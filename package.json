@@ -41,6 +41,7 @@
     "argon2": "^0.41.1",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
+    "chart.js": "^4.4.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "csv-parser": "^3.0.0",
@@ -60,6 +61,7 @@
     "pdf-lib": "^1.17.1",
     "pizzip": "^3.1.7",
     "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
     "react-day-picker": "8.10.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.9",
@@ -75,7 +77,6 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^14.2.14",
-    "@types/argon2": "^0.15.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/fs-extra": "^11.0.4",
     "@types/lodash": "^4.17.10",
