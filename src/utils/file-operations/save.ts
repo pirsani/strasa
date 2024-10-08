@@ -14,7 +14,7 @@ if (!process.env.BASE_PATH_UPLOAD) {
   );
 }
 // Now you can use BASE_PATH_UPLOAD in your application
-console.log(`Base path for uploads: ${BASE_PATH_UPLOAD}`);
+// console.log(`Base path for uploads: ${BASE_PATH_UPLOAD}`);
 
 // Save files to the desired storage
 /*
