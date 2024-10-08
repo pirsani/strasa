@@ -1,0 +1,57 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.indentSize": "tabSize",
+  "editor.tabSize": 2,
+  "editor.wordWrap": "wordWrapColumn",
+  "editor.wordWrapColumn": 100,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+    "source.sortImports": "always",
+    "source.organizeImports": "always" // This will organize and remove unused imports
+  },
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "off",
+    "strings": "on"
+  },
+  "files.eol": "\n",
+  "files.autoSave": "onFocusChange",
+  "files.exclude": {
+    "**/.next": true,
+    "**/node_modules": true
+  },
+  "search.exclude": {
+    "**/.next": true,
+    "**/node_modules": true
+  },
+  // Tailwind CSS IntelliSense settings
+  "tailwindCSS.includeLanguages": {
+    "html": "html",
+    "javascript": "javascript",
+    "javascriptreact": "javascript",
+    "typescript": "typescript",
+    "typescriptreact": "typescript"
+  },
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.experimental.classRegex": [
+    "tw`([^`]*)", // tw`...`
+    "tw\\([^)]*\\)", // tw(...)
+
+    "className=\"([^\"]*)", // className="..."
+    "className=\\{`([^`}]*", // className={`...`}
+    "className=\\{([^}]*)\\}", // className={...}
+
+    "class=\"([^\"]*)", // class="..."
+    "class=\\{`([^`}]*", // class={`...`}
+    "class=\\{([^}]*)\\}" // class={...}
+  ],
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
+}

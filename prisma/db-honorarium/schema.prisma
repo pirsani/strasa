@@ -1,0 +1,880 @@
+// This is your Prisma schema dokumen,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma-honorarium/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_HONORARIUM")
+}
+
+// Model for Users, Accounts, Sessions, and Verification Tokens
+model Permission {
+  id             String           @id @default(cuid())
+  name           String           @unique
+  description    String?
+  createdBy      String           @map("created_by")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedBy      String?          @map("updated_by")
+  updatedAt      DateTime?        @updatedAt @map("updated_at")
+  rolePermission RolePermission[]
+
+  @@map("permissions")
+}
+
+model Role {
+  id             String           @id @default(cuid())
+  name           String           @unique
+  description    String?
+  createdBy      String           @map("created_by")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedBy      String?          @map("updated_by")
+  updatedAt      DateTime?        @updatedAt @map("updated_at")
+  userRole       UserRole[]
+  rolePermission RolePermission[]
+
+  @@map("roles")
+}
+
+model RolePermission {
+  roleId       String     @map("role_id")
+  permissionId String     @map("permission_id")
+  Role         Role       @relation(fields: [roleId], references: [id])
+  Permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  userId String @map("user_id")
+  roleId String @map("role_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model User {
+  id                   String          @id @default(cuid())
+  name                 String
+  email                String          @unique
+  password             String?
+  emailVerified        DateTime?       @map("email_verified")
+  image                String?
+  sessions             Session[]
+  NIP                  String?         @unique @map("nip")
+  organisasiId         String?         @map("organisasi_id")
+  organisasi           Organisasi?     @relation(fields: [organisasiId], references: [id])
+  createdBy            String          @default("init") @map("created_by")
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedBy            String?         @map("updated_by")
+  updatedAt            DateTime?       @updatedAt @map("updated_at")
+  riwayatProsesCreator RiwayatProses[] @relation("riwayat_proses_creator")
+  riwayatProsesUpdater RiwayatProses[] @relation("riwayat_proses_updater")
+  kegiatanCreator      Kegiatan[]      @relation("kegiatan_creator")
+  kegiatanUpdater      Kegiatan[]      @relation("kegiatan_updater")
+  userRole             UserRole[]
+  userPreference       UserPreference? // 1-to-1 relation with UserPreference
+
+  @@map("users")
+}
+
+model UserPreference {
+  id              String    @id @map("user_id") // this will be the user id (foreign key)
+  theme           String?
+  language        String?
+  tahunAnggaran   Int       @default(2025) @map("tahun_anggaran")
+  extraPreference Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime? @updatedAt
+
+  // Relation to User
+  user User @relation(fields: [id], references: [id])
+
+  @@map("user_preferences")
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+// model PejabatPenandatangan {
+//   id                Int        @id @default(autoincrement())
+//   nama              String
+//   NIP               String     @map("nip")
+//   jabatan           String // enum bendahara, ppk
+//   tmtAwal           DateTime   @map("tmt_awal")
+//   tmtAkhir          DateTime   @map("tmt_akhir")
+//   aktif             Boolean
+//   createdBy         String     @map("created_by")
+//   createdAt         DateTime   @default(now()) @map("created_at")
+//   updatedBy         String?    @map("updated_by")
+//   updatedAt         DateTime?  @updatedAt @map("updated_at")
+//   kegiatanBendahara Kegiatan[] @relation("bendahara_kegiatan")
+//   kegiatanPPK       Kegiatan[] @relation("ppk_kegiatan")
+
+//   @@map("pejabat_penandatangan")
+// }
+
+model PangkatGolongan {
+  id                    String                  @id
+  pangkat               String
+  golongan              String
+  ruang                 String
+  deskripsi             String?
+  pesertaKegiatan       PesertaKegiatan[]
+  narasumber            Narasumber[]
+  createdBy             String                  @map("created_by")
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedBy             String?                 @map("updated_by")
+  updatedAt             DateTime?               @updatedAt @map("updated_at")
+  PejabatPerbendaharaan PejabatPerbendaharaan[]
+
+  @@unique([golongan, ruang])
+  @@map("pangkat_golongan")
+}
+
+model Narasumber {
+  id                              String             @id // id narasumber adalah NIK
+  nama                            String
+  NIP                             String             @default("-") @map("nip")
+  NPWP                            String             @default("-") @map("npwp")
+  jabatan                         String             @default("-")
+  eselon                          Int?
+  pangkatGolonganId               String?            @map("pangkat_golongan_id")
+  pangkatGolongan                 PangkatGolongan?   @relation(fields: [pangkatGolonganId], references: [id])
+  jenisHonorariumId               String?            @map("jenis_honorarium_id") // ini hanya jadi catatan jenis yang sekarang saat pengajuan,bisa saja berubah krn kenaikan pangkat dll,  sehingga ketika pencatatan transaksi honorarium harus diacu ke jenis honorarium yg ada di sbm_honorarium dan dicatat di tabel jadwal_narasumber
+  jenisHonorarium                 SbmHonorarium?     @relation(fields: [jenisHonorariumId], references: [id])
+  email                           String?
+  nomorTelepon                    String?            @map("nomor_telepon")
+  bank                            String?
+  namaRekening                    String?            @map("nama_rekening")
+  nomorRekening                   String?            @map("nomor_rekening")
+  dokumenPeryataanRekeningBerbeda String?            @map("dokumen_peryataan_rekening_berbeda")
+  createdBy                       String             @map("created_by")
+  createdAt                       DateTime           @default(now()) @map("created_at")
+  updatedBy                       String?            @map("updated_by")
+  updatedAt                       DateTime?          @updatedAt @map("updated_at")
+  JadwalNarasumber                JadwalNarasumber[]
+
+  @@map("narasumber")
+}
+
+model PmkAcuan {
+  id        String    @id
+  nomorPMK  String    @unique @map("nomor_pmk")
+  tmtAwal   DateTime? @map("tmt_awal")
+  tmtAkhir  DateTime? @map("tmt_akhir")
+  tahun     Int
+  aktif     Boolean
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@map("pmk_acuan")
+}
+
+// referensi halaman 29 PMK 49/2023
+// 9. Honorarium Narasumber/Moderator/Pembawa Acara/Panitia
+model SbmHonorarium {
+  id               String             @id @default(cuid())
+  kode             String?
+  jenis            String
+  satuan           String
+  besaran          Decimal            @db.Decimal(10, 0)
+  uraian           String?
+  tahun            Int
+  createdBy        String             @map("created_by")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedBy        String?            @map("updated_by")
+  updatedAt        DateTime?          @updatedAt @map("updated_at")
+  JadwalNarasumber JadwalNarasumber[]
+  Narasumber       Narasumber[]
+
+  @@unique([kode, tahun])
+  @@map("sbm_honorarium")
+}
+
+model SbmUhDalamNegeri {
+  id             String   @id @default(cuid()) // format id: tahun nomor urut pada sbm contoh untuk aceh tahun 2024 nomor urut 1 maka id: 01-2024
+  provinsiId     String   @map("provinsi_id")
+  provinsi       Provinsi @relation(fields: [provinsiId], references: [id])
+  satuan         String
+  fullboard      Decimal  @db.Decimal(10, 0)
+  fulldayHalfday Decimal  @map("fullday_halfday") @db.Decimal(10, 0) // fullday/halfday dijadikan satu
+  luarKota       Decimal  @map("luar_kota") @db.Decimal(10, 0)
+  dalamKota      Decimal  @map("dalam_kota") @db.Decimal(10, 0)
+  diklat         Decimal  @db.Decimal(10, 0)
+  tahun          Int
+
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@unique([provinsiId, tahun])
+  @@map("sbm_uh_dalam_negeri")
+}
+
+// referensi halaman 23 PMK 49/2023
+// 31 Satuan Biaya Rapat/ Pertemuan di Luar Kantor
+// 31.1 Paket Kegiatan Rapat/Pertemuan di Luar Kantor
+// tingkat [a,b,c] [menteri dan setingkat menteri; eselon I, eselon II; eselon III kebawah]
+// Define the enum
+enum TingkatPaketRapat {
+  a
+  b
+  c
+}
+
+model SbmPaketRapat {
+  id         String            @id @default(cuid())
+  provinsiId String            @map("provinsi_id")
+  provinsi   Provinsi          @relation(fields: [provinsiId], references: [id])
+  tingkat    TingkatPaketRapat // enum a, b, c
+  halfday    Decimal           @db.Decimal(10, 0)
+  fullday    Decimal           @db.Decimal(10, 0)
+  fullboard  Decimal           @db.Decimal(10, 0)
+  tahun      Int
+  createdBy  String            @map("created_by")
+  createdAt  DateTime          @default(now()) @map("created_at")
+  updatedBy  String?           @map("updated_by")
+  updatedAt  DateTime?         @updatedAt @map("updated_at")
+
+  @@unique([provinsiId, tingkat, tahun])
+  @@map("sbm_rapat")
+}
+
+// referensi halaman 26 PMK 49/2023
+// 31.2 Uang Harian Kegiatan Rapat/Pertemuan di Luar Kantor
+model SbmUhRapat {
+  id             String   @id @default(cuid())
+  provinsiId     String   @map("provinsi_id")
+  provinsi       Provinsi @relation(fields: [provinsiId], references: [id])
+  satuan         String
+  fullboard      Decimal  @db.Decimal(10, 0)
+  fulldayHalfday Decimal  @map("fullday_halfday") @db.Decimal(10, 0)
+  tahun          Int
+
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@map("sbm_uh_rapat")
+}
+
+model SbmTaksi {
+  id         String    @id @default(cuid()) // format id: tahun nomor urut pada sbm contoh untuk aceh tahun 2024 nomor urut 1 maka id: 01-2024
+  provinsiId String    @map("provinsi_id")
+  provinsi   Provinsi  @relation(fields: [provinsiId], references: [id])
+  satuan     String
+  besaran    Decimal   @db.Decimal(10, 0)
+  tahun      Int
+  createdBy  String    @map("created_by")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedBy  String?   @map("updated_by")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+
+  @@unique([provinsiId, tahun])
+  @@map("sbm_taksi")
+}
+
+model Kota {
+  id             String            @id @default(cuid())
+  provinsiId     String            @map("provinsi_id")
+  provinsi       Provinsi          @relation(fields: [provinsiId], references: [id])
+  nama           String
+  aktif          Boolean           @default(true) // bisa saja nama kota berubah, maka aktif di nonaktifkan
+  createdBy      String            @map("created_by")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedBy      String?           @map("updated_by")
+  updatedAt      DateTime?         @updatedAt @map("updated_at")
+  sbmTiketAsal   SbmTiketPesawat[] @relation("KotaAsal")
+  SbmTiketTujuan SbmTiketPesawat[] @relation("KotaTujuan")
+
+  @@map("kota")
+}
+
+model SbmTiketPesawat {
+  id           String  @id @default(cuid())
+  kotaAsalId   String  @map("kota_asal_id")
+  kotaAsal     Kota    @relation("KotaAsal", fields: [kotaAsalId], references: [id])
+  kotaTujuanId String  @map("kota_tujuan_id")
+  kotaTujuan   Kota    @relation("KotaTujuan", fields: [kotaTujuanId], references: [id])
+  tiketBisnis  Decimal @map("tiket_bisnis") @db.Decimal(10, 0)
+  tiketEkonomi Decimal @map("tiket_ekonomi") @db.Decimal(10, 0)
+  tahun        Int
+
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@unique([kotaAsalId, kotaTujuanId, tahun])
+  @@map("sbm_tiket_pesawat")
+}
+
+model SbmTiketPesawatLuarNegeri {
+  id             String  @id @default(cuid())
+  kotaAsalId     Int     @map("kota_asal_id")
+  negaraId       String  @map("negara_id")
+  negara         Negara  @relation(fields: [negaraId], references: [id])
+  tiketEksekutif Decimal @map("tiket_eksekutif") @db.Decimal(5, 0)
+  tiketBisnis    Decimal @map("tiket_bisnis") @db.Decimal(5, 0)
+  tiketEkonomi   Decimal @map("tiket_ekonomi") @db.Decimal(5, 0)
+  tahun          Int
+
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@map("sbm_tiket_pesawat_luar_negeri")
+}
+
+model SbmUhLuarNegeri {
+  id           String         @id @default(cuid())
+  negaraId     String         @map("negara_id")
+  negara       Negara         @relation(fields: [negaraId], references: [id])
+  satuan       String
+  golonganA    Decimal        @map("golongan_a") @db.Decimal(4, 0)
+  golonganB    Decimal        @map("golongan_b") @db.Decimal(4, 0)
+  golonganC    Decimal        @map("golongan_c") @db.Decimal(4, 0)
+  golonganD    Decimal        @map("golongan_d") @db.Decimal(4, 0)
+  tahun        Int
+  createdBy    String         @map("created_by")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedBy    String?        @map("updated_by")
+  updatedAt    DateTime?      @updatedAt @map("updated_at")
+  itinerary    Itinerary[]
+  uhLuarNegeri UhLuarNegeri[]
+
+  @@unique([negaraId, tahun])
+  @@map("sbm_uh_luar_negeri")
+}
+
+model SbmUangRepresentasi {
+  id        String    @id @default(cuid())
+  pejabatId Int       @map("pejabat_id")
+  pejabat   Pejabat   @relation(fields: [pejabatId], references: [id])
+  satuan    String
+  luarKota  Int       @map("luar_kota")
+  dalamKota Int       @map("dalam_kota")
+  tahun     Int       @map("tahun")
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@unique([pejabatId, tahun])
+  @@map("sbm_uang_representasi")
+}
+
+model Pejabat {
+  id                  Int                   @id @default(autoincrement())
+  nama                String
+  eselon              Int                   @default(0)
+  SbmUangRepresentasi SbmUangRepresentasi[]
+  createdBy           String                @default("init") @map("created_by")
+  createdAt           DateTime              @default(now()) @map("created_at")
+
+  @@map("pejabat")
+}
+
+// enum 0, 1, 2 as DALAM_KOTA, LUAR_KOTA, LUAR_NEGERI
+enum LOKASI {
+  DALAM_KOTA
+  LUAR_KOTA
+  LUAR_NEGERI
+}
+
+model Kegiatan {
+  id                  String                 @id @default(cuid())
+  nama                String
+  tanggalMulai        DateTime               @map("tanggal_mulai")
+  tanggalSelesai      DateTime               @map("tanggal_selesai")
+  dokumenNodinMemoSk  String                 @map("dokumen_nodin_memo_sk")
+  dokumenJadwal       String                 @map("dokumen_jadwal")
+  lokasi              LOKASI // enum 0, 1, 2
+  provinsiId          String?
+  provinsi            Provinsi?              @relation(fields: [provinsiId], references: [id])
+  keterangan          String?
+  status              String
+  statusRampungan     String?                @map("status_rampungan")
+  statusHonorarium    String?                @map("status_honorarium")
+  statusUhDalamNegeri String?                @map("status_uh_dalam_negeri")
+  statusUhLuarNegeri  String?                @map("status_uh_luar_negeri")
+  satkerId            String                 @map("satker_id")
+  satker              Organisasi             @relation(fields: [satkerId], references: [id], name: "satker_kegiatan")
+  unitKerjaId         String                 @map("unit_kerja_id")
+  unitKerja           Organisasi             @relation(fields: [unitKerjaId], references: [id], name: "unit_kerja_kegiatan")
+  createdBy           String                 @map("created_by")
+  creator             User                   @relation(fields: [createdBy], references: [id], name: "kegiatan_creator")
+  createdAt           DateTime               @default(now()) @map("created_at")
+  updatedBy           String?                @map("updated_by")
+  updater             User?                  @relation(fields: [updatedBy], references: [id], name: "kegiatan_updater")
+  updatedAt           DateTime?              @updatedAt @map("updated_at")
+  bendaharaId         String?                @map("bendahara_id")
+  bendahara           PejabatPerbendaharaan? @relation(fields: [bendaharaId], references: [id], name: "bendahara_kegiatan")
+  ppkId               String?                @map("ppk_id")
+  ppk                 PejabatPerbendaharaan? @relation(fields: [ppkId], references: [id], name: "ppk_kegiatan")
+  kpaId               String?                @map("kpa_id")
+  kpa                 PejabatPerbendaharaan? @relation(fields: [kpaId], references: [id], name: "kpa_kegiatan")
+  dokumenSuratTugas   DokumenSuratTugas[]
+  pesertaKegiatan     PesertaKegiatan[]
+  itinerary           Itinerary[]
+  riwayatProses       RiwayatProses[]
+  kelas               Kelas[]
+  dokumenKegiatan     DokumenKegiatan[]
+  Jadwal              Jadwal[]
+
+  @@map("kegiatan")
+}
+
+model DokumenSuratTugas {
+  id         String    @id @default(cuid())
+  nama       String
+  dokumen    String
+  kegiatanId String    @map("kegiatan_id")
+  kegiatan   Kegiatan  @relation(fields: [kegiatanId], references: [id])
+  createdBy  String    @map("created_by")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedBy  String?   @map("updated_by")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+
+  @@map("dokumen_surat_tugas")
+}
+
+model PesertaKegiatan {
+  id                              String          @id @default(cuid())
+  nama                            String
+  NIP                             String?         @map("nip")
+  NIK                             String          @map("nik")
+  NPWP                            String?         @map("npwp")
+  pangkatGolonganId               String          @map("pangkat_golongan_id")
+  pangkatGolongan                 PangkatGolongan @relation(fields: [pangkatGolonganId], references: [id])
+  jabatan                         String?
+  eselon                          String?
+  email                           String?
+  telp                            String?
+  rekeningSendiri                 Boolean         @default(true) @map("rekening_sendiri")
+  dokumenPeryataanRekeningBerbeda String?         @map("dokumen_peryataan_rekening_berbeda")
+  bank                            String
+  namaRekening                    String          @map("nama_rekening")
+  nomorRekening                   String          @map("nomor_rekening")
+  kegiatanId                      String          @map("kegiatan_id")
+  kegiatan                        Kegiatan        @relation(fields: [kegiatanId], references: [id])
+  jumlahHari                      Int?            @default(0) @map("jumlah_hari")
+  createdBy                       String          @map("created_by")
+  createdAt                       DateTime        @default(now()) @map("created_at")
+  updatedBy                       String?         @map("updated_by")
+  updatedAt                       DateTime?       @updatedAt @map("updated_at")
+  uhDalamNegeri                   UhDalamNegeri[]
+  uhLuarNegeri                    UhLuarNegeri[]
+
+  @@unique([kegiatanId, NIP])
+  @@map("peserta_kegiatan")
+}
+
+model UhDalamNegeri {
+  id                     Int             @id @default(autoincrement())
+  pesertaKegiatanId      String          @map("peserta_kegiatan_id")
+  pesertaKegiatan        PesertaKegiatan @relation(fields: [pesertaKegiatanId], references: [id])
+  jumlahHari             Int             @map("jumlah_hari")
+  hFullboard             Int             @map("h_fullboard")
+  hFulldayHalfday        Int             @map("h_fullday_halfday")
+  hLuarKota              Int             @map("h_luar_kota")
+  hDalamKota             Int             @map("h_dalam_kota")
+  hDiklat                Int             @map("h_diklat")
+  hTransport             Int             @map("h_transport")
+  uhFullboard            Int             @map("uh_fullboard")
+  uhFulldayHalfday       Int             @map("uh_fullday_halfday")
+  uhLuarKota             Int             @map("uh_luar_kota")
+  uhDalamKota            Int             @map("uh_dalam_kota")
+  uhDiklat               Int             @map("uh_diklat")
+  uhTransport            Int             @map("uh_transport")
+  dokumenBuktiPembayaran String?         @map("dokumen_bukti_pembayaran")
+  tahun                  Int
+  createdBy              String          @map("created_by")
+  createdAt              DateTime        @default(now()) @map("created_at")
+  updatedBy              String?         @map("updated_by")
+  updatedAt              DateTime?       @updatedAt @map("updated_at")
+
+  @@map("uh_dalam_negeri")
+}
+
+model UhLuarNegeri {
+  id                     Int             @id @default(autoincrement())
+  pesertaKegiatanId      String          @map("peserta_kegiatan_id")
+  pesertaKegiatan        PesertaKegiatan @relation(fields: [pesertaKegiatanId], references: [id])
+  tanggalMulai           DateTime        @map("tanggal_mulai")
+  tanggalSelesai         DateTime        @map("tanggal_selesai")
+  jumlahHari             Int             @map("jumlah_hari") // harus di kasih trigger biar otomatis dihitung dari tanggal mulai dan selesai
+  sbmUhLuarNegeriId      String          @map("sbm_uh_luar_negeri_id") // akan mengacu ke id yg pencariannya berdasarkan negara dan golongan
+  sbmUhLuarNegeri        SbmUhLuarNegeri @relation(fields: [sbmUhLuarNegeriId], references: [id])
+  golonganUh             String          @map("golongan_uh") // enum A, B, C, D
+  nominalGolonganUh      Int             @map("nominal_golongan_uh") // sesuai dengan golongan yg ada di SbmUhLuarNegeri, karena bersifat historis maka diambil dari SbmUhLuarNegeri, resiko perubahan nilai nominal golongan di SbmUhLuarNegeri harus dihandle di aplikasi
+  hPerjalanan            Int             @map("h_perjalanan")
+  uhPerjalanan           Int             @map("uh_perjalanan")
+  hUangHarian            Int             @map("h_uang_harian")
+  uhUangHarian           Int             @map("uh_uang_harian")
+  hDiklat                Int             @map("h_diklat")
+  uhDiklat               Int             @map("uh_diklat")
+  dokumenBuktiPembayaran String?         @map("dokumen_bukti_pembayaran")
+  tahun                  Int
+  createdBy              String          @map("created_by")
+  createdAt              DateTime        @default(now()) @map("created_at")
+  updatedBy              String?         @map("updated_by")
+  updatedAt              DateTime?       @updatedAt @map("updated_at")
+
+  @@map("uh_luar_negeri")
+}
+
+model Itinerary {
+  id                String           @id @default(cuid())
+  sbmUhLuarNegeriId String?          @map("sbm_uh_luar_negeri_id")
+  lokasi            SbmUhLuarNegeri? @relation(fields: [sbmUhLuarNegeriId], references: [id])
+  dariLokasiId      String
+  dariLokasi        Negara           @relation(fields: [dariLokasiId], references: [id], name: "dari_lokasi")
+  keLokasiId        String
+  keLokasi          Negara           @relation(fields: [keLokasiId], references: [id], name: "ke_lokasi")
+  tanggalMulai      DateTime
+  tanggalSelesai    DateTime
+  kegiatanId        String           @map("kegiatan_id")
+  kegiatan          Kegiatan         @relation(fields: [kegiatanId], references: [id])
+  createdBy         String           @map("created_by")
+  createdAt         DateTime?        @default(now()) @map("created_at")
+  updatedBy         String?          @map("updated_by")
+  updatedAt         DateTime?        @updatedAt @map("updated_at")
+
+  @@map("itinerary")
+}
+
+enum JENIS_PENGAJUAN {
+  GENERATE_RAMPUNGAN
+  HONORARIUM
+  UH_DALAM_NEGERI
+  UH_LUAR_NEGERI
+  PENGGANTIAN_REINBURSEMENT
+  PEMBAYARAN_PIHAK_KETIGA
+}
+
+model RiwayatProses {
+  id         String          @id @default(cuid())
+  jenis      JENIS_PENGAJUAN // enum GenerateRampunga, Honorarium, UhDalamNegeri, UhLuarNegeri, Reimbursement, PihakKetiga
+  status     String
+  keterangan String
+  tglStatus  DateTime        @map("tgl_status")
+  kegiatanId String          @map("kegiatan_id")
+  kegiatan   Kegiatan        @relation(fields: [kegiatanId], references: [id])
+  createdBy  String          @map("created_by")
+  createdAt  DateTime        @default(now()) @map("created_at")
+  updatedBy  String?         @map("updated_by")
+  updatedAt  DateTime?       @updatedAt @map("updated_at")
+  creator    User?           @relation(fields: [createdBy], references: [id], name: "riwayat_proses_creator")
+  updater    User?           @relation(fields: [updatedBy], references: [id], name: "riwayat_proses_updater")
+
+  @@map("riwayat_proses")
+}
+
+model Kelas {
+  id         String    @id @default(cuid())
+  nama       String
+  kode       String?   @unique
+  kegiatanId String    @map("kegiatan_id")
+  kegiatan   Kegiatan  @relation(fields: [kegiatanId], references: [id])
+  createdBy  String    @map("created_by")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedBy  String?   @map("updated_by")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+  jadwal     Jadwal[]
+
+  @@map("kelas")
+}
+
+model Materi {
+  id        String    @id @default(cuid())
+  kode      String?
+  nama      String
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  jadwal    Jadwal[]
+
+  @@map("materi")
+}
+
+model Jadwal {
+  id         String   @id @default(cuid())
+  kegiatanId String   @map("kegiatan_id")
+  kegiatan   Kegiatan @relation(fields: [kegiatanId], references: [id])
+  materiId   String   @map("materi_id")
+  materi     Materi   @relation(fields: [materiId], references: [id])
+  kelasId    String   @map("kelas_id")
+  kelas      Kelas    @relation(fields: [kelasId], references: [id])
+
+  tanggal                            DateTime
+  jamMulai                           DateTime?             @map("jam_mulai")
+  jamSelesai                         DateTime?             @map("jam_selesai")
+  ruang                              String?
+  jumlahJamPelajaran                 Int?                  @map("jumlah_jam_pelajaran")
+  dokumenUndanganNarasumber          String?               @map("dokumen_undangan_narasumber")
+  dokumenKonfirmasiKesediaanMengajar String?               @map("dokumen_konfirmasi_kesediaan_mengajar")
+  dokumenDaftarHadir                 String?               @map("dokumen_daftar_hadir")
+  dokumenJadwalKegiatan              String?               @map("dokumen_jadwal_kegiatan")
+  tautanMaterial                     String?               @map("tautan_material")
+  createdBy                          String                @map("created_by")
+  createdAt                          DateTime              @default(now()) @map("created_at")
+  updatedBy                          String?               @map("updated_by")
+  updatedAt                          DateTime?             @updatedAt @map("updated_at")
+  nominatifHonorarium                NominatifHonorarium[]
+  jadwalNarasumber                   JadwalNarasumber[]
+
+  @@map("jadwal")
+}
+
+model JadwalNarasumber {
+  id                                 Int            @id @default(autoincrement())
+  jadwalId                           String         @map("jadwal_id")
+  jadwal                             Jadwal         @relation(fields: [jadwalId], references: [id])
+  narasumberId                       String         @map("narasumber_id")
+  narasumber                         Narasumber     @relation(fields: [narasumberId], references: [id])
+  jenisHonorariumId                  String?        @map("jenis_honorarium_id") // ini bisa saja berbeda dengan jenis narasumber yang ada di tabel narasumber
+  jenisHonorarium                    SbmHonorarium? @relation(fields: [jenisHonorariumId], references: [id])
+  besaranHonorarium                  Decimal?       @map("besaran_honorarium") @db.Decimal(10, 0) // bersifat historis, karena bisa saja berubah sesuai dengan jenis honorarium yang ada di sbm_honorarium
+  jumlahJamPelajaran                 Decimal?       @map("jumlah_jam_pelajaran") @db.Decimal(5, 2) // bisa saja berbeda dengan jumlah jam pelajaran yang ada di tabel jadwal
+  dokumenKonfirmasiKesediaanMengajar String?        @map("dokumen_konfirmasi_kesediaan_mengajar")
+  pajakDPP                           Decimal?       @map("pajak_dpp") @db.Decimal(10, 0)
+  pajakTarif                         Decimal?       @map("pajak_tarif") @db.Decimal(5, 2)
+  pph21                              Decimal?       @map("pph_21") @db.Decimal(5, 2)
+  jumlahPembayaran                   Decimal?       @map("jumlah_diterima") @db.Decimal(10, 2)
+  createdBy                          String         @map("created_by")
+  createdAt                          DateTime       @default(now()) @map("created_at")
+  updatedBy                          String?        @map("updated_by")
+  updatedAt                          DateTime?      @updatedAt @map("updated_at")
+
+  @@unique([jadwalId, narasumberId])
+  @@map("jadwal_narasumber")
+}
+
+model JenisDokumenKegiatan {
+  id              String            @id @default(cuid())
+  nama            String
+  deskripsi       String?
+  untukLangkahKe  Int               @default(0) @map("untuk_langkah_ke") // enum 0, 1, 2, 4 as setup, pengajuan, daftar nominatif, pembayaran
+  untukLokasiDi   String            @default("0;1") @map("untuk_lokasi_di") // enum 0, 1, 2 as Dalam Kota, Luar Kota, Luar Negeri
+  isMultiple      Boolean           @default(false) @map("is_multiple")
+  createdBy       String            @map("created_by")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedBy       String?           @map("updated_by")
+  updatedAt       DateTime?         @updatedAt @map("updated_at")
+  dokumenKegiatan DokumenKegiatan[]
+
+  @@map("jenis_dokumen_kegiatan")
+}
+
+model DokumenKegiatan {
+  id               String                @id @default(cuid())
+  dokumen          String
+  kegiatanId       String                @map("kegiatan_id")
+  kegiatan         Kegiatan              @relation(fields: [kegiatanId], references: [id])
+  nama             String?
+  jenisDokumenId   String?               @map("jenis_dokumen_id")
+  jenisDokumen     JenisDokumenKegiatan? @relation(fields: [jenisDokumenId], references: [id])
+  originalFilename String?               @map("original_filename")
+  filePath         String?               @map("file_path")
+  mimeType         String?               @map("mime_type")
+  encoding         String?
+  notes            String?
+  hash             String?
+  createdBy        String                @map("created_by")
+  createdAt        DateTime              @default(now()) @map("created_at")
+  verifiedBy       String?               @map("verified_by")
+  verifiedAt       DateTime?             @map("verified_at")
+  updatedBy        String?               @map("updated_by")
+  updatedAt        DateTime              @updatedAt @map("updated_at")
+
+  @@map("dokumen_kegiatan")
+}
+
+model NominatifHonorarium {
+  id                     String  @id @default(cuid())
+  jadwalId               String  @unique @map("jadwal_id")
+  jadwal                 Jadwal  @relation(fields: [jadwalId], references: [id])
+  besaran                Decimal @db.Decimal(10, 0)
+  jumlah                 Int
+  pajakDPP               Decimal @map("pajak_dpp") @db.Decimal(10, 0)
+  pajakTarif             Decimal @map("pajak_tarif") @db.Decimal(5, 2)
+  pph21                  Decimal @map("pph_21") @db.Decimal(5, 2)
+  jumlahDiterima         Decimal @map("jumlah_diterima") @db.Decimal(10, 2)
+  namaRekening           String? @map("nama_rekening")
+  nomorRekening          String? @map("nomor_rekening")
+  dokumenBuktiPembayaran String? @map("dokumen_bukti_pembayaran")
+
+  @@map("daftar_nominatif_honorarium")
+}
+
+// berdasarkan data dari https://e-database.kemendagri.go.id/kemendagri/dataset/1121/tabel-data
+model Provinsi {
+  id               String             @id @default(cuid())
+  tahun            Int?
+  kode             String
+  nama             String
+  urutan           Int?               @default(autoincrement()) // menurut SBM
+  singkatan        String?            @map("singkatan")
+  aktif            Boolean            @default(true)
+  createdBy        String             @default("init") @map("created_by")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedBy        String?            @map("updated_by")
+  updatedAt        DateTime?          @updatedAt @map("updated_at")
+  SbmUhDalamNegeri SbmUhDalamNegeri[]
+  kegiatan         Kegiatan[]
+  SbmPaketRapat    SbmPaketRapat[]
+  SbmUhRapat       SbmUhRapat[]
+  SbmTaksi         SbmTaksi[]
+  Kota             Kota[]
+
+  @@map("provinsi")
+}
+
+model Negara {
+  id          String @id // ISO 3166-1 alpha-3 code
+  urutan      Int? // menurut SBM
+  nama        String @map("nama")
+  namaInggris String @map("nama_inggris")
+  kodeAlpha2  String @unique @map("kode_alpha_2") // ISO 3166-1 alpha-2 code
+  kodeAlpha3  String @unique @map("kode_alpha_3") // ISO 3166-1 alpha-3 code
+  kodeNumeric String @unique @map("kode_numeric") // ISO 3166-1 numeric code
+
+  createdBy                 String                      @default("init") @map("created_by")
+  createdAt                 DateTime                    @default(now()) @map("created_at")
+  updatedBy                 String?                     @map("updated_by")
+  updatedAt                 DateTime?                   @updatedAt @map("updated_at")
+  sbmUhLuarNegeri           SbmUhLuarNegeri[]
+  sbmTiketPesawatLuarNegeri SbmTiketPesawatLuarNegeri[]
+  dariLokasi                Itinerary[]                 @relation("dari_lokasi")
+  keLokasi                  Itinerary[]                 @relation("ke_lokasi")
+
+  @@map("negara")
+}
+
+// https://jdih.kemenkeu.go.id/download/f0614335-ba08-4b1d-b925-08e710c3cc76/2023pmkeuangan062.pdf
+// halaman 5 definisi satker anggaran 
+// Satuan Kerja yang selanjutnya disebut Satker adalah
+// unit organisasi lini Kementerian/Lembaga atau unit
+// organisasi Pemerintah Daerah yang melaksanakan
+// kegiatan Kementerian/Lembaga dan memiliki
+// kewenangan dan tanggung jawab penggunaan
+// anggaran. 
+// halaman 196 membedakan antara satker anggaran dan satker struktural
+// sehingga satker anggaran bisa mengelola anggaran lebih dari satu satker struktural
+
+// permenlu no 6 tahun 2021
+// pasal 626 ayat (2) Pusat berada di bawah dan bertanggung jawab kepada 
+// Menteri melalui Sekretaris Jenderal. 
+// hubungan ini digambarkan sebagai garis-garis putus putus dengan sekretariat jenderal dan garis tanpa putus ke atas dengan menteri
+
+enum StatusAktif {
+  AKTIF
+  NON_AKTIF
+  DIBUBARKAN
+}
+
+model Organisasi {
+  id                     String                  @id @default(cuid())
+  nama                   String
+  singkatan              String?
+  status                 StatusAktif             @default(AKTIF) // Mengganti aktif dengan enum status
+  eselon                 Int? //@default(-1)
+  isSatkerAnggaran       Boolean?                @default(false) @map("is_satker_anggaran")
+  satkerAnggaranId       String?                 @map("anggaran_satker_id")
+  satkerAnggaran         Organisasi?             @relation("satkerAnggaran", fields: [satkerAnggaranId], references: [id])
+  indukOrganisasiId      String?                 @map("induk_organisasi_id")
+  indukOrganisasi        Organisasi?             @relation("pohonOrganisasi", fields: [indukOrganisasiId], references: [id])
+  createdBy              String                  @map("created_by")
+  createdAt              DateTime                @default(now()) @map("created_at")
+  updatedBy              String?                 @map("updated_by")
+  updatedAt              DateTime?               @map("updated_at")
+  subOrganisasi          Organisasi[]            @relation("pohonOrganisasi")
+  unitOrganisasiKelolaan Organisasi[]            @relation("satkerAnggaran")
+  PejabatPerbendaharaan  PejabatPerbendaharaan[]
+  User                   User[]
+  KegiatanSatker         Kegiatan[]              @relation("satker_kegiatan")
+  KegiatanUnitKerja      Kegiatan[]              @relation("unit_kerja_kegiatan")
+
+  @@map("organisasi")
+}
+
+model JenisJabatanPerbendaharaan {
+  id                    String                  @id
+  nama                  String
+  singkatan             String?
+  createdBy             String                  @map("created_by")
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedBy             String?                 @map("updated_by")
+  updatedAt             DateTime?               @map("updated_at")
+  PejabatPerbendaharaan PejabatPerbendaharaan[]
+
+  @@map("jenis_jabatan_perbendaharaan")
+}
+
+model PejabatPerbendaharaan {
+  id                String                     @id @default(cuid())
+  NIK               String?                    @map("nik")
+  nama              String
+  NIP               String?                    @map("nip")
+  pangkatGolonganId String?                    @map("pangkat_golongan_id")
+  pangkatGolongan   PangkatGolongan?           @relation(fields: [pangkatGolonganId], references: [id])
+  jabatanId         String                     @map("jabatan_id")
+  jabatan           JenisJabatanPerbendaharaan @relation(fields: [jabatanId], references: [id])
+  satkerId          String                     @map("satker_id")
+  satker            Organisasi                 @relation(fields: [satkerId], references: [id])
+  tmtMulai          DateTime                   @map("tmt_mulai")
+  tmtSelesai        DateTime?                  @map("tmt_selesai")
+  aktif             Boolean                    @default(true) // ini harusnya bs dilihat dari tmt mulai dan tmt selesai
+  createdBy         String                     @map("created_by")
+  createdAt         DateTime                   @default(now()) @map("created_at")
+  updatedBy         String?                    @map("updated_by")
+  updatedAt         DateTime?                  @map("updated_at")
+  kegiatanPpk       Kegiatan[]                 @relation("ppk_kegiatan")
+  kegiatanBendahara Kegiatan[]                 @relation("bendahara_kegiatan")
+  kegiatanKpa       Kegiatan[]                 @relation("kpa_kegiatan")
+
+  @@map("pejabat_perbendaharaan")
+}
+
+model UploadedFile {
+  id               String   @id @default(cuid())
+  rereferensiId    String?  @map("rereferensi_id")
+  rereferensiTable String?  @map("rereferensi_table")
+  keterangan       String?
+  originalFilename String   @map("original_filename")
+  filePath         String   @map("file_path")
+  mimeType         String?  @map("mime_type")
+  encoding         String?
+  notes            String?
+  hash             String?
+  createdBy        String   @map("created_by")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@map("uploaded_file")
+}

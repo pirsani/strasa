@@ -1,0 +1,195 @@
+"id";"urutan";"nama";"nama_inggris";"kode_alpha_2";"kode_alpha_3";"kode_numeric";"created_by"
+USA;1;Amerika Serikat;United States of America;US;USA;"840";init
+CAN;2;Kanada;Canada;CA;CAN;"124";init
+ARG;3;Argentina;Argentina;AR;ARG;"032";init
+VEN;4;Venezuela;Venezuela (Bolivarian Republic of);VE;VEN;"862";init
+BRA;5;Brasil;Brazil;BR;BRA;"076";init
+CHL;6;Chili;Chile;CL;CHL;"152";init
+COL;7;Kolombia;Colombia;CO;COL;"170";init
+PER;8;Peru;Peru;PE;PER;"604";init
+SUR;9;Suriname;Suriname;SR;SUR;"740";init
+ECU;10;Ekuador;Ecuador;EC;ECU;"218";init
+MEX;11;Meksiko;Mexico;MX;MEX;"484";init
+CUB;12;Kuba;Cuba;CU;CUB;"192";init
+PAN;13;Panama;Panama;PA;PAN;"591";init
+AUT;14;Austria;Austria;AT;AUT;"040";init
+BEL;15;Belgia;Belgium;BE;BEL;"056";init
+FRA;16;Perancis;France;FR;FRA;"250";init
+DEU;17;Jerman;Germany;DE;DEU;"276";init
+NLD;18;Belanda;Netherlands;NL;NLD;"528";init
+CHE;19;Swiss;Switzerland;CH;CHE;"756";init
+DNK;20;Denmark;Denmark;DK;DNK;"208";init
+FIN;21;Finlandia;Finland;FI;FIN;"246";init
+NOR;22;Norwegia;Norway;NO;NOR;"578";init
+SWE;23;Swedia;Sweden;SE;SWE;"752";init
+GBR;24;Inggris;United Kingdom;GB;GBR;"826";init
+BIH;25;Bonsia dan Herzegovina;Bosnia and Herzegovina;BA;BIH;"070";init
+HRV;26;Kroasia;Croatia;HR;HRV;"191";init
+ESP;27;Spanyol;Spain;ES;ESP;"724";init
+GRC;28;Yunani;Greece;GR;GRC;"300";init
+ITA;29;Itali;Italy;IT;ITA;"380";init
+"620";30;Portugal;Portugal;PT;PRT;"620";init
+SRB;31;Serbia;Serbia;RS;SRB;"688";init
+BGR;32;Bulgaria;Bulgaria;BG;BGR;"100";init
+CZE;33;Ceko;Czechia;CZ;CZE;"203";init
+HUN;34;Hongaria;Hungary;HU;HUN;"348";init
+POL;35;Polandia;Poland;PL;POL;"616";init
+ROU;36;Rumania;Romania;RO;ROU;"642";init
+RUS;37;Rusia;Russian Federation;RU;RUS;"643";init
+SVK;38;Slovakia;Slovakia;SK;SVK;"703";init
+UKR;39;Ukraina;Ukraine;UA;UKR;"804";init
+NGA;40;Nigeria;Nigeria;NG;NGA;"566";init
+SEN;41;Senegal;Senegal;SN;SEN;"686";init
+CMR;42;Kamerun;Cameroon;CM;CMR;"120";init
+ETH;43;Etiopian;Ethiopia;ET;ETH;"231";init
+KEN;44;Kenya;Kenya;KE;KEN;"404";init
+MDG;45;Madagaskar;Madagascar;MG;MDG;"450";init
+TZA;46;Tanzania;United Republic of Tanzania;TZ;TZA;"834";init
+ZWE;47;Zimbabwe;Zimbabwe;ZW;ZWE;"716";init
+MOZ;48;Mozambik;Mozambique;MZ;MOZ;"508";init
+NAM;49;Namibia;Namibia;NA;NAM;"516";init
+ZAF;50;Afrika Selatan;South Africa;ZA;ZAF;"710";init
+DZA;51;Aljazair;Algeria;DZ;DZA;"012";init
+EGY;52;Mesir;Egypt;EG;EGY;"818";init
+MAR;53;Maroko;Morocco;MA;MAR;"504";init
+TUN;54;Tunisia;Tunisia;TN;TUN;"788";init
+SDN;55;Sudan;Sudan;SD;SDN;"729";init
+LBY;56;Libya;Libya;LY;LBY;"434";init
+AZE;57;Azerbaijan;Azerbaijan;AZ;AZE;"031";init
+BHR;58;Bahrain;Bahrain;BH;BHR;"048";init
+IRQ;59;Irak;Iraq;IQ;IRQ;"368";init
+JOR;60;Yordan;Jordan;JO;JOR;"400";init
+KWT;61;Kuwait;Kuwait;KW;KWT;"414";init
+LBN;62;Libanon;Lebanon;LB;LBN;"422";init
+QAT;63;Qatar;Qatar;QA;QAT;"634";init
+SYR;64;Suriah;Syrian Arab Republic;SY;SYR;"760";init
+TUR;65;Turki;Turkey;TR;TUR;"792";init
+ARE;66;Uni Emirat Arab;United Arab Emirates;AE;ARE;"784";init
+OMN;69;Kesultanan Oman;Oman;OM;OMN;"512";init
+CHN;70;Republik Rakyat Tiongkok;China;CN;CHN;"156";init
+HKG;71; Hongkong;China Hong Kong;HK;HKG;"344";init
+JPN;72;Jepang;Japan;JP;JPN;"392";init
+KOR;73;Korea Selatan;Republic of Korea;KR;KOR;"410";init
+PRK;74;Korea Utara;Democratic People's Republic of Korea;KP;PRK;"408";init
+AFG;75;Afganistas;Afghanistan;AF;AFG;"004";init
+BGD;76;Bangladesh;Bangladesh;BD;BGD;"050";init
+IND;77;India;India;IN;IND;"356";init
+PAK;78;Pakistan;Pakistan;PK;PAK;"586";init
+LKA;79;Srilanka;Sri Lanka;LK;LKA;"144";init
+IRN;80;Iran;Iran (Islamic Republic of);IR;IRN;"364";init
+KAZ;81;Kazakhstan;Kazakhstan;KZ;KAZ;"398";init
+UZB;81;Uzbekistan;Uzbekistan;UZ;UZB;"860";init
+PHL;83;Filipina;Philippines;PH;PHL;"608";init
+SGP;84;Singapura;Singapore;SG;SGP;"702";init
+MYS;85;Malaysia;Malaysia;MY;MYS;"458";init
+THA;86;Thailand;Thailand;TH;THA;"764";init
+MMR;87;Myanmar;Myanmar;MM;MMR;"104";init
+LAO;88;Laos;Lao People's Democratic Republic;LA;LAO;"418";init
+VNM;89;Vietnam;Viet Nam;VN;VNM;"704";init
+BRN;90;Brunei Darussalam;Brunei Darussalam;BN;BRN;"096";init
+KHM;91;Kamboja;Cambodia;KH;KHM;"116";init
+TLS;92;Timor Leste;Timor-Leste;TL;TLS;"626";init
+AUS;93;Australia;Australia;AU;AUS;"036";init
+NZL;94;Selandia Baru;New Zealand;NZ;NZL;"554";init
+NCL;95; Kaleonia Baru;France New Caledonia;NC;NCL;"540";init
+PNG;96;Papua Nugini;Papua New Guinea;PG;PNG;"598";init
+FJI;97;Fiji;Fiji;FJ;FJI;"242";init
+PLW;;"";Palau;PW;PLW;"585";init
+MKD;;"";North Macedonia;MK;MKD;"807";init
+NER;;"";Niger;NE;NER;"562";init
+COD;;"";Democratic Republic of the Congo;CD;COD;"180";init
+DJI;;"";Djibouti;DJ;DJI;"262";init
+DMA;;"";Dominica;DM;DMA;"212";init
+NIC;;"";Nicaragua;NI;NIC;"558";init
+NPL;;"";Nepal;NP;NPL;"524";init
+NRU;;"";Nauru;NR;NRU;"520";init
+MNE;;"";Montenegro;ME;MNE;"499";init
+MNG;;"";Mongolia;MN;MNG;"496";init
+MCO;;"";Monaco;MC;MCO;"492";init
+FSM;;"";Micronesia (Federated States of);FM;FSM;"583";init
+MUS;;"";Mauritius;MU;MUS;"480";init
+MRT;;"";Mauritania;MR;MRT;"478";init
+MHL;;"";Marshall Islands;MH;MHL;"584";init
+MLT;;"";Malta;MT;MLT;"470";init
+MLI;;"";Mali;ML;MLI;"466";init
+MDV;;"";Maldives;MV;MDV;"462";init
+MWI;;"";Malawi;MW;MWI;"454";init
+LUX;;"";Luxembourg;LU;LUX;"442";init
+LTU;;"";Lithuania;LT;LTU;"440";init
+LIE;;"";Liechtenstein;LI;LIE;"438";init
+LBR;;"";Liberia;LR;LBR;"430";init
+LSO;;"";Lesotho;LS;LSO;"426";init
+LVA;;"";Latvia;LV;LVA;"428";init
+KGZ;;"";Kyrgyzstan;KG;KGZ;"417";init
+KIR;;"";Kiribati;KI;KIR;"296";init
+JAM;;"";Jamaica;JM;JAM;"388";init
+ISR;;"";Israel;IL;ISR;"376";init
+IRL;;"";Ireland;IE;IRL;"372";init
+IDN;;"";Indonesia;ID;IDN;"360";init
+ISL;;"";Iceland;IS;ISL;"352";init
+HND;;"";Honduras;HN;HND;"340";init
+HTI;;"";Haiti;HT;HTI;"332";init
+GUY;;"";Guyana;GY;GUY;"328";init
+GNB;;"";Guinea-Bissau;GW;GNB;"624";init
+GIN;;"";Guinea;GN;GIN;"324";init
+GTM;;"";Guatemala;GT;GTM;"320";init
+GRD;;"";Grenada;GD;GRD;"308";init
+GHA;;"";Ghana;GH;GHA;"288";init
+GEO;;"";Georgia;GE;GEO;"268";init
+GMB;;"";Gambia;GM;GMB;"270";init
+GAB;;"";Gabon;GA;GAB;"266";init
+SWZ;;"";Eswatini;SZ;SWZ;"748";init
+EST;;"";Estonia;EE;EST;"233";init
+ERI;;"";Eritrea;ER;ERI;"232";init
+GNQ;;"";Equatorial Guinea;GQ;GNQ;"226";init
+SMR;;"";San Marino;SM;SMR;"674";init
+STP;;"";Sao Tome and Principe;ST;STP;"678";init
+SAU;;"";Saudi Arabia;SA;SAU;"682";init
+SYC;;"";Seychelles;SC;SYC;"690";init
+SLE;;"";Sierra Leone;SL;SLE;"694";init
+SVN;;"";Slovenia;SI;SVN;"705";init
+SLB;;"";Solomon Islands;SB;SLB;"090";init
+SOM;;"";Somalia;SO;SOM;"706";init
+SSD;;"";South Sudan;SS;SSD;"728";init
+TJK;;"";Tajikistan;TJ;TJK;"762";init
+TGO;;"";Togo;TG;TGO;"768";init
+TON;;"";Tonga;TO;TON;"776";init
+TTO;;"";Trinidad and Tobago;TT;TTO;"780";init
+TKM;;"";Turkmenistan;TM;TKM;"795";init
+TUV;;"";Tuvalu;TV;TUV;"798";init
+UGA;;"";Uganda;UG;UGA;"800";init
+URY;;"";Uruguay;UY;URY;"858";init
+VUT;;"";Vanuatu;VU;VUT;"548";init
+YEM;;"";Yemen;YE;YEM;"887";init
+ZMB;;"";Zambia;ZM;ZMB;"894";init
+SLV;;"";El Salvador;SV;SLV;"222";init
+BWA;;"";Botswana;BW;BWA;"072";init
+DOM;;"";Dominican Republic;DO;DOM;"214";init
+BFA;;"";Burkina Faso;BF;BFA;"854";init
+BDI;;"";Burundi;BI;BDI;"108";init
+CPV;;"";Cabo Verde;CV;CPV;"132";init
+CAF;;"";Central African Republic;CF;CAF;"140";init
+TCD;;"";Chad;TD;TCD;"148";init
+COM;;"";Comoros;KM;COM;"174";init
+COG;;"";Congo;CG;COG;"178";init
+CRI;;"";Costa Rica;CR;CRI;"188";init
+CYP;;"";Cyprus;CY;CYP;"196";init
+BOL;;"";Bolivia (Plurinational State of);BO;BOL;"068";init
+BTN;;"";Bhutan;BT;BTN;"064";init
+BEN;;"";Benin;BJ;BEN;"204";init
+BLZ;;"";Belize;BZ;BLZ;"084";init
+BLR;;"";Belarus;BY;BLR;"112";init
+BRB;;"";Barbados;BB;BRB;"052";init
+BHS;;"";Bahamas;BS;BHS;"044";init
+ARM;;"";Armenia;AM;ARM;"051";init
+ATG;;"";Antigua and Barbuda;AG;ATG;"028";init
+AGO;;"";Angola;AO;AGO;"024";init
+AND;;"";Andorra;AD;AND;"020";init
+ALB;;"";Albania;AL;ALB;"008";init
+WSM;;"";Samoa;WS;WSM;"882";init
+VCT;;"";Saint Vincent and the Grenadines;VC;VCT;"670";init
+LCA;;"";Saint Lucia;LC;LCA;"662";init
+KNA;;"";Saint Kitts and Nevis;KN;KNA;"659";init
+RWA;;"";Rwanda;RW;RWA;"646";init
+MDA;;"";Republic of Moldova;MD;MDA;"498";init
+PRY;;"";Paraguay;PY;PRY;"600";init

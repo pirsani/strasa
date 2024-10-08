@@ -1,0 +1,22 @@
+name;description
+crud-referensi;mengelola data referensi
+crud-referensi-pengguna;mengelola data pengguna
+crud-referensi-role;mengelola data referensi role
+crud-referensi-permission;mengelola data referensi permission
+crud-referensi-role-permission;mengelola data referensi role permission
+crud-referensi-narasumber;mengelola data referensi narasumber
+crud-referensi-materi;mengelola data referensi materi
+crud-referensi-kelas;mengelola data referensi kelas
+crud-referensi-sbm-honorarium;mengelola data referensi sbm honorarium
+crud-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri
+crud-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri
+crud-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi
+crud-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan
+crud-referensi-satker-anggaran;mengelola data referensi satker anggaran
+crud-referensi-unit-kerja;mengelola data referensi unit kerja
+crud-referensi-negara;mengelola data referensi negara
+crud-referensi-provinsi;mengelola data referensi provinsi
+crud-proses-setup-kegiatan;mengelola proses setup kegiatan
+crud-proses-pengajuan;mengelola proses pengajuan
+crud-proses-daftar-nominatif;mengelola proses daftar nominatif
+crud-proses-pembayaran;mengelola proses pembayaran
