@@ -8,6 +8,7 @@ interface SelectSatkerAnggaranProps {
   fieldName: string;
   onChange: (value: string | null) => void;
   value: string | null;
+  selectId?: string;
 }
 
 interface Option {
@@ -19,6 +20,7 @@ const SelectSatkerAnggaran = ({
   fieldName,
   onChange,
   value,
+  selectId,
 }: SelectSatkerAnggaranProps) => {
   const [options, setOptions] = useState<Option[]>([]);
   const genId = randomStrimg(5);
@@ -40,6 +42,7 @@ const SelectSatkerAnggaran = ({
 
   return (
     <Select
+      id={selectId || `${fieldName}-${genId}`}
       instanceId={fieldName}
       options={options}
       isClearable

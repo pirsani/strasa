@@ -1,5 +1,6 @@
 import { simpanPejabatPerbendaharaan } from "@/actions/pejabat-perbendaharaan";
 import BasicDatePicker from "@/components/form/date-picker/basic-date-picker";
+import RequiredLabel from "@/components/form/required";
 import SelectJenisJabatanPerbendaharaan from "@/components/form/select-jenis-jabatan-perbendaharaan";
 import SelectSatkerAnggaran from "@/components/form/select-satker-anggaran";
 import { Button } from "@/components/ui/button";
@@ -74,7 +75,10 @@ const FormPejabatPerbendaharaan = ({
           control={control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nama</FormLabel>
+              <FormLabel>
+                Nama
+                <RequiredLabel />
+              </FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -88,7 +92,10 @@ const FormPejabatPerbendaharaan = ({
             control={control}
             render={({ field }) => (
               <FormItem className="sm:w-1/3">
-                <FormLabel>NIK</FormLabel>
+                <FormLabel>
+                  NIK
+                  <RequiredLabel />
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -101,7 +108,10 @@ const FormPejabatPerbendaharaan = ({
             control={control}
             render={({ field }) => (
               <FormItem className="sm:w-1/3">
-                <FormLabel>NIP</FormLabel>
+                <FormLabel>
+                  NIP
+                  <RequiredLabel />
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -133,7 +143,10 @@ const FormPejabatPerbendaharaan = ({
           control={control}
           render={({ field }) => (
             <FormItem className="">
-              <FormLabel>Satker Anggaran</FormLabel>
+              <FormLabel>
+                Satker Anggaran
+                <RequiredLabel />
+              </FormLabel>
               <FormControl>
                 <SelectSatkerAnggaran
                   value={field.value}
@@ -151,7 +164,10 @@ const FormPejabatPerbendaharaan = ({
           control={control}
           render={({ field }) => (
             <FormItem className="">
-              <FormLabel>Jabatan</FormLabel>
+              <FormLabel>
+                Jabatan
+                <RequiredLabel />
+              </FormLabel>
               <FormControl>
                 <SelectJenisJabatanPerbendaharaan
                   value={field.value}
@@ -170,7 +186,10 @@ const FormPejabatPerbendaharaan = ({
             name="tmtMulai"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="tmtMulai">Tanggal Mulai</FormLabel>
+                <FormLabel htmlFor="tmtMulai">
+                  Tanggal Mulai
+                  <RequiredLabel />
+                </FormLabel>
                 <FormControl>
                   <BasicDatePicker
                     name={field.name}

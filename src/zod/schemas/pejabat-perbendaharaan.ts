@@ -1,10 +1,13 @@
 import { z } from "zod";
-import { fileSchema } from "./file-schema";
-import {
-  golonganRuangSchema,
-  pangkatGolonganOptionalNullableSchema,
-} from "./golongan-ruang";
+import { pangkatGolonganOptionalNullableSchema } from "./golongan-ruang";
 import { tanggalSchema, tanggalSchemaOptional } from "./tanggal";
+
+const cuid2Schema = z
+  .string()
+  .min(21, {
+    message: "Pilih satker",
+  })
+  .regex(/^[a-z0-9]+$/);
 
 export const pejabatPerbendaharaanSchema = z.object({
   id: z.string().optional(),
@@ -28,9 +31,9 @@ export const pejabatPerbendaharaanSchema = z.object({
       .length(18)
       .regex(/^\d{18}$/), // 18-character number
   ]),
-  jabatanId: z.string(),
+  jabatanId: z.string().min(2, { message: "Pilih jabatan" }),
   pangkatGolonganId: pangkatGolonganOptionalNullableSchema,
-  satkerId: z.string(),
+  satkerId: cuid2Schema,
   tmtMulai: tanggalSchema,
   tmtSelesai: tanggalSchemaOptional,
 });
