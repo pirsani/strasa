@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { emptyAllowed } from "@/constants/excel/peserta";
+import {
+  emptyAllowed,
+  columns as extractFromColumns,
+} from "@/constants/excel/peserta";
 import { ParseExcelResult } from "@/utils/excel/parse-excel";
 import { splitEmptyValues } from "@/utils/excel/split-empty-values";
 import { createId } from "@paralleldrive/cuid2";
@@ -26,7 +29,7 @@ const PesertaContainer = ({
 }: PesertaContainerProps) => {
   const { setValue, getValues, watch } = useFormContext();
   const [data, setData] = useState<Record<string, any>[]>([]);
-  const emptyAllowed = ["Eselon", "ID", "Lainny"]; // kolom yang boleh kosong
+  //const emptyAllowed = ["Eselon", "ID", "Lainny"]; // kolom yang boleh kosong
   const [emptyValues, setEmptyValues] = useState<Record<number, string[]>>([]);
   const [missingColumns, setMissingColumns] = useState<string[]>([]);
 
@@ -63,26 +66,28 @@ const PesertaContainer = ({
     }
   }, [value]);
 
-  const extractFromColumns = [
-    "ID",
-    "Nama",
-    "NIP",
-    "Golongan/Ruang",
-    "Jabatan",
-    "Eselon",
-    "NIK",
-    "NPWP",
-    "Nama Rekening",
-    "Bank",
-    "Nomor Rekening",
-  ];
+  // const extractFromColumns = [
+  //   "ID",
+  //   "Nama",
+  //   "NIP",
+  //   "Golongan/Ruang",
+  //   "Jabatan",
+  //   "Eselon",
+  //   "NIK",
+  //   "NPWP",
+  //   "Nama Rekening",
+  //   "Bank",
+  //   "Nomor Rekening",
+  // ];
 
   return (
     <div className="mt-4">
       <h1 className="text-lg font-semibold mb-2">Peserta</h1>
       <div className="flex flex-row items-center gap-2 mb-2">
         <Button variant="outline">
-          <Link href="/templates/peserta.xlsx">Unduh template xls peserta</Link>
+          <Link href="/download/template-excel/peserta">
+            Unduh template xls peserta
+          </Link>
         </Button>
         <span>atau</span>
       </div>

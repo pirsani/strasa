@@ -99,28 +99,6 @@ export const setupKegiatan = async (
         unitKerjaId,
         penggunaId
       );
-      // insert peserta dari excel
-      const peserta = await insertPesertaDariExcel(
-        prisma,
-        kegiatanBaru.id,
-        dataPesertaDariExcel.rows,
-        penggunaId
-      );
-
-      // Handle the documents for surat tugas
-      // const suratTugas = await insertDokumenSuratTugas(
-      //   prisma,
-      //   kegiatanBaru.id,
-      //   kegiatan,
-      //   penggunaId
-      // );
-
-      // const insertedDokumenKegiatan = await insertDokumenKegiatan(
-      //   prisma,
-      //   kegiatanBaru.id,
-      //   kegiatan,
-      //   penggunaId
-      // );
 
       // if kegiatan.lokasi === "LUAR_NEGERI" then insert itinerary
       if (kegiatan.lokasi === "LUAR_NEGERI" && kegiatan.itinerary) {
@@ -131,6 +109,14 @@ export const setupKegiatan = async (
           penggunaId
         );
       }
+
+      // insert peserta dari excel
+      const peserta = await insertPesertaDariExcel(
+        prisma,
+        kegiatan,
+        dataPesertaDariExcel.rows,
+        penggunaId
+      );
 
       return kegiatanBaru;
     });
@@ -266,37 +252,152 @@ async function createKegiatan(
   });
 }
 
+function getGolonganUhLuarNegeriFromGolonganRuang(
+  golonganRuang: string | null
+): "A" | "B" | "C" | "D" | null {
+  if (!golonganRuang) {
+    return null;
+  }
+
+  let gl = golonganRuang.trim();
+  let golongaUhLuarNegeri: "A" | "B" | "C" | "D" | null = null;
+  switch (gl.toUpperCase()) {
+    case "IV/C":
+    case "IV/D":
+    case "IV/E":
+      golongaUhLuarNegeri = "B";
+      break;
+    case "III/C":
+    case "III/D":
+    case "IV/A":
+    case "IV/B":
+      golongaUhLuarNegeri = "C";
+      break;
+    default:
+      break;
+  }
+  return golongaUhLuarNegeri;
+}
+
+function cekGolonganRuang(golonganRuang: string): string | null {
+  const golonganRuangValid = [
+    "I/A",
+    "I/B",
+    "I/C",
+    "I/D",
+    "II/A",
+    "II/B",
+    "II/C",
+    "II/D",
+    "III/A",
+    "III/B",
+    "III/C",
+    "III/D",
+    "IV/A",
+    "IV/B",
+    "IV/C",
+    "IV/D",
+    "IV/E",
+  ];
+
+  if (golonganRuang) {
+    const golonganRuangTrimmed = golonganRuang.trim().toUpperCase();
+    if (golonganRuangValid.includes(golonganRuangTrimmed)) {
+      return golonganRuangTrimmed;
+    }
+  }
+
+  return null;
+}
+
 async function insertPesertaDariExcel(
   prisma: Prisma.TransactionClient,
-  kegiatanBaruId: string,
+  kegiatan: ZKegiatan,
   pesertaKegiatan: Record<string, any>[],
   penggunaId: string
 ) {
+  const kegiatanBaruId = kegiatan.cuid;
+  const kegiatanLokasi = kegiatan.lokasi;
+  const itinerary: ZItinerary[] = kegiatan.itinerary || [];
+
+  // map itenerary dengan SBM
+  // TODO cari GOLONGAN/RUANG dari SBM
   const pesertaBaru = await Promise.all(
     pesertaKegiatan.map(async (peserta) => {
       // checks againts zod schema harusnya dilakukan disisi client saja
       // anggap saja ini adalah data yang valid
 
+      const golonganRuang = peserta["Golongan/Ruang"]
+        .toString()
+        .trim()
+        .toUpperCase();
+
+      const pangkatGolonganId = cekGolonganRuang(golonganRuang);
+      // check if golonganRuang is valid
+
+      console.log(peserta);
       const pesertaBaru = await prisma.pesertaKegiatan.create({
         data: {
           nama: peserta["Nama"],
           NIP: peserta["NIP"].toString(),
           NIK: peserta["NIK"].toString().trim(),
           NPWP: peserta["NPWP"].toString().trim(),
-          pangkatGolonganId: peserta["Golongan/Ruang"]
-            .toString()
-            .trim()
-            .toUpperCase(),
-          eselon: peserta["Eselon"],
-          jabatan: peserta["Jabatan"],
+          pangkatGolonganId: pangkatGolonganId,
+          eselon: peserta["Eselon"].toString(),
+          jabatan: peserta["Jabatan"].toString().trim(),
           kegiatanId: kegiatanBaruId,
-          bank: peserta["Bank"],
-          nomorRekening: peserta["Nomor Rekening"],
-          namaRekening: peserta["Nama Rekening"],
+          bank: peserta["Bank"].toString().trim(),
+          nomorRekening: peserta["Nomor Rekening"].toString().trim(),
+          namaRekening: peserta["Nama Rekening"].toString().trim(),
           createdBy: penggunaId,
           jumlahHari: 0, // Default to 0 HARDCODED
         },
       });
+
+      if (kegiatanLokasi !== "LUAR_NEGERI") {
+        const uangHarian = await prisma.uhDalamNegeri.create({
+          data: {
+            pesertaKegiatanId: pesertaBaru.id,
+            createdBy: penggunaId,
+          },
+        });
+      } else {
+        // generate untuk masing-masing peserta dan itinerary
+        let golonganUhLuarNegeri = peserta["Golongan UH LN"].toString() ?? null;
+        if (golonganUhLuarNegeri) {
+          golonganUhLuarNegeri = golonganUhLuarNegeri.trim().toUpperCase();
+          if (
+            golonganUhLuarNegeri !== "A" &&
+            golonganUhLuarNegeri !== "B" &&
+            golonganUhLuarNegeri !== "C" &&
+            golonganUhLuarNegeri !== "D"
+          ) {
+            golonganUhLuarNegeri = null;
+          }
+        }
+        // check if golonganUhLuarNegeri is valid
+        if (!golonganUhLuarNegeri) {
+          golonganUhLuarNegeri = getGolonganUhLuarNegeriFromGolonganRuang(
+            pesertaBaru.pangkatGolonganId
+          );
+        }
+
+        for (const it of itinerary) {
+          console.log("itinerary", it);
+          const uangHarian = await prisma.uhLuarNegeri.create({
+            data: {
+              dariLokasiId: it.dariLokasiId,
+              keLokasiId: it.keLokasiId,
+              pesertaKegiatanId: pesertaBaru.id,
+              tanggalMulai: it.tanggalMulai,
+              tanggalSelesai: it.tanggalSelesai,
+              createdBy: penggunaId,
+              golonganUh: golonganUhLuarNegeri,
+            },
+          });
+        }
+      }
+
       return pesertaBaru;
     })
   );

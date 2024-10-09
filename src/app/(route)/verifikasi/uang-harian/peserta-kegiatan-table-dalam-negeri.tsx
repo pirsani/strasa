@@ -1,18 +1,21 @@
-import { PesertaKegiatan } from "@prisma-honorarium/client";
+import { PesertaKegiatanDalamNegeri } from "@/actions/kegiatan/peserta/dalam-negeri";
+import { TableCellInput } from "@/components/datatable/table-cell-input";
+import { cn } from "@/lib/utils";
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
-// Define the type for the data
-const data: PesertaKegiatan[] = [
-  // Sample data goes here...
-];
+import { useEffect, useState } from "react";
 
 // Define column structure
-const columns: ColumnDef<PesertaKegiatan>[] = [
+const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
+  {
+    accessorKey: "id",
+    header: "Id",
+    cell: (info) => info.getValue(),
+  },
   {
     accessorKey: "nama",
     header: "Nama",
@@ -59,6 +62,97 @@ const columns: ColumnDef<PesertaKegiatan>[] = [
     cell: (info) => info.getValue(),
   },
   {
+    accessorKey: "uhDalamNegeri.hFullboard",
+    header: "(N) Fullboard",
+    cell: ({ getValue, row, column, table }) =>
+      TableCellInput({
+        initValue: () => getValue() ?? "",
+        row,
+        column,
+        table,
+        className: "h-18 w-18 items-center justify-center p-2 ",
+      }),
+    meta: {
+      className: "items-center justify-center p-0 focus-within:bg-white w-20",
+    },
+  },
+  {
+    accessorKey: "uhDalamNegeri.hFulldayHalfday",
+    header: "(N) Fullday/Halfday",
+    cell: ({ getValue, row, column, table }) =>
+      TableCellInput({
+        initValue: () => getValue() ?? "",
+        row,
+        column,
+        table,
+        className: "h-18 items-center justify-center p-2 ",
+      }),
+    meta: {
+      className: "items-center justify-center p-0 focus-within:bg-white",
+    },
+  },
+  {
+    accessorKey: "uhDalamNegeri.hDalamKota",
+    header: "(N) Dalam Kota",
+    cell: ({ getValue, row, column, table }) =>
+      TableCellInput({
+        initValue: () => getValue() ?? "",
+        row,
+        column,
+        table,
+        className: "h-18 items-center justify-center p-2 ",
+      }),
+    meta: {
+      className: "items-center justify-center p-0 focus-within:bg-white",
+    },
+  },
+
+  {
+    accessorKey: "uhDalamNegeri.hLuarKota",
+    header: "(N) Luar Kota",
+    cell: ({ getValue, row, column, table }) =>
+      TableCellInput({
+        initValue: () => getValue() ?? "",
+        row,
+        column,
+        table,
+        className: "h-18 items-center justify-center p-2 ",
+      }),
+    meta: {
+      className: "items-center justify-center p-0 focus-within:bg-white",
+    },
+  },
+  {
+    accessorKey: "uhDalamNegeri.hDiklat",
+    header: "(N) Diklat",
+    cell: ({ getValue, row, column, table }) =>
+      TableCellInput({
+        initValue: () => getValue() ?? "",
+        row,
+        column,
+        table,
+        className: "h-18 items-center justify-center p-2 ",
+      }),
+    meta: {
+      className: "items-center justify-center p-0 focus-within:bg-white",
+    },
+  },
+  {
+    accessorKey: "uhDalamNegeri.uhTransport",
+    header: "(N) Transport",
+    cell: ({ getValue, row, column, table }) =>
+      TableCellInput({
+        initValue: () => getValue() ?? "",
+        row,
+        column,
+        table,
+        className: "h-18 items-center justify-center p-2 ",
+      }),
+    meta: {
+      className: "items-center justify-center p-0 focus-within:bg-white",
+    },
+  },
+  {
     accessorKey: "jumlahHari",
     header: "Jumlah Hari",
     cell: (info) => info.getValue(),
@@ -66,13 +160,36 @@ const columns: ColumnDef<PesertaKegiatan>[] = [
 ];
 
 interface PesertaKegiatanTableProps {
-  data: PesertaKegiatan[];
+  data: PesertaKegiatanDalamNegeri[];
 }
-export const PesertaKegiatanTable = ({ data }: PesertaKegiatanTableProps) => {
+export const PesertaKegiatanTable = ({
+  data: defaultData,
+}: PesertaKegiatanTableProps) => {
+  const [data, setData] = useState(() => [...defaultData]);
+
+  useEffect(() => {
+    setData(defaultData);
+  }, [defaultData]);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    meta: {
+      updateData: (rowIndex: number, columnId: string, value: string) => {
+        setData((old) =>
+          old.map((row, index) => {
+            if (index === rowIndex) {
+              return {
+                ...old[rowIndex],
+                [columnId]: value,
+              };
+            }
+            return row;
+          })
+        );
+      },
+    },
   });
 
   return (
@@ -84,7 +201,7 @@ export const PesertaKegiatanTable = ({ data }: PesertaKegiatanTableProps) => {
               {headerGroup.headers.map((header, index) => (
                 <th
                   key={header.id}
-                  className={`p-2 border border-gray-300 ${
+                  className={`p-2 border border-gray-300 min-w-18 ${
                     index < 1 ? "sticky left-0 bg-white z-10" : ""
                   } ${index === 1 ? "left-40" : "left-0"}`} // Adjust based on column width
                 >
@@ -103,9 +220,12 @@ export const PesertaKegiatanTable = ({ data }: PesertaKegiatanTableProps) => {
               {row.getVisibleCells().map((cell, index) => (
                 <td
                   key={cell.id}
-                  className={`p-2 border border-gray-300 ${
-                    index < 1 ? "sticky left-0 bg-white z-10" : ""
-                  } ${index === 1 ? "left-40" : "left-0"}`} // Adjust based on column width
+                  className={cn(
+                    `p-2 border border-gray-300 ${
+                      index < 1 ? "sticky left-0 bg-white z-10" : ""
+                    } ${index === 1 ? "left-40" : "left-0"}`,
+                    cell.column.columnDef.meta?.className || ""
+                  )} // Adjust based on column width
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>

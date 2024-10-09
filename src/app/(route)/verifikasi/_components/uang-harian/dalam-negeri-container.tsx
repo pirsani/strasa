@@ -1,6 +1,8 @@
 import { KegiatanWithDetail } from "@/actions/kegiatan";
-import getPesertaKegiatanDalamNegeri from "@/actions/kegiatan/peserta/dalam-negeri";
-import { PesertaKegiatan } from "@prisma-honorarium/client";
+import getPesertaKegiatanDalamNegeri, {
+  PesertaKegiatanDalamNegeri,
+} from "@/actions/kegiatan/peserta/dalam-negeri";
+import FloatingComponent from "@/components/floating-component";
 import { useEffect, useState } from "react";
 import { PesertaKegiatanTable } from "../../uang-harian/peserta-kegiatan-table-dalam-negeri";
 import VerifikasiDataDukungUangHarianDalamNegeri from "./data-dukung-dalam-negeri";
@@ -11,7 +13,14 @@ interface UangHarianDalamNegeriContainerProps {
 const UangHarianDalamNegeriContainer = ({
   kegiatan,
 }: UangHarianDalamNegeriContainerProps) => {
-  const [peserta, setPeserta] = useState<PesertaKegiatan[] | null>(null);
+  const [peserta, setPeserta] = useState<PesertaKegiatanDalamNegeri[] | null>(
+    null
+  );
+  const [isPreviewHidden, setIsPreviewHidden] = useState(false);
+  const handleOnHide = () => {
+    setIsPreviewHidden(true);
+  };
+
   useEffect(() => {
     const getPesertaKegiatan = async () => {
       if (!kegiatan) return;
@@ -32,7 +41,11 @@ const UangHarianDalamNegeriContainer = ({
       <VerifikasiDataDukungUangHarianDalamNegeri
         dokumenKegiatan={kegiatan?.dokumenKegiatan}
       />
-      {peserta && <PesertaKegiatanTable data={peserta} />}
+      {peserta && (
+        <FloatingComponent hide={isPreviewHidden} onHide={handleOnHide}>
+          <PesertaKegiatanTable data={peserta} />
+        </FloatingComponent>
+      )}
     </div>
   );
 };

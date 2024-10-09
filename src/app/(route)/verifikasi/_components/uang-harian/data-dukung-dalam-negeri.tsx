@@ -1,3 +1,4 @@
+"use client";
 import TextDokumenWithPreviewButton from "@/components/kegiatan/text-dokumen-with-preview-button";
 import { DokumenKegiatan } from "@prisma-honorarium/client";
 interface VerifikasiDataDukungUangHarianDalamNegeriProps {
@@ -18,6 +19,7 @@ const VerifikasiDataDukungUangHarianDalamNegeri = ({
   const rampungan = dokumenKegiatan?.find(
     (dokumen) => dokumen.jenisDokumenId === "rampungan-terstempel"
   );
+
   return (
     <div className="">
       <h1 className="font-semibold text-lg py-2 p-2 border-b border-gray-300">

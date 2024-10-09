@@ -464,55 +464,57 @@ model DokumenSuratTugas {
 }
 
 model PesertaKegiatan {
-  id                              String          @id @default(cuid())
+  id                              String           @id @default(cuid())
   nama                            String
-  NIP                             String?         @map("nip")
-  NIK                             String          @map("nik")
-  NPWP                            String?         @map("npwp")
-  pangkatGolonganId               String          @map("pangkat_golongan_id")
-  pangkatGolongan                 PangkatGolongan @relation(fields: [pangkatGolonganId], references: [id])
+  NIP                             String?          @map("nip")
+  NIK                             String           @map("nik")
+  NPWP                            String?          @map("npwp")
+  pangkatGolonganId               String?          @map("pangkat_golongan_id")
+  pangkatGolongan                 PangkatGolongan? @relation(fields: [pangkatGolonganId], references: [id])
   jabatan                         String?
   eselon                          String?
+  golonganUhLuarNegeri            String?          @map("golongan_uh_luar_negeri")
   email                           String?
   telp                            String?
-  rekeningSendiri                 Boolean         @default(true) @map("rekening_sendiri")
-  dokumenPeryataanRekeningBerbeda String?         @map("dokumen_peryataan_rekening_berbeda")
+  rekeningSendiri                 Boolean          @default(true) @map("rekening_sendiri")
+  dokumenPeryataanRekeningBerbeda String?          @map("dokumen_peryataan_rekening_berbeda")
   bank                            String
-  namaRekening                    String          @map("nama_rekening")
-  nomorRekening                   String          @map("nomor_rekening")
-  kegiatanId                      String          @map("kegiatan_id")
-  kegiatan                        Kegiatan        @relation(fields: [kegiatanId], references: [id])
-  jumlahHari                      Int?            @default(0) @map("jumlah_hari")
-  createdBy                       String          @map("created_by")
-  createdAt                       DateTime        @default(now()) @map("created_at")
-  updatedBy                       String?         @map("updated_by")
-  updatedAt                       DateTime?       @updatedAt @map("updated_at")
-  uhDalamNegeri                   UhDalamNegeri[]
+  namaRekening                    String           @map("nama_rekening")
+  nomorRekening                   String           @map("nomor_rekening")
+  kegiatanId                      String           @map("kegiatan_id")
+  kegiatan                        Kegiatan         @relation(fields: [kegiatanId], references: [id])
+  jumlahHari                      Int?             @default(0) @map("jumlah_hari")
+  createdBy                       String           @map("created_by")
+  createdAt                       DateTime         @default(now()) @map("created_at")
+  updatedBy                       String?          @map("updated_by")
+  updatedAt                       DateTime?        @updatedAt @map("updated_at")
+  uhDalamNegeriId                 String?          @map("uh_dalam_negeri_id")
+  uhDalamNegeri                   UhDalamNegeri? // dalam negeri juga nantinya ada itinerari yang menyebakkan menjadi 1 to n relasi
+  uhLuarNegeriId                  String?          @map("uh_luar_negeri_id")
   uhLuarNegeri                    UhLuarNegeri[]
 
-  @@unique([kegiatanId, NIP])
+  @@unique([kegiatanId, NIK])
   @@map("peserta_kegiatan")
 }
 
 model UhDalamNegeri {
   id                     Int             @id @default(autoincrement())
-  pesertaKegiatanId      String          @map("peserta_kegiatan_id")
+  pesertaKegiatanId      String          @unique @map("peserta_kegiatan_id")
   pesertaKegiatan        PesertaKegiatan @relation(fields: [pesertaKegiatanId], references: [id])
-  jumlahHari             Int             @map("jumlah_hari")
-  hFullboard             Int             @map("h_fullboard")
-  hFulldayHalfday        Int             @map("h_fullday_halfday")
-  hLuarKota              Int             @map("h_luar_kota")
-  hDalamKota             Int             @map("h_dalam_kota")
-  hDiklat                Int             @map("h_diklat")
-  hTransport             Int             @map("h_transport")
-  uhFullboard            Int             @map("uh_fullboard")
-  uhFulldayHalfday       Int             @map("uh_fullday_halfday")
-  uhLuarKota             Int             @map("uh_luar_kota")
-  uhDalamKota            Int             @map("uh_dalam_kota")
-  uhDiklat               Int             @map("uh_diklat")
-  uhTransport            Int             @map("uh_transport")
+  jumlahHari             Int             @default(0) @map("jumlah_hari")
+  hFullboard             Int             @default(0) @map("h_fullboard")
+  hFulldayHalfday        Int             @default(0) @map("h_fullday_halfday")
+  hLuarKota              Int             @default(0) @map("h_luar_kota")
+  hDalamKota             Int             @default(0) @map("h_dalam_kota")
+  hDiklat                Int             @default(0) @map("h_diklat")
+  hTransport             Int             @default(0) @map("h_transport")
+  uhFullboard            Int             @default(0) @map("uh_fullboard")
+  uhFulldayHalfday       Int             @default(0) @map("uh_fullday_halfday")
+  uhLuarKota             Int             @default(0) @map("uh_luar_kota")
+  uhDalamKota            Int             @default(0) @map("uh_dalam_kota")
+  uhDiklat               Int             @default(0) @map("uh_diklat")
+  uhTransport            Int             @default(0) @map("uh_transport")
   dokumenBuktiPembayaran String?         @map("dokumen_bukti_pembayaran")
-  tahun                  Int
   createdBy              String          @map("created_by")
   createdAt              DateTime        @default(now()) @map("created_at")
   updatedBy              String?         @map("updated_by")
@@ -522,29 +524,33 @@ model UhDalamNegeri {
 }
 
 model UhLuarNegeri {
-  id                     Int             @id @default(autoincrement())
-  pesertaKegiatanId      String          @map("peserta_kegiatan_id")
-  pesertaKegiatan        PesertaKegiatan @relation(fields: [pesertaKegiatanId], references: [id])
-  tanggalMulai           DateTime        @map("tanggal_mulai")
-  tanggalSelesai         DateTime        @map("tanggal_selesai")
-  jumlahHari             Int             @map("jumlah_hari") // harus di kasih trigger biar otomatis dihitung dari tanggal mulai dan selesai
-  sbmUhLuarNegeriId      String          @map("sbm_uh_luar_negeri_id") // akan mengacu ke id yg pencariannya berdasarkan negara dan golongan
-  sbmUhLuarNegeri        SbmUhLuarNegeri @relation(fields: [sbmUhLuarNegeriId], references: [id])
-  golonganUh             String          @map("golongan_uh") // enum A, B, C, D
-  nominalGolonganUh      Int             @map("nominal_golongan_uh") // sesuai dengan golongan yg ada di SbmUhLuarNegeri, karena bersifat historis maka diambil dari SbmUhLuarNegeri, resiko perubahan nilai nominal golongan di SbmUhLuarNegeri harus dihandle di aplikasi
-  hPerjalanan            Int             @map("h_perjalanan")
-  uhPerjalanan           Int             @map("uh_perjalanan")
-  hUangHarian            Int             @map("h_uang_harian")
-  uhUangHarian           Int             @map("uh_uang_harian")
-  hDiklat                Int             @map("h_diklat")
-  uhDiklat               Int             @map("uh_diklat")
-  dokumenBuktiPembayaran String?         @map("dokumen_bukti_pembayaran")
-  tahun                  Int
-  createdBy              String          @map("created_by")
-  createdAt              DateTime        @default(now()) @map("created_at")
-  updatedBy              String?         @map("updated_by")
-  updatedAt              DateTime?       @updatedAt @map("updated_at")
+  id                     Int              @id @default(autoincrement())
+  pesertaKegiatanId      String           @map("peserta_kegiatan_id")
+  pesertaKegiatan        PesertaKegiatan  @relation(fields: [pesertaKegiatanId], references: [id])
+  dariLokasiId           String           @map("dari_lokasi_id")
+  dariLokasi             Negara           @relation(fields: [dariLokasiId], references: [id], name: "dari_lokasi_uh_luar_negeri")
+  keLokasiId             String           @map("ke_lokasi_id")
+  keLokasi               Negara           @relation(fields: [keLokasiId], references: [id], name: "ke_lokasi_uh_luar_negeri")
+  tanggalMulai           DateTime         @map("tanggal_mulai")
+  tanggalSelesai         DateTime         @map("tanggal_selesai")
+  jumlahHari             Int              @default(0) @map("jumlah_hari") // harus di kasih trigger biar otomatis dihitung dari tanggal mulai dan selesai
+  sbmUhLuarNegeriId      String?          @map("sbm_uh_luar_negeri_id") // akan mengacu ke id yg pencariannya berdasarkan negara dan golongan
+  sbmUhLuarNegeri        SbmUhLuarNegeri? @relation(fields: [sbmUhLuarNegeriId], references: [id])
+  golonganUh             String?          @map("golongan_uh") // enum A, B, C, D
+  nominalGolonganUh      Int?             @default(0) @map("nominal_golongan_uh") // sesuai dengan golongan yg ada di SbmUhLuarNegeri, karena bersifat historis maka diambil dari SbmUhLuarNegeri, resiko perubahan nilai nominal golongan di SbmUhLuarNegeri harus dihandle di aplikasi
+  hPerjalanan            Int              @default(0) @map("h_perjalanan")
+  uhPerjalanan           Int              @default(0) @map("uh_perjalanan")
+  hUangHarian            Int              @default(0) @map("h_uang_harian")
+  uhUangHarian           Int              @default(0) @map("uh_uang_harian")
+  hDiklat                Int              @default(0) @map("h_diklat")
+  uhDiklat               Int              @default(0) @map("uh_diklat")
+  dokumenBuktiPembayaran String?          @map("dokumen_bukti_pembayaran")
+  createdBy              String           @map("created_by")
+  createdAt              DateTime         @default(now()) @map("created_at")
+  updatedBy              String?          @map("updated_by")
+  updatedAt              DateTime?        @updatedAt @map("updated_at")
 
+  @@unique([pesertaKegiatanId, dariLokasiId, keLokasiId, tanggalMulai, tanggalSelesai])
   @@map("uh_luar_negeri")
 }
 
@@ -773,6 +779,8 @@ model Negara {
   sbmTiketPesawatLuarNegeri SbmTiketPesawatLuarNegeri[]
   dariLokasi                Itinerary[]                 @relation("dari_lokasi")
   keLokasi                  Itinerary[]                 @relation("ke_lokasi")
+  dariLokasiUhLuarNegeri    UhLuarNegeri[]              @relation("dari_lokasi_uh_luar_negeri")
+  keLokasiUhLuarNegeri      UhLuarNegeri[]              @relation("ke_lokasi_uh_luar_negeri")
 
   @@map("negara")
 }
