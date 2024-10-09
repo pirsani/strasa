@@ -3,6 +3,7 @@ import getPesertaKegiatanDalamNegeri, {
   PesertaKegiatanDalamNegeri,
 } from "@/actions/kegiatan/peserta/dalam-negeri";
 import FloatingComponent from "@/components/floating-component";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { PesertaKegiatanTable } from "../../uang-harian/peserta-kegiatan-table-dalam-negeri";
 import VerifikasiDataDukungUangHarianDalamNegeri from "./data-dukung-dalam-negeri";
@@ -42,9 +43,14 @@ const UangHarianDalamNegeriContainer = ({
         dokumenKegiatan={kegiatan?.dokumenKegiatan}
       />
       {peserta && (
-        <FloatingComponent hide={isPreviewHidden} onHide={handleOnHide}>
-          <PesertaKegiatanTable data={peserta} />
-        </FloatingComponent>
+        <>
+          <Button type="button" onClick={() => setIsPreviewHidden(false)}>
+            Daftar Peserta
+          </Button>
+          <FloatingComponent hide={isPreviewHidden} onHide={handleOnHide}>
+            <PesertaKegiatanTable data={peserta} />
+          </FloatingComponent>
+        </>
       )}
     </div>
   );

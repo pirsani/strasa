@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 // <https://muhimasri.com/blogs/react-editable-table/>
 
 interface ITableCellProps<T> {
-  initValue: any;
+  getValue: () => any;
   row: Row<T>;
   column: Column<T>;
   table: Table<T>;
@@ -14,14 +14,14 @@ interface ITableCellProps<T> {
   className?: string;
 }
 export const TableCellInput = <T,>({
-  initValue,
+  getValue,
   row,
   column,
   table,
   handleOnBlur = () => {},
   className,
 }: ITableCellProps<T>) => {
-  const initialValue = initValue || "";
+  const initialValue = getValue();
   const [value, setValue] = useState("");
 
   useEffect(() => {
@@ -33,8 +33,10 @@ export const TableCellInput = <T,>({
       table.options.meta &&
       typeof table.options.meta.updateData === "function"
     ) {
+      console.log("row.index", row);
       (table.options.meta.updateData as Function)(row.index, column.id, value);
       handleOnBlur(value);
+      console.log("column.id", column.id);
     } else {
       console.error("updateData method is not available");
     }
@@ -42,14 +44,14 @@ export const TableCellInput = <T,>({
 
   return (
     <input
-      value={value || ""}
+      value={value}
       className={cn(
         `items-center min-h-12 w-20 border-0 border-transparent focus:ring-0 
     bg-transparent p-2 outline-none`,
         className
       )}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={onBlur}
+      onChange={(e) => setValue(e.target.value)} // Update local value
+      onBlur={onBlur} // Save changes on blur
     />
   );
 };

@@ -12,11 +12,6 @@ import { useEffect, useState } from "react";
 // Define column structure
 const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
   {
-    accessorKey: "id",
-    header: "Id",
-    cell: (info) => info.getValue(),
-  },
-  {
     accessorKey: "nama",
     header: "Nama",
     cell: (info) => info.getValue(),
@@ -66,29 +61,31 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
     header: "(N) Fullboard",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
-        initValue: () => getValue() ?? "",
-        row,
-        column,
-        table,
-        className: "h-18 w-18 items-center justify-center p-2 ",
-      }),
-    meta: {
-      className: "items-center justify-center p-0 focus-within:bg-white w-20",
-    },
-  },
-  {
-    accessorKey: "uhDalamNegeri.hFulldayHalfday",
-    header: "(N) Fullday/Halfday",
-    cell: ({ getValue, row, column, table }) =>
-      TableCellInput({
-        initValue: () => getValue() ?? "",
+        getValue,
         row,
         column,
         table,
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className: "items-center justify-center p-0 focus-within:bg-white",
+      className:
+        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
+    },
+  },
+  {
+    accessorKey: "uhDalamNegeri.hFulldayHalfday",
+    header: "(N) Fullday/ Halfday",
+    cell: ({ getValue, row, column, table }) =>
+      TableCellInput({
+        getValue,
+        row,
+        column,
+        table,
+        className: "h-18 items-center justify-center p-2 ",
+      }),
+    meta: {
+      className:
+        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
     },
   },
   {
@@ -96,14 +93,15 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
     header: "(N) Dalam Kota",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
-        initValue: () => getValue() ?? "",
+        getValue,
         row,
         column,
         table,
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className: "items-center justify-center p-0 focus-within:bg-white",
+      className:
+        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
     },
   },
 
@@ -112,14 +110,15 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
     header: "(N) Luar Kota",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
-        initValue: () => getValue() ?? "",
+        getValue,
         row,
         column,
         table,
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className: "items-center justify-center p-0 focus-within:bg-white",
+      className:
+        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
     },
   },
   {
@@ -127,14 +126,15 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
     header: "(N) Diklat",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
-        initValue: () => getValue() ?? "",
+        getValue,
         row,
         column,
         table,
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className: "items-center justify-center p-0 focus-within:bg-white",
+      className:
+        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
     },
   },
   {
@@ -142,18 +142,19 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
     header: "(N) Transport",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
-        initValue: () => getValue() ?? "",
+        getValue,
         row,
         column,
         table,
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className: "items-center justify-center p-0 focus-within:bg-white",
+      className:
+        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
     },
   },
   {
-    accessorKey: "jumlahHari",
+    accessorKey: "uhDalamNegeri.jumlahHari",
     header: "Jumlah Hari",
     cell: (info) => info.getValue(),
   },
@@ -171,6 +172,31 @@ export const PesertaKegiatanTable = ({
     setData(defaultData);
   }, [defaultData]);
 
+  const calculateTotal = (
+    row: PesertaKegiatanDalamNegeri
+  ): PesertaKegiatanDalamNegeri => {
+    if (!row.uhDalamNegeri) {
+      return row;
+    }
+    const fullboard = row.uhDalamNegeri?.hFullboard || 0;
+    const fulldayHalfday = row.uhDalamNegeri?.hFulldayHalfday || 0;
+    const dalamKota = row.uhDalamNegeri?.hDalamKota || 0;
+    const luarKota = row.uhDalamNegeri?.hLuarKota || 0;
+    const diklat = row.uhDalamNegeri?.hDiklat || 0;
+    const transport = row.uhDalamNegeri?.uhTransport || 0;
+
+    const total: number =
+      fullboard + fulldayHalfday + dalamKota + luarKota + diklat + transport;
+
+    return {
+      ...row,
+      uhDalamNegeri: {
+        ...row.uhDalamNegeri,
+        jumlahHari: total,
+      },
+    };
+  };
+
   const table = useReactTable({
     data,
     columns,
@@ -180,10 +206,42 @@ export const PesertaKegiatanTable = ({
         setData((old) =>
           old.map((row, index) => {
             if (index === rowIndex) {
-              return {
+              let parentObj = null;
+              let actualColumnId = columnId;
+
+              console.log("columnId", columnId);
+
+              if (columnId.includes("_")) {
+                const parts = columnId.split("_");
+                parentObj = parts[0];
+                actualColumnId = parts[1];
+              }
+
+              let newRow = {
                 ...old[rowIndex],
-                [columnId]: value,
               };
+
+              if (parentObj) {
+                newRow = {
+                  ...newRow,
+                  [parentObj]: {
+                    ...(newRow[parentObj as keyof typeof newRow] as any),
+                    [actualColumnId]: parseInt(value),
+                  },
+                };
+
+                const newRowWithUpdatedTotal = calculateTotal(
+                  newRow as PesertaKegiatanDalamNegeri
+                );
+                console.log("newRowWithUpdatedTotal", newRowWithUpdatedTotal);
+                return newRowWithUpdatedTotal;
+              } else {
+                newRow = {
+                  ...newRow,
+                  [actualColumnId]: value,
+                };
+              }
+              return newRow;
             }
             return row;
           })
@@ -201,7 +259,7 @@ export const PesertaKegiatanTable = ({
               {headerGroup.headers.map((header, index) => (
                 <th
                   key={header.id}
-                  className={`p-2 border border-gray-300 min-w-18 ${
+                  className={`p-2 border border-gray-300 w-12 ${
                     index < 1 ? "sticky left-0 bg-white z-10" : ""
                   } ${index === 1 ? "left-40" : "left-0"}`} // Adjust based on column width
                 >
