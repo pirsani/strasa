@@ -12,6 +12,9 @@
     "prisma:generate": "cross-env DATABASE_URL=${DATABASE_URL_ADMIN} pnpm prisma generate --schema=./prisma/db-honorarium/schema.prisma",
     "analyze": "cross-env ANALYZE=true pnpm build"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@faker-js/faker": "^9.0.3",
     "@headlessui/react": "^2.1.9",
