@@ -12,6 +12,7 @@ interface ITableCellProps<T> {
   table: Table<T>;
   handleOnBlur?: (value: string | number) => void;
   className?: string;
+  type?: "text" | "number";
 }
 export const TableCellInput = <T,>({
   getValue,
@@ -20,13 +21,14 @@ export const TableCellInput = <T,>({
   table,
   handleOnBlur = () => {},
   className,
+  type = "number",
 }: ITableCellProps<T>) => {
-  const initialValue = getValue();
-  const [value, setValue] = useState("");
+  //const initialValue = getValue();
+  const [value, setValue] = useState(getValue());
 
   useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
+    setValue(getValue());
+  }, [getValue()]);
 
   const onBlur = () => {
     if (
@@ -42,15 +44,20 @@ export const TableCellInput = <T,>({
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  };
+
   return (
     <input
       value={value}
+      placeholder={type === "number" ? "0" : ""}
       className={cn(
-        `items-center min-h-12 w-20 border-0 border-transparent focus:ring-0 
+        `w-full items-center min-h-12 w-20 border-0 border-transparent focus:ring-0 
     bg-transparent p-2 outline-none`,
         className
       )}
-      onChange={(e) => setValue(e.target.value)} // Update local value
+      onChange={handleChange} // Update local value
       onBlur={onBlur} // Save changes on blur
     />
   );

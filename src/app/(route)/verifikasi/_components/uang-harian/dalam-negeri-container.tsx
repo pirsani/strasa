@@ -5,8 +5,8 @@ import getPesertaKegiatanDalamNegeri, {
 import FloatingComponent from "@/components/floating-component";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { PesertaKegiatanTable } from "../../uang-harian/peserta-kegiatan-table-dalam-negeri";
 import VerifikasiDataDukungUangHarianDalamNegeri from "./data-dukung-dalam-negeri";
+import { TabelHariPesertaKegiatan } from "./tabel-peserta-kegiatan-dalam-negeri";
 
 interface UangHarianDalamNegeriContainerProps {
   kegiatan: KegiatanWithDetail | null;
@@ -17,6 +17,9 @@ const UangHarianDalamNegeriContainer = ({
   const [peserta, setPeserta] = useState<PesertaKegiatanDalamNegeri[] | null>(
     null
   );
+  const [pesertaUpdated, setPesertaUpdated] = useState<
+    PesertaKegiatanDalamNegeri[] | null
+  >();
   const [isPreviewHidden, setIsPreviewHidden] = useState(false);
   const handleOnHide = () => {
     setIsPreviewHidden(true);
@@ -37,6 +40,16 @@ const UangHarianDalamNegeriContainer = ({
     getPesertaKegiatan();
   }, [kegiatan]);
 
+  const handleDataChange = (data: PesertaKegiatanDalamNegeri[]) => {
+    setPesertaUpdated(data);
+  };
+
+  const handleSimpanUpdatedData = () => {
+    if (pesertaUpdated) {
+      console.log("pesertaUpdated", pesertaUpdated);
+    }
+  };
+
   return (
     <div>
       <VerifikasiDataDukungUangHarianDalamNegeri
@@ -48,7 +61,22 @@ const UangHarianDalamNegeriContainer = ({
             Daftar Peserta
           </Button>
           <FloatingComponent hide={isPreviewHidden} onHide={handleOnHide}>
-            <PesertaKegiatanTable data={peserta} />
+            <TabelHariPesertaKegiatan
+              data={peserta}
+              onDataChange={handleDataChange}
+            />
+            <div className="flex w-full justify-end p-4 gap-2">
+              <Button type="button" onClick={handleSimpanUpdatedData}>
+                Simpan
+              </Button>
+              <Button
+                type="button"
+                variant={"outline"}
+                onClick={() => setIsPreviewHidden(true)}
+              >
+                Tutup
+              </Button>
+            </div>
           </FloatingComponent>
         </>
       )}

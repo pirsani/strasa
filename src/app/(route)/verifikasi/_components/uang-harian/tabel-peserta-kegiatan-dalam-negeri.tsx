@@ -13,7 +13,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowDownUp, ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface RowData {
   [key: string]: any; // Replace with actual field names and types if known
@@ -77,8 +77,7 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className:
-        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
+      className: "items-center justify-center p-0 max-w-18",
     },
   },
   {
@@ -93,8 +92,7 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className:
-        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
+      className: "items-center justify-center p-0 max-w-18",
     },
   },
   {
@@ -109,8 +107,7 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className:
-        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
+      className: "items-center justify-center p-0 max-w-18",
     },
   },
 
@@ -126,8 +123,7 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className:
-        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
+      className: "items-center justify-center p-0 max-w-18",
     },
   },
   {
@@ -142,12 +138,11 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className:
-        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
+      className: "items-center justify-center p-0 max-w-18",
     },
   },
   {
-    accessorKey: "uhDalamNegeri.uhTransport",
+    accessorKey: "uhDalamNegeri.hTransport",
     header: "Hari Transport",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
@@ -158,23 +153,34 @@ const columns: ColumnDef<PesertaKegiatanDalamNegeri>[] = [
         className: "h-18 items-center justify-center p-2 ",
       }),
     meta: {
-      className:
-        "items-center justify-center p-0 focus-within:bg-white focus-within:border-2 focus-within:border-blue-500 max-w-18",
+      className: "items-center justify-center p-0 max-w-18",
     },
   },
   {
     accessorKey: "uhDalamNegeri.jumlahHari",
     header: "Jumlah Hari",
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      const value = info.getValue() as number;
+      return (
+        <div className="w-full h-full flex items-center justify-center p-2 border-none">
+          {value}
+        </div>
+      );
+    },
+    meta: {
+      className: "items-center justify-center p-0 max-w-18",
+    },
   },
 ];
 
-interface PesertaKegiatanTableProps {
+interface TabelHariPesertaKegiatanProps {
   data: PesertaKegiatanDalamNegeri[];
+  onDataChange?: (data: PesertaKegiatanDalamNegeri[]) => void;
 }
-export const PesertaKegiatanTable = ({
+export const TabelHariPesertaKegiatan = ({
   data: defaultData,
-}: PesertaKegiatanTableProps) => {
+  onDataChange = () => {},
+}: TabelHariPesertaKegiatanProps) => {
   const [data, setData] = useState(() => [...defaultData]);
   const [pageSize, setPageSize] = useState(10); // Set the initial page size
   const [pageIndex, setPageIndex] = useState(0); // Set the initial page index
@@ -182,6 +188,43 @@ export const PesertaKegiatanTable = ({
   const [cumulativeWidths, setCumulativeWidths] = useState<number[]>([]);
   const colRefs = useRef<HTMLTableCellElement[]>([]);
   const frozenColumnCount = 1;
+  const [headerColumnHfullboard, setHeaderColumnHfullboard] = useState(0);
+  const [headerColumnHfulldayHalfday, setHeaderColumnHfulldayHalfday] =
+    useState(0);
+  const [headerColumnHluarKota, setHeaderColumnHluarKota] = useState(0);
+  const [headerColumnHdalamKota, setHeaderColumnHdalamKota] = useState(0);
+  const [headerColumnHdiklat, setHeaderColumnHdiklat] = useState(0);
+  const [headerColumnHtransport, setHeaderColumnHtransport] = useState(0);
+  const [totalJumlahHari, setTotalJumlahHari] = useState(0);
+
+  useEffect(() => {
+    onDataChange(data);
+  }, [data]);
+
+  useEffect(() => {
+    const total =
+      headerColumnHfullboard +
+      headerColumnHfulldayHalfday +
+      headerColumnHdalamKota +
+      headerColumnHluarKota +
+      headerColumnHdiklat +
+      headerColumnHtransport;
+    setTotalJumlahHari(total);
+
+    const updatedPeserta = data.map((row) => {
+      const newRow = calculateTotal(row);
+      return newRow;
+    });
+
+    setData(updatedPeserta);
+  }, [
+    headerColumnHfullboard,
+    headerColumnHfulldayHalfday,
+    headerColumnHdalamKota,
+    headerColumnHluarKota,
+    headerColumnHdiklat,
+    headerColumnHtransport,
+  ]);
 
   useEffect(() => {
     setData(defaultData);
@@ -235,7 +278,9 @@ export const PesertaKegiatanTable = ({
                   ...newRow,
                   [parentObj]: {
                     ...(newRow[parentObj as keyof typeof newRow] as any),
-                    [actualColumnId]: parseInt(value),
+                    [actualColumnId]: Number.isNaN(parseInt(value))
+                      ? 0
+                      : parseInt(value),
                   },
                 };
 
@@ -278,100 +323,199 @@ export const PesertaKegiatanTable = ({
   }, [frozenColumnCount, colRefs]); // Only run when frozen column count or refs change
   //[table.getRowModel().rows]); // Recalculate when rows change
 
+  interface HeaderInputColumnProps {
+    peserta: PesertaKegiatanDalamNegeri[];
+    field?: string;
+    setColumValaue?: React.Dispatch<React.SetStateAction<number>>;
+    value?: number;
+  }
+  const HeaderInputColumn = ({
+    peserta,
+    field,
+    setColumValaue,
+    value: initValue,
+  }: HeaderInputColumnProps) => {
+    const [value, setValue] = useState(initValue);
+
+    useEffect(() => {
+      setValue(initValue);
+    }, [initValue]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue(parseInt(e.target.value));
+    };
+
+    const handleBlur = () => {
+      console.log("value", value);
+
+      if (!field) {
+        return;
+      }
+      const updatedPeserta = changeAllRowsColumnUhDalamNegeri(
+        peserta,
+        field,
+        value ? value : 0
+      );
+      setColumValaue && setColumValaue(value || 0);
+      setData((old) => updatedPeserta);
+      console.log("updatedPeserta", updatedPeserta);
+    };
+
+    return (
+      <th className="p-0 border border-gray-300 focus-within:border-blue-500 focus-within:border-2">
+        <input
+          placeholder="0"
+          value={value || 0}
+          onChange={handleChange}
+          className="w-full h-12 focus:ring-0 bg-transparent p-2 outline-none border-none"
+          onBlur={handleBlur}
+          tabIndex={0} // Ensure the input is focusable
+        />
+      </th>
+    );
+  };
+
   return (
     <div>
       <div className="overflow-x-auto w-full pb-6">
         <table className="min-w-full table-auto border-collapse border border-gray-300">
           <thead>
-            {table.getHeaderGroups().map((headerGroup, index) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, index) => {
-                  const columnRelativeDepth =
-                    header.depth - header.column.depth;
-                  if (columnRelativeDepth > 1) {
-                    return null;
-                  }
-
-                  let rowSpan = 1;
-                  if (header.isPlaceholder) {
-                    const leafs = header.getLeafHeaders();
-                    rowSpan = leafs[leafs.length - 1].depth - header.depth;
-                  }
-
-                  const isGroupHeader =
-                    header.subHeaders && header.subHeaders.length > 1;
-
-                  return (
-                    <th
-                      key={header.id}
-                      ref={(el) => {
-                        if (
-                          index < frozenColumnCount &&
-                          el instanceof HTMLTableCellElement
-                        ) {
-                          colRefs.current[index] = el;
-                        }
-                      }}
-                      colSpan={header.colSpan}
-                      rowSpan={rowSpan}
-                      className={cn(
-                        "px-2 border border-gray-300",
-                        !isGroupHeader
-                          ? "hover:cursor-pointer bg-gray-50"
-                          : "bg-gray-100",
-
-                        {
-                          [`sticky left-0 z-${10 - index}`]:
-                            index < frozenColumnCount, // Sticky columns
-                          "left-0": index >= frozenColumnCount, // Default position for other columns
-                        },
-                        header.column.columnDef.meta?.className
-                      )}
-                      style={
-                        index < frozenColumnCount
-                          ? { left: `${cumulativeWidths[index] || 0}px` }
-                          : undefined
+            {table.getHeaderGroups().map((headerGroup, index) => {
+              return (
+                <>
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header, index) => {
+                      const columnRelativeDepth =
+                        header.depth - header.column.depth;
+                      if (columnRelativeDepth > 1) {
+                        return null;
                       }
-                    >
-                      <div
-                        className={cn(
-                          "flex flex-row items-center w-full h-full gap-2"
-                        )}
-                      >
-                        {/* {header.isPlaceholder ? "y" : "n"}
-                        {header.column.columnDef.header ? "y" : "n"} */}
-                        <span className="flex-grow">
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
+
+                      let rowSpan = 1;
+                      if (header.isPlaceholder) {
+                        const leafs = header.getLeafHeaders();
+                        rowSpan = leafs[leafs.length - 1].depth - header.depth;
+                      }
+
+                      const isGroupHeader =
+                        header.subHeaders && header.subHeaders.length > 1;
+
+                      return (
+                        <th
+                          key={header.id}
+                          ref={(el) => {
+                            if (
+                              index < frozenColumnCount &&
+                              el instanceof HTMLTableCellElement
+                            ) {
+                              colRefs.current[index] = el;
+                            }
+                          }}
+                          colSpan={header.colSpan}
+                          rowSpan={rowSpan}
+                          className={cn(
+                            "px-2 py-1 border border-gray-300",
+                            !isGroupHeader
+                              ? "hover:cursor-pointer bg-gray-50"
+                              : "bg-gray-100",
+
+                            {
+                              [`sticky left-0 z-${10 - index}`]:
+                                index < frozenColumnCount, // Sticky columns
+                              "left-0": index >= frozenColumnCount, // Default position for other columns
+                            }
                           )}
-                        </span>
-                        {/* Sorting icon only for non-grouped columns */}
-                        {!isGroupHeader && header.column.getCanSort() && (
-                          <span
-                            className="hover:cursor-pointer"
-                            onClick={header.column.getToggleSortingHandler()} // Enable sorting on click
+                          style={
+                            index < frozenColumnCount
+                              ? { left: `${cumulativeWidths[index] || 0}px` }
+                              : undefined
+                          }
+                        >
+                          <div
+                            className={cn(
+                              "flex flex-row items-center w-full h-full gap-2"
+                            )}
                           >
-                            {(() => {
-                              const sortOrder = header.column.getIsSorted();
-                              if (sortOrder === false) {
-                                return <ArrowDownUp size={16} />; // Not sorted icon
-                              }
-                              return sortOrder === "asc" ? "🔼" : "🔽"; // Sort ascending/descending icon
-                            })()}
-                          </span>
-                        )}
-                        {/* {isGroupHeader && (
-                          <span className="hover:cursor-pointer">
-                            {header.subHeaders.length}
-                          </span>
-                        )} */}
-                      </div>
+                            {/* {header.isPlaceholder ? "y" : "n"}
+        {header.column.columnDef.header ? "y" : "n"} */}
+                            <span className="flex-grow">
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </span>
+                            {/* Sorting icon only for non-grouped columns */}
+                            {!isGroupHeader && header.column.getCanSort() && (
+                              <span
+                                className="hover:cursor-pointer"
+                                onClick={header.column.getToggleSortingHandler()} // Enable sorting on click
+                              >
+                                {(() => {
+                                  const sortOrder = header.column.getIsSorted();
+                                  if (sortOrder === false) {
+                                    return <ArrowDownUp size={16} />; // Not sorted icon
+                                  }
+                                  return sortOrder === "asc" ? "🔼" : "🔽"; // Sort ascending/descending icon
+                                })()}
+                              </span>
+                            )}
+                            {/* {isGroupHeader && (
+      <span className="hover:cursor-pointer">
+        {header.subHeaders.length}
+      </span>
+        )} */}
+                          </div>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                  <tr key={"_coli" + headerGroup.id}>
+                    <th colSpan={5} className="px-2 border border-gray-300">
+                      {""}
                     </th>
-                  );
-                })}
-              </tr>
-            ))}
+                    <HeaderInputColumn
+                      peserta={data}
+                      field="hFullboard"
+                      setColumValaue={setHeaderColumnHfullboard}
+                      value={headerColumnHfullboard}
+                    />
+                    <HeaderInputColumn
+                      peserta={data}
+                      field="hFulldayHalfday"
+                      setColumValaue={setHeaderColumnHfulldayHalfday}
+                      value={headerColumnHfulldayHalfday}
+                    />
+                    <HeaderInputColumn
+                      peserta={data}
+                      field="hDalamKota"
+                      setColumValaue={setHeaderColumnHdalamKota}
+                      value={headerColumnHdalamKota}
+                    />
+                    <HeaderInputColumn
+                      peserta={data}
+                      field="hLuarKota"
+                      setColumValaue={setHeaderColumnHluarKota}
+                      value={headerColumnHluarKota}
+                    />
+                    <HeaderInputColumn
+                      peserta={data}
+                      field="hDiklat"
+                      setColumValaue={setHeaderColumnHdiklat}
+                      value={headerColumnHdiklat}
+                    />
+                    <HeaderInputColumn
+                      peserta={data}
+                      field="hTransport"
+                      setColumValaue={setHeaderColumnHtransport}
+                      value={headerColumnHtransport}
+                    />
+                    <th className="px-2 border border-gray-300">
+                      {totalJumlahHari}
+                    </th>
+                  </tr>
+                </>
+              );
+            })}
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row, rowIndex) => (
@@ -394,7 +538,7 @@ export const PesertaKegiatanTable = ({
                         }
                       }}
                       className={cn(
-                        "px-2 border border-gray-300 ",
+                        "px-2 py-1 border border-gray-300 focus-within:border-blue-500 focus-within:border-2",
                         {
                           [`sticky left-0 bg-gray-100 z-${10 - index}`]:
                             index < frozenColumnCount, // Sticky columns
@@ -440,6 +584,27 @@ export const PesertaKegiatanTable = ({
       <PaginationControls table={table} />
     </div>
   );
+};
+
+const changeAllRowsColumnUhDalamNegeri = (
+  peserta: PesertaKegiatanDalamNegeri[],
+  field: string,
+  value: number
+): PesertaKegiatanDalamNegeri[] => {
+  return peserta.map((row) => {
+    if (!row.uhDalamNegeri) {
+      return row;
+    }
+    const uhDalamNegeri = row.uhDalamNegeri;
+    const newUh = {
+      ...uhDalamNegeri,
+      [field]: value,
+    };
+    return {
+      ...row,
+      ["uhDalamNegeri"]: newUh,
+    };
+  });
 };
 
 interface PaginationControlsProps<T> {
@@ -523,7 +688,7 @@ function calculateTotal(
   const dalamKota = row.uhDalamNegeri?.hDalamKota || 0;
   const luarKota = row.uhDalamNegeri?.hLuarKota || 0;
   const diklat = row.uhDalamNegeri?.hDiklat || 0;
-  const transport = row.uhDalamNegeri?.uhTransport || 0;
+  const transport = row.uhDalamNegeri?.hTransport || 0;
 
   const total: number =
     fullboard + fulldayHalfday + dalamKota + luarKota + diklat + transport;
