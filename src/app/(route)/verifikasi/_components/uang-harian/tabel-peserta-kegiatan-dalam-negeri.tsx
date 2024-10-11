@@ -13,7 +13,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowDownUp, ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 
 interface RowData {
   [key: string]: any; // Replace with actual field names and types if known
@@ -382,7 +382,7 @@ export const TabelHariPesertaKegiatan = ({
           <thead>
             {table.getHeaderGroups().map((headerGroup, index) => {
               return (
-                <>
+                <Fragment key={headerGroup.id}>
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header, index) => {
                       const columnRelativeDepth =
@@ -513,7 +513,7 @@ export const TabelHariPesertaKegiatan = ({
                       {totalJumlahHari}
                     </th>
                   </tr>
-                </>
+                </Fragment>
               );
             })}
           </thead>

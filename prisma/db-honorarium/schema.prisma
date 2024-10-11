@@ -519,6 +519,8 @@ model UhDalamNegeri {
   createdAt              DateTime        @default(now()) @map("created_at")
   updatedBy              String?         @map("updated_by")
   updatedAt              DateTime?       @updatedAt @map("updated_at")
+  verifiedBy             String?         @map("verified_by")
+  verifiedAt             DateTime?       @map("verified_at")
 
   @@map("uh_dalam_negeri")
 }
@@ -549,6 +551,8 @@ model UhLuarNegeri {
   createdAt              DateTime         @default(now()) @map("created_at")
   updatedBy              String?          @map("updated_by")
   updatedAt              DateTime?        @updatedAt @map("updated_at")
+  verifiedBy             String?          @map("verified_by")
+  verifiedAt             DateTime?        @map("verified_at")
 
   @@unique([pesertaKegiatanId, dariLokasiId, keLokasiId, tanggalMulai, tanggalSelesai])
   @@map("uh_luar_negeri")

@@ -2,14 +2,17 @@ import { KegiatanWithDetail } from "@/actions/kegiatan";
 import getPesertaKegiatanDalamNegeri, {
   PesertaKegiatanDalamNegeri,
 } from "@/actions/kegiatan/peserta/dalam-negeri";
+import SetujuiPengajuanUhDalamNegeri from "@/actions/kegiatan/uang-harian/verifikasi-dalam-negeri";
 import FloatingComponent from "@/components/floating-component";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import VerifikasiDataDukungUangHarianDalamNegeri from "./data-dukung-dalam-negeri";
 import { TabelHariPesertaKegiatan } from "./tabel-peserta-kegiatan-dalam-negeri";
 
 interface UangHarianDalamNegeriContainerProps {
-  kegiatan: KegiatanWithDetail | null;
+  kegiatan: KegiatanWithDetail;
 }
 const UangHarianDalamNegeriContainer = ({
   kegiatan,
@@ -19,7 +22,7 @@ const UangHarianDalamNegeriContainer = ({
   );
   const [pesertaUpdated, setPesertaUpdated] = useState<
     PesertaKegiatanDalamNegeri[] | null
-  >();
+  >(null);
   const [isPreviewHidden, setIsPreviewHidden] = useState(false);
   const handleOnHide = () => {
     setIsPreviewHidden(true);
@@ -50,6 +53,22 @@ const UangHarianDalamNegeriContainer = ({
     }
   };
 
+  const handleSetujuVerifikasiUhDalamNegeri = async () => {
+    if (!kegiatan || !pesertaUpdated) {
+      toast.error("Silakan periksa kembali data peserta");
+      return;
+    }
+    const updated = await SetujuiPengajuanUhDalamNegeri(
+      kegiatan?.id,
+      pesertaUpdated
+    );
+    if (updated.success) {
+      toast.success("Berhasil memperbarui data peserta");
+    } else {
+      toast.error(`Terjadi kesalahan ${updated.error} ${updated.message}`);
+    }
+  };
+
   return (
     <div>
       <VerifikasiDataDukungUangHarianDalamNegeri
@@ -57,15 +76,19 @@ const UangHarianDalamNegeriContainer = ({
       />
       {peserta && (
         <>
-          <Button type="button" onClick={() => setIsPreviewHidden(false)}>
-            Daftar Peserta
+          <Button
+            type="button"
+            onClick={() => setIsPreviewHidden(false)}
+            className={cn("m-1", !isPreviewHidden && "hidden")}
+          >
+            Lihat Daftar Peserta
           </Button>
           <FloatingComponent hide={isPreviewHidden} onHide={handleOnHide}>
             <TabelHariPesertaKegiatan
               data={peserta}
               onDataChange={handleDataChange}
             />
-            <div className="flex w-full justify-end p-4 gap-2">
+            {/* <div className="flex w-full justify-end p-4 gap-2">
               <Button type="button" onClick={handleSimpanUpdatedData}>
                 Simpan
               </Button>
@@ -76,10 +99,37 @@ const UangHarianDalamNegeriContainer = ({
               >
                 Tutup
               </Button>
-            </div>
+            </div> */}
           </FloatingComponent>
         </>
       )}
+
+      <div className="flex flex-col w-full gap-2">
+        <div>
+          <h3 className="text-lg font-bold">Keterangan Revisi</h3>
+          <textarea
+            className="w-full h-24 border border-gray-300 rounded p-2 ring-blue-500 outline-red-500"
+            placeholder="Tulis catatan disini"
+          ></textarea>
+        </div>
+        <div className="flex flex-row gap-2">
+          <Button
+            type="button"
+            className="w-1/3"
+            variant={"destructive"}
+            onClick={handleSimpanUpdatedData}
+          >
+            Revisi
+          </Button>
+          <Button
+            type="button"
+            className="w-full"
+            onClick={handleSetujuVerifikasiUhDalamNegeri}
+          >
+            Setuju
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
