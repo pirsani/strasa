@@ -1,5 +1,6 @@
+import CummulativeErrors from "@/components/form/cummulative-error";
 import InputDatePicker from "@/components/form/date-picker/input-date-picker";
-import FormFileUpload from "@/components/form/form-file-upload";
+import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -9,28 +10,88 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import useFileStore from "@/hooks/use-file-store";
 import { cn } from "@/lib/utils";
 import { Jadwal, jadwalSchema } from "@/zod/schemas/jadwal";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createId } from "@paralleldrive/cuid2";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import SelectKelas from "./select-kelas";
 import SelectMateri from "./select-materi";
 import SelectNarasumber from "./select-narasumber";
 
 interface FormJadwalProps {
-  onCancel: () => void;
+  kegiatanId: string;
+  onCancel?: () => void;
   onSubmit?: (data: Jadwal) => void;
 }
-const FormJadwal = ({ onCancel, onSubmit = () => {} }: FormJadwalProps) => {
+const FormJadwal = ({
+  kegiatanId,
+  onCancel = () => {},
+  onSubmit = () => {},
+}: FormJadwalProps) => {
   const form = useForm<Jadwal>({
     resolver: zodResolver(jadwalSchema),
+    defaultValues: {
+      id: createId(),
+      kegiatanId,
+      tanggal: new Date(),
+      dokumenDaftarHadirCuid: "daftarHadir" + createId() + ".pdf",
+      dokumenSuratCuid: "surat" + createId() + ".pdf",
+    },
   });
 
+  const [isDaftarHadirUploaded, setIsDaftarHadirUploaded] = useState(false);
+  const [isSuratUploaded, setIsSuratUploaded] = useState(false);
+  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
+
   const {
+    setValue,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = form;
+
+  const jadwalId = form.watch("id");
+  const dokumenDaftarHadirCuid = form.watch("dokumenDaftarHadirCuid");
+  const dokumenSuratCuid = form.watch("dokumenSuratCuid");
+
+  // Use a ref to store the folderCuid
+  // const folderCuidRef = useRef(createId());
+  // const folderCuid = folderCuidRef.current;
+  // setValue("cuid", folderCuid);
+
+  const setFileUrl = useFileStore((state) => state.setFileUrl);
+
+  const handleFileChange = (file: File | null) => {
+    // if (file !== null) {
+    //   const fileUrl = URL.createObjectURL(file);
+    //   console.log(fileUrl);
+    //   setFileUrl(fileUrl);
+    // } else {
+    //   setFileUrl(null);
+    // }
+  };
+
+  const handleFileUploadCompleted = (field: string) => {
+    console.log("File uploaded", field);
+    if (field === "dokumenDaftarHadir") {
+      setIsDaftarHadirUploaded(true);
+    } else if (field === "dokumenSurat") {
+      setIsSuratUploaded(true);
+    }
+  };
+
+  useEffect(() => {
+    if (isDaftarHadirUploaded && isSuratUploaded) {
+      setIsReadyToSubmit(true);
+    } else {
+      setIsReadyToSubmit(false);
+    }
+  }, [isDaftarHadirUploaded, isSuratUploaded]);
+
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -113,12 +174,40 @@ const FormJadwal = ({ onCancel, onSubmit = () => {} }: FormJadwalProps) => {
 
         <FormField
           control={control}
+          name="jumlahJamPelajaran"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Jumlah Jam Pelajaran</FormLabel>
+              <FormControl>
+                <Input
+                  name={field.name}
+                  className="md:w-full"
+                  type="number"
+                  step={0.1}
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
           name="dokumenDaftarHadir"
           render={({ field }) => (
             <FormItem>
               <FormLabel htmlFor="dokumenDaftarHadir">Daftar Hadir</FormLabel>
               <FormControl>
-                <FormFileUpload name={field.name} className="bg-white" />
+                <FormFileImmediateUpload
+                  cuid={jadwalId}
+                  folder={dokumenDaftarHadirCuid}
+                  name={field.name}
+                  onFileChange={handleFileChange}
+                  onFileUploadComplete={handleFileUploadCompleted}
+                  className="bg-white"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -133,25 +222,28 @@ const FormJadwal = ({ onCancel, onSubmit = () => {} }: FormJadwalProps) => {
                 Surat/Nodin/Memo Undangan Narsum
               </FormLabel>
               <FormControl>
-                <FormFileUpload
+                <FormFileImmediateUpload
+                  cuid={jadwalId}
+                  folder={dokumenSuratCuid}
                   name={field.name}
+                  onFileChange={handleFileChange}
+                  onFileUploadComplete={handleFileUploadCompleted}
                   className="bg-white"
-                  onFileChange={(file) => {
-                    // Optional handling of file change
-                    form.setValue(field.name, file ?? undefined); // Adjusted to fix the type issue
-                  }}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        <CummulativeErrors errors={errors} verbose />
         <div
           className={cn("flex flex-col sm:flex-row  sm:justify-end gap-2 mt-6")}
         >
-          <Button type="submit">Simpan</Button>
+          <Button type="submit" disabled={!isReadyToSubmit}>
+            Simpan
+          </Button>
           <Button variant="outline" onClick={onCancel}>
-            Cancel
+            Tutup
           </Button>
         </div>
       </form>

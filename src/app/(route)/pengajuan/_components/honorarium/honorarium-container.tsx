@@ -15,7 +15,7 @@ const HonorariumContainer = ({ kegiatan }: HonorariumContainerProps) => {
       <div className="flex flex-col gap-2 w-full">
         <div className="flex flex-wrap gap-1 max-w-full">
           <div className="">
-            <TambahJadwalContainer />
+            <TambahJadwalContainer kegiatanId={kegiatan.id} />
           </div>
           <div className="">
             <TambahKelasContainer />

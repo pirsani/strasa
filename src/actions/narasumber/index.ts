@@ -3,17 +3,19 @@ import { ActionResponse, getUserId } from "@/actions";
 import { hasPermission } from "@/data/user";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { CustomPrismaClientError } from "@/types/custom-prisma-client-error";
-import saveFile from "@/utils/file-operations/save";
 import {
-  narasumberSchema,
-  Narasumber as ZNarasumber,
+  NarasumberWithoutFile,
+  narasumberWithoutFileSchema,
 } from "@/zod/schemas/narasumber";
 import { Narasumber } from "@prisma-honorarium/client";
 import { revalidatePath } from "next/cache";
-import { extname, join } from "path";
 
+import { BASE_PATH_UPLOAD } from "@/app/api/upload/config";
 import { createId } from "@paralleldrive/cuid2";
+import fse from "fs-extra";
+import path from "path";
 import { Logger } from "tslog";
+import { moveFileToFinalFolder } from "../file";
 import { getSessionPengguna } from "../pengguna";
 // Create a Logger instance with custom settings
 const logger = new Logger({
@@ -21,7 +23,7 @@ const logger = new Logger({
 });
 
 export const simpanNarasumber = async (
-  formData: FormData
+  data: NarasumberWithoutFile
 ): Promise<ActionResponse<Narasumber>> => {
   const sessionPengguna = await getSessionPengguna();
   if (
@@ -49,52 +51,22 @@ export const simpanNarasumber = async (
   const permitted = await hasPermission(userId, "narasumber:create");
   logger.info("[permitted]", permitted);
 
-  // ini bikin error ntr harus dicek lagi
-  //const obj = formDataToObject(formData);
-
-  const formDataObj: any = {};
-  formData.forEach((value, key) => {
-    formDataObj[key] = value;
-  });
-  //console.log("formDataObj", formDataObj);
-
   let dataparsed;
   try {
-    dataparsed = narasumberSchema.parse(formDataObj);
-    const file = dataparsed.dokumenPeryataanRekeningBerbeda;
-    let uniqueFilename: string | null = null;
-    const saveto = join("dokumen-pernyataan-rekening-berbeda", dataparsed.id);
+    dataparsed = narasumberWithoutFileSchema.parse(data);
 
-    if (file) {
-      // Extract the file extension
-      const fileExtension = extname(file.name);
-      // Generate a unique filename using nanoid
-      uniqueFilename = `${createId()}${fileExtension}`;
-      console.log("uniqueFilename", uniqueFilename);
-      const { filePath, relativePath, fileHash, fileType } = await saveFile({
-        file,
-        fileName: uniqueFilename,
-        directory: saveto,
-      });
-      logger.info("File saved at:", filePath);
-      const savedFile = await logUploadedFile(
-        uniqueFilename,
-        file.name,
-        relativePath,
-        fileHash,
-        fileType.mime,
-        pengguna
-      );
-      logger.info("File saved to database:", savedFile);
+    // Use type assertion to treat the property as optional
+    delete dataparsed.dokumenPeryataanRekeningBerbedaCuid;
+
+    const dokumenPeryataanRekeningBerbeda = await saveFileToFinalFolder(data);
+
+    const narasumber = dataparsed as Narasumber;
+    if (dokumenPeryataanRekeningBerbeda) {
+      narasumber.dokumenPeryataanRekeningBerbeda =
+        dokumenPeryataanRekeningBerbeda;
     }
 
-    delete dataparsed.dokumenPeryataanRekeningBerbeda;
-    const objNarasumber = dataparsed as Narasumber;
-    if (uniqueFilename) {
-      objNarasumber.dokumenPeryataanRekeningBerbeda = uniqueFilename;
-    }
-
-    const saved = await saveDataToDatabase(objNarasumber, pengguna);
+    const saved = await saveDataToDatabase(narasumber, pengguna);
     revalidatePath("/data-referensi/narasumber");
     return {
       success: true,
@@ -115,27 +87,12 @@ export const simpanNarasumber = async (
 };
 
 export const updateNarasumber = async (
-  formData: FormData,
+  data: NarasumberWithoutFile,
   id: string
 ): Promise<ActionResponse<Narasumber>> => {
   // step 1: parse the form data
-  formData.append("id", id);
-  return simpanNarasumber(formData);
-};
-
-// Function to convert FormData to a plain object
-// When FormData is serialized, if there's no file or the field is empty, it's commonly set as an empty string (""), but sometimes frameworks will serialize the value as the string "undefined". This string is not the same as the undefined type in JavaScript. This function will convert the FormData object to a plain object, replacing the string "undefined" with the actual undefined type.
-const formDataToObject = (formData: FormData) => {
-  const obj: Record<string, any> = {};
-  formData.forEach((value, key) => {
-    // Check if the value is the string "undefined"
-    if (value === "undefined") {
-      obj[key] = undefined; // Assign undefined if the value is the string "undefined"
-    } else {
-      obj[key] = value; // Otherwise, assign the value
-    }
-  });
-  return obj;
+  data.id = id;
+  return simpanNarasumber(data);
 };
 
 const saveDataToDatabase = async (data: Narasumber, byUser: string) => {
@@ -169,45 +126,63 @@ const saveDataToDatabase = async (data: Narasumber, byUser: string) => {
   }
 };
 
-const updateDataToDatabase = async (
-  data: ZNarasumber,
-  id: string,
-  updatedBy: string
-) => {
-  const dataUpdatedBy = {
-    ...data,
-    dokumenPeryataanRekeningBerbeda: data.dokumenPeryataanRekeningBerbeda?.name,
-    updatedBy,
-  };
-  // Save data to database
+// pinda file dari temp ke final folder menurut NIK narasumber
+const saveFileToFinalFolder = async (data: NarasumberWithoutFile) => {
+  console.log(
+    "dokumenPeryataanRekeningBerbedaCuid",
+    data.dokumenPeryataanRekeningBerbedaCuid
+  );
+  if (!data.dokumenPeryataanRekeningBerbedaCuid) {
+    return null;
+  }
   try {
-    //const result = await dbHonorarium.$transaction(async (prisma) => {
-    const newNarasumber = await dbHonorarium.narasumber.update({
+    // Save the file to the final folder
+    const uploadedFile = await dbHonorarium.uploadedFile.findUnique({
       where: {
-        id,
+        id: data.dokumenPeryataanRekeningBerbedaCuid,
       },
-      data: dataUpdatedBy,
     });
-    // Save data to database
-    return newNarasumber;
-    // });
-    // return result;
-  } catch (error) {
-    const e = error as CustomPrismaClientError;
-    switch (e.code) {
-      case "P2002":
-        logger.info("There is a unique constraint violation");
-        throw new Error("Narasumber dengan NIK yang sama sudah ada");
-        break;
-      case "P2025":
-        logger.info("There is a foreign key constraint violation");
-        throw new Error("Narasumber tidak ditemukan");
-        break;
-      default:
-        break;
+    if (!uploadedFile) {
+      throw new Error("File not found in log uploaded file");
     }
-    logger.error("Error saving data to database:", e);
-    throw new Error(e.message);
+
+    const finalPathFile = path.posix.join(
+      BASE_PATH_UPLOAD,
+      "narasumber",
+      data.id,
+      data.dokumenPeryataanRekeningBerbedaCuid
+    );
+    const tempPathFile = path.posix.join(
+      BASE_PATH_UPLOAD,
+      "temp",
+      data.dokumenPeryataanRekeningBerbedaCuid
+    );
+    const resolvedPathFile = path.resolve(finalPathFile);
+    const resolvedTempPathFile = path.resolve(tempPathFile);
+
+    // check if temp file exists
+    const fileExists = await fse.pathExists(resolvedTempPathFile);
+    if (!fileExists) {
+      logger.error(
+        "File not found in temp folder, skipping moving file to final folder"
+      );
+      return;
+    }
+
+    await moveFileToFinalFolder(resolvedTempPathFile, resolvedPathFile);
+
+    const filePathRelative = path.posix.relative(
+      BASE_PATH_UPLOAD,
+      finalPathFile
+    );
+
+    // Move the file to the final folder
+    // const finalPath = await moveFileToFinalFolder(uploadedFile);
+    // return finalPath;
+    return filePathRelative;
+  } catch (error) {
+    logger.error("Error moving file:", error);
+    throw new Error("Error moving file");
   }
 };
 

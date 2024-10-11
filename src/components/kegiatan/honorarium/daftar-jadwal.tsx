@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getJadwalByKegiatanId, JadwalKelasNarasumber } from "@/data/jadwal";
 import { formatHariTanggal } from "@/utils/date-format";
 import Decimal from "decimal.js";
+import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import NarasumberListItem from "./narasumber-list-item";
 
@@ -60,15 +61,17 @@ const DaftarJadwal = ({ kegiatanId, proses }: DaftarJadwalProps) => {
               key={index}
               className="w-full border border-gray-300 focus-within:ring-1 focus-within:ring-blue-500 rounded-md"
             >
-              <div className="flex flex-row w-full ">
-                <div className="px-4 w-1/3 py-2  border-b border-gray-300">
-                  {jadwal.kelas.nama}
-                </div>
-                <div className="px-4 py-2 w-full border-b border-gray-300">
-                  {jadwal.materi.nama}
-                </div>
-                <div className="px-4 py-2 w-full border-b border-gray-300">
+              <div className="flex flex-row w-full border-b border-gray-300 ">
+                <div className="px-4 w-1/3 py-2  ">{jadwal.kelas.nama}</div>
+                <div className="px-4 py-2 w-full ">{jadwal.materi.nama}</div>
+                <div className="px-4 py-2 w-full ">
                   {formatHariTanggal(jadwal.tanggal)}
+                </div>
+                <div className="flex-grow" />
+                <div className="p-2 border-b ">
+                  <Button className="" variant={"destructive"}>
+                    <Trash size={16} />
+                  </Button>
                 </div>
               </div>
 

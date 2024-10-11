@@ -41,3 +41,23 @@ export const getJadwalByKegiatanId = async (
 
   return jadwal;
 };
+
+export const getJadwalById = async (
+  jadwalId: string
+): Promise<JadwalKelasNarasumber | null> => {
+  const jadwal = await dbHonorarium.jadwal.findFirst({
+    where: {
+      id: jadwalId,
+    },
+    include: {
+      kelas: true,
+      materi: true,
+      jadwalNarasumber: {
+        include: {
+          narasumber: true,
+        },
+      },
+    },
+  });
+  return jadwal;
+};

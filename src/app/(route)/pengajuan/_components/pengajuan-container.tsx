@@ -75,7 +75,7 @@ const PengajuanContainer = () => {
 
   return (
     <>
-      <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-20 bg-gray-100 rounded-lg py-4 lg:px-4">
+      <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-20 bg-gray-100 rounded-lg py-4 lg:px-4 p-2">
         <div className="w-full flex flex-col gap-2 ">
           <SelectKegiatan
             inputId="kegiatan"

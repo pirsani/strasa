@@ -663,7 +663,7 @@ model Jadwal {
 }
 
 model JadwalNarasumber {
-  id                                 Int            @id @default(autoincrement())
+  id                                 String         @id @default(cuid())
   jadwalId                           String         @map("jadwal_id")
   jadwal                             Jadwal         @relation(fields: [jadwalId], references: [id])
   narasumberId                       String         @map("narasumber_id")

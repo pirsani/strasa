@@ -5,6 +5,8 @@ import {
   narasumberSchema,
 } from "@/zod/schemas/narasumber";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createId } from "@paralleldrive/cuid2";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
@@ -16,8 +18,10 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import InputFile from "./input-file";
-import Required from "./required";
+import FormFileImmediateUpload from "./form-file-immediate-upload";
+import { default as RequiredLabel, RequiredLabelWithCatatan } from "./required";
+import SelectEselon from "./select-eselon";
+import SelectGolonganRuang from "./select-golongan-ruang";
 
 interface FormNarasumberProps {
   onCancel?: () => void;
@@ -47,10 +51,30 @@ const FormNarasumber = ({
       nomorRekening: "",
       nomorTelepon: "",
       dokumenPeryataanRekeningBerbeda: null,
+      dokumenPeryataanRekeningBerbedaCuid: createId() + ".pdf",
       ...initialData, // Override defaults with initialData if provided
     },
   });
-  const { control, handleSubmit } = form;
+  const { control, handleSubmit, watch } = form;
+
+  const dokumenPeryataanRekeningBerbedaCuid = watch(
+    "dokumenPeryataanRekeningBerbedaCuid"
+  );
+  const narasumberId = watch("id");
+
+  const handleFileChange = (file: File | null) => {
+    // Do nothing if the file is null
+  };
+
+  const [
+    isDokumenPeryataanRekeningBerbedaUploaded,
+    setIsDokumenPeryataanRekeningBerbedaUploaded,
+  ] = useState(false);
+
+  const handleFileUploadCompleted = (field: string) => {
+    console.log("File uploaded", field);
+    setIsDokumenPeryataanRekeningBerbedaUploaded(true);
+  };
 
   return (
     <Form {...form}>
@@ -62,7 +86,7 @@ const FormNarasumber = ({
             <FormItem>
               <FormLabel>
                 Nama
-                <Required />
+                <RequiredLabel />
               </FormLabel>
               <FormControl>
                 <Input {...field} />
@@ -79,7 +103,7 @@ const FormNarasumber = ({
               <FormItem className="sm:w-1/3">
                 <FormLabel>
                   NIK
-                  <Required />
+                  <RequiredLabel />
                 </FormLabel>
                 <FormControl>
                   <Input {...field} />
@@ -94,8 +118,7 @@ const FormNarasumber = ({
             render={({ field }) => (
               <FormItem className="sm:w-1/3">
                 <FormLabel>
-                  NIP
-                  <Required />
+                  <RequiredLabelWithCatatan label="NIP" />
                 </FormLabel>
                 <FormControl>
                   <Input {...field} />
@@ -110,8 +133,7 @@ const FormNarasumber = ({
             render={({ field }) => (
               <FormItem className="sm:w-1/3">
                 <FormLabel>
-                  NPWP
-                  <Required />
+                  <RequiredLabelWithCatatan label="NPWP" />
                 </FormLabel>
                 <FormControl>
                   <Input {...field} />
@@ -129,8 +151,7 @@ const FormNarasumber = ({
             render={({ field }) => (
               <FormItem className="sm:w-10/12">
                 <FormLabel>
-                  Jabatan
-                  <Required />
+                  <RequiredLabelWithCatatan label="Jabatan" />
                 </FormLabel>
                 <FormControl>
                   <Input {...field} />
@@ -143,13 +164,13 @@ const FormNarasumber = ({
             name="pangkatGolonganId"
             control={control}
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-56">
                 <FormLabel>Gol/Ruang</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value ?? ""} // Convert null to empty string
-                    placeholder="format III/A IV/C"
+                  <SelectGolonganRuang
+                    fieldName={field.name}
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 </FormControl>
                 <FormMessage />
@@ -161,8 +182,68 @@ const FormNarasumber = ({
             name="eselon"
             control={control}
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-56">
                 <FormLabel>Eselon</FormLabel>
+                <FormControl>
+                  <SelectEselon
+                    fieldName={field.name}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-2">
+          <FormField
+            name="bank"
+            control={control}
+            render={({ field }) => (
+              <FormItem className="sm:w-2/12">
+                <FormLabel>
+                  Bank <RequiredLabel />
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value ?? ""} // Convert null to empty string
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="namaRekening"
+            control={control}
+            render={({ field }) => (
+              <FormItem className="sm:w-7/12">
+                <FormLabel>
+                  Nama Rekening
+                  <RequiredLabel />
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value ?? ""} // Convert null to empty string
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="nomorRekening"
+            control={control}
+            render={({ field }) => (
+              <FormItem className="sm:w-3/12">
+                <FormLabel>
+                  Nomor Rekening
+                  <RequiredLabel />
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -174,6 +255,7 @@ const FormNarasumber = ({
             )}
           />
         </div>
+
         <div className="flex flex-col sm:flex-row gap-2">
           <FormField
             name="email"
@@ -210,56 +292,6 @@ const FormNarasumber = ({
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2">
-          <FormField
-            name="bank"
-            control={control}
-            render={({ field }) => (
-              <FormItem className="sm:w-2/12">
-                <FormLabel>Bank</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value ?? ""} // Convert null to empty string
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="namaRekening"
-            control={control}
-            render={({ field }) => (
-              <FormItem className="sm:w-7/12">
-                <FormLabel>Nama Rekening</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value ?? ""} // Convert null to empty string
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="nomorRekening"
-            control={control}
-            render={({ field }) => (
-              <FormItem className="sm:w-3/12">
-                <FormLabel>Nomor Rekening</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value ?? ""} // Convert null to empty string
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
         <FormField
           name="dokumenPeryataanRekeningBerbeda"
           control={control}
@@ -269,9 +301,12 @@ const FormNarasumber = ({
                 Pernyataan Beda Rekening (jika nama berbeda)
               </FormLabel>
               <FormControl>
-                <InputFile
+                <FormFileImmediateUpload
+                  cuid={dokumenPeryataanRekeningBerbedaCuid}
                   name={field.name}
-                  onFileChange={(file) => field.onChange(file)}
+                  onFileChange={handleFileChange}
+                  onFileUploadComplete={handleFileUploadCompleted}
+                  className="bg-white"
                 />
               </FormControl>
               <FormMessage />

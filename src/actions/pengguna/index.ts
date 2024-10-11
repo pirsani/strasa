@@ -196,7 +196,7 @@ export const simpanDataPengguna = async (
 
 export const getSessionPengguna = async () => {
   const session = await auth();
-  logger.info("session", session);
+  // logger.info("session", session);
   if (!session || !session.user || !session.user.id) {
     return {
       success: false,
@@ -220,7 +220,7 @@ export const getSessionPenggunaForAction = async (): Promise<
   ActionResponse<SessionPenggunaForActionResponse>
 > => {
   const pengguna = await getSessionPengguna();
-  logger.info("Pengguna", pengguna);
+  // logger.info("Pengguna", pengguna);
   if (!pengguna.success || !pengguna.data || !pengguna.data.id) {
     return {
       success: false,

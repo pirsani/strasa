@@ -1,15 +1,12 @@
 import { z } from "zod";
 import { fileSchema } from "./file-schema";
-import {
-  golonganRuangSchema,
-  pangkatGolonganOptionalNullableSchema,
-} from "./golongan-ruang";
+import { pangkatGolonganOptionalNullableSchema } from "./golongan-ruang";
 
 const emptyStringToNull = z
   .string()
   .transform((val) => (val === "" || val === "-" ? null : val));
 
-export const narasumberSchema = z.object({
+export const narasumberWithoutFileSchema = z.object({
   id: z
     .string()
     .min(16, {
@@ -74,11 +71,24 @@ export const narasumberSchema = z.object({
       }
     ),
   nomorTelepon: emptyStringToNull.nullable().optional(),
-  bank: emptyStringToNull.nullable().optional(),
-  namaRekening: emptyStringToNull.nullable().optional(),
-  nomorRekening: emptyStringToNull.nullable().optional(),
+  bank: z.string().min(2, { message: "Nama bank minimal 2 karakter" }).max(150),
+  namaRekening: z
+    .string()
+    .min(3, { message: "Nama rekening minimal 3 karakter" })
+    .max(150),
+  nomorRekening: z
+    .string()
+    .min(5, { message: "Nomor rekening minimal 5 karakter" })
+    .max(150),
+  dokumenPeryataanRekeningBerbedaCuid: z.string().optional(),
+});
+
+export const narasumberFileSchema = z.object({
   dokumenPeryataanRekeningBerbeda: fileSchema({ required: false }),
 });
+
+export const narasumberSchema =
+  narasumberWithoutFileSchema.merge(narasumberFileSchema);
 
 export type Narasumber = z.infer<typeof narasumberSchema>;
 
@@ -89,6 +99,8 @@ export const narasumberEditModeSchema = narasumberSchema.extend({
     z.null(),
   ]),
 });
+
+export type NarasumberWithoutFile = z.infer<typeof narasumberWithoutFileSchema>;
 
 export type NarasumberForEditing = z.infer<typeof narasumberEditModeSchema>;
 // export type NarasumberForEditing = Omit<

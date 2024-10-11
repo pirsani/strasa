@@ -8,10 +8,12 @@ import {
 
 type CummulativeErrorsProps<T extends FieldValues> = {
   errors: FieldErrors<T>;
+  verbose?: boolean;
 };
 
 const CummulativeErrors = <T extends FieldValues>({
   errors,
+  verbose = false,
 }: CummulativeErrorsProps<T>) => {
   const hasErrors = Object.keys(errors).length > 0;
 
@@ -62,7 +64,9 @@ const CummulativeErrors = <T extends FieldValues>({
       <strong className="font-bold">Ada kesalahan dalam pengisian form:</strong>
       <ul className="list-disc list-inside">
         {Object.entries(errors).map(([key, value]) => (
-          <li key={key}>{getMessage(value)}</li>
+          <li key={key}>
+            {verbose && <span>${key}</span>} {getMessage(value)}
+          </li>
         ))}
       </ul>
     </div>

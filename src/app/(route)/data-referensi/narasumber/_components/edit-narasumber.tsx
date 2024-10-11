@@ -37,34 +37,7 @@ const EditNarasumber = ({
 
   const onSubmit = async (data: Narasumber) => {
     try {
-      const formData = new FormData();
       const { dokumenPeryataanRekeningBerbeda, ...dataWithoutFile } = data;
-
-      // Append non-file fields to formData
-      for (const [key, value] of Object.entries(dataWithoutFile)) {
-        if (value !== null && value !== undefined) {
-          // type inputan tidak ada date, jadi g perlu cek date
-          if (typeof value === "string") {
-            formData.append(key, value);
-          } else {
-            formData.append(key, JSON.stringify(value));
-          }
-        } else {
-          // karena pada prisma boleh null, maka yg null g perlu di append
-          console.warn(`Field '${key}' is null or undefined, skipping...`);
-        }
-      }
-
-      // Append the file field (check if file is provided)
-      // file di treat berbeda, karena file tidak bisa di stringify
-      if (dokumenPeryataanRekeningBerbeda) {
-        formData.append(
-          "dokumenPeryataanRekeningBerbeda",
-          dokumenPeryataanRekeningBerbeda as File
-        );
-      } else {
-        console.warn("No file provided for 'dokumenPeryataanRekeningBerbeda'.");
-      }
 
       if (!narasumber) {
         console.error("Narasumber data is missing.");
@@ -73,7 +46,7 @@ const EditNarasumber = ({
       }
 
       // Call API to save the data
-      const simpan = await updateNarasumber(formData, narasumber.id);
+      const simpan = await updateNarasumber(dataWithoutFile, narasumber.id);
 
       // Handle API response
       if (!simpan.success) {
