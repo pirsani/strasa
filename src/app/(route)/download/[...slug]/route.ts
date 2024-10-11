@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import downloadDokumenKegiatan from "./dokumen-kegiatan";
+import downloadDokumenNarasumber from "./dokumen-narasumber";
 import { downloadDokumenPengadaan } from "./generator-dokumen-pengadaan";
 import { downloadDokumenRampungan } from "./generator-rampungan";
 import { downloadTemplateExcel } from "./template-excel";
@@ -23,6 +24,8 @@ export async function GET(
       return downloadTemplateExcel(req, slug);
     case "dokumen-kegiatan":
       return downloadDokumenKegiatan(req, slug);
+    case "narasumber":
+      return downloadDokumenNarasumber(req, slug);
     default:
       return new NextResponse(`Download ${params.slug.join("/")}`);
   }

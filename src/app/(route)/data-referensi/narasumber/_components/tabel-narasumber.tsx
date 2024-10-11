@@ -1,11 +1,14 @@
 "use client";
 import { deleteNarasumber } from "@/actions/narasumber";
 import ConfirmDialog from "@/components/confirm-dialog";
+import FloatingComponent from "@/components/floating-component";
+import PdfPreviewContainer from "@/components/pdf-preview-container";
 import {
   KolomAksi,
   TabelGenericWithoutInlineEdit,
 } from "@/components/tabel-generic-without-inline-edit";
 import { NarasumberWithStringDate } from "@/data/narasumber";
+import useFileStore from "@/hooks/use-file-store";
 import { useSearchTerm } from "@/hooks/use-search-term";
 import { Narasumber } from "@prisma-honorarium/client";
 import { ColumnDef, createColumnHelper, Row } from "@tanstack/react-table";
@@ -32,6 +35,20 @@ export const TabelNarasumber = ({
     useState<NarasumberWithStringDate | null>(null);
   const [errors, setErrors] = useState<ZodError | null>(null);
   const { searchTerm } = useSearchTerm();
+
+  const { fileUrl, isPreviewHidden, setFileUrl } = useFileStore();
+
+  const handleOnHide = () => {
+    useFileStore.setState({ isPreviewHidden: true });
+  };
+
+  const handleOnShow = () => {
+    useFileStore.setState({ isPreviewHidden: false });
+  };
+
+  useEffect(() => {
+    useFileStore.setState({ isPreviewHidden: true });
+  }, []);
 
   const filteredData = data.filter((row) => {
     if (!searchTerm || searchTerm === "") return true;
@@ -177,6 +194,15 @@ export const TabelNarasumber = ({
 
   const handleView = (row: NarasumberWithStringDate) => {
     console.log("View row:", row);
+    if (!row.dokumenPeryataanRekeningBerbeda) {
+      toast.error("tidak ada dokumen pernyataan rekening berbeda");
+      return;
+    }
+    // generate file url
+    const fileUrl = "/download/" + row.dokumenPeryataanRekeningBerbeda;
+    setFileUrl(fileUrl);
+
+    handleOnShow();
     // Implement your view logic here
     // view pdf
   };
@@ -205,6 +231,9 @@ export const TabelNarasumber = ({
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />
+      <FloatingComponent hide={isPreviewHidden} onHide={handleOnHide}>
+        <PdfPreviewContainer className="border-2 h-full border-gray-500" />
+      </FloatingComponent>
     </div>
   );
 };

@@ -24,6 +24,7 @@ const getNarasumber = async () => {
       bank, 
       nama_rekening AS "namaRekening",
       nomor_rekening AS "nomorRekening",
+      dokumen_peryataan_rekening_berbeda AS "dokumenPeryataanRekeningBerbeda",
       created_by AS "createdBy",
       created_at AS "createdAt",
       TO_CHAR(created_at, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS "createdAt",
