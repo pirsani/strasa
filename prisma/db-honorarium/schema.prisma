@@ -163,9 +163,9 @@ model Narasumber {
   jenisHonorarium                 SbmHonorarium?     @relation(fields: [jenisHonorariumId], references: [id])
   email                           String?
   nomorTelepon                    String?            @map("nomor_telepon")
-  bank                            String?
-  namaRekening                    String?            @map("nama_rekening")
-  nomorRekening                   String?            @map("nomor_rekening")
+  bank                            String
+  namaRekening                    String             @map("nama_rekening")
+  nomorRekening                   String             @map("nomor_rekening")
   dokumenPeryataanRekeningBerbeda String?            @map("dokumen_peryataan_rekening_berbeda")
   createdBy                       String             @map("created_by")
   createdAt                       DateTime           @default(now()) @map("created_at")

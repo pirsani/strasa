@@ -1,3 +1,4 @@
+import simpanNarasumber from "@/actions/narasumber";
 import { cn } from "@/lib/utils";
 import {
   Narasumber,
@@ -8,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -25,14 +27,14 @@ import SelectGolonganRuang from "./select-golongan-ruang";
 
 interface FormNarasumberProps {
   onCancel?: () => void;
-  onSubmit?: (data: Narasumber) => void;
+  onSaveSuccess?: (data: Narasumber) => void;
   className?: string;
   narasumber?: Partial<NarasumberForEditing>; // Allow partial initial data
 }
 const FormNarasumber = ({
   className,
   onCancel,
-  onSubmit = () => {}, // Provide a default no-op function
+  onSaveSuccess = () => {}, // Provide a default no-op function
   narasumber: initialData = {}, // Provide an empty object as default value
 }: FormNarasumberProps) => {
   const form = useForm<NarasumberForEditing>({
@@ -74,6 +76,23 @@ const FormNarasumber = ({
   const handleFileUploadCompleted = (field: string) => {
     console.log("File uploaded", field);
     setIsDokumenPeryataanRekeningBerbedaUploaded(true);
+  };
+
+  const onSubmit = async (data: Narasumber) => {
+    try {
+      const { dokumenPeryataanRekeningBerbeda, ...dataWithoutFile } = data;
+      const existingId = initialData?.id;
+      const simpan = await simpanNarasumber(dataWithoutFile, existingId);
+      if (!simpan.success) {
+        toast.error(
+          `Error saving narasumber: ${simpan.error} ${simpan.message}`
+        );
+      } else {
+        toast.success("Berhasil menyimpan narasumber");
+        console.log("Berhasil menyimpan narasumber:", data);
+        onSaveSuccess(data);
+      }
+    } catch (error) {}
   };
 
   return (

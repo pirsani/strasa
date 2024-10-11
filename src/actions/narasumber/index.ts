@@ -23,7 +23,8 @@ const logger = new Logger({
 });
 
 export const simpanNarasumber = async (
-  data: NarasumberWithoutFile
+  data: NarasumberWithoutFile,
+  existingId?: string
 ): Promise<ActionResponse<Narasumber>> => {
   const sessionPengguna = await getSessionPengguna();
   if (
@@ -50,6 +51,25 @@ export const simpanNarasumber = async (
   }
   const permitted = await hasPermission(userId, "narasumber:create");
   logger.info("[permitted]", permitted);
+
+  // if existingId is not provided, then it's should be a new data
+  // but because we are using upsert, we need to prevent user to insert new data with existing id because it will update the existing data, may be user not aware that the data is already exist so we will throw an error
+
+  if (!existingId) {
+    // check if the data already exist
+    const isExist = await dbHonorarium.narasumber.findFirst({
+      where: {
+        id: data.id,
+      },
+    });
+    if (isExist) {
+      return {
+        success: false,
+        error: "E-NUUI-001", // error Narasumber, prevent user unintended try to update
+        message: "Narasumber already exist, please use update instead",
+      };
+    }
+  }
 
   let dataparsed;
   try {
@@ -143,7 +163,10 @@ const saveFileToFinalFolder = async (data: NarasumberWithoutFile) => {
       },
     });
     if (!uploadedFile) {
-      throw new Error("File not found in log uploaded file");
+      logger.warn(
+        "There is no file not found in log uploaded file, ignore if this is a existing data"
+      );
+      return null;
     }
 
     const finalPathFile = path.posix.join(

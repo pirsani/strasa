@@ -31,7 +31,7 @@ export const DialogTambahSatkerAnggaran = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-1 w-48">
-          <Plus size={18} />
+          <Plus size={12} />
           <BrickWall size={18} />
           <span className="hidden sm:block">SatkerAnggaran</span>
         </Button>

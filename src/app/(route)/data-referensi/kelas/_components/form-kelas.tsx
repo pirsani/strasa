@@ -29,18 +29,21 @@ interface FormKelasProps {
   handleFormSubmitComplete?: (isSuccess: Boolean) => void;
   className?: string;
   kelas?: Partial<Kelas>;
+  kegiatanId?: string;
 }
 const FormKelas = ({
   onCancel,
   handleFormSubmitComplete,
   className,
   kelas,
+  kegiatanId,
 }: FormKelasProps) => {
   const form = useForm<Kelas>({
     resolver: zodResolver(kelasSchema),
     defaultValues: {
       kode: "",
       nama: "",
+      kegiatanId: kegiatanId || "",
     },
   });
 
@@ -101,6 +104,7 @@ const FormKelas = ({
                     <SelectKegiatan
                       onChange={field.onChange}
                       inputId={field.name}
+                      value={field.value}
                     />
                   </FormControl>
                   <FormMessage />

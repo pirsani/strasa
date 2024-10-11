@@ -24,7 +24,7 @@ export const DialogFormPejabatPerbendaharaan = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-1 w-32">
-          <Plus size={18} />
+          <Plus size={12} />
           <Contact size={18} />
           <span className="hidden sm:block">Pejabat</span>
           <Signature className="block sm:hidden" size={24} />

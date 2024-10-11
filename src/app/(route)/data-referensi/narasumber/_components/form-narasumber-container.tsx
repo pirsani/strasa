@@ -1,5 +1,5 @@
 "use client";
-import TambahNarasumber from "@/approute/data-referensi/narasumber/_components/tambah-narasumber";
+import DialogTambahNarasumber from "@/app/(route)/data-referensi/narasumber/_components/dialog-tambah-narasumber";
 import { NarasumberWithStringDate } from "@/data/narasumber";
 import { NarasumberForEditing } from "@/zod/schemas/narasumber";
 import { useState } from "react";
@@ -37,7 +37,7 @@ const FormNarasumberContainer = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <TambahNarasumber />
+      <DialogTambahNarasumber />
       <EditNarasumber
         isEditing={isEditing}
         closeDialog={handleOnClose}

@@ -53,7 +53,7 @@ const TambahJadwalContainer = ({ kegiatanId }: TambahJadwalContainerProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"outline"} className="gap-1">
+        <Button variant={"default"} className="gap-1">
           <Plus size={12} />
           <span className="hidden md:block">Jadwal</span>
           <Calendar size={24} />

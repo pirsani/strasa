@@ -13,7 +13,12 @@ import { BookOpen, Plus } from "lucide-react";
 import { useState } from "react";
 import FormMateri from "./form-materi";
 
-export const DialogTambahMateri = () => {
+interface DialogTambahMateriProps {
+  buttonVariant?: "default" | "secondary" | "outline";
+}
+export const DialogTambahMateri = ({
+  buttonVariant = "default",
+}: DialogTambahMateriProps) => {
   const [open, setOpen] = useState(false);
 
   const onCancel = () => {
@@ -30,8 +35,8 @@ export const DialogTambahMateri = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-1 w-36">
-          <Plus size={18} />
+        <Button className="gap-1 w-32" variant={buttonVariant}>
+          <Plus size={12} />
           <BookOpen size={18} />
           <span className="hidden sm:block">Materi</span>
         </Button>

@@ -4,16 +4,12 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { UnitKerja as ZUnitkerja } from "@/zod/schemas/unit-kerja";
-import { BookOpen, GraduationCap, Grid, Plus } from "lucide-react";
-import { Chicle } from "next/font/google";
-import { Children, useEffect, useState } from "react";
-import FormUnitKerja from "./form-unit-kerja";
+import { Grid, Plus } from "lucide-react";
+import { useEffect } from "react";
 
 interface DialogUnitKerjaProps {
   open: boolean;
@@ -32,7 +28,7 @@ export const DialogUnitKerja = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-1 w-36">
-          <Plus size={18} />
+          <Plus size={12} />
           <Grid size={18} />
           <span className="hidden sm:block">Unit Kerja</span>
         </Button>

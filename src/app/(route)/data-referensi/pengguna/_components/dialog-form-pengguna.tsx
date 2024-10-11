@@ -28,7 +28,7 @@ export const DialogFormPengguna = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-1 w-36">
-          <Plus size={18} />
+          <Plus size={12} />
           <Grid size={18} />
           <span className="hidden sm:block">Pengguna</span>
         </Button>

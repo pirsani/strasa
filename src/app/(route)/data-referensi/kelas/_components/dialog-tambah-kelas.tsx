@@ -5,16 +5,22 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { BookOpen, GraduationCap, Grid, Plus } from "lucide-react";
+import { Grid, Plus } from "lucide-react";
 import { useState } from "react";
 import FormKelas from "./form-kelas";
 
-export const DialogTambahKelas = () => {
+interface DialogTambahKelasProps {
+  buttonVariant?: "default" | "secondary" | "outline";
+  kegiatanId?: string;
+}
+export const DialogTambahKelas = ({
+  buttonVariant = "default",
+  kegiatanId = "",
+}: DialogTambahKelasProps) => {
   const [open, setOpen] = useState(false);
 
   const onCancel = () => {
@@ -31,8 +37,8 @@ export const DialogTambahKelas = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-1 w-36">
-          <Plus size={18} />
+        <Button className="gap-1 w-28" variant={buttonVariant}>
+          <Plus size={12} />
           <Grid size={18} />
           <span className="hidden sm:block">Kelas</span>
         </Button>
@@ -47,6 +53,7 @@ export const DialogTambahKelas = () => {
         <FormKelas
           onCancel={onCancel}
           handleFormSubmitComplete={handleFormSubmitComplete}
+          kegiatanId={kegiatanId}
         />
       </DialogContent>
     </Dialog>

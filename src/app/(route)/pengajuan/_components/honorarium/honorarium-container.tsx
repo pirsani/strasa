@@ -1,9 +1,9 @@
-import TambahNarasumber from "@/approute/data-referensi/narasumber/_components/tambah-narasumber";
+import { DialogTambahKelas } from "@/app/(route)/data-referensi/kelas/_components/dialog-tambah-kelas";
+import { DialogTambahMateri } from "@/app/(route)/data-referensi/materi/_components/dialog-tambah-materi";
+import DialogTambahNarasumber from "@/app/(route)/data-referensi/narasumber/_components/dialog-tambah-narasumber";
 import DaftarJadwal from "@/components/kegiatan/honorarium/daftar-jadwal";
 import { Kegiatan } from "@prisma-honorarium/client";
 import TambahJadwalContainer from "./tambah-jadwal-container";
-import TambahKelasContainer from "./tambah-kelas-container";
-import TambahMateriContainer from "./tambah-materi-container";
 
 interface HonorariumContainerProps {
   kegiatan: Kegiatan;
@@ -18,13 +18,16 @@ const HonorariumContainer = ({ kegiatan }: HonorariumContainerProps) => {
             <TambahJadwalContainer kegiatanId={kegiatan.id} />
           </div>
           <div className="">
-            <TambahKelasContainer />
+            <DialogTambahKelas
+              kegiatanId={kegiatan.id}
+              buttonVariant="outline"
+            />
           </div>
           <div className="">
-            <TambahMateriContainer />
+            <DialogTambahMateri buttonVariant="outline" />
           </div>
           <div className="w-1/4">
-            <TambahNarasumber />
+            <DialogTambahNarasumber buttonVariant="outline" />
           </div>
         </div>
 

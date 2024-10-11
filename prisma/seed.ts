@@ -1,11 +1,10 @@
 import { dbHonorarium } from "@/lib/db-honorarium";
-import { es, faker } from "@faker-js/faker";
-import { LOKASI, Organisasi, Provinsi } from "@prisma-honorarium/client";
+import { faker } from "@faker-js/faker";
+import { LOKASI, Organisasi } from "@prisma-honorarium/client";
 import bcrypt from "bcryptjs"; // Import bcrypt for password hashing and comparison
 import csv from "csv-parser";
-import { tr } from "date-fns/locale";
 import fs from "fs";
-import path, { resolve } from "path";
+import path from "path";
 
 interface permission {
   name: string;
@@ -803,44 +802,44 @@ async function main() {
     ],
   });
 
-  const narasumber = await dbHonorarium.narasumber.createMany({
-    data: [
-      {
-        id: "1234567891234567", // ini adalah NIK 16 digit
-        nama: "Dr. Rizal Sukma",
-        NIP: "196509241992031001",
-        pangkatGolonganId: "IV/D",
-        createdBy: "init",
-        email: "",
-      },
-      {
-        id: "1234567891234568", // ini adalah NIK 16 digit
-        nama: "Dr. Bertiga",
-        NIP: "196509241992031002",
-        pangkatGolonganId: "IV/C",
-        createdBy: "init",
-        email: "",
-      },
-      {
-        id: "1234567891234569", // ini adalah NIK 16 digit
-        nama: "Dr. Madya Bendahara",
-        NIP: "197509241992031001",
-        pangkatGolonganId: "IV/B",
-        createdBy: "init",
-        email: "",
-      },
-      {
-        id: "1234567891234570", // ini adalah NIK 16 digit
-        nama: "Dr. Siapa lah",
-        NIP: "198509241992031001",
-        pangkatGolonganId: "IV/A",
-        createdBy: "init",
-        email: "",
-      },
-    ],
-  });
+  // const narasumber = await dbHonorarium.narasumber.createMany({
+  //   data: [
+  //     {
+  //       id: "1234567891234567", // ini adalah NIK 16 digit
+  //       nama: "Dr. Rizal Sukma",
+  //       NIP: "196509241992031001",
+  //       pangkatGolonganId: "IV/D",
+  //       createdBy: "init",
+  //       email: "",
+  //     },
+  //     {
+  //       id: "1234567891234568", // ini adalah NIK 16 digit
+  //       nama: "Dr. Bertiga",
+  //       NIP: "196509241992031002",
+  //       pangkatGolonganId: "IV/C",
+  //       createdBy: "init",
+  //       email: "",
+  //     },
+  //     {
+  //       id: "1234567891234569", // ini adalah NIK 16 digit
+  //       nama: "Dr. Madya Bendahara",
+  //       NIP: "197509241992031001",
+  //       pangkatGolonganId: "IV/B",
+  //       createdBy: "init",
+  //       email: "",
+  //     },
+  //     {
+  //       id: "1234567891234570", // ini adalah NIK 16 digit
+  //       nama: "Dr. Siapa lah",
+  //       NIP: "198509241992031001",
+  //       pangkatGolonganId: "IV/A",
+  //       createdBy: "init",
+  //       email: "",
+  //     },
+  //   ],
+  // });
 
-  const narasumberData = Array.from({ length: 100 }).map(() => ({
+  const narasumberData = Array.from({ length: 8 }).map(() => ({
     id: faker.string.numeric(16), // Generate a unique ID
     nama: faker.person.fullName(), // Generate a random full name
     NIP: faker.string.numeric(18), // Generate a random 18-digit string

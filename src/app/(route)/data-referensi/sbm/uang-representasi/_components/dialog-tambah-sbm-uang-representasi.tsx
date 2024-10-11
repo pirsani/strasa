@@ -31,7 +31,7 @@ export const DialogTambahSbmUangRepresentasi = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-1 w-72">
-          <Plus size={18} />
+          <Plus size={12} />
           <Banknote size={18} />
           <span className="hidden sm:block">SBM Uang Representasi</span>
         </Button>
