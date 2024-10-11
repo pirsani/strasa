@@ -60,7 +60,7 @@ const TambahJadwalContainer = ({ kegiatanId }: TambahJadwalContainerProps) => {
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="w-full sm:min-w-[750px] max-h-[calc(100vh-100px)]"
+        className="flex flex-col w-full sm:min-w-[750px] max-h-[calc(100vh-50px)]"
         onEscapeKeyDown={handleEscapeKeyDown}
       >
         <DialogHeader>
@@ -69,11 +69,13 @@ const TambahJadwalContainer = ({ kegiatanId }: TambahJadwalContainerProps) => {
             Isi form di bawah untuk menambahkan jadwal kelas pengajar
           </DialogDescription>
         </DialogHeader>
-        <FormJadwal
-          onCancel={() => setOpen(false)}
-          onSubmit={onSubmit}
-          kegiatanId={kegiatanId}
-        />
+        <div className="flex w-full h-full overflow-auto px-4">
+          <FormJadwal
+            onCancel={() => setOpen(false)}
+            onSubmit={onSubmit}
+            kegiatanId={kegiatanId}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

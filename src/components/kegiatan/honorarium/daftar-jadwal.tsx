@@ -4,6 +4,7 @@ import { getOptionsSbmHonorarium, OptionSbm } from "@/actions/sbm";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { getJadwalByKegiatanId, JadwalKelasNarasumber } from "@/data/jadwal";
+import { useSearchTerm } from "@/hooks/use-search-term";
 import { formatHariTanggal } from "@/utils/date-format";
 import Decimal from "decimal.js";
 import { Trash } from "lucide-react";
@@ -17,6 +18,26 @@ interface DaftarJadwalProps {
 }
 const DaftarJadwal = ({ kegiatanId, proses }: DaftarJadwalProps) => {
   const [dataJadwal, setDataJadwal] = useState<JadwalKelasNarasumber[]>([]);
+
+  const { searchTerm } = useSearchTerm();
+  const filteredData = dataJadwal.filter((row) => {
+    if (!searchTerm || searchTerm === "") return true;
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    //const searchWords = lowercasedSearchTerm.split(" ").filter(Boolean);
+    const searchWords =
+      lowercasedSearchTerm
+        .match(/"[^"]+"|\S+/g)
+        ?.map((word) => word.replace(/"/g, "")) || [];
+
+    return searchWords.every(
+      (word) =>
+        row.materi.nama?.toLowerCase().includes(word) ||
+        row.jadwalNarasumber.some((narsum) =>
+          narsum.narasumber.nama?.toLowerCase().includes(word)
+        )
+    );
+  });
+
   useEffect(() => {
     const getJadwal = async () => {
       const dataJadwal = await getJadwalByKegiatanId(kegiatanId);
@@ -54,14 +75,14 @@ const DaftarJadwal = ({ kegiatanId, proses }: DaftarJadwalProps) => {
 
   return (
     <div className="flex flex-col gap-6">
-      {dataJadwal &&
-        dataJadwal.map((jadwal, index) => {
+      {filteredData &&
+        filteredData.map((jadwal, index) => {
           return (
             <div
               key={index}
-              className="w-full border border-gray-300 focus-within:ring-1 focus-within:ring-blue-500 rounded-md"
+              className="w-full border border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 rounded-md"
             >
-              <div className="flex flex-row w-full border-b border-gray-300 ">
+              <div className="flex flex-row w-full border-b border-blue-400 ">
                 <div className="px-4 w-1/3 py-2  ">{jadwal.kelas.nama}</div>
                 <div className="px-4 py-2 w-full ">{jadwal.materi.nama}</div>
                 <div className="px-4 py-2 w-full ">
@@ -118,11 +139,8 @@ const DaftarJadwal = ({ kegiatanId, proses }: DaftarJadwalProps) => {
 const FormProsesPengajuan = () => {
   return (
     <div className="flex flex-col px-4 py-2 w-full border-t border-gray-300 gap-2">
-      <div>
-        <Textarea placeholder="Catatan" className="w-full" />
-      </div>
       <div className="flex flex-row justify-between">
-        <Button className="bg-blue-500 text-white">Ajukan</Button>
+        <Button className="">Ajukan</Button>
       </div>
     </div>
   );

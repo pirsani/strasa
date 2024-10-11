@@ -94,7 +94,10 @@ const FormJadwal = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 w-full"
+      >
         <div className="flex flex-row gap-2">
           <FormField
             control={control}
