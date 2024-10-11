@@ -199,6 +199,7 @@ export const TabelHariPesertaKegiatan = ({
 
   useEffect(() => {
     onDataChange(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
@@ -217,6 +218,7 @@ export const TabelHariPesertaKegiatan = ({
     });
 
     setData(updatedPeserta);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     headerColumnHfullboard,
     headerColumnHfulldayHalfday,

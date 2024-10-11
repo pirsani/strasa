@@ -28,6 +28,7 @@ export const TableCellInput = <T,>({
 
   useEffect(() => {
     setValue(getValue());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getValue()]);
 
   const onBlur = () => {
