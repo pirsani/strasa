@@ -11,3 +11,8 @@ k.nama
 FROM kota k
 inner join provinsi p ON p.id = k.provinsi_id 
 where k.id in ('3216','3275','3271','3276','3603','3671','3674','3101');
+
+GRANT SELECT ON vkota_sekitar_jakarta TO public;
+
+-- grant select select to user honuserd01
+GRANT SELECT ON vkota_sekitar_jakarta TO honuserd01;
