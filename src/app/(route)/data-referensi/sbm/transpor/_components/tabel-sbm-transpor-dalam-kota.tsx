@@ -8,16 +8,16 @@ import {
   KolomAksi,
   TabelGeneric,
 } from "@/components/tabel-generic";
+import { SbmTransporDalamKotaPulangPergiPlainObject } from "@/data/sbm-transpor/dalam-kota";
 import { sbmTransporDalamKotaPulangPergiSchema } from "@/zod/schemas/transpor";
 
-import { SbmTransporDalamKotaPulangPergi } from "@prisma-honorarium/client";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ZodError } from "zod";
 
 interface TabelSbmTransporDalamKotaPulangPergiProps {
-  data: SbmTransporDalamKotaPulangPergi[];
+  data: SbmTransporDalamKotaPulangPergiPlainObject[];
   optionsKota: { value: string; label: string }[];
 }
 export const TabelSbmTransporDalamKotaPulangPergi = ({
@@ -25,17 +25,17 @@ export const TabelSbmTransporDalamKotaPulangPergi = ({
   optionsKota,
 }: TabelSbmTransporDalamKotaPulangPergiProps) => {
   const [data, setData] =
-    useState<SbmTransporDalamKotaPulangPergi[]>(initialData);
+    useState<SbmTransporDalamKotaPulangPergiPlainObject[]>(initialData);
   const [isEditing, setIsEditing] = useState(false);
   const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
   const [originalData, setOriginalData] =
-    useState<SbmTransporDalamKotaPulangPergi | null>(null);
+    useState<SbmTransporDalamKotaPulangPergiPlainObject | null>(null);
 
-  const columns: ColumnDef<SbmTransporDalamKotaPulangPergi>[] = [
+  const columns: ColumnDef<SbmTransporDalamKotaPulangPergiPlainObject>[] = [
     {
       accessorKey: "besaran",
       header: "Besaran",
-      cell: formatCurrency<SbmTransporDalamKotaPulangPergi>,
+      cell: formatCurrency<SbmTransporDalamKotaPulangPergiPlainObject>,
       footer: "Kode",
     },
 
@@ -52,7 +52,7 @@ export const TabelSbmTransporDalamKotaPulangPergi = ({
       accessorKey: "_additionalKolomAksi",
       header: "Aksi",
       cell: (info) =>
-        KolomAksi<SbmTransporDalamKotaPulangPergi>(
+        KolomAksi<SbmTransporDalamKotaPulangPergiPlainObject>(
           info,
           handleEdit,
           handleDelete,
@@ -67,7 +67,9 @@ export const TabelSbmTransporDalamKotaPulangPergi = ({
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-  const handleDelete = async (row: SbmTransporDalamKotaPulangPergi) => {
+  const handleDelete = async (
+    row: SbmTransporDalamKotaPulangPergiPlainObject
+  ) => {
     setIsConfirmDialogOpen(true);
     setOriginalData(row);
   };
@@ -93,13 +95,13 @@ export const TabelSbmTransporDalamKotaPulangPergi = ({
     }
   };
 
-  const handleView = (row: SbmTransporDalamKotaPulangPergi) => {
+  const handleView = (row: SbmTransporDalamKotaPulangPergiPlainObject) => {
     console.log("View row:", row);
     // Implement your view logic here
     // view pdf
   };
 
-  const handleEdit = (row: Row<SbmTransporDalamKotaPulangPergi>) => {
+  const handleEdit = (row: Row<SbmTransporDalamKotaPulangPergiPlainObject>) => {
     console.log("Edit row:", row);
     // Implement your edit logic here
     setOriginalData(row.original); // Store the original data
@@ -108,7 +110,9 @@ export const TabelSbmTransporDalamKotaPulangPergi = ({
     setEditableRowIndex(row.id);
   };
 
-  const handleOnSave = async (row: SbmTransporDalamKotaPulangPergi) => {
+  const handleOnSave = async (
+    row: SbmTransporDalamKotaPulangPergiPlainObject
+  ) => {
     console.log("Save row:", row);
     // Implement your save logic here
 
@@ -134,7 +138,7 @@ export const TabelSbmTransporDalamKotaPulangPergi = ({
     }
   };
 
-  const handleUndoEdit = (row: SbmTransporDalamKotaPulangPergi) => {
+  const handleUndoEdit = (row: SbmTransporDalamKotaPulangPergiPlainObject) => {
     console.log("Undo edit row:", row);
     // Implement your undo edit logic here
     if (originalData) {

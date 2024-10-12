@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Grid, Plus } from "lucide-react";
+import { Banknote, Plus } from "lucide-react";
 import { useState } from "react";
 import FormSbmTransporJakartaKeKotaKabSekitar from "./form-sbm-transpor-jakarta-ke-kota-kab-sekitar";
 
@@ -39,7 +39,7 @@ export const DialogTambahSbmTransporJakartaKeKotaKabSekitar = ({
       <DialogTrigger asChild>
         <Button className="gap-1 w-96" variant={buttonVariant}>
           <Plus size={12} />
-          <Grid size={18} />
+          <Banknote size={18} />
           <span className="hidden sm:block">
             SBM Transpor Jakarta Ke Kota Kab Sekitar
           </span>

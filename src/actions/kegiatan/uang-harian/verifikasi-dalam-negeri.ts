@@ -3,6 +3,7 @@ import { getSessionPenggunaForAction } from "@/actions/pengguna";
 import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
 import { dbHonorarium } from "@/lib/db-honorarium";
+import Decimal from "decimal.js";
 import { PesertaKegiatanDalamNegeri } from "../peserta/dalam-negeri";
 
 const SetujuiPengajuanUhDalamNegeri = async (
@@ -36,10 +37,11 @@ const SetujuiPengajuanUhDalamNegeri = async (
     const provinsi = kegiatan.provinsiId;
 
     // find SBM
-
+    const tahunSbm = kegiatan.tanggalMulai.getFullYear();
     const sbm = await dbHonorarium.sbmUhDalamNegeri.findFirst({
       where: {
         provinsiId: provinsi,
+        tahun: tahunSbm,
       },
     });
 
@@ -48,6 +50,25 @@ const SetujuiPengajuanUhDalamNegeri = async (
         success: false,
         error: "SBM tidak ditemukan",
       };
+    }
+
+    let besaranSbmTransport = new Decimal(0);
+    if (lokasi === "DALAM_KOTA") {
+      const sbmTransportDalamKota =
+        await dbHonorarium.sbmTransporDalamKotaPulangPergi.findFirst({
+          where: {
+            tahun: tahunSbm,
+          },
+        });
+
+      if (!sbmTransportDalamKota) {
+        return {
+          success: false,
+          error: "SBM Transport Dalam Kota tidak ditemukan",
+        };
+      }
+
+      besaranSbmTransport = sbmTransportDalamKota.besaran;
     }
 
     const { fullboard, fulldayHalfday, luarKota, dalamKota, diklat } = sbm;
@@ -73,7 +94,8 @@ const SetujuiPengajuanUhDalamNegeri = async (
                   hDiklat: uhDalamNegeri.hDiklat,
                   uhDiklat: uhDalamNegeri.jumlahHari * Number(diklat),
                   hTransport: uhDalamNegeri.hTransport,
-                  //uhTransport: uhDalamNegeri.uhTransport * Number(),
+                  uhTransport:
+                    uhDalamNegeri.uhTransport * Number(besaranSbmTransport),
                   verifiedBy: penggunaId,
                   verifiedAt: new Date(),
                 },

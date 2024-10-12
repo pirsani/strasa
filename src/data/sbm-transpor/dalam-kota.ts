@@ -1,5 +1,6 @@
 import { dbHonorarium } from "@/lib/db-honorarium";
 import {
+  Kota,
   SbmTransporDalamKotaPulangPergi,
   SbmTransporIbukotaKeKotaKab,
   SbmTransporJakartaKeKotaKabSekitar,
@@ -20,11 +21,12 @@ export type SbmTransporIbukotaKeKotaKabPlainObject = Omit<
   besaran: number | Decimal;
 };
 
-export type sbmTransporJakartaKeKotaKabSekitarPlainObject = Omit<
+export type SbmTransporJakartaKeKotaKabSekitarPlainObject = Omit<
   SbmTransporJakartaKeKotaKabSekitar,
   "besaran"
 > & {
   besaran: number | Decimal;
+  kota: Kota;
 };
 
 export const getSbmTransporDalamKotaPulangPergi = async (

@@ -1,11 +1,11 @@
 "use client";
 import {
   deleteSbmTransporJakartaKeKotaKabSekitar,
-  SbmTransporJakartaKeKotaKabSekitarWithKota,
   simpanDataSbmTransporJakartaKeKotaKabSekitar,
 } from "@/actions/sbm/transpor";
 import ConfirmDialog from "@/components/confirm-dialog";
 import { KolomAksi, TabelGeneric } from "@/components/tabel-generic";
+import { SbmTransporJakartaKeKotaKabSekitarPlainObject } from "@/data/sbm-transpor/dalam-kota";
 import { sbmTransporJakartaKeKotaKabSekitarSchema } from "@/zod/schemas/transpor";
 
 import { ColumnDef, Row } from "@tanstack/react-table";
@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { ZodError } from "zod";
 
 interface TabelSbmTransporJakartaKeKotaSekitarProps {
-  data: SbmTransporJakartaKeKotaKabSekitarWithKota[];
+  data: SbmTransporJakartaKeKotaKabSekitarPlainObject[];
   optionsKota: { value: string; label: string }[];
 }
 export const TabelSbmTransporJakartaKeKotaSekitar = ({
@@ -22,13 +22,13 @@ export const TabelSbmTransporJakartaKeKotaSekitar = ({
   optionsKota,
 }: TabelSbmTransporJakartaKeKotaSekitarProps) => {
   const [data, setData] =
-    useState<SbmTransporJakartaKeKotaKabSekitarWithKota[]>(initialData);
+    useState<SbmTransporJakartaKeKotaKabSekitarPlainObject[]>(initialData);
   const [isEditing, setIsEditing] = useState(false);
   const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
   const [originalData, setOriginalData] =
-    useState<SbmTransporJakartaKeKotaKabSekitarWithKota | null>(null);
+    useState<SbmTransporJakartaKeKotaKabSekitarPlainObject | null>(null);
 
-  const columns: ColumnDef<SbmTransporJakartaKeKotaKabSekitarWithKota>[] = [
+  const columns: ColumnDef<SbmTransporJakartaKeKotaKabSekitarPlainObject>[] = [
     {
       id: "rowNumber",
       header: "#",
@@ -62,7 +62,7 @@ export const TabelSbmTransporJakartaKeKotaSekitar = ({
       accessorKey: "_additionalKolomAksi",
       header: "Aksi",
       cell: (info) =>
-        KolomAksi<SbmTransporJakartaKeKotaKabSekitarWithKota>(
+        KolomAksi<SbmTransporJakartaKeKotaKabSekitarPlainObject>(
           info,
           handleEdit,
           handleDelete,
@@ -78,7 +78,7 @@ export const TabelSbmTransporJakartaKeKotaSekitar = ({
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   const handleDelete = async (
-    row: SbmTransporJakartaKeKotaKabSekitarWithKota
+    row: SbmTransporJakartaKeKotaKabSekitarPlainObject
   ) => {
     setIsConfirmDialogOpen(true);
     setOriginalData(row);
@@ -103,13 +103,15 @@ export const TabelSbmTransporJakartaKeKotaSekitar = ({
     }
   };
 
-  const handleView = (row: SbmTransporJakartaKeKotaKabSekitarWithKota) => {
+  const handleView = (row: SbmTransporJakartaKeKotaKabSekitarPlainObject) => {
     console.log("View row:", row);
     // Implement your view logic here
     // view pdf
   };
 
-  const handleEdit = (row: Row<SbmTransporJakartaKeKotaKabSekitarWithKota>) => {
+  const handleEdit = (
+    row: Row<SbmTransporJakartaKeKotaKabSekitarPlainObject>
+  ) => {
     console.log("Edit row:", row);
     // Implement your edit logic here
     setOriginalData(row.original); // Store the original data
@@ -119,7 +121,7 @@ export const TabelSbmTransporJakartaKeKotaSekitar = ({
   };
 
   const handleOnSave = async (
-    row: SbmTransporJakartaKeKotaKabSekitarWithKota
+    row: SbmTransporJakartaKeKotaKabSekitarPlainObject
   ) => {
     console.log("Save row:", row);
     // Implement your save logic here
@@ -146,7 +148,9 @@ export const TabelSbmTransporJakartaKeKotaSekitar = ({
     }
   };
 
-  const handleUndoEdit = (row: SbmTransporJakartaKeKotaKabSekitarWithKota) => {
+  const handleUndoEdit = (
+    row: SbmTransporJakartaKeKotaKabSekitarPlainObject
+  ) => {
     console.log("Undo edit row:", row);
     // Implement your undo edit logic here
     if (originalData) {
