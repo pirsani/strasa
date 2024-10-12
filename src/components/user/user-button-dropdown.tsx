@@ -41,7 +41,7 @@ const UserButtonDropdown = ({ user }: IUserButtonProps) => (
       <Avatar className="w-9 h-9">
         <AvatarImage
           className="rounded-full w-9 h-9 border-2 border-gray-300"
-          src={user.image ? "/images/avatar.png" : "/images/avatar.png"}
+          src={user.image ?? "/images/avatar.png"}
           sizes="9"
         />
         <AvatarFallback className="w-9 h-9 text-sm">

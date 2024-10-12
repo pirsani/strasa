@@ -164,6 +164,14 @@ export const dataReferensiRoutes: RouteItem[] = [
     order: 4,
     displayAsMenu: true,
   },
+  {
+    name: "referensi-sbm-transpor",
+    title: "SBM Transpor",
+    href: "/data-referensi/sbm/transpor",
+    icon: "banknote",
+    order: 4,
+    displayAsMenu: true,
+  },
   // atas permintaan user, referensi sbm taksi dihapus
   // {
   //   name: "referensi-sbm-taksi",

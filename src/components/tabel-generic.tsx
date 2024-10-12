@@ -13,12 +13,10 @@ import {
   Table,
   useReactTable,
 } from "@tanstack/react-table";
-import Decimal from "decimal.js";
 import {
   ArrowDownUp,
   ChevronLeft,
   ChevronRight,
-  Delete,
   Pencil,
   Save,
   Trash,
@@ -26,7 +24,6 @@ import {
   Undo2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Input } from "./ui/input";
 
 // <https://github.com/TanStack/table/discussions/5051
 
@@ -40,6 +37,7 @@ interface TabelGenericProps<T> {
   frozenColumnCount?: number;
   isEditing?: boolean;
   editableRowId?: string | null;
+  hidePagination?: boolean;
 }
 
 export const TabelGeneric = <T,>({
@@ -48,6 +46,7 @@ export const TabelGeneric = <T,>({
   frozenColumnCount = 1,
   isEditing = false,
   editableRowId = null,
+  hidePagination = false,
 }: TabelGenericProps<T>) => {
   const [data, setData] = useState(initialData); // Assuming `initialData` is your table data
   //const [isEditing, setIsEditing] = useState(initialIsEditing);
@@ -457,7 +456,7 @@ export const TabelGeneric = <T,>({
           </tbody>
         </table>
       </div>
-      <PaginationControls table={table} />
+      {!hidePagination && <PaginationControls table={table} />}
     </div>
   );
 };

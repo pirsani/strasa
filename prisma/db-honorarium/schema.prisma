@@ -297,18 +297,65 @@ model SbmTaksi {
   @@map("sbm_taksi")
 }
 
+model SbmTransporDalamKotaPulangPergi {
+  id        String    @id @default(cuid())
+  besaran   Decimal   @db.Decimal(10, 0)
+  tahun     Int       @unique
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@map("sbm_transpor_dalam_kota_pulang_pergi")
+}
+
+model SbmTransporJakartaKeKotaKabSekitar {
+  id        String    @id @default(cuid())
+  kotaId    String    @map("kota_id")
+  kota      Kota      @relation(fields: [kotaId], references: [id], name: "jakarta_ke_kota_kab_sekitar")
+  besaran   Decimal   @db.Decimal(10, 0)
+  tahun     Int
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@unique([kotaId, tahun])
+  @@map("sbm_transpor_jakarta_ke_kota_kab_sekitar")
+}
+
+model SbmTransporIbukotaKeKotaKab {
+  id        String    @id @default(cuid())
+  ibukotaId String    @map("ibukota_id")
+  ibukota   Kota      @relation(fields: [ibukotaId], references: [id], name: "ibukota")
+  kotaId    String    @map("kota_id")
+  kota      Kota      @relation(fields: [kotaId], references: [id], name: "kota_kab_tujuan")
+  besaran   Decimal   @db.Decimal(10, 0)
+  tahun     Int
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@unique([ibukotaId, kotaId, tahun])
+  @@map("sbm_transpor_ibukota_ke_kota_kab")
+}
+
 model Kota {
-  id             String            @id @default(cuid())
-  provinsiId     String            @map("provinsi_id")
-  provinsi       Provinsi          @relation(fields: [provinsiId], references: [id])
-  nama           String
-  aktif          Boolean           @default(true) // bisa saja nama kota berubah, maka aktif di nonaktifkan
-  createdBy      String            @map("created_by")
-  createdAt      DateTime          @default(now()) @map("created_at")
-  updatedBy      String?           @map("updated_by")
-  updatedAt      DateTime?         @updatedAt @map("updated_at")
-  sbmTiketAsal   SbmTiketPesawat[] @relation("KotaAsal")
-  SbmTiketTujuan SbmTiketPesawat[] @relation("KotaTujuan")
+  id                                 String                               @id @default(cuid())
+  provinsiId                         String                               @map("provinsi_id")
+  provinsi                           Provinsi                             @relation(fields: [provinsiId], references: [id])
+  nama                               String
+  aktif                              Boolean                              @default(true) // bisa saja nama kota berubah, maka aktif di nonaktifkan
+  createdBy                          String                               @map("created_by")
+  createdAt                          DateTime                             @default(now()) @map("created_at")
+  updatedBy                          String?                              @map("updated_by")
+  updatedAt                          DateTime?                            @updatedAt @map("updated_at")
+  sbmTiketAsal                       SbmTiketPesawat[]                    @relation("kota_asal")
+  SbmTiketTujuan                     SbmTiketPesawat[]                    @relation("kota_tujuan")
+  SbmTransporJakartaKeKotaKabSekitar SbmTransporJakartaKeKotaKabSekitar[] @relation("jakarta_ke_kota_kab_sekitar")
+  SbmTransporIbukotaKeKotaKabAsal    SbmTransporIbukotaKeKotaKab[]        @relation("ibukota")
+  SbmTransporIbukotaKeKotaKabTujuan  SbmTransporIbukotaKeKotaKab[]        @relation("kota_kab_tujuan")
 
   @@map("kota")
 }
@@ -316,9 +363,9 @@ model Kota {
 model SbmTiketPesawat {
   id           String  @id @default(cuid())
   kotaAsalId   String  @map("kota_asal_id")
-  kotaAsal     Kota    @relation("KotaAsal", fields: [kotaAsalId], references: [id])
+  kotaAsal     Kota    @relation("kota_asal", fields: [kotaAsalId], references: [id])
   kotaTujuanId String  @map("kota_tujuan_id")
-  kotaTujuan   Kota    @relation("KotaTujuan", fields: [kotaTujuanId], references: [id])
+  kotaTujuan   Kota    @relation("kota_tujuan", fields: [kotaTujuanId], references: [id])
   tiketBisnis  Decimal @map("tiket_bisnis") @db.Decimal(10, 0)
   tiketEkonomi Decimal @map("tiket_ekonomi") @db.Decimal(10, 0)
   tahun        Int
