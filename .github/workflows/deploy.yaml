@@ -65,7 +65,8 @@ jobs:
 
       - name: Extract and restart service on VPS
         run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+          export PATH="${{ secrets.PNPM_PATH }}:${{ secrets.PM2_PATH }}:$PATH" # Use secrets for pnpm and pm2 paths
           tar -xzf ${{ secrets.DIR_TARGET }}/build.tar.gz -C ${{ secrets.DIR_TARGET }}
-          pm2 restart pnpm --name d01 -- start -p 3030
+          pm2 restart d01 || pm2 start pnpm --name d01 -- start -p 3030
           EOF
