@@ -3,7 +3,7 @@ import { Progress } from "@/components/form/progress";
 import { cn } from "@/lib/utils";
 import { createId } from "@paralleldrive/cuid2";
 import axios from "axios";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Controller,
   ControllerRenderProps,
@@ -44,6 +44,10 @@ FormFileImmediateUploadProps) => {
   const { control, watch } = useFormContext();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [percentCompleted, setPercentCompleted] = useState(0);
+
+  useEffect(() => {
+    setPercentCompleted(0);
+  }, [cuid]);
 
   // Watch the field value to display previously saved file
   const currentFile = watch(name) as File | undefined;

@@ -1,4 +1,3 @@
-import SimpanJadwalKelasNarasumber from "@/actions/honorarium/narasumber";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,46 +7,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Jadwal, jadwalSchema } from "@/zod/schemas/jadwal";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Jadwal } from "@/zod/schemas/jadwal";
 import { Calendar, Plus } from "lucide-react";
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "sonner";
 import FormJadwal from "./form-jadwal";
 
 interface TambahJadwalContainerProps {
   kegiatanId: string;
+  onSuccess?: () => void;
 }
 
-const TambahJadwalContainer = ({ kegiatanId }: TambahJadwalContainerProps) => {
+const TambahJadwalContainer = ({
+  kegiatanId,
+  onSuccess = () => {},
+}: TambahJadwalContainerProps) => {
   const [open, setOpen] = useState(false);
-  const form = useForm<Jadwal>({
-    resolver: zodResolver(jadwalSchema),
-  });
 
-  const {
-    handleSubmit,
-    formState: { errors },
-  } = form;
-
-  const onSubmit: SubmitHandler<Jadwal> = async (data) => {
-    const { dokumenDaftarHadir, dokumenSurat, ...jadwalWithoutFile } = data;
-    console.log(data);
-    console.log(jadwalWithoutFile);
-    const jadwal = await SimpanJadwalKelasNarasumber(jadwalWithoutFile);
-    if (jadwal.success) {
-      //setOpen(false);
-      toast.success("Jadwal berhasil disimpan");
-    } else {
-      toast.error(jadwal.error);
-    }
-    // Call API to save data
-    // Close dialog
-    // setOpen(false);
-  };
   const handleEscapeKeyDown = (event: KeyboardEvent) => {
     event.preventDefault(); // Prevent the default behavior of closing the dialog
+  };
+
+  const handleOnSuccess = (data: Jadwal) => {
+    // call parent on success
+    onSuccess();
   };
 
   return (
@@ -72,7 +54,7 @@ const TambahJadwalContainer = ({ kegiatanId }: TambahJadwalContainerProps) => {
         <div className="flex w-full h-full overflow-auto px-4">
           <FormJadwal
             onCancel={() => setOpen(false)}
-            onSubmit={onSubmit}
+            onSuccess={handleOnSuccess}
             kegiatanId={kegiatanId}
           />
         </div>

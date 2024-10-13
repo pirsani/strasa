@@ -1,6 +1,8 @@
+import SimpanJadwalKelasNarasumber from "@/actions/honorarium/narasumber";
 import CummulativeErrors from "@/components/form/cummulative-error";
 import InputDatePicker from "@/components/form/date-picker/input-date-picker";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
+import RequiredLabel from "@/components/form/required";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import SelectKelas from "./select-kelas";
 import SelectMateri from "./select-materi";
 import SelectNarasumber from "./select-narasumber";
@@ -25,38 +28,61 @@ import SelectNarasumber from "./select-narasumber";
 interface FormJadwalProps {
   kegiatanId: string;
   onCancel?: () => void;
-  onSubmit?: (data: Jadwal) => void;
+  onSuccess?: (data: Jadwal) => void;
 }
 const FormJadwal = ({
   kegiatanId,
   onCancel = () => {},
-  onSubmit = () => {},
+  onSuccess = () => {},
 }: FormJadwalProps) => {
+  const generateCuids = () => ({
+    id: createId(),
+    dokumenDaftarHadirCuid: "daftarHadir" + createId() + ".pdf",
+    dokumenUndanganNarasumberCuid: "surat" + createId() + ".pdf",
+  });
   const form = useForm<Jadwal>({
     resolver: zodResolver(jadwalSchema),
     defaultValues: {
-      id: createId(),
       kegiatanId,
       tanggal: new Date(),
-      dokumenDaftarHadirCuid: "daftarHadir" + createId() + ".pdf",
-      dokumenSuratCuid: "surat" + createId() + ".pdf",
+      narasumberIds: [],
+      kelasId: "",
+      materiId: "",
+      ...generateCuids(),
     },
   });
 
   const [isDaftarHadirUploaded, setIsDaftarHadirUploaded] = useState(false);
-  const [isSuratUploaded, setIsSuratUploaded] = useState(false);
+  const [
+    isDokumenUndanganNarasumberUploaded,
+    setIsDokumenUndanganNarasumberUploaded,
+  ] = useState(false);
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
 
   const {
     setValue,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isSubmitting },
   } = form;
 
   const jadwalId = form.watch("id");
   const dokumenDaftarHadirCuid = form.watch("dokumenDaftarHadirCuid");
-  const dokumenSuratCuid = form.watch("dokumenSuratCuid");
+  const dokumenUndanganNarasumberCuid = form.watch(
+    "dokumenUndanganNarasumberCuid"
+  );
+
+  const handleReset = () => {
+    reset({
+      kegiatanId,
+      tanggal: new Date(),
+      narasumberIds: [],
+      kelasId: "",
+      materiId: "",
+      ...generateCuids(), // regenerate new cuids here
+    });
+  };
 
   // Use a ref to store the folderCuid
   // const folderCuidRef = useRef(createId());
@@ -79,18 +105,37 @@ const FormJadwal = ({
     console.log("File uploaded", field);
     if (field === "dokumenDaftarHadir") {
       setIsDaftarHadirUploaded(true);
-    } else if (field === "dokumenSurat") {
-      setIsSuratUploaded(true);
+    } else if (field === "dokumenUndanganNarasumber") {
+      setIsDokumenUndanganNarasumberUploaded(true);
+    }
+  };
+
+  const onSubmit = async (data: Jadwal) => {
+    const {
+      dokumenDaftarHadir,
+      dokumenUndanganNarasumber,
+      ...jadwalWithoutFile
+    } = data;
+    console.log(data);
+    console.log(jadwalWithoutFile);
+    const jadwal = await SimpanJadwalKelasNarasumber(jadwalWithoutFile);
+    if (jadwal.success) {
+      handleReset();
+      toast.success("Jadwal berhasil disimpan");
+      // call parent on success
+      onSuccess(data);
+    } else {
+      toast.error(jadwal.error);
     }
   };
 
   useEffect(() => {
-    if (isDaftarHadirUploaded && isSuratUploaded) {
+    if (isDaftarHadirUploaded && isDokumenUndanganNarasumberUploaded) {
       setIsReadyToSubmit(true);
     } else {
       setIsReadyToSubmit(false);
     }
-  }, [isDaftarHadirUploaded, isSuratUploaded]);
+  }, [isDaftarHadirUploaded, isDokumenUndanganNarasumberUploaded]);
 
   return (
     <Form {...form}>
@@ -104,7 +149,9 @@ const FormJadwal = ({
             name="tanggal"
             render={({ field }) => (
               <FormItem className="w-64">
-                <FormLabel htmlFor="tanggal">Tanggal</FormLabel>
+                <FormLabel htmlFor="tanggal">
+                  Tanggal <RequiredLabel />
+                </FormLabel>
                 <FormControl>
                   <InputDatePicker
                     name={field.name}
@@ -124,7 +171,10 @@ const FormJadwal = ({
             name="kelasId"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel htmlFor="kelasId">Kelas</FormLabel>
+                <FormLabel htmlFor="kelasId">
+                  Kelas
+                  <RequiredLabel />
+                </FormLabel>
                 <FormControl>
                   <SelectKelas
                     inputId={field.name}
@@ -143,7 +193,10 @@ const FormJadwal = ({
           name="materiId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="materiId">Materi</FormLabel>
+              <FormLabel htmlFor="materiId">
+                Materi
+                <RequiredLabel />
+              </FormLabel>
               <FormControl>
                 <SelectMateri
                   inputId={field.name}
@@ -161,7 +214,10 @@ const FormJadwal = ({
           name="narasumberIds"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="narasumberIds">Narasumber</FormLabel>
+              <FormLabel htmlFor="narasumberIds">
+                Narasumber
+                <RequiredLabel />
+              </FormLabel>
               <FormControl>
                 <SelectNarasumber
                   isMulti
@@ -180,7 +236,10 @@ const FormJadwal = ({
           name="jumlahJamPelajaran"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Jumlah Jam Pelajaran</FormLabel>
+              <FormLabel>
+                Jumlah Jam Pelajaran
+                <RequiredLabel />
+              </FormLabel>
               <FormControl>
                 <Input
                   name={field.name}
@@ -201,11 +260,14 @@ const FormJadwal = ({
           name="dokumenDaftarHadir"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="dokumenDaftarHadir">Daftar Hadir</FormLabel>
+              <FormLabel htmlFor="dokumenDaftarHadir">
+                Daftar Hadir
+                <RequiredLabel />
+              </FormLabel>
               <FormControl>
                 <FormFileImmediateUpload
-                  cuid={jadwalId}
-                  folder={dokumenDaftarHadirCuid}
+                  cuid={dokumenDaftarHadirCuid}
+                  folder={kegiatanId}
                   name={field.name}
                   onFileChange={handleFileChange}
                   onFileUploadComplete={handleFileUploadCompleted}
@@ -218,16 +280,17 @@ const FormJadwal = ({
         />
         <FormField
           control={control}
-          name="dokumenSurat"
+          name="dokumenUndanganNarasumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="dokumenSurat">
+              <FormLabel htmlFor="dokumenUndanganNarasumber">
                 Surat/Nodin/Memo Undangan Narsum
+                <RequiredLabel />
               </FormLabel>
               <FormControl>
                 <FormFileImmediateUpload
-                  cuid={jadwalId}
-                  folder={dokumenSuratCuid}
+                  cuid={dokumenUndanganNarasumberCuid}
+                  folder={kegiatanId}
                   name={field.name}
                   onFileChange={handleFileChange}
                   onFileUploadComplete={handleFileUploadCompleted}
@@ -238,7 +301,7 @@ const FormJadwal = ({
             </FormItem>
           )}
         />
-        <CummulativeErrors errors={errors} verbose />
+        <CummulativeErrors errors={errors} verbose={false} />
         <div
           className={cn("flex flex-col sm:flex-row  sm:justify-end gap-2 mt-6")}
         >

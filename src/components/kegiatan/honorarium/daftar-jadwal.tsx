@@ -15,8 +15,13 @@ export type Proses = "pengajuan" | "verfikasi" | "pembayaran";
 interface DaftarJadwalProps {
   kegiatanId: string;
   proses: Proses;
+  triggerUpdate?: number;
 }
-const DaftarJadwal = ({ kegiatanId, proses }: DaftarJadwalProps) => {
+const DaftarJadwal = ({
+  kegiatanId,
+  proses,
+  triggerUpdate, // hanya simple trigger untuk re-render
+}: DaftarJadwalProps) => {
   const [dataJadwal, setDataJadwal] = useState<JadwalKelasNarasumber[]>([]);
 
   const { searchTerm } = useSearchTerm();
@@ -44,7 +49,7 @@ const DaftarJadwal = ({ kegiatanId, proses }: DaftarJadwalProps) => {
       setDataJadwal(dataJadwal);
     };
     getJadwal();
-  }, [kegiatanId]);
+  }, [kegiatanId, triggerUpdate]);
 
   const [optionsSbmHonorarium, setOptionsSbmHonorarium] = useState<OptionSbm[]>(
     []
