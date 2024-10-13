@@ -49,6 +49,11 @@ jobs:
         run: pnpm run prisma:db-push
 
       - name: Build the application
+        env:
+          DATABASE_URL_ADMIN: ${{ secrets.DATABASE_URL_ADMIN }} # Existing secret
+          DATABASE_URL_HONORARIUM: ${{ secrets.DATABASE_URL_HONORARIUM }} # New secret added
+          BASE_PATH_UPLOAD: ${{ secrets.BASE_PATH_UPLOAD }}
+          BASE_PATH_UPLOAD_CHUNK: ${{ secrets.BASE_PATH_UPLOAD_CHUNK }}
         run: pnpm run build # Use pnpm to build the application
 
       - name: Archive build artifacts
