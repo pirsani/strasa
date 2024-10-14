@@ -111,6 +111,7 @@ const NarasumberDetail = ({
         honorarium: new Decimal(0),
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JumlahJP, selectedSbmHonorarium]);
 
   const handleUpdateJp = async () => {
