@@ -15,12 +15,14 @@ interface NarasumberDetailProps {
   narasumber: Narasumber;
   jadwalNarasumber: JadwalNarasumber;
   optionsSbmHonorarium?: OptionSbm[];
+  proses?: "pengajuan" | "verfikasi" | "pembayaran";
 }
 
 const NarasumberDetail = ({
   narasumber,
   jadwalNarasumber,
   optionsSbmHonorarium = [],
+  proses,
 }: NarasumberDetailProps) => {
   const [perkiraanPembayaran, setPerkiraanPembayaran] =
     useState<PerkiraanPembayaran>({
@@ -92,8 +94,6 @@ const NarasumberDetail = ({
       <RowNarasumber text="Bank" value={narasumber.bank} />
       <RowNarasumber text="Nama Rekening" value={narasumber.namaRekening} />
       <RowNarasumber text="Nomor Rekening" value={narasumber.nomorRekening} />
-      <RowNarasumber text="Kelas" value={`Kelas X`} />
-      <RowNarasumber text="Materi" value={`Materi Y`} />
       <RowNarasumberWithInput text="lembar konfirmasi">
         <div className="w-full flex justify-between">
           <span>nama file</span>
@@ -109,6 +109,7 @@ const NarasumberDetail = ({
       </RowNarasumberWithInput>
       <RowNarasumberWithInput text="Jumlah JP">
         <input
+          value={Number(JumlahJP)}
           className="px-2 py-1 w-24"
           min={0.5}
           type="number"

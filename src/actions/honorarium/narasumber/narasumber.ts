@@ -11,9 +11,9 @@ import fse from "fs-extra";
 import { revalidatePath } from "next/cache";
 import path from "path";
 import { Logger } from "tslog";
-import { moveFileToFinalFolder } from "../file";
-import { getKegiatanById } from "../kegiatan";
-import { getPrismaErrorResponse } from "../prisma-error-response";
+import { moveFileToFinalFolder } from "../../file";
+import { getKegiatanById } from "../../kegiatan";
+import { getPrismaErrorResponse } from "../../prisma-error-response";
 // Create a Logger instance with custom settings
 const logger = new Logger({
   hideLogPositionForProduction: true,
@@ -88,6 +88,7 @@ export const SimpanJadwalKelasNarasumber = async (
             create: {
               jadwalId: jadwalUpsert.id,
               narasumberId: narasumberId,
+              jumlahJamPelajaran: jadwal.jumlahJamPelajaran,
               createdBy: penggunaId,
               createdAt: new Date(),
             },

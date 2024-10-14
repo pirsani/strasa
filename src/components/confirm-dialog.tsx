@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 interface ConfirmDialogProps {
   message: string;
   isOpen: boolean;
-  onConfirm: () => void;
+  onConfirm: (data?: any) => void;
   onCancel: () => void;
   className?: string;
 }

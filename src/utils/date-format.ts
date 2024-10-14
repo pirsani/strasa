@@ -1,12 +1,14 @@
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
 
-export const formatHariTanggal = (date: Date): string => {
-  return format(date, "PPPP", { locale: id });
+export const formatHariTanggal = (date: string | Date): string => {
+  const parsedDate = typeof date === "string" ? parseISO(date) : date;
+  return format(parsedDate, "PPPP", { locale: id });
 };
 
-export const formatTanggal = (date: Date): string => {
-  return format(date, "d MMMM yyyy", { locale: id });
+export const formatTanggal = (date: string | Date): string => {
+  const parsedDate = typeof date === "string" ? parseISO(date) : date;
+  return format(parsedDate, "d MMMM yyyy", { locale: id });
 };
 
 // Example usage

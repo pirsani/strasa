@@ -1,5 +1,6 @@
 "use server";
 import { dbHonorarium } from "@/lib/db-honorarium";
+import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import {
   Jadwal,
   JadwalNarasumber,
@@ -7,12 +8,40 @@ import {
   Materi,
   Narasumber,
 } from "@prisma-honorarium/client";
+import Decimal from "decimal.js";
+
+export type JadwalPlainObject = Omit<
+  Jadwal,
+  | "tanggal"
+  | "createdAt"
+  | "updatedAt"
+  | "diajukanTanggal"
+  | "diverifikasiTanggal"
+  | "disetujuiTanggal"
+  | "dibayarTanggal"
+  | "jumlahJamPelajaran"
+> & {
+  tanggal: Date | string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  diajukanTanggal: Date | string;
+  diverifikasiTanggal: Date | string;
+  disetujuiTanggal: Date | string;
+  dibayarTanggal: Date | string;
+  jumlahJamPelajaran: Decimal | number;
+};
 
 export interface JadwalNarsum extends JadwalNarasumber {
   narasumber: Narasumber;
 }
 
 export interface Narsum extends Narasumber {}
+
+export interface ObjPlainJadwalKelasNarasumber extends JadwalPlainObject {
+  kelas: Kelas;
+  materi: Materi;
+  jadwalNarasumber: JadwalNarsum[];
+}
 
 export interface JadwalKelasNarasumber extends Jadwal {
   kelas: Kelas;
@@ -40,6 +69,13 @@ export const getJadwalByKegiatanId = async (
   console.log(["[JadwalKelasNarasumber]"], jadwal);
 
   return jadwal;
+};
+
+export const getObPlainJadwalByKegiatanId = async (kegiatanId: string) => {
+  const jadwal = await getJadwalByKegiatanId(kegiatanId);
+  const plainObject =
+    convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber[]>(jadwal);
+  return plainObject;
 };
 
 export const getJadwalById = async (

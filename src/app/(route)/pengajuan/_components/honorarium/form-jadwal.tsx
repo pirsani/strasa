@@ -1,4 +1,4 @@
-import SimpanJadwalKelasNarasumber from "@/actions/honorarium/narasumber";
+import SimpanJadwalKelasNarasumber from "@/actions/honorarium/narasumber/narasumber";
 import CummulativeErrors from "@/components/form/cummulative-error";
 import InputDatePicker from "@/components/form/date-picker/input-date-picker";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";

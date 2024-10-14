@@ -12,12 +12,14 @@ interface NarasumberListItemProps {
   optionsSbmHonorarium: OptionSbm[];
   index: number;
   totalNarsum?: number;
+  proses?: "pengajuan" | "verfikasi" | "pembayaran";
 }
 export const NarasumberListItem = ({
   jadwal,
   index = 0,
   totalNarsum = 1,
   optionsSbmHonorarium = [],
+  proses,
 }: NarasumberListItemProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [detail, setDetail] = useState<Narsum | null>(null);
@@ -60,6 +62,7 @@ export const NarasumberListItem = ({
               optionsSbmHonorarium={optionsSbmHonorarium}
               narasumber={jadwal.narasumber}
               jadwalNarasumber={jadwal}
+              proses={proses}
             />
           </div>
         )}
