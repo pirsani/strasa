@@ -2,24 +2,27 @@
 import { OptionSbm } from "@/actions/sbm";
 import { Button } from "@/components/ui/button";
 import { JadwalNarsum, Narsum } from "@/data/jadwal";
+import { StatusLangkah } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import NarasumberDetail from "./narusumber-detail";
 
 interface NarasumberListItemProps {
-  jadwal: JadwalNarsum;
+  jadwalNarasumber: JadwalNarsum;
   optionsSbmHonorarium: OptionSbm[];
   index: number;
   totalNarsum?: number;
   proses?: "pengajuan" | "verfikasi" | "pembayaran";
+  statusPengajuanHonorarium?: StatusLangkah | null;
 }
 export const NarasumberListItem = ({
-  jadwal,
+  jadwalNarasumber,
   index = 0,
   totalNarsum = 1,
   optionsSbmHonorarium = [],
   proses,
+  statusPengajuanHonorarium = null,
 }: NarasumberListItemProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [detail, setDetail] = useState<Narsum | null>(null);
@@ -52,17 +55,18 @@ export const NarasumberListItem = ({
 
         {!isDetailOpen && (
           <>
-            <Column>{jadwal.narasumber.nama}</Column>
-            <Column>{jadwal.narasumber.jabatan}</Column>
+            <Column>{jadwalNarasumber.narasumber.nama}</Column>
+            <Column>{jadwalNarasumber.narasumber.jabatan}</Column>
           </>
         )}
         {isDetailOpen && (
           <div className="p-0 bg-blue-50 h-auto w-full bg-white rounded-sm border border-blue-300">
             <NarasumberDetail
               optionsSbmHonorarium={optionsSbmHonorarium}
-              narasumber={jadwal.narasumber}
-              jadwalNarasumber={jadwal}
+              narasumber={jadwalNarasumber.narasumber}
+              jadwalNarasumber={jadwalNarasumber}
               proses={proses}
+              statusPengajuanHonorarium={statusPengajuanHonorarium}
             />
           </div>
         )}

@@ -17,6 +17,7 @@ const jadwalWithoutFileSchema = z.object({
   tanggal: z.coerce.date({ message: "Silakan pilih tanggal" }),
   dokumenDaftarHadirCuid: z.string(),
   dokumenUndanganNarasumberCuid: z.string(),
+  dokumenKonfirmasiKesediaanMengajarCuid: z.string(),
 });
 
 const jadwalFileSchema = z.object({
@@ -27,6 +28,10 @@ const jadwalFileSchema = z.object({
   dokumenUndanganNarasumber: fileSchema({
     required: true,
     message: "Dokumen Surat/Nodin/Memo Undangan Narsum harus diupload",
+  }),
+  dokumenKonfirmasiKesediaanMengajar: fileSchema({
+    required: true,
+    message: "Dokumen Konfirmasi Kesediaan Mengajar harus diupload",
   }),
 });
 

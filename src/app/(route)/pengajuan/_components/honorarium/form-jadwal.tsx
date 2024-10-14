@@ -38,7 +38,8 @@ const FormJadwal = ({
   const generateCuids = () => ({
     id: createId(),
     dokumenDaftarHadirCuid: "daftarHadir" + createId() + ".pdf",
-    dokumenUndanganNarasumberCuid: "surat" + createId() + ".pdf",
+    dokumenUndanganNarasumberCuid: "undangan" + createId() + ".pdf",
+    dokumenKonfirmasiKesediaanMengajarCuid: "konfirmasi" + createId() + ".pdf",
   });
   const form = useForm<Jadwal>({
     resolver: zodResolver(jadwalSchema),
@@ -71,6 +72,9 @@ const FormJadwal = ({
   const dokumenDaftarHadirCuid = form.watch("dokumenDaftarHadirCuid");
   const dokumenUndanganNarasumberCuid = form.watch(
     "dokumenUndanganNarasumberCuid"
+  );
+  const dokumenKonfirmasiKesediaanMengajarCuid = form.watch(
+    "dokumenKonfirmasiKesediaanMengajarCuid"
   );
 
   const handleReset = () => {
@@ -114,6 +118,7 @@ const FormJadwal = ({
     const {
       dokumenDaftarHadir,
       dokumenUndanganNarasumber,
+      dokumenKonfirmasiKesediaanMengajar,
       ...jadwalWithoutFile
     } = data;
     console.log(data);
@@ -186,6 +191,29 @@ const FormJadwal = ({
               </FormItem>
             )}
           />
+          <FormField
+            control={control}
+            name="jumlahJamPelajaran"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Jumlah JP
+                  <RequiredLabel />
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    name={field.name}
+                    className="md:w-full"
+                    type="number"
+                    step={0.1}
+                    value={field.value || ""}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <FormField
@@ -233,30 +261,6 @@ const FormJadwal = ({
 
         <FormField
           control={control}
-          name="jumlahJamPelajaran"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Jumlah Jam Pelajaran
-                <RequiredLabel />
-              </FormLabel>
-              <FormControl>
-                <Input
-                  name={field.name}
-                  className="md:w-full"
-                  type="number"
-                  step={0.1}
-                  value={field.value || ""}
-                  onChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
           name="dokumenDaftarHadir"
           render={({ field }) => (
             <FormItem>
@@ -290,6 +294,29 @@ const FormJadwal = ({
               <FormControl>
                 <FormFileImmediateUpload
                   cuid={dokumenUndanganNarasumberCuid}
+                  folder={kegiatanId}
+                  name={field.name}
+                  onFileChange={handleFileChange}
+                  onFileUploadComplete={handleFileUploadCompleted}
+                  className="bg-white"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="dokumenKonfirmasiKesediaanMengajar"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Lembar Konfirmasi Kesediaan Mengajar
+                <RequiredLabel />
+              </FormLabel>
+              <FormControl>
+                <FormFileImmediateUpload
+                  cuid={dokumenKonfirmasiKesediaanMengajarCuid}
                   folder={kegiatanId}
                   name={field.name}
                   onFileChange={handleFileChange}

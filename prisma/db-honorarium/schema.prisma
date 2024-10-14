@@ -725,6 +725,7 @@ model JadwalNarasumber {
   jadwal                             Jadwal         @relation(fields: [jadwalId], references: [id])
   narasumberId                       String         @map("narasumber_id")
   narasumber                         Narasumber     @relation(fields: [narasumberId], references: [id])
+  asWas                              Json?          @map("as_was") // ini akan menyimpan data "as was" dari narasumber yang bersangkutan karena bisa saja berubah seiring waktu sehingga akan tetap dapat ditelusuri as was nya
   jenisHonorariumId                  String?        @map("jenis_honorarium_id") // ini bisa saja berbeda dengan jenis narasumber yang ada di tabel narasumber
   jenisHonorarium                    SbmHonorarium? @relation(fields: [jenisHonorariumId], references: [id])
   besaranHonorarium                  Decimal?       @map("besaran_honorarium") @db.Decimal(10, 0) // bersifat historis, karena bisa saja berubah sesuai dengan jenis honorarium yang ada di sbm_honorarium

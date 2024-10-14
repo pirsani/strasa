@@ -67,6 +67,8 @@ export const SimpanJadwalKelasNarasumber = async (
             dokumenDaftarHadir: moveFileResult?.dokumenDaftarHadirPath,
             dokumenUndanganNarasumber:
               moveFileResult?.dokumenUndanganNarasumberPath,
+            dokumenKonfirmasiKesediaanMengajar:
+              moveFileResult?.dokumenKonfirmasiKesediaanMengajarPath,
             tanggal: jadwal.tanggal,
             createdBy: penggunaId,
             createdAt: new Date(),
@@ -74,6 +76,15 @@ export const SimpanJadwalKelasNarasumber = async (
         });
 
         for (const narasumberId of jadwal.narasumberIds) {
+          const narsum = await prisma.narasumber.findUnique({
+            where: { id: narasumberId },
+          });
+          // object narsum to json
+          // TODO: we will later improve this to be more performant
+          const asWas = {
+            narasumber: JSON.parse(JSON.stringify(narsum)),
+          };
+          //const asWasJson = asWas;
           await prisma.jadwalNarasumber.upsert({
             where: {
               jadwalId_narasumberId: {
@@ -84,6 +95,7 @@ export const SimpanJadwalKelasNarasumber = async (
             update: {
               updatedBy: penggunaId,
               updatedAt: new Date(),
+              asWas,
             },
             create: {
               jadwalId: jadwalUpsert.id,
@@ -91,6 +103,7 @@ export const SimpanJadwalKelasNarasumber = async (
               jumlahJamPelajaran: jadwal.jumlahJamPelajaran,
               createdBy: penggunaId,
               createdAt: new Date(),
+              asWas,
             },
           });
         }
@@ -160,6 +173,7 @@ export const deleteJadwalKelasNarasumber = async (
 interface ResultSaveFileToFinalFolder {
   dokumenDaftarHadirPath: string | null;
   dokumenUndanganNarasumberPath: string | null;
+  dokumenKonfirmasiKesediaanMengajarPath: string | null;
 }
 const saveFileToFinalFolder = async (
   data: Jadwal,
@@ -168,13 +182,18 @@ const saveFileToFinalFolder = async (
   let result: ResultSaveFileToFinalFolder = {
     dokumenDaftarHadirPath: null,
     dokumenUndanganNarasumberPath: null,
+    dokumenKonfirmasiKesediaanMengajarPath: null,
   };
   console.log(
     "dokumenCuids",
     data.dokumenDaftarHadirCuid,
     data.dokumenUndanganNarasumberCuid
   );
-  if (!data.dokumenDaftarHadirCuid || !data.dokumenUndanganNarasumberCuid) {
+  if (
+    !data.dokumenDaftarHadirCuid ||
+    !data.dokumenUndanganNarasumberCuid ||
+    !data.dokumenKonfirmasiKesediaanMengajarCuid
+  ) {
     return null;
   }
   try {
@@ -182,7 +201,11 @@ const saveFileToFinalFolder = async (
     const uploadedFile = await dbHonorarium.uploadedFile.findMany({
       where: {
         id: {
-          in: [data.dokumenDaftarHadirCuid, data.dokumenUndanganNarasumberCuid],
+          in: [
+            data.dokumenDaftarHadirCuid,
+            data.dokumenUndanganNarasumberCuid,
+            data.dokumenKonfirmasiKesediaanMengajarCuid,
+          ],
         },
       },
     });
@@ -209,7 +232,7 @@ const saveFileToFinalFolder = async (
       // check if temp file exists
       const fileExists = await fse.pathExists(resolvedTempPathFile);
       if (!fileExists) {
-        logger.error(
+        logger.warn(
           "File not found in temp folder, skipping moving file to final folder"
         );
         continue;

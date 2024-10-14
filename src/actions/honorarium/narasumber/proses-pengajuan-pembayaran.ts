@@ -78,6 +78,18 @@ const updateStatusPengajuanPembayaran = async (
       },
     });
     logger.info("[updateStatusPengajuanPembayaran]", updateStatus);
+
+    if (!updateStatus || !updateStatus.statusPengajuanHonorarium) {
+      return {
+        success: false,
+        error: "Error saving data",
+      };
+    }
+
+    return {
+      success: true,
+      data: updateStatus.statusPengajuanHonorarium as StatusLangkah,
+    };
   } catch (error) {
     logger.error("[updateStatusPengajuanPembayaran]", error);
     return {
@@ -85,11 +97,44 @@ const updateStatusPengajuanPembayaran = async (
       error: "Error saving data",
     };
   }
+};
 
-  return {
-    success: true,
-    data: status,
-  };
+export const updateJumlahJpJadwalNarasumber = async (
+  jadwalId: string,
+  jumlahJp: number,
+  jenisHonorariumId: string | null
+): Promise<ActionResponse<Boolean>> => {
+  console.log(jadwalId, jumlahJp, jenisHonorariumId);
+  try {
+    const updateStatus = await dbHonorarium.jadwalNarasumber.update({
+      where: {
+        id: jadwalId,
+      },
+      data: {
+        jumlahJamPelajaran: jumlahJp,
+        jenisHonorariumId: jenisHonorariumId,
+      },
+    });
+
+    if (!updateStatus) {
+      return {
+        success: false,
+        message: "failed to save data",
+        error: "E-UJP-001",
+      };
+    }
+
+    return {
+      success: true,
+      data: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "failed to save data",
+      error: "E-UJP-002",
+    };
+  }
 };
 
 export default updateStatusPengajuanPembayaran;

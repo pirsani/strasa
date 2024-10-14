@@ -99,7 +99,7 @@ const DaftarJadwal = ({
 
   const handleCancel = () => {
     setIsConfirmDialogDeleteJadwalOpen(false);
-    console.log("Cancelled!");
+    //console.log("Cancelled!");
   };
 
   const handleConfirmDeleteJadwal = async () => {
@@ -109,10 +109,11 @@ const DaftarJadwal = ({
       toast.error("Gagal menghapus jadwal");
       return;
     }
-    setSelfTrigger((prev) => prev + 1);
-    // setDataJadwal(
-    //   dataJadwal.filter((jadwal) => jadwal.id !== originalJadwal?.id)
-    // );
+    // setSelfTrigger((prev) => prev + 1);
+    // optimistic update data jadwal
+    setDataJadwal(
+      dataJadwal.filter((jadwal) => jadwal.id !== originalJadwal?.id)
+    );
     setIsConfirmDialogDeleteJadwalOpen(false);
   };
 
@@ -128,8 +129,70 @@ const DaftarJadwal = ({
     setConfirmDialogDeleteJadwalMessage(
       `Apakah anda yakin menghapus data jadwal tanggal ${originalJadwal?.tanggal}${originalJadwal?.kelas.nama} ${originalJadwal?.materi.nama}  ?`
     );
-    // remove from dataJadwal after success delete
+    // hanya memunculkan dialog konfirmasi, delete dilakukan setelah confirm delete
     setIsConfirmDialogDeleteJadwalOpen(true);
+  };
+
+  const handleProsesPengajuanSuccess = (
+    jadwalId: string,
+    newStatus: string
+  ) => {
+    // refresh data
+    // setSelfTrigger((prev) => prev + 1);
+    // jika pake optimistic tidak perlu refresh data langsung update existing row
+    // find data from jadwal , update status  dan update jadwal
+    setDataJadwal(
+      dataJadwal.map((jadwal) => {
+        if (jadwal.id === jadwalId) {
+          return {
+            ...jadwal,
+            statusPengajuanHonorarium: newStatus,
+          };
+        }
+        return jadwal;
+      })
+    );
+  };
+
+  const handleProsesVerifikasiApproveSuccess = (
+    jadwalId: string,
+    newStatus: string
+  ) => {
+    // handle here
+    setDataJadwal(
+      dataJadwal.map((jadwal) => {
+        if (jadwal.id === jadwalId) {
+          return {
+            ...jadwal,
+            statusPengajuanHonorarium: newStatus,
+          };
+        }
+        return jadwal;
+      })
+    );
+  };
+
+  const handleProsesVerifikasiReviseSuccess = (
+    jadwalId: string,
+    newStatus: string,
+    catatan: string
+  ) => {
+    // refresh data
+    // setSelfTrigger((prev) => prev + 1);
+    // jika pake optimistic tidak perlu refresh data langsung update existing row
+    // find data from jadwal , update status  dan update jadwal
+    setDataJadwal(
+      dataJadwal.map((jadwal) => {
+        if (jadwal.id === jadwalId) {
+          return {
+            ...jadwal,
+            catatanRevisi: catatan,
+            statusPengajuanHonorarium: newStatus,
+          };
+        }
+        return jadwal;
+      })
+    );
   };
 
   return (
@@ -175,16 +238,19 @@ const DaftarJadwal = ({
               </div>
 
               <div className="flex flex-col w-full px-4 py-2">
-                {jadwal.jadwalNarasumber.map((jadwalNarsum, index) => {
+                {jadwal.jadwalNarasumber.map((jadwalNarasumber, index) => {
                   const jumlahNarsum = jadwal.jadwalNarasumber.length;
                   return (
                     <NarasumberListItem
-                      key={jadwalNarsum.id}
+                      key={jadwalNarasumber.id}
                       optionsSbmHonorarium={optionsSbmHonorarium}
                       index={index}
-                      jadwal={jadwalNarsum}
+                      jadwalNarasumber={jadwalNarasumber}
                       totalNarsum={jumlahNarsum}
                       proses={proses}
+                      statusPengajuanHonorarium={
+                        jadwal.statusPengajuanHonorarium as StatusLangkah
+                      }
                     />
                   );
                 })}
@@ -198,12 +264,15 @@ const DaftarJadwal = ({
                   <FormProsesPengajuan
                     jadwalId={jadwal.id}
                     statusPengajuanHonorarium={jadwal.statusPengajuanHonorarium}
+                    onSuccess={handleProsesPengajuanSuccess}
                   />
                 )}
                 {proses == "verfikasi" && (
                   <FormProsesVerifikasi
                     jadwalId={jadwal.id}
                     statusPengajuanHonorarium={jadwal.statusPengajuanHonorarium}
+                    onRevise={handleProsesVerifikasiReviseSuccess}
+                    onApproved={handleProsesVerifikasiApproveSuccess}
                   />
                 )}
               </div>
@@ -237,10 +306,12 @@ const handleProsesPengajuan = async (jadwalId: string) => {
 interface FormProsesPengajuanProps {
   jadwalId: string;
   statusPengajuanHonorarium: string | null;
+  onSuccess?: (jadwalId: string, newStatus: StatusLangkah) => void;
 }
 const FormProsesPengajuan = ({
   jadwalId,
   statusPengajuanHonorarium,
+  onSuccess = () => {},
 }: FormProsesPengajuanProps) => {
   const [status, setStatus] = useState<string | null>(
     statusPengajuanHonorarium
@@ -249,7 +320,8 @@ const FormProsesPengajuan = ({
   const handleOnClick = async () => {
     const proses = await handleProsesPengajuan(jadwalId);
     if (proses.success) {
-      setStatus("Submitted");
+      onSuccess(jadwalId, proses.data);
+      setStatus(proses.data);
     }
   };
 
@@ -278,7 +350,7 @@ const FormProsesPengajuan = ({
 };
 
 const handleProsesVerifikasiSetuju = async (jadwalId: string) => {
-  console.log(jadwalId);
+  //console.log(jadwalId);
   const newStatus: StatusLangkah = "Approved";
   const updateStatus = await updateStatusPengajuanPembayaran(
     jadwalId,
@@ -313,10 +385,18 @@ const handleProsesVerifikasiRevisi = async (
 interface FormProsesVerifikasiProps {
   jadwalId: string;
   statusPengajuanHonorarium: string | null;
+  onRevise?: (
+    jadwalId: string,
+    newStatus: StatusLangkah,
+    catatan: string
+  ) => void;
+  onApproved?: (jadwalId: string, newStatus: StatusLangkah) => void;
 }
 const FormProsesVerifikasi = ({
   jadwalId,
   statusPengajuanHonorarium,
+  onRevise = () => {},
+  onApproved = () => {},
 }: FormProsesVerifikasiProps) => {
   const [status, setStatus] = useState<string | null>(
     statusPengajuanHonorarium
@@ -326,6 +406,8 @@ const FormProsesVerifikasi = ({
     const proses = await handleProsesVerifikasiSetuju(jadwalId);
     if (proses.success) {
       setStatus(proses.data);
+      // call parent on success
+      onApproved(jadwalId, proses.data);
     }
   };
 
@@ -333,6 +415,7 @@ const FormProsesVerifikasi = ({
     const proses = await handleProsesVerifikasiRevisi(jadwalId, catatan);
     if (proses.success) {
       setStatus(proses.data);
+      onRevise(jadwalId, proses.data, catatan);
     }
   };
 
