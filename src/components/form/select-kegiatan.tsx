@@ -55,6 +55,7 @@ const SelectKegiatan = ({
 
   return (
     <Select
+      placeholder="Pilih Kegiatan"
       inputId={inputId}
       instanceId={inputId}
       value={selectedOption}

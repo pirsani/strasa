@@ -1,5 +1,6 @@
 "use server";
 
+import { getObPlainJadwalByKegiatanIdWithStatusDisetujui } from "@/data/jadwal";
 import { dbHonorarium } from "@/lib/db-honorarium";
 
 export const getMateri = async (materi?: string) => {
@@ -33,4 +34,25 @@ export const getOptionsNarasumber = async () => {
   }));
 
   return optionsNarasumber;
+};
+
+export interface OptionJadwal {
+  value: string;
+  label: string;
+  kelas: string;
+  materi: string;
+  tanggal: string | Date;
+}
+export const getOptionsJadwalDisetujui = async (kegiatanId: string) => {
+  const dataJadwal = await getObPlainJadwalByKegiatanIdWithStatusDisetujui(
+    kegiatanId
+  );
+  const optionsJadwal: OptionJadwal[] = dataJadwal.map((jadwal) => ({
+    value: jadwal.id,
+    label: jadwal.kelas.nama + "-" + jadwal.materi.nama,
+    kelas: jadwal.kelas.nama,
+    materi: jadwal.materi.nama,
+    tanggal: jadwal.tanggal.toString(),
+  }));
+  return optionsJadwal;
 };

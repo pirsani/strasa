@@ -71,8 +71,42 @@ export const getJadwalByKegiatanId = async (
   return jadwal;
 };
 
+export const getJadwalByKegiatanIdWithStatus = async (
+  kegiatanId: string,
+  statusPengajuanHonorarium: string
+): Promise<JadwalKelasNarasumber[]> => {
+  const jadwal = await dbHonorarium.jadwal.findMany({
+    where: {
+      kegiatanId: kegiatanId,
+      statusPengajuanHonorarium: statusPengajuanHonorarium,
+    },
+    include: {
+      kelas: true,
+      materi: true,
+      jadwalNarasumber: {
+        include: {
+          narasumber: true,
+        },
+      },
+    },
+  });
+  console.log(["[kegiatanId]"], kegiatanId);
+  console.log(["[JadwalKelasNarasumber]"], jadwal);
+
+  return jadwal;
+};
+
 export const getObPlainJadwalByKegiatanId = async (kegiatanId: string) => {
   const jadwal = await getJadwalByKegiatanId(kegiatanId);
+  const plainObject =
+    convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber[]>(jadwal);
+  return plainObject;
+};
+
+export const getObPlainJadwalByKegiatanIdWithStatusDisetujui = async (
+  kegiatanId: string
+) => {
+  const jadwal = await getJadwalByKegiatanIdWithStatus(kegiatanId, "Approved");
   const plainObject =
     convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber[]>(jadwal);
   return plainObject;

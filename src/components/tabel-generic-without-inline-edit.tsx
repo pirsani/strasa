@@ -13,22 +13,16 @@ import {
   Table,
   useReactTable,
 } from "@tanstack/react-table";
-import Decimal from "decimal.js";
 import {
   ArrowDownUp,
   ChevronLeft,
   ChevronRight,
-  Delete,
   Eye,
   Pencil,
   Printer,
-  Save,
-  Trash,
   Trash2,
-  Undo2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Input } from "./ui/input";
 
 // <https://github.com/TanStack/table/discussions/5051
 
@@ -223,7 +217,10 @@ export const TabelGenericWithoutInlineEdit = <T,>({
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row, rowIndex) => (
-              <tr key={row.id} className="odd:bg-white even:bg-gray-50">
+              <tr
+                key={row.id}
+                className="odd:bg-white even:bg-gray-50 hover:bg-gray-200"
+              >
                 {row.getVisibleCells().map((cell, index) => {
                   const field = cell.column.columnDef.meta?.field;
                   //This will ensure TypeScript understands that row.original can be indexed by a string.
