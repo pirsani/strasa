@@ -7,6 +7,7 @@ import { getBesaranPajakHonorarium } from "@/lib/pajak";
 import formatCurrency from "@/utils/format-currency";
 import { JadwalNarasumber, Narasumber } from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
+import { LoaderPinwheel } from "lucide-react";
 import { useEffect, useState } from "react";
 import Select, { ActionMeta, SingleValue } from "react-select";
 import { toast } from "sonner";
@@ -75,7 +76,7 @@ const NarasumberDetail = ({
   //     getBesaranPajakHonorarium(narasumber.pangkatGolonganId, narasumber.NPWP),
   //   []
   // );
-
+  const [isChanged, setIsChanged] = useState(false);
   const handleJpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
@@ -87,11 +88,13 @@ const NarasumberDetail = ({
       // Convert to Decimal and update state
       setJumlahJP(new Decimal(value));
     }
+    setIsChanged(true);
   };
 
   const handleSbmHonorariumChange = (selected: OptionSbm | null) => {
     console.log("Selected sbm honorarium:", selected);
     setSelectedSbmHonorarium(selected);
+    setIsChanged(true);
   };
 
   useEffect(() => {
@@ -114,9 +117,11 @@ const NarasumberDetail = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JumlahJP, selectedSbmHonorarium]);
 
+  const [isUpdatingJp, setIsUpdatingJp] = useState(false);
   const handleUpdateJp = async () => {
-    if (proses === "pengajuan") {
+    if (proses === "pengajuan" || proses === "verfikasi") {
       // update JP dan update jenis honorarium
+      setIsUpdatingJp(true);
       const jenisHonorariumId = selectedSbmHonorarium?.value || null;
       const jumlahJamPelajaran = JumlahJP.toNumber();
       const updatedJadwalNarasumber = await updateJumlahJpJadwalNarasumber(
@@ -125,13 +130,15 @@ const NarasumberDetail = ({
         jenisHonorariumId
       );
       if (!updatedJadwalNarasumber.success) {
+        toast.error(
+          `Gagal memperbarui JP dan Jenis Honorarium ${updatedJadwalNarasumber.message}`
+        );
         return;
       } else {
+        setIsChanged(false);
         toast.success("JP dan Jenis Honorarium diperbarui");
       }
-    }
-    if (proses === "verfikasi") {
-      //
+      setIsUpdatingJp(false);
     }
   };
 
@@ -194,15 +201,21 @@ const NarasumberDetail = ({
         <input
           disabled={!isAllowEditJp}
           value={Number(JumlahJP)}
-          className="px-2 py-1 w-24"
+          className="px-2 py-1 w-16"
           min={0.0}
           type="number"
           step={0.1}
           onChange={handleJpChange}
         />
-        {isAllowEditJp && (
-          <Button className="ml-2" variant={"default"} onClick={handleUpdateJp}>
-            Update Jenis dan JP
+        {isAllowEditJp && isChanged && (
+          <Button
+            className="ml-2"
+            variant={"default"}
+            onClick={handleUpdateJp}
+            disabled={isUpdatingJp}
+          >
+            Update Jenis dan JP{" "}
+            {isUpdatingJp ? <LoaderPinwheel className="animate-spin" /> : ""}
           </Button>
         )}
       </RowNarasumberWithInput>

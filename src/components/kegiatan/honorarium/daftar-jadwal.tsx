@@ -11,7 +11,7 @@ import {
   ObjPlainJadwalKelasNarasumber,
 } from "@/data/jadwal";
 import { useSearchTerm } from "@/hooks/use-search-term";
-import { StatusLangkah } from "@/lib/constants";
+import { getStatusLangkah, StatusLangkah } from "@/lib/constants";
 import { formatHariTanggal } from "@/utils/date-format";
 import Decimal from "decimal.js";
 import { Trash } from "lucide-react";
@@ -135,7 +135,7 @@ const DaftarJadwal = ({
 
   const handleProsesPengajuanSuccess = (
     jadwalId: string,
-    newStatus: string
+    newStatus: StatusLangkah | string
   ) => {
     // refresh data
     // setSelfTrigger((prev) => prev + 1);
@@ -156,8 +156,9 @@ const DaftarJadwal = ({
 
   const handleProsesVerifikasiApproveSuccess = (
     jadwalId: string,
-    newStatus: string
+    newStatus: string | StatusLangkah | null
   ) => {
+    if (!newStatus) return;
     // handle here
     setDataJadwal(
       dataJadwal.map((jadwal) => {
@@ -174,9 +175,10 @@ const DaftarJadwal = ({
 
   const handleProsesVerifikasiReviseSuccess = (
     jadwalId: string,
-    newStatus: string,
+    newStatus: string | StatusLangkah | null,
     catatan: string
   ) => {
+    if (!newStatus) return;
     // refresh data
     // setSelfTrigger((prev) => prev + 1);
     // jika pake optimistic tidak perlu refresh data langsung update existing row
@@ -305,16 +307,16 @@ const handleProsesPengajuan = async (jadwalId: string) => {
 
 interface FormProsesPengajuanProps {
   jadwalId: string;
-  statusPengajuanHonorarium: string | null;
-  onSuccess?: (jadwalId: string, newStatus: StatusLangkah) => void;
+  statusPengajuanHonorarium: StatusLangkah | string | null;
+  onSuccess?: (jadwalId: string, newStatus: StatusLangkah | string) => void;
 }
 const FormProsesPengajuan = ({
   jadwalId,
   statusPengajuanHonorarium,
   onSuccess = () => {},
 }: FormProsesPengajuanProps) => {
-  const [status, setStatus] = useState<string | null>(
-    statusPengajuanHonorarium
+  const [status, setStatus] = useState<StatusLangkah | null>(
+    getStatusLangkah(statusPengajuanHonorarium)
   );
 
   const handleOnClick = async () => {
@@ -384,7 +386,7 @@ const handleProsesVerifikasiRevisi = async (
 
 interface FormProsesVerifikasiProps {
   jadwalId: string;
-  statusPengajuanHonorarium: string | null;
+  statusPengajuanHonorarium: StatusLangkah | string | null;
   onRevise?: (
     jadwalId: string,
     newStatus: StatusLangkah,

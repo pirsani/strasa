@@ -13,22 +13,15 @@ import {
   Table,
   useReactTable,
 } from "@tanstack/react-table";
-import Decimal from "decimal.js";
 import {
   ArrowDownUp,
   ChevronLeft,
   ChevronRight,
-  Delete,
   Eye,
-  Key,
   Pencil,
-  Save,
-  Trash,
   Trash2,
-  Undo2,
 } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { Input } from "./ui/input";
 
 // <https://github.com/TanStack/table/discussions/5051
 
@@ -48,7 +41,7 @@ export type RowDetails<T> = {
 interface TabelExpandableProps<T, R> {
   data: T[];
   columns: ColumnDef<T>[];
-  renderExpandedRowDetails: (row: T, details: R[]) => React.ReactNode;
+  renderExpandedRowDetails: (row: T, details?: R[]) => React.ReactNode;
   rowDetails: RowDetails<R>;
   expanded: ExpandedState;
   setExpanded: React.Dispatch<React.SetStateAction<ExpandedState>>;
@@ -290,9 +283,7 @@ export const TabelExpandable = <T, R>({
                   })}
                 </tr>
                 {expanded[row.id] && (
-                  <>
-                    {renderExpandedRowDetails(row.original, rowDetails[row.id])}
-                  </>
+                  <>{renderExpandedRowDetails(row.original)}</>
                 )}
               </Fragment>
             ))}

@@ -6,7 +6,43 @@ export type StatusLangkah =
   | "Verified"
   | "Approved"
   | "Paid"
-  | "End";
+  | "End"
+  | null;
+
+export const validStatusLangkah: StatusLangkah[] = [
+  "Draft",
+  "Submitted",
+  "Revise",
+  "Revised",
+  "Verified",
+  "Approved",
+  "Paid",
+  "End",
+  null,
+];
+
+// Convert valid statuses to a Set for O(1) lookup performance
+const validStatusLangkahSet = new Set<StatusLangkah>(validStatusLangkah);
+
+/**
+ * Checks if a value is a valid StatusLangkah.
+ *
+ * @param value - The value to check.
+ * @returns True if the value is a valid StatusLangkah, otherwise false.
+ */
+export function isValidStatusLangkah(value: unknown): value is StatusLangkah {
+  return validStatusLangkahSet.has(value as StatusLangkah);
+}
+
+/**
+ * Gets a valid StatusLangkah if the provided value matches, otherwise returns null.
+ *
+ * @param value - The value to check.
+ * @returns The valid StatusLangkah or null if not valid.
+ */
+export function getStatusLangkah(value: unknown): StatusLangkah {
+  return isValidStatusLangkah(value) ? (value as StatusLangkah) : null;
+}
 
 export const LANGKAH = [
   "setup",

@@ -68,6 +68,8 @@ const updateStatusPengajuanPembayaran = async (
       break;
   }
 
+  // jika pengajuan maka update staus untuk seluruh kegiatan menjadi submitted
+
   try {
     const updateStatus = await dbHonorarium.jadwal.update({
       where: {
@@ -85,6 +87,18 @@ const updateStatusPengajuanPembayaran = async (
         error: "Error saving data",
       };
     }
+
+    // tantangannya adalah bagaiman mengetahu bahwa semua jadwal sudah di setujui
+    // sehingga status kegiatan bisa merefleksikan status secara keseluruhan
+    const updateStatusKegiatan = await dbHonorarium.kegiatan.update({
+      where: {
+        id: updateStatus.kegiatanId,
+      },
+      data: {
+        status: "pengajuan",
+        statusHonorarium: "pengajuan",
+      },
+    });
 
     return {
       success: true,

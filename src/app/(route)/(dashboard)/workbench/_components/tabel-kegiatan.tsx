@@ -1,12 +1,17 @@
 "use client";
 
 import { KegiatanWithSatker } from "@/actions/kegiatan";
+import StatusBadge from "@/components/kegiatan/status-badge";
 import {
   ExpandedState,
   RowDetails,
   TabelExpandable,
 } from "@/components/tabel-expandable";
 import { Button } from "@/components/ui/button";
+import { getObPlainJadwalByKegiatanId } from "@/data/jadwal";
+import { StatusLangkah } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import { formatHariTanggal, formatTanggal } from "@/utils/date-format";
 import { Kegiatan } from "@prisma-honorarium/client";
 
 import { ColumnDef, Row } from "@tanstack/react-table";
@@ -21,6 +26,11 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
   const [data, setData] = useState<KegiatanWithSatker[]>(initialData);
   const [isEditing, setIsEditing] = useState(false);
   const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [rowDetails, setRowDetails] = useState<RowDetails<RowDetail>>({});
+
   const columns: ColumnDef<KegiatanWithSatker>[] = [
     {
       id: "rowNumber",
@@ -39,9 +49,10 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
           <Button variant={"ghost"}>
             <ChevronRight
               size={18}
+              className={cn(expanded[info.row.index] && "rotate-90")}
               onClick={() => {
                 console.log("info", info);
-                handleExpand(info.row.id);
+                handleExpand(info.row.original.id, info.row.index);
               }}
             />
           </Button>
@@ -58,24 +69,24 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       cell: (info) => info.getValue(),
       footer: "Kode",
     },
-    {
-      //accessorKey: "kode",
-      header: "Tanggal Pengajuan",
-      //cell: (info) => info.getValue(),
-      footer: "Kode",
-      meta: {
-        showOnExpand: true,
-      },
-    },
-    {
-      //accessorKey: "kode",
-      header: "Jenis Pengajuan",
-      //cell: (info) => info.getValue(),
-      footer: "Kode",
-      meta: {
-        showOnExpand: true,
-      },
-    },
+    // {
+    //   //accessorKey: "kode",
+    //   header: "Tanggal Pengajuan",
+    //   //cell: (info) => info.getValue(),
+    //   footer: "Kode",
+    //   meta: {
+    //     showOnExpand: true,
+    //   },
+    // },
+    // {
+    //   //accessorKey: "kode",
+    //   header: "Jenis Pengajuan",
+    //   //cell: (info) => info.getValue(),
+    //   footer: "Kode",
+    //   meta: {
+    //     showOnExpand: true,
+    //   },
+    // },
     {
       accessorKey: "status",
       header: "Status",
@@ -110,13 +121,14 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
   interface RowDetail {
     id: string;
     nama: string;
-    createdAt: Date;
+    tanggalKegiatan?: Date | string | null;
+    jenisPengajuan: string;
+    statusPengajuan: StatusLangkah | null;
+    diajukanTanggal?: Date | string | null;
+    diverifikasiTanggal?: Date | string | null;
+    disetujuiTanggal?: Date | string | null;
+    dibayarTanggal?: Date | string | null;
   }
-
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [expanded, setExpanded] = useState<ExpandedState>({});
-  const [rowDetails, setRowDetails] = useState<RowDetails<RowDetail>>({});
 
   const handleView = (row: Kegiatan) => {
     console.log("View row:", row);
@@ -129,37 +141,102 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     // to new page
   };
 
-  const handleExpand = (rowId: string) => {
+  const handleExpand = async (rowId: string, index: number) => {
     console.log("Expand row:", rowId);
     // Implement your expand row logic here
+
+    const jadwals = await getObPlainJadwalByKegiatanId(rowId);
+    //console.log("Detail:", detail);
+
+    const newDetails: RowDetail[] = jadwals.map((jadwal) => {
+      return {
+        id: jadwal.id,
+        nama: jadwal.kelas.nama,
+        tanggalKegiatan: jadwal.tanggal,
+        jenisPengajuan: "Honorarium",
+        // statusPengajuan: mapStatusLangkahToDesc(
+        //   jadwal.statusPengajuanHonorarium
+        // ),
+        statusPengajuan: jadwal.statusPengajuanHonorarium as StatusLangkah,
+        diajukanTanggal: jadwal.diajukanTanggal,
+        diverifikasiTanggal: jadwal.diverifikasiTanggal,
+        disetujuiTanggal: jadwal.disetujuiTanggal,
+        dibayarTanggal: jadwal.dibayarTanggal,
+      };
+    });
+
+    const newRowDetails = {
+      ...rowDetails,
+      [rowId]: newDetails,
+    };
+
+    setRowDetails(newRowDetails);
+
     setExpanded((prev) => ({
       ...prev,
-      [rowId]: !prev[rowId], // Allow multiple rows to be expanded
+      [index]: !prev[index], // Allow multiple rows to be expanded
     }));
     setIsExpanded(!isExpanded);
   };
 
   const renderExpandedRowDetails = (
-    row: KegiatanWithSatker,
-    details: RowDetail[]
+    row: KegiatanWithSatker
+    //details: RowDetail[]
   ) => {
-    if (!details || details.length === 0) {
+    const details = rowDetails[row.id];
+
+    if (details && details.length > 0) {
+      // iterate over details
       return (
         <tr>
           <td colSpan={8}>
-            <p>No details available</p>
+            <table className="table-auto w-full text-left">
+              <thead>
+                <tr className="bg-slate-700 text-slate-300">
+                  <th>Kelas</th>
+                  <th>Tanggal Kegiatan</th>
+                  <th>Tanggal Pengajuan</th>
+                  <th>Status Pengajuan</th>
+                  <th>Tanggal Verifikasi</th>
+                  <th>Tanggal Disetujui</th>
+                  <th>Tanggal Dibayar</th>
+                  <th>Jenis Pengajuan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {details.map((detail: RowDetail) => (
+                  <tr
+                    key={detail.id}
+                    className="odd:bg-slate-200 even:bg-slate-100"
+                  >
+                    <td>{detail.nama}</td>
+                    <td>{formatHariTanggal(detail.tanggalKegiatan)}</td>
+                    <td>{formatTanggal(detail.diajukanTanggal)}</td>
+                    <td>{<StatusBadge status={detail.statusPengajuan} />}</td>
+                    <td>{formatTanggal(detail.diverifikasiTanggal)}</td>
+                    <td>{formatTanggal(detail.disetujuiTanggal)}</td>
+                    <td>{formatTanggal(detail.dibayarTanggal)}</td>
+                    <td>{detail.jenisPengajuan}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      );
+    } else {
+      return (
+        <tr>
+          <td colSpan={8}>
+            <div>
+              <p>
+                <strong>No Details Available</strong>
+              </p>
+            </div>
           </td>
         </tr>
       );
     }
-
-    return (
-      <div>
-        <p>
-          <strong>Details:</strong>
-        </p>
-      </div>
-    );
   };
 
   const renderExpandedRow = (row: KegiatanWithSatker) => {

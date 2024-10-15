@@ -24,11 +24,11 @@ export type JadwalPlainObject = Omit<
   tanggal: Date | string;
   createdAt: Date | string;
   updatedAt: Date | string;
-  diajukanTanggal: Date | string;
-  diverifikasiTanggal: Date | string;
-  disetujuiTanggal: Date | string;
-  dibayarTanggal: Date | string;
-  jumlahJamPelajaran: Decimal | number;
+  diajukanTanggal: Date | string | null;
+  diverifikasiTanggal: Date | string | null;
+  disetujuiTanggal: Date | string | null;
+  dibayarTanggal: Date | string | null;
+  jumlahJamPelajaran: Decimal | number | null;
 };
 
 export interface JadwalNarsum extends JadwalNarasumber {
