@@ -63,26 +63,35 @@ model UserRole {
 }
 
 model User {
-  id                   String          @id @default(cuid())
-  name                 String
-  email                String          @unique
-  password             String?
-  emailVerified        DateTime?       @map("email_verified")
-  image                String?
-  sessions             Session[]
-  NIP                  String?         @unique @map("nip")
-  organisasiId         String?         @map("organisasi_id")
-  organisasi           Organisasi?     @relation(fields: [organisasiId], references: [id])
-  createdBy            String          @default("init") @map("created_by")
-  createdAt            DateTime        @default(now()) @map("created_at")
-  updatedBy            String?         @map("updated_by")
-  updatedAt            DateTime?       @updatedAt @map("updated_at")
-  riwayatProsesCreator RiwayatProses[] @relation("riwayat_proses_creator")
-  riwayatProsesUpdater RiwayatProses[] @relation("riwayat_proses_updater")
-  kegiatanCreator      Kegiatan[]      @relation("kegiatan_creator")
-  kegiatanUpdater      Kegiatan[]      @relation("kegiatan_updater")
-  userRole             UserRole[]
-  userPreference       UserPreference? // 1-to-1 relation with UserPreference
+  id                           String             @id @default(cuid())
+  name                         String
+  email                        String             @unique
+  password                     String?
+  emailVerified                DateTime?          @map("email_verified")
+  image                        String?
+  sessions                     Session[]
+  NIP                          String?            @unique @map("nip")
+  organisasiId                 String?            @map("organisasi_id")
+  organisasi                   Organisasi?        @relation(fields: [organisasiId], references: [id])
+  createdBy                    String             @default("init") @map("created_by")
+  createdAt                    DateTime           @default(now()) @map("created_at")
+  updatedBy                    String?            @map("updated_by")
+  updatedAt                    DateTime?          @updatedAt @map("updated_at")
+  logProsesCreator             LogProses[]        @relation("log_proses_creator")
+  logProsesUpdater             LogProses[]        @relation("log_proses_updater")
+  kegiatanCreator              Kegiatan[]         @relation("kegiatan_creator")
+  kegiatanUpdater              Kegiatan[]         @relation("kegiatan_updater")
+  userRole                     UserRole[]
+  userPreference               UserPreference? // 1-to-1 relation with UserPreference
+  jadwalDiajukan               Jadwal[]           @relation("jadwal_diajukan_oleh")
+  jadwalDiverifikasi           Jadwal[]           @relation("jadwal_diverifikasi_oleh")
+  jadwalDisetujui              Jadwal[]           @relation("jadwal_disetujui_oleh")
+  jadwalDibayar                Jadwal[]           @relation("jadwal_dibayar_oleh")
+  pengajuanDiajukan            RiwayatPengajuan[] @relation("pengajuan_diajukan_oleh")
+  pengajuanDiverifikasi        RiwayatPengajuan[] @relation("pengajuan_diverifikasi_oleh")
+  pengajuanDisetujui           RiwayatPengajuan[] @relation("pengajuan_disetujui_oleh")
+  pengajuanPermintanPembayaran RiwayatPengajuan[] @relation("pengajuan_permintaan_pembayaran_oleh")
+  pengajuanDibayar             RiwayatPengajuan[] @relation("pengajuan_dibayar_oleh")
 
   @@map("users")
 }
@@ -488,11 +497,12 @@ model Kegiatan {
   dokumenSuratTugas   DokumenSuratTugas[]
   pesertaKegiatan     PesertaKegiatan[]
   itinerary           Itinerary[]
-  riwayatProses       RiwayatProses[]
+  logProses           LogProses[]
   kelas               Kelas[]
   dokumenKegiatan     DokumenKegiatan[]
   Jadwal              Jadwal[]
   pembayaran          Pembayaran[]           @relation("pembayaran_kegiatan")
+  riwayatPengajuan    RiwayatPengajuan[]     @relation("riwayat_pengajuan_kegiatan")
 
   @@map("kegiatan")
 }
@@ -636,7 +646,48 @@ enum JENIS_PENGAJUAN {
   PEMBAYARAN_PIHAK_KETIGA
 }
 
-model RiwayatProses {
+enum STATUS_PENGAJUAN {
+  SUBMITTED
+  REVISE
+  REVISED
+  VERIFIED
+  APPROVED
+  REQUEST_TO_PAY
+  PAID
+  DONE
+  END
+}
+
+model RiwayatPengajuan {
+  id                     String           @id @default(cuid())
+  jenis                  JENIS_PENGAJUAN // enum GenerateRampungan, Honorarium, UhDalamNegeri, UhLuarNegeri, Reimbursement, PihakKetiga
+  kegiatanId             String           @map("kegiatan_id")
+  kegiatan               Kegiatan         @relation(fields: [kegiatanId], references: [id], name: "riwayat_pengajuan_kegiatan")
+  status                 STATUS_PENGAJUAN
+  tanggalPengajuan       DateTime         @map("tanggal_pengajuan")
+  tanggalVerifikasi      DateTime?        @map("tanggal_verifikasi")
+  tanggalDisetujui       DateTime?        @map("tanggal_disetujui")
+  tanggalDibayar         DateTime?        @map("tanggal_dibayar")
+  tanggalSelesai         DateTime?        @map("tanggal_selesai")
+  diajukanOlehId         String           @map("diajukan_oleh_id")
+  diajukanOleh           User             @relation(fields: [diajukanOlehId], references: [id], name: "pengajuan_diajukan_oleh")
+  diverifikasiOlehId     String?          @map("diverifikasi_oleh_id")
+  diverifikasiOleh       User?            @relation(fields: [diverifikasiOlehId], references: [id], name: "pengajuan_diverifikasi_oleh")
+  disetujuiOlehId        String?          @map("disetujui_oleh_id")
+  disetujuiOleh          User?            @relation(fields: [disetujuiOlehId], references: [id], name: "pengajuan_disetujui_oleh")
+  dibayarOlehId          String?          @map("dibayar_oleh_id")
+  dibayarOleh            User?            @relation(fields: [dibayarOlehId], references: [id], name: "pengajuan_dibayar_oleh")
+  dimintaPembayaraOlehId String?          @map("pengajuan_permintaan_pembayaran_oleh_id")
+  dimintaPembayaraOleh   User?            @relation(fields: [dimintaPembayaraOlehId], references: [id], name: "pengajuan_permintaan_pembayaran_oleh")
+  createdBy              String           @map("created_by")
+  createdAt              DateTime         @default(now()) @map("created_at")
+  updatedBy              String?          @map("updated_by")
+  updatedAt              DateTime?        @updatedAt @map("updated_at")
+
+  @@map("pengajuan")
+}
+
+model LogProses {
   id         String          @id @default(cuid())
   jenis      JENIS_PENGAJUAN // enum GenerateRampunga, Honorarium, UhDalamNegeri, UhLuarNegeri, Reimbursement, PihakKetiga
   status     String
@@ -648,10 +699,10 @@ model RiwayatProses {
   createdAt  DateTime        @default(now()) @map("created_at")
   updatedBy  String?         @map("updated_by")
   updatedAt  DateTime?       @updatedAt @map("updated_at")
-  creator    User?           @relation(fields: [createdBy], references: [id], name: "riwayat_proses_creator")
-  updater    User?           @relation(fields: [updatedBy], references: [id], name: "riwayat_proses_updater")
+  creator    User?           @relation(fields: [createdBy], references: [id], name: "log_proses_creator")
+  updater    User?           @relation(fields: [updatedBy], references: [id], name: "log_proses_updater")
 
-  @@map("riwayat_proses")
+  @@map("log_proses")
 }
 
 model Kelas {
@@ -692,31 +743,37 @@ model Jadwal {
   kelas      Kelas    @relation(fields: [kelasId], references: [id])
 
   tanggal                            DateTime
-  jamMulai                           DateTime?             @map("jam_mulai")
-  jamSelesai                         DateTime?             @map("jam_selesai")
+  jamMulai                           DateTime?              @map("jam_mulai")
+  jamSelesai                         DateTime?              @map("jam_selesai")
   ruang                              String?
-  jumlahJamPelajaran                 Decimal?              @map("jumlah_jam_pelajaran") @db.Decimal(5, 2)
-  dokumenUndanganNarasumber          String?               @map("dokumen_undangan_narasumber")
-  dokumenKonfirmasiKesediaanMengajar String?               @map("dokumen_konfirmasi_kesediaan_mengajar")
-  dokumenDaftarHadir                 String?               @map("dokumen_daftar_hadir")
-  dokumenJadwalKegiatan              String?               @map("dokumen_jadwal_kegiatan")
-  tautanMaterial                     String?               @map("tautan_material")
-  statusPengajuanHonorarium          String?               @map("status_pengajuan_honorarium")
-  diajukanOleh                       String?               @map("diajukan_oleh")
-  diajukanTanggal                    DateTime?             @map("diajukan_tanggal")
-  diverifikasiOleh                   String?               @map("diverifikasi_oleh")
-  diverifikasiTanggal                DateTime?             @map("diverifikasi_tanggal")
-  disetujuiOleh                      String?               @map("disetujui_oleh") //  disetujui oleh PPK 
-  disetujuiTanggal                   DateTime?             @map("disetujui_tanggal")
-  dibayarOleh                        String?               @map("dibayar_oleh") // dibayar oleh bendahara
-  dibayarTanggal                     DateTime?             @map("dibayar_tanggal")
-  catatanRevisi                      String?               @map("catatan_revisi")
-  createdBy                          String                @map("created_by")
-  createdAt                          DateTime              @default(now()) @map("created_at")
-  updatedBy                          String?               @map("updated_by")
-  updatedAt                          DateTime?             @updatedAt @map("updated_at")
+  jumlahJamPelajaran                 Decimal?               @map("jumlah_jam_pelajaran") @db.Decimal(5, 2)
+  dokumenUndanganNarasumber          String?                @map("dokumen_undangan_narasumber")
+  dokumenKonfirmasiKesediaanMengajar String?                @map("dokumen_konfirmasi_kesediaan_mengajar")
+  dokumenDaftarHadir                 String?                @map("dokumen_daftar_hadir")
+  dokumenJadwalKegiatan              String?                @map("dokumen_jadwal_kegiatan")
+  tautanMaterial                     String?                @map("tautan_material")
+  statusPengajuanHonorarium          String?                @map("status_pengajuan_honorarium")
+  diajukanOlehId                     String?                @map("diajukan_oleh_id")
+  diajukanOleh                       User?                  @relation(fields: [diajukanOlehId], references: [id], name: "jadwal_diajukan_oleh")
+  diajukanTanggal                    DateTime?              @map("diajukan_tanggal")
+  diverifikasiOlehId                 String?                @map("diverifikasi_oleh_id")
+  diverifikasiOleh                   User?                  @relation(fields: [diverifikasiOlehId], references: [id], name: "jadwal_diverifikasi_oleh")
+  diverifikasiTanggal                DateTime?              @map("diverifikasi_tanggal")
+  disetujuiOlehId                    String?                @map("disetujui_oleh_id") //  disetujui oleh PPK 
+  disetujuiOleh                      User?                  @relation(fields: [disetujuiOlehId], references: [id], name: "jadwal_disetujui_oleh")
+  disetujuiTanggal                   DateTime?              @map("disetujui_tanggal")
+  dibayarOlehId                      String?                @map("dibayar_oleh_id") // dibayar oleh bendahara
+  dibayarOleh                        User?                  @relation(fields: [dibayarOlehId], references: [id], name: "jadwal_dibayar_oleh")
+  dibayarTanggal                     DateTime?              @map("dibayar_tanggal")
+  catatanRevisi                      String?                @map("catatan_revisi")
+  createdBy                          String                 @map("created_by")
+  createdAt                          DateTime               @default(now()) @map("created_at")
+  updatedBy                          String?                @map("updated_by")
+  updatedAt                          DateTime?              @updatedAt @map("updated_at")
   nominatifHonorarium                NominatifHonorarium[]
   jadwalNarasumber                   JadwalNarasumber[]
+  PejabatPerbendaharaan              PejabatPerbendaharaan? @relation(fields: [pejabatPerbendaharaanId], references: [id])
+  pejabatPerbendaharaanId            String?
 
   @@map("jadwal")
 }
@@ -822,7 +879,7 @@ model Pembayaran {
   ppk                     PejabatPerbendaharaan @relation(fields: [ppkId], references: [id], name: "ppk_pembayaran")
   pejabatPerbendaharaanId String?
   catatan                 String?
-  dibayarOleh             String?               @map("dibayar_oleh") // harusnya ini akan berisi id user yang melakukan pembayaran
+  dibayarOlehId           String?               @map("dibayar_oleh_id") // harusnya ini akan berisi id user yang melakukan pembayaran
   tanggalPembayaran       DateTime?             @map("tanggal_pembayaran")
   asWas                   Json?
   createdBy               String                @map("created_by")
@@ -963,6 +1020,7 @@ model PejabatPerbendaharaan {
   kegiatanKpa         Kegiatan[]                 @relation("kpa_kegiatan")
   bendaharaPembayaran Pembayaran[]               @relation("bendahara_pembayaran")
   ppkPembayaran       Pembayaran[]               @relation("ppk_pembayaran")
+  Jadwal              Jadwal[]
 
   @@map("pejabat_perbendaharaan")
 }

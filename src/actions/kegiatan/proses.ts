@@ -5,6 +5,7 @@ import { JENIS_PENGAJUAN, Kegiatan } from "@prisma-honorarium/client";
 import { revalidatePath } from "next/cache";
 import { Logger } from "tslog";
 import { KegiatanWithDetail } from ".";
+import { getSessionPenggunaForAction } from "../pengguna";
 import { ActionResponse } from "../response";
 // Create a Logger instance with custom settings
 const logger = new Logger({
@@ -14,18 +15,18 @@ const logger = new Logger({
 export const getStatusPengajuanGenerateRampungan = async (
   kegiatanId: string
 ) => {
-  const existingRiwayatProses = await dbHonorarium.riwayatProses.findFirst({
+  const existingLogProses = await dbHonorarium.logProses.findFirst({
     where: {
       kegiatanId,
       jenis: JENIS_PENGAJUAN.GENERATE_RAMPUNGAN,
     },
   });
 
-  return existingRiwayatProses;
+  return existingLogProses;
 };
 
-export const getRiwayatProses = async (kegiatanId: string) => {
-  const riwayat = await dbHonorarium.riwayatProses.findMany({
+export const getLogProses = async (kegiatanId: string) => {
+  const riwayat = await dbHonorarium.logProses.findMany({
     where: {
       kegiatanId,
     },
@@ -34,8 +35,17 @@ export const getRiwayatProses = async (kegiatanId: string) => {
   return riwayat;
 };
 
-export const pengajuanGenerateRampungan = async (kegiatanId: string) => {
+export const pengajuanGenerateRampungan = async (
+  kegiatanId: string
+): Promise<ActionResponse<KegiatanWithDetail>> => {
   //jika sudah ada pengajuan generate rampungan, maka update status pengajuannya dan tanggal statusnya
+
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) {
+    return pengguna;
+  }
+  const penggunaId = pengguna.data.penggunaId;
+  const satkerId = pengguna.data.satkerId;
 
   const updateStatusRampungan = await dbHonorarium.kegiatan.update({
     where: {
@@ -50,9 +60,21 @@ export const pengajuanGenerateRampungan = async (kegiatanId: string) => {
       dokumenKegiatan: true,
     },
   });
-  console.log("[createRiwayatProses]", updateStatusRampungan);
+  console.log("[createLogProses]", updateStatusRampungan);
 
-  const createRiwayatProses = await dbHonorarium.riwayatProses.create({
+  const buatPengajuan = await dbHonorarium.riwayatPengajuan.create({
+    data: {
+      jenis: "GENERATE_RAMPUNGAN",
+      kegiatanId,
+      diajukanOlehId: penggunaId,
+      tanggalPengajuan: new Date(),
+      status: "SUBMITTED",
+      createdBy: penggunaId,
+    },
+  });
+  console.log("[createPengajuan]", buatPengajuan);
+
+  const createLogProses = await dbHonorarium.logProses.create({
     data: {
       kegiatanId,
       jenis: JENIS_PENGAJUAN.GENERATE_RAMPUNGAN,
@@ -62,9 +84,12 @@ export const pengajuanGenerateRampungan = async (kegiatanId: string) => {
       tglStatus: new Date(),
     },
   });
-  console.log("[createRiwayatProses]", createRiwayatProses);
+  console.log("[createLogProses]", createLogProses);
   revalidatePath("/pengajuan");
-  return updateStatusRampungan;
+  return {
+    success: true,
+    data: updateStatusRampungan,
+  };
 };
 
 export type StatusRampungan =

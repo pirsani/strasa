@@ -4,11 +4,11 @@ import FloatingComponent from "@/components/floating-component";
 import PreviewKegiatan from "@/components/kegiatan";
 import PdfPreviewContainer from "@/components/pdf-preview-container";
 import { JenisPengajuan } from "@/types";
-import { RiwayatProses } from "@prisma-honorarium/client";
+import { LogProses } from "@prisma-honorarium/client";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
-import { getRiwayatProses } from "@/actions/kegiatan/proses";
+import { getLogProses } from "@/actions/kegiatan/proses";
 import useFileStore from "@/hooks/use-file-store";
 import ButtonsPengajuan from "./buttons-pengajuan";
 import { DisplayFormPengajuanGenerateRampungan } from "./honorarium/display-form-pengajuan-generate-rampungan";
@@ -26,7 +26,7 @@ const SelectKegiatan = dynamic(
 const PengajuanContainer = () => {
   const [kegiatanId, setKegiatanId] = useState<string | null>(null);
   const [kegiatan, setKegiatan] = useState<KegiatanWithDetail | null>(null);
-  const [riwayatProses, setRiwayatProses] = useState<RiwayatProses[]>([]);
+  const [logProses, setLogProses] = useState<LogProses[]>([]);
   const [jenisPengajuan, setJenisPengajuan] = useState<JenisPengajuan | null>(
     null
   );
@@ -57,9 +57,9 @@ const PengajuanContainer = () => {
     const getKegiatan = async () => {
       if (kegiatanId) {
         const data = await getKegiatanById(kegiatanId);
-        const riwayat = await getRiwayatProses(kegiatanId);
+        const riwayat = await getLogProses(kegiatanId);
         setKegiatan(data);
-        setRiwayatProses(riwayat);
+        setLogProses(riwayat);
       }
     };
     getKegiatan();
@@ -91,7 +91,7 @@ const PengajuanContainer = () => {
             jenisPengajuan={jenisPengajuan}
             handleSelection={handleSelection}
             kegiatan={kegiatan}
-            riwayatProses={riwayatProses}
+            logProses={logProses}
           />
 
           <span>{jenisPengajuan}</span>

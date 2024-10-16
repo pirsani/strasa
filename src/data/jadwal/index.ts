@@ -1,4 +1,5 @@
 "use server";
+import { PenggunaInfo } from "@/data/pengguna";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import {
@@ -42,6 +43,9 @@ export interface ObjPlainJadwalKelasNarasumber extends JadwalPlainObject {
   kelas: Kelas;
   materi: Materi;
   jadwalNarasumber: JadwalNarsum[];
+  kegiatan?: Kegiatan;
+  diajukanOleh?: PenggunaInfo | null;
+  disetujuiOleh?: PenggunaInfo | null;
 }
 
 export interface JadwalKelasNarasumber extends Jadwal {
@@ -49,6 +53,8 @@ export interface JadwalKelasNarasumber extends Jadwal {
   materi: Materi;
   jadwalNarasumber: JadwalNarsum[];
   kegiatan?: Kegiatan;
+  diajukanOleh?: PenggunaInfo | null;
+  disetujuiOleh?: PenggunaInfo | null;
 }
 export const getJadwalByKegiatanId = async (
   kegiatanId: string
@@ -65,6 +71,8 @@ export const getJadwalByKegiatanId = async (
           narasumber: true,
         },
       },
+      diajukanOleh: true,
+      disetujuiOleh: true,
     },
   });
   console.log(["[kegiatanId]"], kegiatanId);

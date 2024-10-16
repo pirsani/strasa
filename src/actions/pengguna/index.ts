@@ -215,6 +215,7 @@ interface SessionPenggunaForActionResponse {
   satkerId: string;
   unitKerjaId: string;
   penggunaId: string;
+  penggunaName: string;
 }
 export const getSessionPenggunaForAction = async (): Promise<
   ActionResponse<SessionPenggunaForActionResponse>
@@ -240,12 +241,14 @@ export const getSessionPenggunaForAction = async (): Promise<
   const satkerId = pengguna.data.satkerId;
   const unitKerjaId = pengguna.data.unitKerjaId;
   const penggunaId = pengguna.data.id;
+  const penggunaName = pengguna.data.name!;
   return {
     success: true,
     data: {
       satkerId,
       unitKerjaId,
       penggunaId,
+      penggunaName,
     },
   };
 };

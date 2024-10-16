@@ -37,8 +37,11 @@ const FormPengajuanGenerateRampungan = ({
     if (!kegiatanId) return;
     console.log("Form submitted:", data);
     const pengajuan = await pengajuanGenerateRampungan(kegiatanId);
+    if (!pengajuan.success) {
+      return;
+    }
     console.log("Pengajuan:", pengajuan);
-    handleSuccess(pengajuan);
+    handleSuccess(pengajuan.data);
   };
   return (
     <div

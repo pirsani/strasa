@@ -5,7 +5,7 @@ import {
   JENIS_PENGAJUAN,
   Kegiatan,
   LOKASI,
-  RiwayatProses,
+  LogProses,
 } from "@prisma-honorarium/client";
 import {
   Coins,
@@ -20,16 +20,16 @@ import { useEffect, useState } from "react";
 
 // generate rampungan, uh dalam negeri, uh luar negeri hanya dapat di ajukan sekali
 // honorarium, penggantian reimbursement, pembayaran pihak ke-3 dapat di ajukan berkali-kali
-interface MapRiwayatProses {
-  [JENIS_PENGAJUAN.HONORARIUM]: RiwayatProses[];
-  [JENIS_PENGAJUAN.PENGGANTIAN_REINBURSEMENT]: RiwayatProses[];
-  [JENIS_PENGAJUAN.PEMBAYARAN_PIHAK_KETIGA]: RiwayatProses[];
+interface MapLogProses {
+  [JENIS_PENGAJUAN.HONORARIUM]: LogProses[];
+  [JENIS_PENGAJUAN.PENGGANTIAN_REINBURSEMENT]: LogProses[];
+  [JENIS_PENGAJUAN.PEMBAYARAN_PIHAK_KETIGA]: LogProses[];
 }
 
 interface ButtonsPengajuanProps {
   jenisPengajuan: JenisPengajuan | null;
   kegiatan: Kegiatan | null;
-  riwayatProses: RiwayatProses[];
+  logProses: LogProses[];
   handleSelection: (jenis: JenisPengajuan) => void;
 }
 
@@ -37,7 +37,7 @@ const ButtonsPengajuan = ({
   jenisPengajuan: initialJenisPengajuan,
   kegiatan: initialKegiatan,
   handleSelection,
-  riwayatProses,
+  logProses,
 }: ButtonsPengajuanProps) => {
   const [jenisPengajuan, setJenisPengajuan] = useState<JenisPengajuan | null>(
     initialJenisPengajuan
@@ -49,13 +49,12 @@ const ButtonsPengajuan = ({
     setKegiatan(initialKegiatan);
   }, [initialKegiatan]);
 
-  const [mapRiwayatProses, setMapRiwayatProses] =
-    useState<MapRiwayatProses | null>(null);
+  const [mapLogProses, setMapLogProses] = useState<MapLogProses | null>(null);
 
   const handleOnClick = (jenis: JenisPengajuan) => {
     setJenisPengajuan(jenis);
     handleSelection(jenis);
-    console.log("[riwayatProses]", riwayatProses);
+    console.log("[logProses]", logProses);
   };
 
   const handleSuccessPengajuanRampungan = (kegiatan: Kegiatan) => {
@@ -64,9 +63,9 @@ const ButtonsPengajuan = ({
   };
 
   useEffect(() => {
-    console.log("[useEffect][riwayatProses]", riwayatProses);
-    setMapRiwayatProses(mappingRiwayatProses(riwayatProses));
-  }, [riwayatProses]);
+    console.log("[useEffect][logProses]", logProses);
+    setMapLogProses(mappingLogProses(logProses));
+  }, [logProses]);
 
   useEffect(() => {
     console.log("[useEffect][initialJenisPengajuan]", initialJenisPengajuan);
@@ -145,14 +144,14 @@ const ButtonsPengajuan = ({
   );
 };
 
-const mappingRiwayatProses = (riwayatProses: RiwayatProses[]) => {
-  const mapped: MapRiwayatProses = {
+const mappingLogProses = (logProses: LogProses[]) => {
+  const mapped: MapLogProses = {
     [JENIS_PENGAJUAN.HONORARIUM]: [],
     [JENIS_PENGAJUAN.PENGGANTIAN_REINBURSEMENT]: [],
     [JENIS_PENGAJUAN.PEMBAYARAN_PIHAK_KETIGA]: [],
   };
 
-  riwayatProses.forEach((proses) => {
+  logProses.forEach((proses) => {
     const jenis = proses.jenis;
   });
   console.log("[mapped]", mapped);

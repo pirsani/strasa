@@ -23,17 +23,18 @@ const updateStatusPengajuanPembayaran = async (
   const satkerId = pengguna.data.satkerId;
   const unitKerjaId = pengguna.data.unitKerjaId;
   const penggunaId = pengguna.data.penggunaId;
+  const penggunaName = pengguna.data.penggunaName;
 
   interface ObjJadlwaUpdate {
     statusPengajuanHonorarium: StatusLangkah;
-    diajukanOleh?: string;
+    diajukanOlehId?: string;
     diajukanTanggal?: Date;
-    diverifikasiOleh?: string;
+    diverifikasiOlehId?: string;
     diverifikasiTanggal?: Date;
     catatanRevisi?: string;
-    disetujuiOleh?: string;
+    disetujuiOlehId?: string;
     disetujuiTanggal?: Date;
-    dibayarOleh?: string;
+    dibayarOlehId?: string;
     dibayarTanggal?: Date;
   }
 
@@ -42,26 +43,26 @@ const updateStatusPengajuanPembayaran = async (
   };
   switch (status) {
     case "Submitted":
-      objJadlwaUpdate.diajukanOleh = penggunaId;
+      objJadlwaUpdate.diajukanOlehId = penggunaId;
       objJadlwaUpdate.diajukanTanggal = new Date();
       break;
     case "Revised":
-      objJadlwaUpdate.diajukanOleh = penggunaId;
+      objJadlwaUpdate.diajukanOlehId = penggunaId;
       objJadlwaUpdate.diajukanTanggal = new Date();
       break;
     case "Revise":
-      objJadlwaUpdate.diverifikasiOleh = penggunaId;
+      objJadlwaUpdate.diverifikasiOlehId = penggunaId;
       objJadlwaUpdate.diverifikasiTanggal = new Date();
       objJadlwaUpdate.catatanRevisi = catatanRevisi || "-";
       break;
     case "Approved":
-      objJadlwaUpdate.diverifikasiOleh = penggunaId;
+      objJadlwaUpdate.diverifikasiOlehId = penggunaId;
       objJadlwaUpdate.diverifikasiTanggal = new Date();
-      objJadlwaUpdate.disetujuiOleh = penggunaId;
+      objJadlwaUpdate.disetujuiOlehId = penggunaId;
       objJadlwaUpdate.disetujuiTanggal = new Date();
       break;
     case "Paid":
-      objJadlwaUpdate.dibayarOleh = penggunaId;
+      objJadlwaUpdate.dibayarOlehId = penggunaId;
       objJadlwaUpdate.dibayarTanggal = new Date();
       break;
     default:

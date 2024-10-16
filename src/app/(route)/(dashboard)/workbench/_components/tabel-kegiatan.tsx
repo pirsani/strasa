@@ -124,6 +124,8 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     tanggalKegiatan?: Date | string | null;
     jenisPengajuan: string;
     statusPengajuan: StatusLangkah | null;
+    diajukanOlehId?: string | null;
+    diajukanOleh?: string | null;
     diajukanTanggal?: Date | string | null;
     diverifikasiTanggal?: Date | string | null;
     disetujuiTanggal?: Date | string | null;
@@ -158,6 +160,8 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         //   jadwal.statusPengajuanHonorarium
         // ),
         statusPengajuan: jadwal.statusPengajuanHonorarium as StatusLangkah,
+        diajukanOlehId: jadwal.diajukanOlehId,
+        diajukanOleh: jadwal.diajukanOleh?.name,
         diajukanTanggal: jadwal.diajukanTanggal,
         diverifikasiTanggal: jadwal.diverifikasiTanggal,
         disetujuiTanggal: jadwal.disetujuiTanggal,
@@ -189,23 +193,22 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       // iterate over details
       return (
         <tr>
-          <td colSpan={8}>
+          <td colSpan={8} className=" pb-4">
             <table className="table-auto w-full text-left border border-collapse">
               <thead>
-                <tr className="bg-slate-700 text-slate-300">
-                  <th className="border">Kelas</th>
-                  <th className="border">Tanggal Kegiatan</th>
-                  <th className="border">Tanggal Pengajuan</th>
-                  <th className="border">Status Pengajuan</th>
-                  <th className="border">Tanggal Verifikasi</th>
-                  <th className="border">Tanggal Disetujui</th>
-                  <th className="border">Tanggal Dibayar</th>
-                  <th className="border">Jenis Pengajuan</th>
+                <tr className="bg-gray-800 text-gray-200 h-12">
+                  <th className="border px-1">Kelas</th>
+                  <th className="border px-1">Tanggal Kegiatan</th>
+                  <th className="border px-1">Tanggal Pengajuan</th>
+                  <th className="border px-1">Jenis Pengajuan</th>
+                  <th className="border px-1">Status Pengajuan</th>
+                  <th className="border px-1">Operator</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {details.map((detail: RowDetail) => (
-                  <tr key={detail.id} className="even:bg-slate-100">
+                  <tr key={detail.id} className="even:bg-slate-100 h-10">
                     <td className="border px-2">{detail.nama}</td>
                     <td className="border px-2">
                       {formatHariTanggal(detail.tanggalKegiatan)}
@@ -213,19 +216,20 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                     <td className="border px-2">
                       {formatTanggal(detail.diajukanTanggal)}
                     </td>
+                    <td className="border px-2">{detail.jenisPengajuan}</td>
                     <td className="border px-2">
                       {<StatusBadge status={detail.statusPengajuan} />}
                     </td>
-                    <td className="border px-2">
-                      {formatTanggal(detail.diverifikasiTanggal)}
+                    <td className="border px-2">{detail.diajukanOleh}</td>
+                    <td>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-blue-800"
+                      >
+                        <Eye size={18} />
+                      </Button>
                     </td>
-                    <td className="border px-2">
-                      {formatTanggal(detail.disetujuiTanggal)}
-                    </td>
-                    <td className="border px-2">
-                      {formatTanggal(detail.dibayarTanggal)}
-                    </td>
-                    <td className="border px-2">{detail.jenisPengajuan}</td>
                   </tr>
                 ))}
               </tbody>

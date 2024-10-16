@@ -2,11 +2,11 @@
 import { getKegiatanById, KegiatanWithDetail } from "@/actions/kegiatan";
 import FloatingComponent from "@/components/floating-component";
 import PdfPreviewContainer from "@/components/pdf-preview-container";
-import { RiwayatProses } from "@prisma-honorarium/client";
+import { LogProses } from "@prisma-honorarium/client";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
-import { getRiwayatProses } from "@/actions/kegiatan/proses";
+import { getLogProses } from "@/actions/kegiatan/proses";
 import { JenisPengajuan } from "@/app/(route)/daftar-nominatif/_components/select-jenis-pengajuan";
 import useFileStore from "@/hooks/use-file-store";
 import FormNominatifHonorarium from "./form-nominatif-honorarium";
@@ -19,7 +19,7 @@ const SelectKegiatan = dynamic(
 const DaftarNominatifContainer = () => {
   const [kegiatanId, setKegiatanId] = useState<string | null>(null);
   const [kegiatan, setKegiatan] = useState<KegiatanWithDetail | null>(null);
-  const [riwayatProses, setRiwayatProses] = useState<RiwayatProses[]>([]);
+  const [logProses, setLogProses] = useState<LogProses[]>([]);
   const [jenisPengajuan, setJenisPengajuan] = useState<JenisPengajuan | null>(
     null
   );
@@ -36,12 +36,12 @@ const DaftarNominatifContainer = () => {
     const getKegiatan = async () => {
       if (kegiatanId) {
         const data = await getKegiatanById(kegiatanId);
-        const riwayat = await getRiwayatProses(kegiatanId);
+        const riwayat = await getLogProses(kegiatanId);
         setKegiatan(data);
-        setRiwayatProses(riwayat);
+        setLogProses(riwayat);
       } else {
         setKegiatan(null);
-        setRiwayatProses([]);
+        setLogProses([]);
       }
     };
     getKegiatan();
