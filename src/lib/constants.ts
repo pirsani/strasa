@@ -5,6 +5,7 @@ export type StatusLangkah =
   | "Revised"
   | "Verified"
   | "Approved"
+  | "RequestToPay"
   | "Paid"
   | "End"
   | null;
@@ -16,6 +17,7 @@ export const validStatusLangkah: StatusLangkah[] = [
   "Revised",
   "Verified",
   "Approved",
+  "RequestToPay",
   "Paid",
   "End",
   null,
@@ -44,6 +46,24 @@ export function getStatusLangkah(value: unknown): StatusLangkah {
   return isValidStatusLangkah(value) ? (value as StatusLangkah) : null;
 }
 
+export const ALUR_PROSES = [
+  "setup",
+  "pengajuan",
+  "verifikasi",
+  "nominatif",
+  "pembayaran",
+  "selesai",
+];
+
+export type AlurProses =
+  | "setup"
+  | "pengajuan"
+  | "verifikasi"
+  | "nominatif"
+  | "pembayaran"
+  | "selesai"
+  | null;
+
 export const LANGKAH = [
   "setup",
   "pengajuan",
@@ -67,6 +87,8 @@ export const mapStatusLangkahToDesc = (status: string | null) => {
       return "Telah diperbaiki";
     case "Verified":
       return "Telah diverifikasi";
+    case "RequestToPay":
+      return "Permintaan pembayaran";
     case "Paid":
       return "Telah dibayar";
     case "End":
@@ -88,13 +110,15 @@ export const mapStatusLangkahToColor = (status: string | null) => {
     case "Revised":
       return "bg-yellow-300 text-yellow-800";
     case "Verified":
-      return "bg-green-300 text-green-800";
+      return "bg-green-200 text-green-600";
     case "Approved":
-      return "text-green-300 bg-red-800";
+      return "bg-green-400 text-green-200 ";
+    case "RequestToPay":
+      return "bg-green-600 text-green-200";
     case "Paid":
-      return "bg-green-300 text-green-800";
+      return "bg-green-700 text-green-200";
     case "End":
-      return "bg-green-300 text-green-800";
+      return "bg-blue-700 text-white";
     default:
       return "text-white bg-gray-800";
   }

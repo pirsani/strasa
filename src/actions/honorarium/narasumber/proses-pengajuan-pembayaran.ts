@@ -95,8 +95,8 @@ const updateStatusPengajuanPembayaran = async (
         id: updateStatus.kegiatanId,
       },
       data: {
-        status: "pengajuan",
-        statusHonorarium: "pengajuan",
+        status: "Submitted",
+        statusHonorarium: "Submitted",
       },
     });
 

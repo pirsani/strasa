@@ -29,6 +29,7 @@ const statusIcons = {
   Approved: <CheckCheck size={16} className="mr-1" />,
   Paid: <HandCoins size={16} className="mr-1" />,
   End: <Goal size={16} className="mr-1" />,
+  RequestToPay: <HandCoins size={16} className="mr-1" />,
 };
 
 const StatusIcon = ({
@@ -53,13 +54,17 @@ const StatusBadge = ({ status, className }: StatusBadgeProps) => {
           : status == "Revise"
           ? "bg-yellow-300 text-yellow-800"
           : status == "Revised"
-          ? "bg-yellow-300 text-yellow-800"
+          ? "bg-green-200 text-green-800"
           : status == "Verified"
-          ? "bg-green-300 text-green-800"
+          ? "bg-green-200 text-green-800"
           : status == "Approved"
-          ? "text-green-300 bg-green-800"
+          ? "bg-green-400 text-green-800"
+          : status == "RequestToPay"
+          ? "bg-green-600 text-green-100"
           : status == "Paid"
-          ? "bg-green-300 text-green-800"
+          ? "bg-green-800 text-green-100"
+          : status == "End"
+          ? "bg-blue-700 text-white"
           : "bg-gray-200 text-gray-500"
       )}
     >

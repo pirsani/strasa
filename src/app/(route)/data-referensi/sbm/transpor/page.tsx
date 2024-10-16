@@ -21,7 +21,7 @@ const TransporPage = async () => {
     await getSbmTransporJakartaKeKotaKabSekitar(tahunAnggaran);
 
   // suppress Warning: Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
-  const convertedDataSbmDalkot = dataSbmJakartaKeKotaKabSekitar.map((item) => ({
+  const convertedDataSbmDalkot = dataSbmDalamKota.map((item) => ({
     ...convertSpecialTypesToPlain<SbmTransporDalamKotaPulangPergiPlainObject>(
       item
     ),

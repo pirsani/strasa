@@ -4,6 +4,7 @@ import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import {
   Jadwal,
   JadwalNarasumber,
+  Kegiatan,
   Kelas,
   Materi,
   Narasumber,
@@ -47,6 +48,7 @@ export interface JadwalKelasNarasumber extends Jadwal {
   kelas: Kelas;
   materi: Materi;
   jadwalNarasumber: JadwalNarsum[];
+  kegiatan?: Kegiatan;
 }
 export const getJadwalByKegiatanId = async (
   kegiatanId: string
@@ -96,6 +98,38 @@ export const getJadwalByKegiatanIdWithStatus = async (
   return jadwal;
 };
 
+export const getJadwalBySatkerIdWithStatus = async (
+  satkerId: string,
+  statusPengajuanHonorarium: string,
+  tahun: number = new Date().getFullYear()
+): Promise<JadwalKelasNarasumber[]> => {
+  const jadwal = await dbHonorarium.jadwal.findMany({
+    where: {
+      kegiatan: {
+        satkerId: satkerId,
+        tanggalMulai: {
+          gte: new Date(tahun, 0, 1),
+          lt: new Date(tahun + 1, 0, 1),
+        },
+      },
+      statusPengajuanHonorarium: statusPengajuanHonorarium,
+    },
+    include: {
+      kelas: true,
+      materi: true,
+      jadwalNarasumber: {
+        include: {
+          narasumber: true,
+        },
+      },
+      kegiatan: true,
+    },
+  });
+  console.log(["[JadwalKelasNarasumber]"], jadwal);
+
+  return jadwal;
+};
+
 export const getObPlainJadwalByKegiatanId = async (kegiatanId: string) => {
   const jadwal = await getJadwalByKegiatanId(kegiatanId);
   const plainObject =
@@ -107,6 +141,26 @@ export const getObPlainJadwalByKegiatanIdWithStatusDisetujui = async (
   kegiatanId: string
 ) => {
   const jadwal = await getJadwalByKegiatanIdWithStatus(kegiatanId, "Approved");
+  const plainObject =
+    convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber[]>(jadwal);
+  return plainObject;
+};
+
+export const getObPlainJadwalBySatkerIdWithStatus = async (
+  satkerId: string,
+  status: string,
+  tahun: number = new Date().getFullYear()
+) => {
+  const jadwal = await getJadwalBySatkerIdWithStatus(satkerId, status, tahun);
+  const plainObject =
+    convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber[]>(jadwal);
+  return plainObject;
+};
+
+export const getObPlainJadwalBySatkerIdWithStatusPermintanPembayaran = async (
+  satkerId: string
+) => {
+  const jadwal = await getJadwalBySatkerIdWithStatus(satkerId, "RequestToPay");
   const plainObject =
     convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber[]>(jadwal);
   return plainObject;

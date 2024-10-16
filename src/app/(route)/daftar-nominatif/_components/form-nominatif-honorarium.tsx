@@ -1,7 +1,10 @@
+import { KegiatanWithDetail } from "@/actions/kegiatan";
+import { pengajuanPembayaran } from "@/actions/pembayaran";
+import SelectJenisPengajuan from "@/app/(route)/daftar-nominatif/_components/select-jenis-pengajuan";
+import CummulativeErrors from "@/components/form/cummulative-error";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
 import RequiredLabel from "@/components/form/required";
 import SelectBendahara from "@/components/form/select-bendahara";
-import SelectJenisPengajuan from "@/components/form/select-jenis-pengajuan";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,29 +16,32 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  NominatifHonorarium,
-  nominatifHonorariumSchema,
-} from "@/zod/schemas/nominatif-honorarium";
+  NominatifPembayaran,
+  nominatifPembayaranSchema,
+} from "@/zod/schemas/nominatif-pembayaran";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { WandSparkles } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import SelectJadwalHonorarium from "./select-jadwal-honorarium";
 
-interface FormNominatifHonorariumProps {
-  kegiatanId: string;
+interface FormNominatifPembayaranProps {
+  kegiatan: KegiatanWithDetail;
   onCanceled?: () => void;
-  onSuccess?: (data: NominatifHonorarium) => void;
+  onSuccess?: (data: NominatifPembayaran) => void;
 }
-const FormNominatifHonorarium = ({
-  kegiatanId,
+const FormNominatifPembayaran = ({
+  kegiatan,
   onCanceled = () => {},
   onSuccess = () => {},
-}: FormNominatifHonorariumProps) => {
-  const form = useForm<NominatifHonorarium>({
-    resolver: zodResolver(nominatifHonorariumSchema),
+}: FormNominatifPembayaranProps) => {
+  const kegiatanId = kegiatan.id;
+  const form = useForm<NominatifPembayaran>({
+    resolver: zodResolver(nominatifPembayaranSchema),
     defaultValues: {
-      id: kegiatanId,
+      id: createId(),
       buktiPajakCuid: "buktiPajak" + createId() + ".pdf",
       kegiatanId: kegiatanId ?? "",
       jenisPengajuan: "",
@@ -63,15 +69,47 @@ const FormNominatifHonorarium = ({
     // Do nothing if the file is null
   };
 
-  const handleReset = () => {
-    reset();
-    onCanceled();
+  const onSubmit = async (data: NominatifPembayaran) => {
+    console.log(data);
+    onSuccess(data);
+    const { dokumenBuktiPajak, ...nominatifPembayaranWithoutFile } = data;
+
+    const pembayaran = await pengajuanPembayaran(
+      nominatifPembayaranWithoutFile
+    );
+
+    if (pembayaran.success) {
+      toast.success("Pengajuan pembayaran berhasil diajukan");
+      onSuccess(data);
+    } else {
+      toast.error("Pengajuan pembayaran gagal diajukan");
+    }
   };
+
+  const handleReset = () => {
+    onCanceled();
+    reset({
+      id: createId(),
+      buktiPajakCuid: "buktiPajak" + createId() + ".pdf",
+      kegiatanId: kegiatanId ?? "",
+      jenisPengajuan: "",
+      jadwalId: "",
+      bendaharaId: "",
+      ppkId: "",
+    });
+  };
+
+  useEffect(() => {
+    handleReset();
+  }, [kegiatanId]);
 
   return (
     <div className="flex flex-col gap-4">
       <Form {...form}>
-        <form className="flex flex-col gap-4 w-full">
+        <form
+          className="flex flex-col gap-4 w-full"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div className="flex flex-row gap-2">
             <FormField
               control={control}
@@ -83,11 +121,13 @@ const FormNominatifHonorarium = ({
                   </FormLabel>
                   <FormControl>
                     <SelectJenisPengajuan
+                      kegiatan={kegiatan}
                       fieldName="jenisPengajuan"
                       value={field.value}
                       onChange={field.onChange}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -106,10 +146,11 @@ const FormNominatifHonorarium = ({
                       <SelectJadwalHonorarium
                         kegiatanId={kegiatanId}
                         fieldName="jadwalId"
-                        value={field.value}
+                        value={field.value ?? ""}
                         onChange={field.onChange}
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -132,6 +173,7 @@ const FormNominatifHonorarium = ({
                       onChange={field.onChange}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -152,6 +194,7 @@ const FormNominatifHonorarium = ({
                       onChange={field.onChange}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -175,7 +218,7 @@ const FormNominatifHonorarium = ({
                   <FormControl>
                     <FormFileImmediateUpload
                       cuid={buktiPajakCuid}
-                      folder={jadwalId}
+                      folder={kegiatanId}
                       name={field.name}
                       onFileChange={handleFileChange}
                       className="bg-white"
@@ -205,6 +248,7 @@ const FormNominatifHonorarium = ({
               )}
             />
           </div>
+          <CummulativeErrors errors={errors} />
           <div className="flex flex-row gap-2 justify-end">
             <Button type="submit" disabled={isSubmitting}>
               Ajukan Pembayaran
@@ -216,4 +260,4 @@ const FormNominatifHonorarium = ({
   );
 };
 
-export default FormNominatifHonorarium;
+export default FormNominatifPembayaran;

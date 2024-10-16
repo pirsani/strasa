@@ -190,33 +190,42 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       return (
         <tr>
           <td colSpan={8}>
-            <table className="table-auto w-full text-left">
+            <table className="table-auto w-full text-left border border-collapse">
               <thead>
                 <tr className="bg-slate-700 text-slate-300">
-                  <th>Kelas</th>
-                  <th>Tanggal Kegiatan</th>
-                  <th>Tanggal Pengajuan</th>
-                  <th>Status Pengajuan</th>
-                  <th>Tanggal Verifikasi</th>
-                  <th>Tanggal Disetujui</th>
-                  <th>Tanggal Dibayar</th>
-                  <th>Jenis Pengajuan</th>
+                  <th className="border">Kelas</th>
+                  <th className="border">Tanggal Kegiatan</th>
+                  <th className="border">Tanggal Pengajuan</th>
+                  <th className="border">Status Pengajuan</th>
+                  <th className="border">Tanggal Verifikasi</th>
+                  <th className="border">Tanggal Disetujui</th>
+                  <th className="border">Tanggal Dibayar</th>
+                  <th className="border">Jenis Pengajuan</th>
                 </tr>
               </thead>
               <tbody>
                 {details.map((detail: RowDetail) => (
-                  <tr
-                    key={detail.id}
-                    className="odd:bg-slate-200 even:bg-slate-100"
-                  >
-                    <td>{detail.nama}</td>
-                    <td>{formatHariTanggal(detail.tanggalKegiatan)}</td>
-                    <td>{formatTanggal(detail.diajukanTanggal)}</td>
-                    <td>{<StatusBadge status={detail.statusPengajuan} />}</td>
-                    <td>{formatTanggal(detail.diverifikasiTanggal)}</td>
-                    <td>{formatTanggal(detail.disetujuiTanggal)}</td>
-                    <td>{formatTanggal(detail.dibayarTanggal)}</td>
-                    <td>{detail.jenisPengajuan}</td>
+                  <tr key={detail.id} className="even:bg-slate-100">
+                    <td className="border px-2">{detail.nama}</td>
+                    <td className="border px-2">
+                      {formatHariTanggal(detail.tanggalKegiatan)}
+                    </td>
+                    <td className="border px-2">
+                      {formatTanggal(detail.diajukanTanggal)}
+                    </td>
+                    <td className="border px-2">
+                      {<StatusBadge status={detail.statusPengajuan} />}
+                    </td>
+                    <td className="border px-2">
+                      {formatTanggal(detail.diverifikasiTanggal)}
+                    </td>
+                    <td className="border px-2">
+                      {formatTanggal(detail.disetujuiTanggal)}
+                    </td>
+                    <td className="border px-2">
+                      {formatTanggal(detail.dibayarTanggal)}
+                    </td>
+                    <td className="border px-2">{detail.jenisPengajuan}</td>
                   </tr>
                 ))}
               </tbody>

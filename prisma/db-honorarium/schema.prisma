@@ -492,6 +492,7 @@ model Kegiatan {
   kelas               Kelas[]
   dokumenKegiatan     DokumenKegiatan[]
   Jadwal              Jadwal[]
+  pembayaran          Pembayaran[]           @relation("pembayaran_kegiatan")
 
   @@map("kegiatan")
 }
@@ -628,6 +629,7 @@ model Itinerary {
 enum JENIS_PENGAJUAN {
   GENERATE_RAMPUNGAN
   HONORARIUM
+  UH
   UH_DALAM_NEGERI
   UH_LUAR_NEGERI
   PENGGANTIAN_REINBURSEMENT
@@ -803,6 +805,34 @@ model NominatifHonorarium {
   @@map("daftar_nominatif_honorarium")
 }
 
+model Pembayaran {
+  id                      String                @id @default(cuid())
+  kegiatanId              String                @map("kegiatan_id")
+  kegiatan                Kegiatan              @relation(fields: [kegiatanId], references: [id], name: "pembayaran_kegiatan")
+  satkerId                String                @map("satker_id")
+  satker                  Organisasi            @relation(fields: [satkerId], references: [id], name: "satker_pembayaran")
+  mapTo                   String                @map("map_to")
+  mappedId                String                @map("mapped_id")
+  dokumenBuktiPajak       String                @map("dokumen_bukti_pajak")
+  bendaharaId             String                @map("bendahara_id")
+  bendahara               PejabatPerbendaharaan @relation(fields: [bendaharaId], references: [id], name: "bendahara_pembayaran")
+  jenisPengajuan          JENIS_PENGAJUAN
+  status                  String                @map("status") // [RequestToPay, Paid, Rejected]
+  ppkId                   String                @map("ppk_id")
+  ppk                     PejabatPerbendaharaan @relation(fields: [ppkId], references: [id], name: "ppk_pembayaran")
+  pejabatPerbendaharaanId String?
+  catatan                 String?
+  dibayarOleh             String?               @map("dibayar_oleh") // harusnya ini akan berisi id user yang melakukan pembayaran
+  tanggalPembayaran       DateTime?             @map("tanggal_pembayaran")
+  asWas                   Json?
+  createdBy               String                @map("created_by")
+  createdAt               DateTime              @default(now()) @map("created_at")
+  updatedBy               String?               @map("updated_by")
+  updatedAt               DateTime?             @updatedAt @map("updated_at")
+
+  @@map("pembayaran")
+}
+
 // berdasarkan data dari https://e-database.kemendagri.go.id/kemendagri/dataset/1121/tabel-data
 model Provinsi {
   id               String             @id @default(cuid())
@@ -888,10 +918,11 @@ model Organisasi {
   updatedAt              DateTime?               @map("updated_at")
   subOrganisasi          Organisasi[]            @relation("pohonOrganisasi")
   unitOrganisasiKelolaan Organisasi[]            @relation("satkerAnggaran")
-  PejabatPerbendaharaan  PejabatPerbendaharaan[]
-  User                   User[]
-  KegiatanSatker         Kegiatan[]              @relation("satker_kegiatan")
-  KegiatanUnitKerja      Kegiatan[]              @relation("unit_kerja_kegiatan")
+  pejabatPerbendaharaan  PejabatPerbendaharaan[]
+  user                   User[]
+  kegiatanSatker         Kegiatan[]              @relation("satker_kegiatan")
+  kegiatanUnitKerja      Kegiatan[]              @relation("unit_kerja_kegiatan")
+  satkerPembayaran       Pembayaran[]            @relation("satker_pembayaran")
 
   @@map("organisasi")
 }
@@ -910,26 +941,28 @@ model JenisJabatanPerbendaharaan {
 }
 
 model PejabatPerbendaharaan {
-  id                String                     @id @default(cuid())
-  NIK               String?                    @map("nik")
-  nama              String
-  NIP               String?                    @map("nip")
-  pangkatGolonganId String?                    @map("pangkat_golongan_id")
-  pangkatGolongan   PangkatGolongan?           @relation(fields: [pangkatGolonganId], references: [id])
-  jabatanId         String                     @map("jabatan_id")
-  jabatan           JenisJabatanPerbendaharaan @relation(fields: [jabatanId], references: [id])
-  satkerId          String                     @map("satker_id")
-  satker            Organisasi                 @relation(fields: [satkerId], references: [id])
-  tmtMulai          DateTime                   @map("tmt_mulai")
-  tmtSelesai        DateTime?                  @map("tmt_selesai")
-  aktif             Boolean                    @default(true) // ini harusnya bs dilihat dari tmt mulai dan tmt selesai
-  createdBy         String                     @map("created_by")
-  createdAt         DateTime                   @default(now()) @map("created_at")
-  updatedBy         String?                    @map("updated_by")
-  updatedAt         DateTime?                  @map("updated_at")
-  kegiatanPpk       Kegiatan[]                 @relation("ppk_kegiatan")
-  kegiatanBendahara Kegiatan[]                 @relation("bendahara_kegiatan")
-  kegiatanKpa       Kegiatan[]                 @relation("kpa_kegiatan")
+  id                  String                     @id @default(cuid())
+  NIK                 String?                    @map("nik")
+  nama                String
+  NIP                 String?                    @map("nip")
+  pangkatGolonganId   String?                    @map("pangkat_golongan_id")
+  pangkatGolongan     PangkatGolongan?           @relation(fields: [pangkatGolonganId], references: [id])
+  jabatanId           String                     @map("jabatan_id")
+  jabatan             JenisJabatanPerbendaharaan @relation(fields: [jabatanId], references: [id])
+  satkerId            String                     @map("satker_id")
+  satker              Organisasi                 @relation(fields: [satkerId], references: [id])
+  tmtMulai            DateTime                   @map("tmt_mulai")
+  tmtSelesai          DateTime?                  @map("tmt_selesai")
+  aktif               Boolean                    @default(true) // ini harusnya bs dilihat dari tmt mulai dan tmt selesai
+  createdBy           String                     @map("created_by")
+  createdAt           DateTime                   @default(now()) @map("created_at")
+  updatedBy           String?                    @map("updated_by")
+  updatedAt           DateTime?                  @map("updated_at")
+  kegiatanPpk         Kegiatan[]                 @relation("ppk_kegiatan")
+  kegiatanBendahara   Kegiatan[]                 @relation("bendahara_kegiatan")
+  kegiatanKpa         Kegiatan[]                 @relation("kpa_kegiatan")
+  bendaharaPembayaran Pembayaran[]               @relation("bendahara_pembayaran")
+  ppkPembayaran       Pembayaran[]               @relation("ppk_pembayaran")
 
   @@map("pejabat_perbendaharaan")
 }

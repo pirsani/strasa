@@ -17,10 +17,12 @@ interface Option {
 export const SelectBendahara = ({
   fieldName,
   onChange,
-  value,
+  value: initValue,
 }: SelectBendaharaProps) => {
   const [options, setOptions] = useState<Option[]>([]);
-  const [selectedValue, setSelectedValue] = useState<string | null>(value);
+  const [selectedValue, setSelectedValue] = useState<string | null>(
+    initValue ?? null
+  );
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -35,10 +37,10 @@ export const SelectBendahara = ({
         console.log("mappedOptions", mappedOptions);
 
         // Set default value after options are loaded
-        if (value) {
-          console.log("value", value);
+        if (initValue) {
+          console.log("value", initValue);
           const defaultOption = mappedOptions.find(
-            (option) => option.value === value
+            (option) => option.value === initValue
           );
           console.log("defaultOption", defaultOption);
           setSelectedValue(defaultOption ? defaultOption.value : null);
@@ -47,8 +49,11 @@ export const SelectBendahara = ({
     };
 
     fetchOptions();
-  }, [value]);
+  }, []);
 
+  useEffect(() => {
+    setSelectedValue(initValue ?? null);
+  }, [initValue]);
   return (
     <Select
       instanceId={fieldName}
@@ -59,7 +64,11 @@ export const SelectBendahara = ({
         setSelectedValue(newValue); // Update local state
         onChange(newValue); // Call onChange handler
       }}
-      value={options.find((option) => option.value === selectedValue) || null}
+      value={
+        selectedValue
+          ? options.find((option) => option.value === selectedValue)
+          : null
+      }
       getOptionLabel={(option) => option.label}
       getOptionValue={(option) => option.value.toString()}
       filterOption={(option, inputValue) =>

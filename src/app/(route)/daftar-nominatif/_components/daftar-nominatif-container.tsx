@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
 import { getRiwayatProses } from "@/actions/kegiatan/proses";
-import { JenisPengajuan } from "@/components/form/select-jenis-pengajuan";
+import { JenisPengajuan } from "@/app/(route)/daftar-nominatif/_components/select-jenis-pengajuan";
 import useFileStore from "@/hooks/use-file-store";
 import FormNominatifHonorarium from "./form-nominatif-honorarium";
 
@@ -31,15 +31,6 @@ const DaftarNominatifContainer = () => {
     setKegiatanId(value); // after this set, it will trigger re-render PreviewKegiatan
   };
 
-  const handleSuccessDaftarNominatifRampungan = (
-    kegiatanUpdated: KegiatanWithDetail
-  ) => {
-    setKegiatan((kegiatan) => ({
-      ...kegiatan,
-      ...kegiatanUpdated,
-    }));
-  };
-
   useEffect(() => {
     console.log("kegiatanId", kegiatanId);
     const getKegiatan = async () => {
@@ -48,6 +39,9 @@ const DaftarNominatifContainer = () => {
         const riwayat = await getRiwayatProses(kegiatanId);
         setKegiatan(data);
         setRiwayatProses(riwayat);
+      } else {
+        setKegiatan(null);
+        setRiwayatProses([]);
       }
     };
     getKegiatan();
@@ -55,6 +49,11 @@ const DaftarNominatifContainer = () => {
 
   const handleOnHide = () => {
     useFileStore.setState({ isPreviewHidden: true });
+  };
+
+  const handleOnSuccess = (data: any) => {
+    // reset kegiatanId to null
+    setKegiatanId(null);
   };
 
   useEffect(() => {
@@ -66,13 +65,20 @@ const DaftarNominatifContainer = () => {
       <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-20 bg-gray-100 rounded-lg py-4 lg:px-4 p-2">
         <div className="w-full flex flex-col gap-2 ">
           <SelectKegiatan
+            proses={"nominatif"}
             inputId="kegiatan"
             onChange={handleKegiatanChange}
             className="w-full"
+            value={kegiatanId ?? ""}
           />
         </div>
         <div>
-          {kegiatanId && <FormNominatifHonorarium kegiatanId={kegiatanId} />}
+          {kegiatan && (
+            <FormNominatifHonorarium
+              kegiatan={kegiatan}
+              onSuccess={handleOnSuccess}
+            />
+          )}
         </div>
       </div>
       <FloatingComponent hide={isPreviewHidden} onHide={handleOnHide}>

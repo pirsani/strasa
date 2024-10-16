@@ -1,6 +1,10 @@
 "use client";
-import { getOptionsKegiatan } from "@/actions/kegiatan";
+import {
+  getOptionsKegiatan,
+  getOptionsKegiatanOnAlurProses,
+} from "@/actions/kegiatan";
 import useTahunAnggaranStore from "@/hooks/use-tahun-anggaran-store";
+import { AlurProses } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import Select, { SingleValue } from "react-select";
@@ -10,6 +14,7 @@ interface SelectKegiatanProps {
   onChange?: (value: string | null) => void;
   value?: string;
   className?: string;
+  proses?: AlurProses;
 }
 
 interface Option {
@@ -22,6 +27,7 @@ const SelectKegiatan = ({
   onChange = () => {},
   value,
   className,
+  proses,
 }: SelectKegiatanProps) => {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
@@ -29,13 +35,19 @@ const SelectKegiatan = ({
 
   useEffect(() => {
     const fetchOptions = async () => {
-      const optionKegiatan = await getOptionsKegiatan();
-      if (optionKegiatan) {
-        const mappedOptions = optionKegiatan.map((kegiatan) => ({
-          value: kegiatan.value,
-          label: kegiatan.label,
-        }));
-        setOptions(mappedOptions);
+      if (proses) {
+        const optionsKegiatan = await getOptionsKegiatanOnAlurProses(proses);
+        return setOptions(optionsKegiatan);
+      } else {
+        const optionsKegiatan = await getOptionsKegiatan();
+        return setOptions(optionsKegiatan);
+        // if (optionKegiatan) {
+        //   const mappedOptions = optionKegiatan.map((kegiatan) => ({
+        //     value: kegiatan.value,
+        //     label: kegiatan.label,
+        //   }));
+        //   setOptions(mappedOptions);
+        // }
       }
     };
     fetchOptions();
