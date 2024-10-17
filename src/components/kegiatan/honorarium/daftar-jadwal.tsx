@@ -13,6 +13,7 @@ import {
 import { useSearchTerm } from "@/hooks/use-search-term";
 import { getStatusPengajuan, STATUS_PENGAJUAN } from "@/lib/constants";
 import { formatHariTanggal } from "@/utils/date-format";
+import { ALUR_PROSES } from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
 import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -20,10 +21,9 @@ import { toast } from "sonner";
 import StatusBadge from "../status-badge";
 import NarasumberListItem from "./narasumber-list-item";
 
-export type Proses = "pengajuan" | "verifikasi" | "pembayaran";
 interface DaftarJadwalProps {
   kegiatanId: string;
-  proses: Proses;
+  proses: ALUR_PROSES;
   triggerUpdate?: number;
 }
 const DaftarJadwal = ({
@@ -204,7 +204,7 @@ const DaftarJadwal = ({
           const status = jadwal.riwayatPengajuan?.status || null;
           const isShowButton =
             status === "DRAFT" || status === "REVISE" || status === null;
-          if (proses == "verifikasi" && !status) {
+          if (proses == "VERIFIKASI" && !status) {
             return null;
           } // skip jadwal yang belum diajukan
           return (
@@ -225,7 +225,7 @@ const DaftarJadwal = ({
                 </div>
                 <div className="flex-grow" />
 
-                {isShowButton && proses === "pengajuan" && (
+                {isShowButton && proses === "PENGAJUAN" && (
                   <div className="p-2 border-b ">
                     <Button
                       className=""
@@ -262,7 +262,7 @@ const DaftarJadwal = ({
                 <div className="px-4 py-2 w-full border-t border-gray-300">
                   Catatan: {jadwal.riwayatPengajuan?.catatanRevisi || "-"}
                 </div>
-                {proses == "pengajuan" && (
+                {proses == "PENGAJUAN" && (
                   <FormProsesPengajuan
                     jadwalId={jadwal.id}
                     statusPengajuanHonorarium={
@@ -271,7 +271,7 @@ const DaftarJadwal = ({
                     onSuccess={handleProsesPengajuanSuccess}
                   />
                 )}
-                {proses == "verifikasi" && (
+                {proses == "VERIFIKASI" && (
                   <FormProsesVerifikasi
                     jadwalId={jadwal.id}
                     statusPengajuanHonorarium={

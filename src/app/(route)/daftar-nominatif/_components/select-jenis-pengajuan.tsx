@@ -1,7 +1,8 @@
 "use client";
+import { KegiatanWithDetail } from "@/actions/kegiatan";
 import { getJenisPengajuan } from "@/lib/constants";
 import { randomStrimg } from "@/utils/random-string";
-import { JENIS_PENGAJUAN, Kegiatan } from "@prisma-honorarium/client";
+import { JENIS_PENGAJUAN } from "@prisma-honorarium/client";
 import { useEffect, useState } from "react";
 import Select, { SingleValue } from "react-select";
 
@@ -23,7 +24,7 @@ interface SelectJenisPengajuanProps {
   fieldName: string;
   value?: JENIS_PENGAJUAN | string | null;
   onChange: (value: JENIS_PENGAJUAN | null) => void;
-  kegiatan?: Kegiatan;
+  kegiatan?: KegiatanWithDetail;
 }
 export const SelectJenisPengajuan = ({
   fieldName,
@@ -76,10 +77,20 @@ export const SelectJenisPengajuan = ({
   );
 };
 
-const createOptionsBaseOnKegiatan = (kegiatan?: Kegiatan): Option[] => {
+const createOptionsBaseOnKegiatan = (
+  kegiatan?: KegiatanWithDetail
+): Option[] => {
   if (!kegiatan) {
     return JENIS_PENGAJUAN_OPTIONS;
   }
+
+  const pengajuanUhLuarNegeri = kegiatan.riwayatPengajuan?.find(
+    (pengajuan) => pengajuan.jenis === "UH_LUAR_NEGERI"
+  );
+
+  const pengajuanUhDalamNegeri = kegiatan.riwayatPengajuan?.find(
+    (pengajuan) => pengajuan.jenis === "UH_DALAM_NEGERI"
+  );
 
   let options: Option[] = [
     {
@@ -89,7 +100,7 @@ const createOptionsBaseOnKegiatan = (kegiatan?: Kegiatan): Option[] => {
   ];
   if (
     kegiatan.lokasi !== "LUAR_NEGERI" &&
-    kegiatan.statusUhDalamNegeri === "Approved"
+    pengajuanUhDalamNegeri?.status === "APPROVED"
   ) {
     options.push({
       value: "UH_DALAM_NEGERI",
@@ -97,7 +108,7 @@ const createOptionsBaseOnKegiatan = (kegiatan?: Kegiatan): Option[] => {
     });
   } else if (
     kegiatan.lokasi === "LUAR_NEGERI" &&
-    kegiatan.statusUhLuarNegeri === "Approved"
+    pengajuanUhLuarNegeri?.status === "APPROVED"
   ) {
     options.push({
       value: "UH_LUAR_NEGERI",

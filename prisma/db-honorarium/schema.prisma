@@ -464,46 +464,46 @@ enum LOKASI {
 }
 
 model Kegiatan {
-  id                  String                 @id @default(cuid())
-  nama                String
-  tanggalMulai        DateTime               @map("tanggal_mulai")
-  tanggalSelesai      DateTime               @map("tanggal_selesai")
-  dokumenNodinMemoSk  String                 @map("dokumen_nodin_memo_sk")
-  dokumenJadwal       String                 @map("dokumen_jadwal")
-  lokasi              LOKASI // enum 0, 1, 2
-  provinsiId          String?
-  provinsi            Provinsi?              @relation(fields: [provinsiId], references: [id])
-  keterangan          String?
-  status              String
-  statusRampungan     String?                @map("status_rampungan")
-  statusHonorarium    String?                @map("status_honorarium")
-  statusUhDalamNegeri String?                @map("status_uh_dalam_negeri")
-  statusUhLuarNegeri  String?                @map("status_uh_luar_negeri")
-  satkerId            String                 @map("satker_id")
-  satker              Organisasi             @relation(fields: [satkerId], references: [id], name: "satker_kegiatan")
-  unitKerjaId         String                 @map("unit_kerja_id")
-  unitKerja           Organisasi             @relation(fields: [unitKerjaId], references: [id], name: "unit_kerja_kegiatan")
-  createdBy           String                 @map("created_by")
-  creator             User                   @relation(fields: [createdBy], references: [id], name: "kegiatan_creator")
-  createdAt           DateTime               @default(now()) @map("created_at")
-  updatedBy           String?                @map("updated_by")
-  updater             User?                  @relation(fields: [updatedBy], references: [id], name: "kegiatan_updater")
-  updatedAt           DateTime?              @updatedAt @map("updated_at")
-  bendaharaId         String?                @map("bendahara_id")
-  bendahara           PejabatPerbendaharaan? @relation(fields: [bendaharaId], references: [id], name: "bendahara_kegiatan")
-  ppkId               String?                @map("ppk_id")
-  ppk                 PejabatPerbendaharaan? @relation(fields: [ppkId], references: [id], name: "ppk_kegiatan")
-  kpaId               String?                @map("kpa_id")
-  kpa                 PejabatPerbendaharaan? @relation(fields: [kpaId], references: [id], name: "kpa_kegiatan")
-  dokumenSuratTugas   DokumenSuratTugas[]
-  pesertaKegiatan     PesertaKegiatan[]
-  itinerary           Itinerary[]
-  logProses           LogProses[]
-  kelas               Kelas[]
-  dokumenKegiatan     DokumenKegiatan[]
-  Jadwal              Jadwal[]
-  pembayaran          Pembayaran[]           @relation("pembayaran_kegiatan")
-  riwayatPengajuan    RiwayatPengajuan[]     @relation("riwayat_pengajuan_kegiatan")
+  id                 String                 @id @default(cuid())
+  nama               String
+  tanggalMulai       DateTime               @map("tanggal_mulai")
+  tanggalSelesai     DateTime               @map("tanggal_selesai")
+  dokumenNodinMemoSk String                 @map("dokumen_nodin_memo_sk")
+  dokumenJadwal      String                 @map("dokumen_jadwal")
+  lokasi             LOKASI // enum 0, 1, 2
+  provinsiId         String?
+  provinsi           Provinsi?              @relation(fields: [provinsiId], references: [id])
+  keterangan         String?
+  status             String
+  // statusRampungan     String?                @map("status_rampungan")
+  // statusHonorarium    String?                @map("status_honorarium")
+  // statusUhDalamNegeri String?                @map("status_uh_dalam_negeri")
+  // statusUhLuarNegeri  String?                @map("status_uh_luar_negeri")
+  satkerId           String                 @map("satker_id")
+  satker             Organisasi             @relation(fields: [satkerId], references: [id], name: "satker_kegiatan")
+  unitKerjaId        String                 @map("unit_kerja_id")
+  unitKerja          Organisasi             @relation(fields: [unitKerjaId], references: [id], name: "unit_kerja_kegiatan")
+  createdBy          String                 @map("created_by")
+  creator            User                   @relation(fields: [createdBy], references: [id], name: "kegiatan_creator")
+  createdAt          DateTime               @default(now()) @map("created_at")
+  updatedBy          String?                @map("updated_by")
+  updater            User?                  @relation(fields: [updatedBy], references: [id], name: "kegiatan_updater")
+  updatedAt          DateTime?              @updatedAt @map("updated_at")
+  bendaharaId        String?                @map("bendahara_id")
+  bendahara          PejabatPerbendaharaan? @relation(fields: [bendaharaId], references: [id], name: "bendahara_kegiatan")
+  ppkId              String?                @map("ppk_id")
+  ppk                PejabatPerbendaharaan? @relation(fields: [ppkId], references: [id], name: "ppk_kegiatan")
+  kpaId              String?                @map("kpa_id")
+  kpa                PejabatPerbendaharaan? @relation(fields: [kpaId], references: [id], name: "kpa_kegiatan")
+  dokumenSuratTugas  DokumenSuratTugas[]
+  pesertaKegiatan    PesertaKegiatan[]
+  itinerary          Itinerary[]
+  logProses          LogProses[]
+  kelas              Kelas[]
+  dokumenKegiatan    DokumenKegiatan[]
+  Jadwal             Jadwal[]
+  pembayaran         Pembayaran[]           @relation("pembayaran_kegiatan")
+  riwayatPengajuan   RiwayatPengajuan[]     @relation("riwayat_pengajuan_kegiatan")
 
   @@map("kegiatan")
 }
@@ -702,7 +702,7 @@ model RiwayatPengajuan {
   updatedAt                  DateTime? @updatedAt @map("updated_at")
   jadwal                     Jadwal[]  @relation("riwayat_pengajuan_jadwal")
 
-  @@map("pengajuan")
+  @@map("riwayat_pengajuan")
 }
 
 model LogProses {

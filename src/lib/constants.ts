@@ -68,33 +68,6 @@ export const getJenisPengajuan = (
   return JENIS_PENGAJUAN[jenis as keyof typeof JENIS_PENGAJUAN] || null;
 };
 
-// export const ALUR_PROSES = [
-//   "setup",
-//   "pengajuan",
-//   "verifikasi",
-//   "nominatif",
-//   "pembayaran",
-//   "selesai",
-// ];
-
-// export type AlurProses =
-//   | "setup"
-//   | "pengajuan"
-//   | "verifikasi"
-//   | "nominatif"
-//   | "pembayaran"
-//   | "selesai"
-//   | null;
-
-// export const LANGKAH = [
-//   "setup",
-//   "pengajuan",
-//   "verifikasi",
-//   "nominatif",
-//   "pembayaran",
-//   "selesai",
-// ];
-
 export const mapStatusLangkahToDesc = (status: STATUS_PENGAJUAN | null) => {
   switch (status) {
     case "DRAFT":

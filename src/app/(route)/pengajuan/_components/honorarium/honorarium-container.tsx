@@ -44,7 +44,7 @@ const HonorariumContainer = ({ kegiatan }: HonorariumContainerProps) => {
           <DaftarJadwal
             triggerUpdate={jadwalUpdatedAt}
             kegiatanId={kegiatan.id}
-            proses={"pengajuan"}
+            proses={"PENGAJUAN"}
           />
         </div>
       </div>

@@ -1,22 +1,37 @@
 # Flow Process
 
 ```ts
-type StatusLangkah =
-  | "Draft"
-  | "Submitted"
-  | "Revise"
-  | "Revised"
-  | "Paid"
-  | "End";
+enum ALUR_PROSES {
+  SETUP
+  PENGAJUAN
+  VERIFIKASI
+  NOMINATIF
+  PEMBAYARAN
+  SELESAI
+}
 
-const langkah = [
-  "setup",
-  "pengajuan",
-  "verifikasi",
-  "nominatif",
-  "pembayaran",
-  "selesai",
-];
+enum JENIS_PENGAJUAN {
+  GENERATE_RAMPUNGAN
+  HONORARIUM
+  UH
+  UH_DALAM_NEGERI
+  UH_LUAR_NEGERI
+  PENGGANTIAN_REINBURSEMENT
+  PEMBAYARAN_PIHAK_KETIGA
+}
+
+enum STATUS_PENGAJUAN {
+  DRAFT
+  SUBMITTED
+  REVISE
+  REVISED
+  VERIFIED
+  APPROVED
+  REQUEST_TO_PAY
+  PAID
+  DONE
+  END
+}
 ```
 
 Example Workflow

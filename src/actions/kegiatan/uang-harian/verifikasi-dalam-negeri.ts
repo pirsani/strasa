@@ -3,8 +3,15 @@ import { getSessionPenggunaForAction } from "@/actions/pengguna";
 import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
 import { dbHonorarium } from "@/lib/db-honorarium";
+import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
+import { Logger } from "tslog";
 import { PesertaKegiatanDalamNegeri } from "../peserta/dalam-negeri";
+import { updateStatusUhDalamNegeri } from "../proses";
+
+const logger = new Logger({
+  hideLogPositionForProduction: true,
+});
 
 const SetujuiPengajuanUhDalamNegeri = async (
   kegiatanId: string,
@@ -24,12 +31,17 @@ const SetujuiPengajuanUhDalamNegeri = async (
       where: {
         id: kegiatanId,
       },
+      include: {
+        provinsi: true,
+      },
     });
 
     if (!kegiatan || !kegiatan.lokasi || !kegiatan.provinsiId) {
+      logger.info("E-SPUHDN-01", kegiatan);
       return {
         success: false,
-        error: "Kegiatan tidak ditemukan",
+        error: "E-SPUHDN-01",
+        message: `Kegiatan tidak ditemukan / lokasi tidak ditemukan/ provinsi tidak ditemukan`,
       };
     }
 
@@ -46,9 +58,13 @@ const SetujuiPengajuanUhDalamNegeri = async (
     });
 
     if (!sbm) {
+      const error = `E-SBMUHDN-01`;
+      const message = `SBM Uang Harian ${kegiatan.provinsi?.nama} tahun ${tahunSbm} tidak ditemukan, silakan impor data SBM Uang Harian terlebih dahulu.`;
+      logger.error(error, message);
       return {
         success: false,
-        error: "SBM tidak ditemukan",
+        error,
+        message,
       };
     }
 
@@ -62,9 +78,13 @@ const SetujuiPengajuanUhDalamNegeri = async (
         });
 
       if (!sbmTransportDalamKota) {
+        const error = `E-SBMUHDN-02`;
+        const message = `SBM Transport Dalam Kota tahun ${tahunSbm} tidak ditemukan`;
+        logger.error(error, message);
         return {
           success: false,
-          error: "SBM Transport Dalam Kota tidak ditemukan",
+          error:
+            "SBM Transport Dalam Kota tidak ditemukan, silakan masukkan data SBM Transpor Dalam Kota terlebih dahulu.",
         };
       }
 
@@ -112,6 +132,19 @@ const SetujuiPengajuanUhDalamNegeri = async (
         return peserta;
       }
     );
+
+    // update riwayat kegiatan
+    //const updatedRiwayatPengajuan = await updateRiwayat
+
+    const updated = await updateStatusUhDalamNegeri(
+      kegiatanId,
+      STATUS_PENGAJUAN.APPROVED
+    );
+
+    logger.info("[SUCCESS SetujuiPengajuanUhDalamNegeri]", {
+      transactionUpdate,
+      updated,
+    });
 
     // all peserta updated
     return {

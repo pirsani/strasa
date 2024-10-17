@@ -55,7 +55,7 @@ const VerfikasiSelectionContainer = ({
             />
           )}
           {jenisPengajuan == "HONORARIUM" && (
-            <DaftarJadwal kegiatanId={kegiatan.id} proses="verifikasi" />
+            <DaftarJadwal kegiatanId={kegiatan.id} proses="VERIFIKASI" />
           )}
           {jenisPengajuan == "UH_DALAM_NEGERI" && (
             <UangHarianDalamNegeriContainer kegiatan={kegiatan} />

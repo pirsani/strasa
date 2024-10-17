@@ -1,6 +1,7 @@
 "use server";
 import { dbHonorarium } from "@/lib/db-honorarium";
 
+import { createId } from "@paralleldrive/cuid2";
 import {
   JENIS_PENGAJUAN,
   Kegiatan,
@@ -10,6 +11,7 @@ import { revalidatePath } from "next/cache";
 import { Logger } from "tslog";
 import { KegiatanWithDetail } from ".";
 import { getSessionPenggunaForAction } from "../pengguna";
+import { getPrismaErrorResponse } from "../prisma-error-response";
 import { ActionResponse } from "../response";
 // Create a Logger instance with custom settings
 const logger = new Logger({
@@ -103,7 +105,7 @@ export const pengajuanGenerateRampungan = async (
       kegiatanId,
       jenis: JENIS_PENGAJUAN.GENERATE_RAMPUNGAN,
       keterangan: "Generate Rampungan",
-      status: "pengajuan",
+      status: "SUBMITTED",
       createdBy: "admin",
       tglStatus: new Date(),
     },
@@ -127,6 +129,77 @@ export const pengajuanGenerateRampungan = async (
   };
 };
 
+const upsertRiwayatPengajuan = async (
+  kegiatanId: string,
+  status: STATUS_PENGAJUAN,
+  jenis: JENIS_PENGAJUAN,
+  catatan?: string | null
+): Promise<ActionResponse<KegiatanWithDetail>> => {
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) {
+    return {
+      success: false,
+      error: "E-UAuth-01",
+      message: "User not found",
+    };
+  }
+  //TODO CHECK PERMISSION here
+  const penggunaId = pengguna.data.penggunaId;
+  const satkerId = pengguna.data.satkerId;
+
+  try {
+    // find riwayat pengajuan
+    const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
+      where: {
+        kegiatanId,
+        jenis,
+      },
+    });
+
+    const objUpdateRiwayatPengajuan = createObjUpdateRiwayatPengajuan(
+      status,
+      penggunaId,
+      catatan
+    );
+
+    const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.upsert({
+      where: {
+        id: riwayatPengajuan?.id || createId(),
+      },
+      create: {
+        kegiatanId,
+        status: "SUBMITTED",
+        jenis,
+        diajukanOlehId: penggunaId,
+        diajukanTanggal: new Date(),
+        createdBy: penggunaId,
+      },
+      update: {
+        ...objUpdateRiwayatPengajuan,
+      },
+    });
+  } catch (error) {
+    logger.error("[updateRiwayatPengajuan]", error);
+    return getPrismaErrorResponse(error as Error);
+  }
+
+  const kegiatan = await getKegiatan(kegiatanId);
+  if (!kegiatan) {
+    // harusnya tidak akan pernah sampai ke sini
+    return {
+      success: false,
+      error: "E-KUSLN01",
+      message: "Silakan coba refresh halaman ini",
+    };
+  }
+
+  console.log("[updateRiwayatPengajuan UH]", updateStatusRampungan);
+  return {
+    success: true,
+    data: kegiatan,
+  };
+};
+
 export const updateStatusRampungan = async (
   kegiatanId: string,
   statusRampunganBaru: STATUS_PENGAJUAN
@@ -134,124 +207,39 @@ export const updateStatusRampungan = async (
   // TODO check permission disini untuk update status rampungan
   // allowed status: pengajuan, terverifikasi, revisi, ditolak, selesai
 
-  let updateStatusRampungan;
-  try {
-    const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
-      where: {
-        kegiatanId,
-        jenis: "GENERATE_RAMPUNGAN",
-      },
-    });
+  const updated = await upsertRiwayatPengajuan(
+    kegiatanId,
+    statusRampunganBaru,
+    "GENERATE_RAMPUNGAN"
+  );
 
-    if (!riwayatPengajuan) {
-      return {
-        success: false,
-        error: "E-KUSLN01",
-        message: "Silakan coba refresh halaman ini",
-      };
-    }
-    const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
-      where: {
-        id: riwayatPengajuan.id,
-      },
-      data: {
-        status: statusRampunganBaru,
-      },
-    });
-  } catch (error) {}
-
-  const kegiatan = await getKegiatan(kegiatanId);
-  if (!kegiatan) {
-    // harusnya tidak akan pernah sampai ke sini
-    return {
-      success: false,
-      error: "E-KUSLN01",
-      message: "Silakan coba refresh halaman ini",
-    };
-  }
-
-  console.log("[updateStatusRampungan]", updateStatusRampungan);
-  return {
-    success: true,
-    data: kegiatan,
-  };
+  return updated;
 };
 
 export const updateStatusUhLuarNegeri = async (
   kegiatanId: string,
   statusUhLuarNegeriBaru: STATUS_PENGAJUAN
 ): Promise<ActionResponse<KegiatanWithDetail>> => {
-  try {
-    const updatedKegiatan = await dbHonorarium.kegiatan.update({
-      where: {
-        id: kegiatanId,
-      },
-      data: {
-        statusUhLuarNegeri: statusUhLuarNegeriBaru,
-      },
-      include: {
-        itinerary: true,
-        provinsi: true,
-        dokumenKegiatan: true,
-      },
-    });
-    console.log("[updatedKegiatan]", updatedKegiatan);
-    return {
-      success: true,
-      data: updatedKegiatan,
-    };
-  } catch (error) {
-    logger.error("Error updateStatusUhLuarNegeri", error);
-    return {
-      success: false,
-      error: "E-URPSLN-01",
-      message: "Error update Status Uh Luar Negeri",
-    };
-  }
+  const updated = await upsertRiwayatPengajuan(
+    kegiatanId,
+    statusUhLuarNegeriBaru,
+    "UH_LUAR_NEGERI"
+  );
+
+  return updated;
 };
 
 export const updateStatusUhDalamNegeri = async (
   kegiatanId: string,
   statusUhDalamNegeriBaru: STATUS_PENGAJUAN
 ): Promise<ActionResponse<Kegiatan>> => {
-  try {
-    const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
-      where: {
-        kegiatanId,
-        jenis: "UH_DALAM_NEGERI",
-      },
-    });
-    if (!riwayatPengajuan) {
-      return {
-        success: false,
-        error: "E-URPSDN-01",
-        message: "Silakan coba refresh halaman ini",
-      };
-    }
-    const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
-      where: {
-        id: riwayatPengajuan.id,
-      },
-      data: {
-        status: statusUhDalamNegeriBaru,
-      },
-    });
-  } catch (error) {}
-  const kegiatan = await getKegiatan(kegiatanId);
-  if (!kegiatan) {
-    // harusnya tidak akan pernah sampai ke sini
-    return {
-      success: false,
-      error: "E-KUSLN01",
-      message: "Silakan coba refresh halaman ini",
-    };
-  }
+  const updated = await upsertRiwayatPengajuan(
+    kegiatanId,
+    statusUhDalamNegeriBaru,
+    "UH_DALAM_NEGERI"
+  );
 
-  console.log("[updateStatusRampungan]", updateStatusRampungan);
-  return {
-    success: true,
-    data: kegiatan,
-  };
+  return updated;
 };
 
 const getKegiatan = async (
@@ -269,4 +257,72 @@ const getKegiatan = async (
     },
   });
   return kegiatan;
+};
+
+interface ObjUpdateRiwayatPengajuan {
+  status: STATUS_PENGAJUAN;
+  diverifikasiOlehId?: string;
+  disetujuiOlehId?: string;
+  dimintaPembayaranOlehId?: string;
+  dibayarOlehId?: string;
+  diselesaikanOlehId?: string;
+  catatanRevisi?: string;
+
+  diverifikasiTanggal?: Date;
+  disetujuiTanggal?: Date;
+  dimintaPembayaranTanggal?: Date;
+  dibayarTanggal?: Date;
+  diselesaikanTanggal?: Date;
+}
+
+const createObjUpdateRiwayatPengajuan = (
+  status: STATUS_PENGAJUAN,
+  penggunaId: string,
+  catatanRevisi?: string | null
+) => {
+  let objRiwayatPengajuanUpdate: ObjUpdateRiwayatPengajuan = {
+    status: status,
+  };
+  switch (status) {
+    case "SUBMITTED":
+      // objRiwayatPengajuanUpdate.diajukanOlehId = penggunaId;
+      // objRiwayatPengajuanUpdate.diajukanTanggal = new Date();
+      break;
+    case "REVISED":
+      // objRiwayatPengajuanUpdate.diajukanOlehId = penggunaId;
+      // objRiwayatPengajuanUpdate.diajukanTanggal = new Date();
+      break;
+    case "REVISE":
+      objRiwayatPengajuanUpdate.diverifikasiOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.diverifikasiTanggal = new Date();
+      objRiwayatPengajuanUpdate.catatanRevisi = catatanRevisi || "-";
+      break;
+    case "VERIFIED":
+      objRiwayatPengajuanUpdate.diverifikasiOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.diverifikasiTanggal = new Date();
+      break;
+    case "APPROVED":
+      objRiwayatPengajuanUpdate.diverifikasiOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.diverifikasiTanggal = new Date();
+      objRiwayatPengajuanUpdate.disetujuiOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.disetujuiTanggal = new Date();
+      break;
+    case "REQUEST_TO_PAY":
+      objRiwayatPengajuanUpdate.dimintaPembayaranOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.dimintaPembayaranTanggal = new Date();
+      break;
+    case "PAID":
+      objRiwayatPengajuanUpdate.dibayarOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.dibayarTanggal = new Date();
+      break;
+    case "DONE":
+    case "END":
+      objRiwayatPengajuanUpdate.diselesaikanOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.diselesaikanTanggal = new Date();
+      break;
+    default:
+      break;
+  }
+
+  return objRiwayatPengajuanUpdate;
 };

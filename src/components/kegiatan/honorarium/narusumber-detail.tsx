@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { getBesaranPajakHonorarium } from "@/lib/pajak";
 import formatCurrency from "@/utils/format-currency";
 import {
+  ALUR_PROSES,
   JadwalNarasumber,
   Narasumber,
   STATUS_PENGAJUAN,
@@ -24,7 +25,7 @@ interface NarasumberDetailProps {
   narasumber: Narasumber;
   jadwalNarasumber: JadwalNarasumber;
   optionsSbmHonorarium?: OptionSbm[];
-  proses?: "pengajuan" | "verifikasi" | "pembayaran";
+  proses?: ALUR_PROSES;
   statusPengajuanHonorarium?: STATUS_PENGAJUAN | null;
 }
 
@@ -122,7 +123,7 @@ const NarasumberDetail = ({
 
   const [isUpdatingJp, setIsUpdatingJp] = useState(false);
   const handleUpdateJp = async () => {
-    if (proses === "pengajuan" || proses === "verifikasi") {
+    if (proses === "PENGAJUAN" || proses === "VERIFIKASI") {
       // update JP dan update jenis honorarium
       setIsUpdatingJp(true);
       const jenisHonorariumId = selectedSbmHonorarium?.value || null;
@@ -148,22 +149,22 @@ const NarasumberDetail = ({
   // jumlah JP dan jenis honorarium hanya bisa dilakukan jika isOnPengajuan isOnVerifikasi bernilai true
 
   // const isOnPengajuan =
-  //   proses === "pengajuan" &&
+  //   proses === "PENGAJUAN" &&
   //   (!statusPengajuanHonorarium || statusPengajuanHonorarium === "Revise");
 
   // const isOnVerifikasi =
-  //   proses === "verifikasi" &&
+  //   proses === "VERIFIKASI" &&
   //   statusPengajuanHonorarium &&
   //   (statusPengajuanHonorarium === "Submitted" ||
   //     statusPengajuanHonorarium === "Revised");
   const [isAllowEditJp, setIsAllowEditJp] = useState(false);
   useEffect(() => {
     const isOnPengajuan =
-      proses === "pengajuan" &&
+      proses === "PENGAJUAN" &&
       (!statusPengajuanHonorarium || statusPengajuanHonorarium === "REVISE");
 
     const isOnVerifikasi =
-      proses === "verifikasi" &&
+      proses === "VERIFIKASI" &&
       (statusPengajuanHonorarium || false) &&
       (statusPengajuanHonorarium === "SUBMITTED" ||
         statusPengajuanHonorarium === "REVISED");

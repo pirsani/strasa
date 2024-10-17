@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { JadwalNarsum, Narsum } from "@/data/jadwal";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { ALUR_PROSES } from "@prisma-honorarium/client";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import NarasumberDetail from "./narusumber-detail";
@@ -13,7 +14,7 @@ interface NarasumberListItemProps {
   optionsSbmHonorarium: OptionSbm[];
   index: number;
   totalNarsum?: number;
-  proses?: "pengajuan" | "verifikasi" | "pembayaran";
+  proses?: ALUR_PROSES;
   statusPengajuanHonorarium?: STATUS_PENGAJUAN | null;
 }
 export const NarasumberListItem = ({

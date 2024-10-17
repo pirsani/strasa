@@ -63,7 +63,9 @@ const UangHarianDalamNegeriContainer = ({
       pesertaUpdated
     );
     if (updated.success) {
-      toast.success("Berhasil memperbarui data peserta");
+      toast.success(
+        "Berhasil menverifikasi data peserta dan menyetujui pengajuan"
+      );
     } else {
       toast.error(`Terjadi kesalahan ${updated.error} ${updated.message}`);
     }

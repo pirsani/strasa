@@ -260,6 +260,8 @@ const deleteExisting = async (): Promise<void> => {
     await dbHonorarium.kelas.deleteMany({});
     await dbHonorarium.logProses.deleteMany({});
     await dbHonorarium.dokumenSuratTugas.deleteMany({});
+    await dbHonorarium.uhDalamNegeri.deleteMany({});
+    await dbHonorarium.uhLuarNegeri.deleteMany({});
     await dbHonorarium.pesertaKegiatan.deleteMany({});
     await dbHonorarium.itinerary.deleteMany({});
     await dbHonorarium.dokumenKegiatan.deleteMany({});
@@ -283,6 +285,9 @@ const deleteExisting = async (): Promise<void> => {
     await dbHonorarium.role.deleteMany({});
     await dbHonorarium.sbmUangRepresentasi.deleteMany({});
     await dbHonorarium.pejabat.deleteMany({});
+    await dbHonorarium.sbmTransporDalamKotaPulangPergi.deleteMany({});
+    await dbHonorarium.sbmTransporIbukotaKeKotaKab.deleteMany({});
+    await dbHonorarium.sbmTransporJakartaKeKotaKabSekitar.deleteMany({});
     await dbHonorarium.kota.deleteMany({});
     await dbHonorarium.provinsi.deleteMany({});
     await dbHonorarium.negara.deleteMany({});
@@ -482,6 +487,41 @@ async function main() {
       ],
     });
 
+  const pelaksanaKeuangan = await dbHonorarium.pejabatPerbendaharaan.createMany(
+    {
+      data: [
+        {
+          jabatanId: "PPK",
+          nama: "Pepeka satu",
+          satkerId: initialUnitKerja[10].id,
+          createdBy: "init",
+          tmtMulai: new Date("2020-01-01"),
+        },
+        {
+          jabatanId: "PPK",
+          nama: "Pepeka dua",
+          satkerId: initialUnitKerja[10].id,
+          createdBy: "init",
+          tmtMulai: new Date("2020-01-01"),
+        },
+        {
+          jabatanId: "bendahara-pengeluaran",
+          nama: "BENDI1 bendahara-pengeluaran",
+          satkerId: initialUnitKerja[10].id,
+          createdBy: "init",
+          tmtMulai: new Date("2020-01-01"),
+        },
+        {
+          jabatanId: "bendahara-pengeluaran",
+          nama: "BENDU2 bendahara-pengeluaran",
+          satkerId: initialUnitKerja[10].id,
+          createdBy: "init",
+          tmtMulai: new Date("2020-01-01"),
+        },
+      ],
+    }
+  );
+
   // Truncate the table
   const role = await dbHonorarium.role.createMany({
     data: [
@@ -587,6 +627,7 @@ async function main() {
       tanggalMulai: new Date(),
       tanggalSelesai: new Date(),
       lokasi: LOKASI.DALAM_KOTA,
+      provinsiId: "31",
       dokumenNodinMemoSk: "123456789.pdf",
       dokumenJadwal: "123456789.pdf",
       satkerId: initialUnitKerja[10].id,

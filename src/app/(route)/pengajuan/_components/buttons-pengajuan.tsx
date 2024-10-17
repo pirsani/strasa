@@ -1,7 +1,12 @@
 import { KegiatanWithDetail } from "@/actions/kegiatan";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { JENIS_PENGAJUAN, LOKASI, LogProses } from "@prisma-honorarium/client";
+import {
+  JENIS_PENGAJUAN,
+  LOKASI,
+  LogProses,
+  STATUS_PENGAJUAN,
+} from "@prisma-honorarium/client";
 import {
   Coins,
   FileStack,
@@ -74,6 +79,12 @@ const ButtonsPengajuan = ({
   const pengajuanRampungan = kegiatan.riwayatPengajuan?.find(
     (riwayat) => riwayat.jenis === "GENERATE_RAMPUNGAN"
   );
+  const pengajuanUhDalamNegeri = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "UH_DALAM_NEGERI"
+  );
+  const pengajuanUhLuarNegeri = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "UH_LUAR_NEGERI"
+  );
 
   return (
     <>
@@ -97,16 +108,16 @@ const ButtonsPengajuan = ({
         </Button>
         {kegiatan.lokasi != LOKASI.LUAR_NEGERI && (
           <ButtonAjukanUhDalamNegeri
-            statusRampungan={kegiatan.statusRampungan}
-            statusUhDalamNegeri={kegiatan.statusUhDalamNegeri}
+            statusRampungan={pengajuanRampungan?.status || null}
+            statusUhDalamNegeri={pengajuanUhDalamNegeri?.status || null}
             jenisPengajuan={jenisPengajuan}
             handleOnClick={handleOnClick}
           />
         )}
         {kegiatan.lokasi == LOKASI.LUAR_NEGERI && (
           <ButtonAjukanUhLuarNegeri
-            statusRampungan={kegiatan.statusRampungan}
-            statusUhLuarNegeri={kegiatan.statusUhLuarNegeri}
+            statusRampungan={pengajuanRampungan?.status || null}
+            statusUhLuarNegeri={pengajuanUhLuarNegeri?.status || null}
             jenisPengajuan={jenisPengajuan}
             handleOnClick={handleOnClick}
           />
@@ -162,14 +173,14 @@ const mappingLogProses = (logProses: LogProses[]) => {
 interface ButtonRiwayatRampunganProps {
   handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
   jenisPengajuan?: JENIS_PENGAJUAN | null;
-  statusRampungan: string | null;
+  statusRampungan: STATUS_PENGAJUAN | null;
 }
 const ButtonRiwayatRampungan = ({
   handleOnClick,
   jenisPengajuan,
   statusRampungan,
 }: ButtonRiwayatRampunganProps) => {
-  if (statusRampungan && statusRampungan !== "pengajuan") return null;
+  if (statusRampungan && statusRampungan !== "SUBMITTED") return null;
 
   return (
     <Button
@@ -189,8 +200,8 @@ const ButtonRiwayatRampungan = ({
 interface ButtonAjukanUhDalamNegeriProps {
   handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
   jenisPengajuan?: JENIS_PENGAJUAN | null;
-  statusRampungan: string | null;
-  statusUhDalamNegeri: string | null;
+  statusRampungan: STATUS_PENGAJUAN | null;
+  statusUhDalamNegeri: STATUS_PENGAJUAN | null;
 }
 // button ini hanya untuk menampilkan button ajukan UH dalam negeri, , BUKAN pengajuan itu sendiri,
 // setelah diklik akan mengubah state jenisPengajuan menjadi UH_DALAM_NEGERI
@@ -205,7 +216,7 @@ const ButtonAjukanUhDalamNegeri = ({
   // jika belum ada generate rampungan, tidak bisa ajukan UH dalam negeri
   if (
     !statusRampungan ||
-    (statusRampungan !== "terverifikasi" && statusRampungan !== "selesai")
+    (statusRampungan !== "VERIFIED" && statusRampungan !== "END")
   )
     return null;
 
@@ -230,8 +241,8 @@ const ButtonAjukanUhDalamNegeri = ({
 interface ButtonAjukanUhLuarNegeriProps {
   handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
   jenisPengajuan?: JENIS_PENGAJUAN | null;
-  statusRampungan: string | null;
-  statusUhLuarNegeri: string | null;
+  statusRampungan: STATUS_PENGAJUAN | null;
+  statusUhLuarNegeri: STATUS_PENGAJUAN | null;
 }
 
 const ButtonAjukanUhLuarNegeri = ({
@@ -242,7 +253,7 @@ const ButtonAjukanUhLuarNegeri = ({
 }: ButtonAjukanUhLuarNegeriProps) => {
   if (
     !statusRampungan ||
-    (statusRampungan !== "terverifikasi" && statusRampungan !== "selesai")
+    (statusRampungan !== "VERIFIED" && statusRampungan !== "END")
   )
     return null;
   return (

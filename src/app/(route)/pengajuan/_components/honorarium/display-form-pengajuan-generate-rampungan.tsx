@@ -46,7 +46,7 @@ export const DisplayFormPengajuanGenerateRampungan = ({
             memverifikasi pengajuan Anda
           </span>
         </p>
-        <p>{kegiatan.statusRampungan}</p>
+        <p>{pengajuanRampungan.status}</p>
         <p>{kegiatan.lokasi}</p>
       </>
     );

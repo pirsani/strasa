@@ -79,7 +79,7 @@ const ButtonsVerifikasi = ({
           handleOnClick={() => handleOnClick("UH_DALAM_NEGERI")}
           jenisPengajuan={jenisPengajuan}
           statusRampungan={pengajuanRampungan?.status || null}
-          statusUhDalamNegeri={kegiatan.statusUhDalamNegeri}
+          statusUhDalamNegeri={pengajuanUhDalamNegeri?.status || null}
         />
       )}
       {kegiatan.lokasi == LOKASI.LUAR_NEGERI && (
@@ -87,7 +87,7 @@ const ButtonsVerifikasi = ({
           handleOnClick={() => handleOnClick("UH_LUAR_NEGERI")}
           jenisPengajuan={jenisPengajuan}
           statusRampungan={pengajuanRampungan?.status || null}
-          statusUhLuarNegeri={kegiatan.statusUhLuarNegeri}
+          statusUhLuarNegeri={pengajuanHonorarium?.status || null}
         />
       )}
 
@@ -156,7 +156,7 @@ interface ButtonVerifikasiUhDalamNegeriProps {
   handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
   jenisPengajuan?: JENIS_PENGAJUAN | null;
   statusRampungan: STATUS_PENGAJUAN | null;
-  statusUhDalamNegeri: string | null;
+  statusUhDalamNegeri: STATUS_PENGAJUAN | null;
 }
 
 const ButtonVerifikasiUhDalamNegeri = ({
@@ -173,7 +173,7 @@ const ButtonVerifikasiUhDalamNegeri = ({
   )
     return null;
   //jika status UH dalam negeri bukan pengajuan, maka button tidak muncul
-  if (!statusUhDalamNegeri || statusUhDalamNegeri !== "pengajuan") return null;
+  if (!statusUhDalamNegeri || statusUhDalamNegeri !== "SUBMITTED") return null;
 
   return (
     <Button
@@ -196,8 +196,8 @@ const ButtonVerifikasiUhDalamNegeri = ({
 interface ButtonVerifikasiUhLuarNegeriProps {
   handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
   jenisPengajuan?: JENIS_PENGAJUAN | null;
-  statusRampungan: string | null;
-  statusUhLuarNegeri: string | null;
+  statusRampungan: STATUS_PENGAJUAN | null;
+  statusUhLuarNegeri: STATUS_PENGAJUAN | null;
 }
 
 const ButtonVerifikasiUhLuarNegeri = ({
@@ -209,11 +209,11 @@ const ButtonVerifikasiUhLuarNegeri = ({
   //jika status rampungan belum ada atau selesai, maka button tidak muncul
   if (
     !statusRampungan ||
-    (statusRampungan !== "terverifikasi" && statusRampungan !== "selesai")
+    (statusRampungan !== "VERIFIED" && statusRampungan !== "END")
   )
     return null;
   //jika status UH dalam negeri bukan pengajuan, maka button tidak muncul
-  if (!statusUhLuarNegeri || statusUhLuarNegeri !== "pengajuan") return null;
+  if (!statusUhLuarNegeri || statusUhLuarNegeri !== "SUBMITTED") return null;
 
   return (
     <Button

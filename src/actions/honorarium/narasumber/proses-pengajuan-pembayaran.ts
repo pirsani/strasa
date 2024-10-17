@@ -47,12 +47,14 @@ const updateStatusPengajuanPembayaran = async (
     disetujuiOlehId?: string;
     dimintaPembayaranOlehId?: string;
     dibayarOlehId?: string;
+    diselesaikanOlehId?: string;
     catatanRevisi?: string;
 
     diverifikasiTanggal?: Date;
     disetujuiTanggal?: Date;
     dimintaPembayaranTanggal?: Date;
     dibayarTanggal?: Date;
+    diselesaikanTanggal?: Date;
   }
 
   let objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
@@ -87,6 +89,10 @@ const updateStatusPengajuanPembayaran = async (
       objRiwayatPengajuanUpdate.diverifikasiTanggal = new Date();
       objRiwayatPengajuanUpdate.catatanRevisi = catatanRevisi || "-";
       break;
+    case "VERIFIED":
+      objRiwayatPengajuanUpdate.diverifikasiOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.diverifikasiTanggal = new Date();
+      break;
     case "APPROVED":
       objRiwayatPengajuanUpdate.diverifikasiOlehId = penggunaId;
       objRiwayatPengajuanUpdate.diverifikasiTanggal = new Date();
@@ -100,6 +106,11 @@ const updateStatusPengajuanPembayaran = async (
     case "PAID":
       objRiwayatPengajuanUpdate.dibayarOlehId = penggunaId;
       objRiwayatPengajuanUpdate.dibayarTanggal = new Date();
+      break;
+    case "DONE":
+    case "END":
+      objRiwayatPengajuanUpdate.diselesaikanOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.diselesaikanTanggal = new Date();
       break;
     default:
       break;

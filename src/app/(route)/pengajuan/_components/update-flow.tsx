@@ -3,13 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Kegiatan, updateAlurLangkah } from "@/lib/alur-proses";
 import { useState } from "react";
 
-// const kegiatan: Kegiatan = {
-//   id: 1,
-//   langkahSekarang: "setup",
-//   langkahSelanjutnya: "pengajuan",
-//   status: "Draft",
-// };
-
 const UpdateFlow = ({ initKegiatan }: { initKegiatan: Kegiatan }) => {
   const [kegiatan, setKegiatan] = useState<Kegiatan>(initKegiatan);
 
