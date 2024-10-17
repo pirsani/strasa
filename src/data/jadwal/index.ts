@@ -1,5 +1,5 @@
 "use server";
-import { PenggunaInfo } from "@/data/pengguna";
+import { RiwayatPengajuanIncludePengguna } from "@/data/kegiatan/riwayat-pengajuan";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import {
@@ -9,6 +9,7 @@ import {
   Kelas,
   Materi,
   Narasumber,
+  STATUS_PENGAJUAN,
 } from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
 
@@ -44,8 +45,9 @@ export interface ObjPlainJadwalKelasNarasumber extends JadwalPlainObject {
   materi: Materi;
   jadwalNarasumber: JadwalNarsum[];
   kegiatan?: Kegiatan;
-  diajukanOleh?: PenggunaInfo | null;
-  disetujuiOleh?: PenggunaInfo | null;
+  riwayatPengajuan?: RiwayatPengajuanIncludePengguna | null;
+  // diajukanOleh?: PenggunaInfo | null;
+  // disetujuiOleh?: PenggunaInfo | null;
 }
 
 export interface JadwalKelasNarasumber extends Jadwal {
@@ -53,8 +55,9 @@ export interface JadwalKelasNarasumber extends Jadwal {
   materi: Materi;
   jadwalNarasumber: JadwalNarsum[];
   kegiatan?: Kegiatan;
-  diajukanOleh?: PenggunaInfo | null;
-  disetujuiOleh?: PenggunaInfo | null;
+  riwayatPengajuan?: RiwayatPengajuanIncludePengguna | null;
+  // diajukanOleh?: PenggunaInfo | null;
+  // disetujuiOleh?: PenggunaInfo | null;
 }
 export const getJadwalByKegiatanId = async (
   kegiatanId: string
@@ -71,31 +74,14 @@ export const getJadwalByKegiatanId = async (
           narasumber: true,
         },
       },
-      diajukanOleh: true,
-      disetujuiOleh: true,
-    },
-  });
-  console.log(["[kegiatanId]"], kegiatanId);
-  console.log(["[JadwalKelasNarasumber]"], jadwal);
-
-  return jadwal;
-};
-
-export const getJadwalByKegiatanIdWithStatus = async (
-  kegiatanId: string,
-  statusPengajuanHonorarium: string
-): Promise<JadwalKelasNarasumber[]> => {
-  const jadwal = await dbHonorarium.jadwal.findMany({
-    where: {
-      kegiatanId: kegiatanId,
-      statusPengajuanHonorarium: statusPengajuanHonorarium,
-    },
-    include: {
-      kelas: true,
-      materi: true,
-      jadwalNarasumber: {
+      riwayatPengajuan: {
         include: {
-          narasumber: true,
+          diajukanOleh: true,
+          diverifikasiOleh: true,
+          disetujuiOleh: true,
+          dimintaPembayaranOleh: true,
+          dibayarOleh: true,
+          diselesaikanOleh: true,
         },
       },
     },
@@ -106,9 +92,43 @@ export const getJadwalByKegiatanIdWithStatus = async (
   return jadwal;
 };
 
+export const getJadwalByKegiatanIdWithStatus = async (
+  kegiatanId: string,
+  statusPengajuanHonorarium: STATUS_PENGAJUAN
+): Promise<JadwalKelasNarasumber[]> => {
+  const jadwal = await dbHonorarium.jadwal.findMany({
+    where: {
+      kegiatanId: kegiatanId,
+      riwayatPengajuan: {
+        status: statusPengajuanHonorarium,
+      },
+    },
+    include: {
+      kelas: true,
+      materi: true,
+      jadwalNarasumber: {
+        include: {
+          narasumber: true,
+        },
+      },
+      riwayatPengajuan: {
+        include: {
+          diajukanOleh: true,
+          diverifikasiOleh: true,
+          disetujuiOleh: true,
+          dimintaPembayaranOleh: true,
+          dibayarOleh: true,
+          diselesaikanOleh: true,
+        },
+      },
+    },
+  });
+  return jadwal;
+};
+
 export const getJadwalBySatkerIdWithStatus = async (
   satkerId: string,
-  statusPengajuanHonorarium: string,
+  statusPengajuanHonorarium: STATUS_PENGAJUAN,
   tahun: number = new Date().getFullYear()
 ): Promise<JadwalKelasNarasumber[]> => {
   const jadwal = await dbHonorarium.jadwal.findMany({
@@ -120,7 +140,9 @@ export const getJadwalBySatkerIdWithStatus = async (
           lt: new Date(tahun + 1, 0, 1),
         },
       },
-      statusPengajuanHonorarium: statusPengajuanHonorarium,
+      riwayatPengajuan: {
+        status: statusPengajuanHonorarium,
+      },
     },
     include: {
       kelas: true,
@@ -130,10 +152,18 @@ export const getJadwalBySatkerIdWithStatus = async (
           narasumber: true,
         },
       },
-      kegiatan: true,
+      riwayatPengajuan: {
+        include: {
+          diajukanOleh: true,
+          diverifikasiOleh: true,
+          disetujuiOleh: true,
+          dimintaPembayaranOleh: true,
+          dibayarOleh: true,
+          diselesaikanOleh: true,
+        },
+      },
     },
   });
-  console.log(["[JadwalKelasNarasumber]"], jadwal);
 
   return jadwal;
 };
@@ -148,7 +178,7 @@ export const getObPlainJadwalByKegiatanId = async (kegiatanId: string) => {
 export const getObPlainJadwalByKegiatanIdWithStatusDisetujui = async (
   kegiatanId: string
 ) => {
-  const jadwal = await getJadwalByKegiatanIdWithStatus(kegiatanId, "Approved");
+  const jadwal = await getJadwalByKegiatanIdWithStatus(kegiatanId, "APPROVED");
   const plainObject =
     convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber[]>(jadwal);
   return plainObject;
@@ -156,7 +186,7 @@ export const getObPlainJadwalByKegiatanIdWithStatusDisetujui = async (
 
 export const getObPlainJadwalBySatkerIdWithStatus = async (
   satkerId: string,
-  status: string,
+  status: STATUS_PENGAJUAN,
   tahun: number = new Date().getFullYear()
 ) => {
   const jadwal = await getJadwalBySatkerIdWithStatus(satkerId, status, tahun);
@@ -168,7 +198,10 @@ export const getObPlainJadwalBySatkerIdWithStatus = async (
 export const getObPlainJadwalBySatkerIdWithStatusPermintanPembayaran = async (
   satkerId: string
 ) => {
-  const jadwal = await getJadwalBySatkerIdWithStatus(satkerId, "RequestToPay");
+  const jadwal = await getJadwalBySatkerIdWithStatus(
+    satkerId,
+    "REQUEST_TO_PAY"
+  );
   const plainObject =
     convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber[]>(jadwal);
   return plainObject;

@@ -9,10 +9,9 @@ import {
 } from "@/components/tabel-expandable";
 import { Button } from "@/components/ui/button";
 import { getObPlainJadwalByKegiatanId } from "@/data/jadwal";
-import { StatusLangkah } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { formatHariTanggal, formatTanggal } from "@/utils/date-format";
-import { Kegiatan } from "@prisma-honorarium/client";
+import { Kegiatan, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { ChevronRight, Eye } from "lucide-react";
@@ -123,7 +122,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     nama: string;
     tanggalKegiatan?: Date | string | null;
     jenisPengajuan: string;
-    statusPengajuan: StatusLangkah | null;
+    statusPengajuan: STATUS_PENGAJUAN | null;
     diajukanOlehId?: string | null;
     diajukanOleh?: string | null;
     diajukanTanggal?: Date | string | null;
@@ -159,13 +158,13 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         // statusPengajuan: mapStatusLangkahToDesc(
         //   jadwal.statusPengajuanHonorarium
         // ),
-        statusPengajuan: jadwal.statusPengajuanHonorarium as StatusLangkah,
-        diajukanOlehId: jadwal.diajukanOlehId,
-        diajukanOleh: jadwal.diajukanOleh?.name,
-        diajukanTanggal: jadwal.diajukanTanggal,
-        diverifikasiTanggal: jadwal.diverifikasiTanggal,
-        disetujuiTanggal: jadwal.disetujuiTanggal,
-        dibayarTanggal: jadwal.dibayarTanggal,
+        statusPengajuan: jadwal.riwayatPengajuan?.status || null,
+        diajukanOlehId: jadwal.riwayatPengajuan?.diajukanOlehId,
+        diajukanOleh: jadwal.riwayatPengajuan?.diajukanOleh?.name,
+        diajukanTanggal: jadwal.riwayatPengajuan?.diajukanTanggal,
+        diverifikasiTanggal: jadwal.riwayatPengajuan?.diajukanTanggal,
+        disetujuiTanggal: jadwal.riwayatPengajuan?.disetujuiTanggal,
+        dibayarTanggal: jadwal.riwayatPengajuan?.dibayarTanggal,
       };
     });
 

@@ -1,16 +1,22 @@
 "use server";
 
+import { ALUR_PROSES, STATUS_PENGAJUAN } from "@/lib/constants";
 import { dbHonorarium } from "@/lib/db-honorarium";
-import { Organisasi } from "@prisma-honorarium/client";
-
-import { AlurProses } from "@/lib/constants";
 import {
   DokumenKegiatan,
   Itinerary,
   Kegiatan,
+  //ALUR_PROSES,
+  Organisasi,
   Provinsi,
 } from "@prisma-honorarium/client";
+import { Logger } from "tslog";
 import { getTahunAnggranPilihan } from "../pengguna/preference";
+
+const logger = new Logger({
+  hideLogPositionForProduction: true,
+  name: "KEGIATAN",
+});
 
 export interface KegiatanWithSatker extends Kegiatan {
   satker: Organisasi;
@@ -75,40 +81,80 @@ export const getOptionsKegiatan = async () => {
   return optionsKegiatan;
 };
 
-export const getOptionsKegiatanOnAlurProses = async (proses: AlurProses) => {
+export const getOptionsKegiatanOnAlurProses = async (proses: ALUR_PROSES) => {
   if (!proses) return [];
-  let statusUh = "";
-  let statusHonorarium = "";
+  let status: STATUS_PENGAJUAN = "DRAFT";
+
   switch (proses) {
-    case "nominatif":
-      statusUh = "Approved";
-      statusHonorarium = "Submitted";
+    case "SETUP":
+    case "PENGAJUAN":
+      status = "DRAFT";
+      break;
+    case "VERIFIKASI":
+      status = "SUBMITTED";
+      break;
+    case "NOMINATIF":
+      status = "APPROVED";
+      break;
+    case "PEMBAYARAN":
+      status = "REQUEST_TO_PAY";
       break;
     default:
       break;
   }
 
-  console.log("proses", proses);
-  const tahunAnggaran = await getTahunAnggranPilihan();
-  const dataKegiatan = await dbHonorarium.kegiatan.findMany({
+  logger.info("status", status);
+
+  const kegiatans = await dbHonorarium.kegiatan.findMany({
     where: {
-      tanggalMulai: {
-        gte: new Date(`${tahunAnggaran}-01-01`),
-        lte: new Date(`${tahunAnggaran}-12-31`),
+      riwayatPengajuan: {
+        some: {
+          status: status,
+        },
       },
-      OR: [
-        { statusUhDalamNegeri: statusUh },
-        { statusUhLuarNegeri: statusUh },
-        { statusHonorarium: statusHonorarium },
-      ],
     },
   });
-  // map dataKegiatan to options
-  const optionsKegiatan = dataKegiatan.map((kegiatan) => ({
+  const optionsKegiatan = kegiatans.map((kegiatan) => ({
     value: kegiatan.id,
-    // label: kegiatan.status + "-" + kegiatan.nama,
     label: kegiatan.nama,
   }));
-
   return optionsKegiatan;
 };
+
+// export const getOptionsKegiatanOnAlurProses = async (proses: AlurProses) => {
+//   if (!proses) return [];
+//   let statusUh = "";
+//   let statusHonorarium = "";
+//   switch (proses) {
+//     case "nominatif":
+//       statusUh = "Approved";
+//       statusHonorarium = "Submitted";
+//       break;
+//     default:
+//       break;
+//   }
+
+//   console.log("proses", proses);
+//   const tahunAnggaran = await getTahunAnggranPilihan();
+//   const dataKegiatan = await dbHonorarium.kegiatan.findMany({
+//     where: {
+//       tanggalMulai: {
+//         gte: new Date(`${tahunAnggaran}-01-01`),
+//         lte: new Date(`${tahunAnggaran}-12-31`),
+//       },
+//       OR: [
+//         { statusUhDalamNegeri: statusUh },
+//         { statusUhLuarNegeri: statusUh },
+//         { statusHonorarium: statusHonorarium },
+//       ],
+//     },
+//   });
+//   // map dataKegiatan to options
+//   const optionsKegiatan = dataKegiatan.map((kegiatan) => ({
+//     value: kegiatan.id,
+//     // label: kegiatan.status + "-" + kegiatan.nama,
+//     label: kegiatan.nama,
+//   }));
+
+//   return optionsKegiatan;
+// };

@@ -11,7 +11,7 @@ import {
   ObjPlainJadwalKelasNarasumber,
 } from "@/data/jadwal";
 import { useSearchTerm } from "@/hooks/use-search-term";
-import { getStatusLangkah, StatusLangkah } from "@/lib/constants";
+import { getStatusPengajuan, STATUS_PENGAJUAN } from "@/lib/constants";
 import { formatHariTanggal } from "@/utils/date-format";
 import Decimal from "decimal.js";
 import { Trash } from "lucide-react";
@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import StatusBadge from "../status-badge";
 import NarasumberListItem from "./narasumber-list-item";
 
-export type Proses = "pengajuan" | "verfikasi" | "pembayaran";
+export type Proses = "pengajuan" | "verifikasi" | "pembayaran";
 interface DaftarJadwalProps {
   kegiatanId: string;
   proses: Proses;
@@ -135,7 +135,7 @@ const DaftarJadwal = ({
 
   const handleProsesPengajuanSuccess = (
     jadwalId: string,
-    newStatus: StatusLangkah | string
+    newStatus: STATUS_PENGAJUAN | string
   ) => {
     // refresh data
     // setSelfTrigger((prev) => prev + 1);
@@ -156,7 +156,7 @@ const DaftarJadwal = ({
 
   const handleProsesVerifikasiApproveSuccess = (
     jadwalId: string,
-    newStatus: string | StatusLangkah | null
+    newStatus: string | STATUS_PENGAJUAN | null
   ) => {
     if (!newStatus) return;
     // handle here
@@ -175,7 +175,7 @@ const DaftarJadwal = ({
 
   const handleProsesVerifikasiReviseSuccess = (
     jadwalId: string,
-    newStatus: string | StatusLangkah | null,
+    newStatus: string | STATUS_PENGAJUAN | null,
     catatan: string
   ) => {
     if (!newStatus) return;
@@ -200,11 +200,11 @@ const DaftarJadwal = ({
   return (
     <div className="flex flex-col gap-6">
       {filteredData &&
-        filteredData.map((jadwal, index) => {
-          const status = jadwal.statusPengajuanHonorarium;
+        filteredData.map((jadwal: ObjPlainJadwalKelasNarasumber, index) => {
+          const status = jadwal.riwayatPengajuan?.status || null;
           const isShowButton =
-            status === "Draft" || status === "Revise" || status === null;
-          if (proses == "verfikasi" && !status) {
+            status === "DRAFT" || status === "REVISE" || status === null;
+          if (proses == "verifikasi" && !status) {
             return null;
           } // skip jadwal yang belum diajukan
           return (
@@ -251,7 +251,7 @@ const DaftarJadwal = ({
                       totalNarsum={jumlahNarsum}
                       proses={proses}
                       statusPengajuanHonorarium={
-                        jadwal.statusPengajuanHonorarium as StatusLangkah
+                        jadwal.riwayatPengajuan?.status as STATUS_PENGAJUAN
                       }
                     />
                   );
@@ -260,19 +260,23 @@ const DaftarJadwal = ({
 
               <div className="flex flex-col w-full ">
                 <div className="px-4 py-2 w-full border-t border-gray-300">
-                  Catatan: {jadwal.catatanRevisi || "-"}
+                  Catatan: {jadwal.riwayatPengajuan?.catatanRevisi || "-"}
                 </div>
                 {proses == "pengajuan" && (
                   <FormProsesPengajuan
                     jadwalId={jadwal.id}
-                    statusPengajuanHonorarium={jadwal.statusPengajuanHonorarium}
+                    statusPengajuanHonorarium={
+                      jadwal.riwayatPengajuan?.status || null
+                    }
                     onSuccess={handleProsesPengajuanSuccess}
                   />
                 )}
-                {proses == "verfikasi" && (
+                {proses == "verifikasi" && (
                   <FormProsesVerifikasi
                     jadwalId={jadwal.id}
-                    statusPengajuanHonorarium={jadwal.statusPengajuanHonorarium}
+                    statusPengajuanHonorarium={
+                      jadwal.riwayatPengajuan?.status || null
+                    }
                     onRevise={handleProsesVerifikasiReviseSuccess}
                     onApproved={handleProsesVerifikasiApproveSuccess}
                   />
@@ -292,7 +296,7 @@ const DaftarJadwal = ({
 };
 
 const handleProsesPengajuan = async (jadwalId: string) => {
-  const newStatus: StatusLangkah = "Submitted";
+  const newStatus: STATUS_PENGAJUAN = "SUBMITTED";
   const updateStatus = await updateStatusPengajuanPembayaran(
     jadwalId,
     newStatus
@@ -307,16 +311,16 @@ const handleProsesPengajuan = async (jadwalId: string) => {
 
 interface FormProsesPengajuanProps {
   jadwalId: string;
-  statusPengajuanHonorarium: StatusLangkah | string | null;
-  onSuccess?: (jadwalId: string, newStatus: StatusLangkah | string) => void;
+  statusPengajuanHonorarium: STATUS_PENGAJUAN | string | null;
+  onSuccess?: (jadwalId: string, newStatus: STATUS_PENGAJUAN | string) => void;
 }
 const FormProsesPengajuan = ({
   jadwalId,
   statusPengajuanHonorarium,
   onSuccess = () => {},
 }: FormProsesPengajuanProps) => {
-  const [status, setStatus] = useState<StatusLangkah | null>(
-    getStatusLangkah(statusPengajuanHonorarium)
+  const [status, setStatus] = useState<STATUS_PENGAJUAN | null>(
+    getStatusPengajuan(statusPengajuanHonorarium)
   );
 
   const handleOnClick = async () => {
@@ -328,7 +332,7 @@ const FormProsesPengajuan = ({
   };
 
   const isShowButton =
-    status === "Draft" || status === "Revise" || status === null;
+    status === "DRAFT" || status === "REVISE" || status === null;
 
   return (
     <>
@@ -353,7 +357,7 @@ const FormProsesPengajuan = ({
 
 const handleProsesVerifikasiSetuju = async (jadwalId: string) => {
   //console.log(jadwalId);
-  const newStatus: StatusLangkah = "Approved";
+  const newStatus: STATUS_PENGAJUAN = "APPROVED";
   const updateStatus = await updateStatusPengajuanPembayaran(
     jadwalId,
     newStatus
@@ -370,7 +374,7 @@ const handleProsesVerifikasiRevisi = async (
   jadwalId: string,
   catatan: string
 ) => {
-  const newStatus: StatusLangkah = "Revise";
+  const newStatus: STATUS_PENGAJUAN = "REVISE";
   const updateStatus = await updateStatusPengajuanPembayaran(
     jadwalId,
     newStatus,
@@ -386,13 +390,13 @@ const handleProsesVerifikasiRevisi = async (
 
 interface FormProsesVerifikasiProps {
   jadwalId: string;
-  statusPengajuanHonorarium: StatusLangkah | string | null;
+  statusPengajuanHonorarium: STATUS_PENGAJUAN | string | null;
   onRevise?: (
     jadwalId: string,
-    newStatus: StatusLangkah,
+    newStatus: STATUS_PENGAJUAN,
     catatan: string
   ) => void;
-  onApproved?: (jadwalId: string, newStatus: StatusLangkah) => void;
+  onApproved?: (jadwalId: string, newStatus: STATUS_PENGAJUAN) => void;
 }
 const FormProsesVerifikasi = ({
   jadwalId,
@@ -421,7 +425,7 @@ const FormProsesVerifikasi = ({
     }
   };
 
-  const isShowButton = status === "Submitted" || status === "Revised";
+  const isShowButton = status === "SUBMITTED" || status === "REVISED";
 
   return (
     <div className="flex flex-col px-4 py-2 w-full border-t border-gray-300 gap-2">

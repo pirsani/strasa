@@ -4,7 +4,7 @@ import {
   getOptionsKegiatanOnAlurProses,
 } from "@/actions/kegiatan";
 import useTahunAnggaranStore from "@/hooks/use-tahun-anggaran-store";
-import { AlurProses } from "@/lib/constants";
+import { ALUR_PROSES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import Select, { SingleValue } from "react-select";
@@ -14,7 +14,7 @@ interface SelectKegiatanProps {
   onChange?: (value: string | null) => void;
   value?: string;
   className?: string;
-  proses?: AlurProses;
+  proses?: ALUR_PROSES | null;
 }
 
 interface Option {
@@ -51,7 +51,7 @@ const SelectKegiatan = ({
       }
     };
     fetchOptions();
-  }, [tahunAnggaran]);
+  }, [tahunAnggaran, proses]);
 
   useEffect(() => {
     if (value !== undefined) {

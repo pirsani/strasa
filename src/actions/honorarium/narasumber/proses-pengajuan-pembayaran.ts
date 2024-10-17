@@ -1,9 +1,12 @@
 "use server";
 
 import { getSessionPenggunaForAction } from "@/actions/pengguna";
+import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
-import { StatusLangkah } from "@/lib/constants";
+import { getJadwalIncludeKegiatan } from "@/data/narasumber/jadwal";
 import { dbHonorarium } from "@/lib/db-honorarium";
+import { createId } from "@paralleldrive/cuid2";
+import { JENIS_PENGAJUAN, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import { Logger } from "tslog";
 
 const logger = new Logger({
@@ -12,58 +15,91 @@ const logger = new Logger({
 
 const updateStatusPengajuanPembayaran = async (
   jadwalId: string,
-  status: StatusLangkah,
+  status: STATUS_PENGAJUAN,
   catatanRevisi?: string
-): Promise<ActionResponse<StatusLangkah>> => {
+): Promise<ActionResponse<STATUS_PENGAJUAN>> => {
   const pengguna = await getSessionPenggunaForAction();
   if (!pengguna.success) {
     return pengguna;
   }
 
+  const jadwal = await getJadwalIncludeKegiatan(jadwalId);
+
+  if (!jadwal) {
+    return {
+      success: false,
+      error: "Jadwal not found",
+    };
+  }
+
+  const kegiatanId = jadwal.kegiatanId;
+  const riwayatPengajuanId = jadwal.riwayatPengajuanId;
+
+  // TODO memastikan bahwa pengguna yang mengajukan adalah satker pengguna yang terkait dengan kegiatan
   const satkerId = pengguna.data.satkerId;
   const unitKerjaId = pengguna.data.unitKerjaId;
   const penggunaId = pengguna.data.penggunaId;
   const penggunaName = pengguna.data.penggunaName;
 
-  interface ObjJadlwaUpdate {
-    statusPengajuanHonorarium: StatusLangkah;
-    diajukanOlehId?: string;
-    diajukanTanggal?: Date;
+  interface ObjRiwayatPengajuanUpdate {
+    status: STATUS_PENGAJUAN;
     diverifikasiOlehId?: string;
-    diverifikasiTanggal?: Date;
-    catatanRevisi?: string;
     disetujuiOlehId?: string;
-    disetujuiTanggal?: Date;
+    dimintaPembayaranOlehId?: string;
     dibayarOlehId?: string;
+    catatanRevisi?: string;
+
+    diverifikasiTanggal?: Date;
+    disetujuiTanggal?: Date;
+    dimintaPembayaranTanggal?: Date;
     dibayarTanggal?: Date;
   }
 
-  let objJadlwaUpdate: ObjJadlwaUpdate = {
-    statusPengajuanHonorarium: status,
+  let objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
+    status: status,
   };
+
+  interface ObjCreateRiwayatPengajuan {
+    jenis: JENIS_PENGAJUAN;
+    status: STATUS_PENGAJUAN;
+    diajukanOlehId: string;
+    diajukanTanggal: Date;
+  }
+
+  let objCreateRiwayatPengajuan: ObjCreateRiwayatPengajuan = {
+    status: "SUBMITTED",
+    jenis: "HONORARIUM",
+    diajukanOlehId: penggunaId,
+    diajukanTanggal: new Date(),
+  };
+
   switch (status) {
-    case "Submitted":
-      objJadlwaUpdate.diajukanOlehId = penggunaId;
-      objJadlwaUpdate.diajukanTanggal = new Date();
+    case "SUBMITTED":
+      // objRiwayatPengajuanUpdate.diajukanOlehId = penggunaId;
+      // objRiwayatPengajuanUpdate.diajukanTanggal = new Date();
       break;
-    case "Revised":
-      objJadlwaUpdate.diajukanOlehId = penggunaId;
-      objJadlwaUpdate.diajukanTanggal = new Date();
+    case "REVISED":
+      // objRiwayatPengajuanUpdate.diajukanOlehId = penggunaId;
+      // objRiwayatPengajuanUpdate.diajukanTanggal = new Date();
       break;
-    case "Revise":
-      objJadlwaUpdate.diverifikasiOlehId = penggunaId;
-      objJadlwaUpdate.diverifikasiTanggal = new Date();
-      objJadlwaUpdate.catatanRevisi = catatanRevisi || "-";
+    case "REVISE":
+      objRiwayatPengajuanUpdate.diverifikasiOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.diverifikasiTanggal = new Date();
+      objRiwayatPengajuanUpdate.catatanRevisi = catatanRevisi || "-";
       break;
-    case "Approved":
-      objJadlwaUpdate.diverifikasiOlehId = penggunaId;
-      objJadlwaUpdate.diverifikasiTanggal = new Date();
-      objJadlwaUpdate.disetujuiOlehId = penggunaId;
-      objJadlwaUpdate.disetujuiTanggal = new Date();
+    case "APPROVED":
+      objRiwayatPengajuanUpdate.diverifikasiOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.diverifikasiTanggal = new Date();
+      objRiwayatPengajuanUpdate.disetujuiOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.disetujuiTanggal = new Date();
       break;
-    case "Paid":
-      objJadlwaUpdate.dibayarOlehId = penggunaId;
-      objJadlwaUpdate.dibayarTanggal = new Date();
+    case "REQUEST_TO_PAY":
+      objRiwayatPengajuanUpdate.dimintaPembayaranOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.dimintaPembayaranTanggal = new Date();
+      break;
+    case "PAID":
+      objRiwayatPengajuanUpdate.dibayarOlehId = penggunaId;
+      objRiwayatPengajuanUpdate.dibayarTanggal = new Date();
       break;
     default:
       break;
@@ -72,46 +108,42 @@ const updateStatusPengajuanPembayaran = async (
   // jika pengajuan maka update staus untuk seluruh kegiatan menjadi submitted
 
   try {
-    const updateStatus = await dbHonorarium.jadwal.update({
-      where: {
-        id: jadwalId,
-      },
-      data: {
-        ...objJadlwaUpdate,
-      },
+    const transaction = await dbHonorarium.$transaction(async (prisma) => {
+      const upsertRiwayatPengajuan = await prisma.riwayatPengajuan.upsert({
+        where: {
+          id: riwayatPengajuanId || createId(),
+        },
+        update: {
+          ...objRiwayatPengajuanUpdate,
+        },
+        create: {
+          kegiatanId: kegiatanId,
+          ...objCreateRiwayatPengajuan,
+          createdBy: penggunaId,
+        },
+      });
+
+      if (!riwayatPengajuanId) {
+        // update jadwal riwayatPengajuanId
+        const updateJadwal = await prisma.jadwal.update({
+          where: {
+            id: jadwalId,
+          },
+          data: {
+            riwayatPengajuanId: upsertRiwayatPengajuan.id,
+          },
+        });
+      }
     });
-    logger.info("[updateStatusPengajuanPembayaran]", updateStatus);
-
-    if (!updateStatus || !updateStatus.statusPengajuanHonorarium) {
-      return {
-        success: false,
-        error: "Error saving data",
-      };
-    }
-
-    // tantangannya adalah bagaiman mengetahu bahwa semua jadwal sudah di setujui
-    // sehingga status kegiatan bisa merefleksikan status secara keseluruhan
-    const updateStatusKegiatan = await dbHonorarium.kegiatan.update({
-      where: {
-        id: updateStatus.kegiatanId,
-      },
-      data: {
-        status: "Submitted",
-        statusHonorarium: "Submitted",
-      },
-    });
-
-    return {
-      success: true,
-      data: updateStatus.statusPengajuanHonorarium as StatusLangkah,
-    };
   } catch (error) {
     logger.error("[updateStatusPengajuanPembayaran]", error);
-    return {
-      success: false,
-      error: "Error saving data",
-    };
+    return getPrismaErrorResponse(error as Error);
   }
+
+  return {
+    success: true,
+    data: status,
+  };
 };
 
 export const updateJumlahJpJadwalNarasumber = async (

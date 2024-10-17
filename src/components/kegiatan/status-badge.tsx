@@ -1,8 +1,9 @@
 import {
-  getStatusLangkah,
+  STATUS_PENGAJUAN,
+  getStatusPengajuan,
   mapStatusLangkahToDesc,
-  StatusLangkah,
 } from "@/lib/constants";
+
 import { cn } from "@/lib/utils";
 import {
   BookDashed,
@@ -16,20 +17,21 @@ import {
 } from "lucide-react";
 
 interface StatusBadgeProps {
-  status: StatusLangkah | string | null;
+  status: STATUS_PENGAJUAN | string | null;
   className?: string;
 }
 
 const statusIcons = {
-  Draft: <BookDashed size={16} className="mr-1" />,
-  Submitted: <Forward size={16} className="mr-1" />,
-  Revise: <PencilLine size={16} className="mr-1" />,
-  Revised: <Pencil size={16} className="mr-1" />,
-  Verified: <Check size={16} className="mr-1" />,
-  Approved: <CheckCheck size={16} className="mr-1" />,
-  Paid: <HandCoins size={16} className="mr-1" />,
-  End: <Goal size={16} className="mr-1" />,
-  RequestToPay: <HandCoins size={16} className="mr-1" />,
+  DRAFT: <BookDashed size={16} className="mr-1" />,
+  SUBMITTED: <Forward size={16} className="mr-1" />,
+  REVISE: <PencilLine size={16} className="mr-1" />,
+  REVISED: <Pencil size={16} className="mr-1" />,
+  VERIFIED: <Check size={16} className="mr-1" />,
+  APPROVED: <CheckCheck size={16} className="mr-1" />,
+  REQUEST_TO_PAY: <HandCoins size={16} className="mr-1" />,
+  PAID: <HandCoins size={16} className="mr-1" />,
+  END: <Goal size={16} className="mr-1" />,
+  DONE: <Goal size={16} className="mr-1" />,
 };
 
 const StatusIcon = ({
@@ -37,7 +39,7 @@ const StatusIcon = ({
 }: {
   status: StatusBadgeProps["status"];
 }) => {
-  const status = getStatusLangkah(initStatus);
+  const status = getStatusPengajuan(initStatus);
   if (status === null) return null;
   return statusIcons[status];
 };
@@ -47,23 +49,23 @@ const StatusBadge = ({ status, className }: StatusBadgeProps) => {
     <div
       className={cn(
         "rounded-sm px-2 flex flex-row h-[24px] items-center",
-        status == "Draft"
+        status == "DRAFT"
           ? "bg-yellow-300 text-yellow-800"
           : status == "Submitted"
           ? "bg-blue-300 text-blue-800"
-          : status == "Revise"
+          : status == "REVISE"
           ? "bg-yellow-300 text-yellow-800"
-          : status == "Revised"
+          : status == "REVISED"
           ? "bg-green-200 text-green-800"
-          : status == "Verified"
+          : status == "VERIFIED"
           ? "bg-green-200 text-green-800"
-          : status == "Approved"
+          : status == "APPROVED"
           ? "bg-green-400 text-green-800"
-          : status == "RequestToPay"
+          : status == "REQUEST_TO_PAY"
           ? "bg-green-600 text-green-100"
-          : status == "Paid"
+          : status == "PAID"
           ? "bg-green-800 text-green-100"
-          : status == "End"
+          : status == "END"
           ? "bg-blue-700 text-white"
           : "bg-gray-200 text-gray-500"
       )}

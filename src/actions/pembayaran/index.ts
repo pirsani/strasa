@@ -1,13 +1,19 @@
 "use server";
 
 import { getSessionPenggunaForAction } from "@/actions/pengguna";
+import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
 import {
   getObjPlainPembayaran,
   ObjPlainPembayaranIncludeKegiatan,
 } from "@/data/pembayaran";
+import { getJenisPengajuan } from "@/lib/constants";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { NominatifPembayaranWithoutFile } from "@/zod/schemas/nominatif-pembayaran";
-import { JENIS_PENGAJUAN, Pembayaran } from "@prisma-honorarium/client";
+import {
+  JENIS_PENGAJUAN,
+  Pembayaran,
+  RiwayatPengajuan,
+} from "@prisma-honorarium/client";
 import { revalidatePath } from "next/cache";
 import { getTahunAnggranPilihan } from "../pengguna/preference";
 import { ActionResponse } from "../response";
@@ -18,27 +24,6 @@ interface dataPengajuanPembayaran {
   jenisPengajuan: string;
   lokasi?: string;
 }
-// const getDataPengajuanPembayaran = async () => {
-//   const pengguna = await getSessionPenggunaForAction();
-//   if (!pengguna.success) {
-//     return pengguna;
-//   }
-
-//   const satkerId = pengguna.data.satkerId;
-//   const status = "RequestToPay";
-//   const tahun = await getTahunAnggranPilihan();
-//   const kegiatanDalamNegeri = await getObjPlainKegiatanWithStatus(
-//     satkerId,
-//     status,
-//     tahun
-//   );
-
-//   const jadwalKelasNarasumber = await getObPlainJadwalBySatkerIdWithStatus(
-//     satkerId,
-//     status,
-//     tahun
-//   );
-// };
 
 export const getPengajuanPembayaran = async (): Promise<
   ActionResponse<ObjPlainPembayaranIncludeKegiatan[]>
@@ -101,43 +86,63 @@ export const pengajuanPembayaran = async (
   }
   try {
     const transaction = await dbHonorarium.$transaction(async (prisma) => {
+      let updateRiwayatPengajuan: RiwayatPengajuan;
+      let riwayatPengajuanId: string | undefined;
       switch (mapTo) {
         case "jadwal":
-          // jika pengajuan honorarium, update status pengajuan honorarium
-          const updateJadwal = await prisma.jadwal.update({
+          const jadwal = await prisma.jadwal.findUnique({
             where: {
               id: mappedId,
             },
-            data: {
-              statusPengajuanHonorarium: "RequestToPay",
-            },
           });
+
+          // jadwal sudah harus pernah diajukan dan disetujui
+          if (!jadwal || !jadwal.riwayatPengajuanId) {
+            return null;
+          }
+
+          riwayatPengajuanId = jadwal.riwayatPengajuanId;
+
+          // // jika pengajuan honorarium, update status pengajuan honorarium
+          // updateRiwayatPengajuan = await prisma.riwayatPengajuan.update({
+          //   where: {
+          //     id: jadwal.riwayatPengajuanId,
+          //     status: "APPROVED",
+          //   },
+          //   data: {
+          //     status: "REQUEST_TO_PAY",
+          //     dimintaPembayaranOlehId: penggunaId,
+          //     dimintaPembayaranTanggal: new Date(),
+          //   },
+          // });
           break;
         case "kegiatan":
-          // jika pengajuan kegiatan, update status pengajuan kegiatan
-          let dataStatus: {
-            statusUhDalamNegeri?: string;
-            statusUhLuarNegeri?: string;
-          } = {};
-          if (kegiatan.lokasi !== "LUAR_NEGERI") {
-            dataStatus = {
-              statusUhDalamNegeri: "RequestToPay",
-            };
-          } else {
-            dataStatus = {
-              statusUhLuarNegeri: "RequestToPay",
-            };
+          const jenisPengajuan = getJenisPengajuan(data.jenisPengajuan);
+          if (!jenisPengajuan) {
+            return null;
           }
-          const updateKegiatan = await prisma.kegiatan.update({
-            where: {
-              id: mappedId,
-            },
-            data: {
-              ...dataStatus,
-              updatedAt: new Date(),
-              updatedBy: penggunaId,
-            },
-          });
+          const riwayat =
+            await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(
+              mappedId,
+              data.jenisPengajuan as JENIS_PENGAJUAN
+            );
+
+          if (!riwayat) {
+            return null;
+          }
+
+          riwayatPengajuanId = riwayat.id;
+
+          // updateRiwayatPengajuan = await prisma.riwayatPengajuan.update({
+          //   where: {
+          //     id: riwayat?.id,
+          //   },
+          //   data: {
+          //     status: "REQUEST_TO_PAY",
+          //     dimintaPembayaranOlehId: penggunaId,
+          //     dimintaPembayaranTanggal: new Date(),
+          //   },
+          // });
           break;
 
         default:
@@ -161,8 +166,15 @@ export const pengajuanPembayaran = async (
       return pembayaran;
     });
 
-    revalidatePath("/daftar-nominatif");
+    if (!transaction) {
+      return {
+        success: false,
+        error: "Tidak dapat menemukan data yang sesuai",
+        message: "Tidak dapat menemukan data yang sesuai",
+      };
+    }
 
+    revalidatePath("/daftar-nominatif");
     return {
       success: true,
       data: transaction,

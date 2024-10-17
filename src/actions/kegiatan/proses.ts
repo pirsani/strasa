@@ -67,7 +67,7 @@ export const pengajuanGenerateRampungan = async (
       jenis: "GENERATE_RAMPUNGAN",
       kegiatanId,
       diajukanOlehId: penggunaId,
-      tanggalPengajuan: new Date(),
+      diajukanTanggal: new Date(),
       status: "SUBMITTED",
       createdBy: penggunaId,
     },

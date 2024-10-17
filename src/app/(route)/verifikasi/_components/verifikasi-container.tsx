@@ -51,6 +51,7 @@ const VerifikasiContainer = () => {
             inputId="kegiatan"
             onChange={handleKegiatanChange}
             className="w-full"
+            proses={"VERIFIKASI"}
           />
           <div className="flex flex-row gap-2 w-full border-gray-300 border rounded-md p-2 shadow-lg">
             <PreviewKegiatan kegiatan={kegiatan} className="w-full" />

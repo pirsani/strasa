@@ -1,3 +1,9 @@
+import { JENIS_PENGAJUAN, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
+export type {
+  ALUR_PROSES,
+  JENIS_PENGAJUAN,
+  STATUS_PENGAJUAN,
+} from "@prisma-honorarium/client";
 export type StatusLangkah =
   | "Draft"
   | "Submitted"
@@ -42,18 +48,32 @@ export function isValidStatusLangkah(value: unknown): value is StatusLangkah {
  * @param value - The value to check.
  * @returns The valid StatusLangkah or null if not valid.
  */
-export function getStatusLangkah(value: unknown): StatusLangkah {
-  return isValidStatusLangkah(value) ? (value as StatusLangkah) : null;
-}
+// export function getStatusLangkah(value: unknown): StatusLangkah {
+//   return isValidStatusLangkah(value) ? (value as StatusLangkah) : null;
+// }
 
-export const ALUR_PROSES = [
-  "setup",
-  "pengajuan",
-  "verifikasi",
-  "nominatif",
-  "pembayaran",
-  "selesai",
-];
+export const getStatusPengajuan = (
+  status: STATUS_PENGAJUAN | string | null
+): STATUS_PENGAJUAN | null => {
+  if (status === null || typeof status !== "string") return "DRAFT";
+  return STATUS_PENGAJUAN[status as keyof typeof STATUS_PENGAJUAN] || null;
+};
+
+export const getJenisPengajuan = (
+  jenis: JENIS_PENGAJUAN | string | null
+): JENIS_PENGAJUAN | null => {
+  if (jenis === null || typeof jenis !== "string") return null;
+  return JENIS_PENGAJUAN[jenis as keyof typeof JENIS_PENGAJUAN] || null;
+};
+
+// export const ALUR_PROSES = [
+//   "setup",
+//   "pengajuan",
+//   "verifikasi",
+//   "nominatif",
+//   "pembayaran",
+//   "selesai",
+// ];
 
 export type AlurProses =
   | "setup"

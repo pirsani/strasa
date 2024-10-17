@@ -2,7 +2,7 @@
 import { OptionSbm } from "@/actions/sbm";
 import { Button } from "@/components/ui/button";
 import { JadwalNarsum, Narsum } from "@/data/jadwal";
-import { StatusLangkah } from "@/lib/constants";
+import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
@@ -13,8 +13,8 @@ interface NarasumberListItemProps {
   optionsSbmHonorarium: OptionSbm[];
   index: number;
   totalNarsum?: number;
-  proses?: "pengajuan" | "verfikasi" | "pembayaran";
-  statusPengajuanHonorarium?: StatusLangkah | null;
+  proses?: "pengajuan" | "verifikasi" | "pembayaran";
+  statusPengajuanHonorarium?: STATUS_PENGAJUAN | null;
 }
 export const NarasumberListItem = ({
   jadwalNarasumber,

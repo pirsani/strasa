@@ -2,10 +2,13 @@ import { updateJumlahJpJadwalNarasumber } from "@/actions/honorarium/narasumber/
 import { OptionSbm } from "@/actions/sbm";
 import ButtonEye from "@/components/button-eye-open-document";
 import { Button } from "@/components/ui/button";
-import { StatusLangkah } from "@/lib/constants";
 import { getBesaranPajakHonorarium } from "@/lib/pajak";
 import formatCurrency from "@/utils/format-currency";
-import { JadwalNarasumber, Narasumber } from "@prisma-honorarium/client";
+import {
+  JadwalNarasumber,
+  Narasumber,
+  STATUS_PENGAJUAN,
+} from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
 import { LoaderPinwheel } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -21,8 +24,8 @@ interface NarasumberDetailProps {
   narasumber: Narasumber;
   jadwalNarasumber: JadwalNarasumber;
   optionsSbmHonorarium?: OptionSbm[];
-  proses?: "pengajuan" | "verfikasi" | "pembayaran";
-  statusPengajuanHonorarium?: StatusLangkah | null;
+  proses?: "pengajuan" | "verifikasi" | "pembayaran";
+  statusPengajuanHonorarium?: STATUS_PENGAJUAN | null;
 }
 
 const NarasumberDetail = ({
@@ -119,7 +122,7 @@ const NarasumberDetail = ({
 
   const [isUpdatingJp, setIsUpdatingJp] = useState(false);
   const handleUpdateJp = async () => {
-    if (proses === "pengajuan" || proses === "verfikasi") {
+    if (proses === "pengajuan" || proses === "verifikasi") {
       // update JP dan update jenis honorarium
       setIsUpdatingJp(true);
       const jenisHonorariumId = selectedSbmHonorarium?.value || null;
@@ -149,7 +152,7 @@ const NarasumberDetail = ({
   //   (!statusPengajuanHonorarium || statusPengajuanHonorarium === "Revise");
 
   // const isOnVerifikasi =
-  //   proses === "verfikasi" &&
+  //   proses === "verifikasi" &&
   //   statusPengajuanHonorarium &&
   //   (statusPengajuanHonorarium === "Submitted" ||
   //     statusPengajuanHonorarium === "Revised");
@@ -157,13 +160,13 @@ const NarasumberDetail = ({
   useEffect(() => {
     const isOnPengajuan =
       proses === "pengajuan" &&
-      (!statusPengajuanHonorarium || statusPengajuanHonorarium === "Revise");
+      (!statusPengajuanHonorarium || statusPengajuanHonorarium === "REVISE");
 
     const isOnVerifikasi =
-      proses === "verfikasi" &&
+      proses === "verifikasi" &&
       (statusPengajuanHonorarium || false) &&
-      (statusPengajuanHonorarium === "Submitted" ||
-        statusPengajuanHonorarium === "Revised");
+      (statusPengajuanHonorarium === "SUBMITTED" ||
+        statusPengajuanHonorarium === "REVISED");
     setIsAllowEditJp(isOnPengajuan || isOnVerifikasi);
     console.log("[check proses]", isOnPengajuan, isOnVerifikasi, isAllowEditJp);
     // eslint-disable-next-line react-hooks/exhaustive-deps
