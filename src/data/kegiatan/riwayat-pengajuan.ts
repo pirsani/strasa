@@ -1,3 +1,4 @@
+"use server";
 import { PenggunaInfo } from "@/data/pengguna";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { JENIS_PENGAJUAN, RiwayatPengajuan } from "@prisma-honorarium/client";

@@ -12,6 +12,7 @@ import {
   RiwayatPengajuan,
 } from "@prisma-honorarium/client";
 import { Logger } from "tslog";
+import { getSessionPenggunaForAction } from "../pengguna";
 import { getTahunAnggranPilihan } from "../pengguna/preference";
 
 const logger = new Logger({
@@ -65,6 +66,28 @@ export const getKegiatanById = async (
 };
 
 export const getOptionsKegiatan = async () => {
+  logger.info("getOptionsKegiatan");
+
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) return [];
+
+  const satkerId = pengguna.data.satkerId;
+  const unitKerjaId = pengguna.data.unitKerjaId;
+
+  // TODO: permission check
+  type AccessKegiatanLevel = "SATKER" | "UNIT_KERJA" | "ADMIN";
+  let accessKegiatanLevel: AccessKegiatanLevel;
+  if (satkerId === unitKerjaId) {
+    accessKegiatanLevel = "SATKER";
+  } else {
+    accessKegiatanLevel = "UNIT_KERJA";
+  }
+
+  const isOnLevelSatker = accessKegiatanLevel == "SATKER" ? true : false;
+
+  // hanya dapat memilih yang ada di satker dan unit kerja yang dipilih
+  // jika admin dapat memilih pada satkernya jika tidak makan hanya dapat memilih pada unitKerjaId dan satkerId sesuai pengguna
+
   const tahunAnggaran = await getTahunAnggranPilihan();
   const dataKegiatan = await dbHonorarium.kegiatan.findMany({
     where: {
@@ -72,6 +95,8 @@ export const getOptionsKegiatan = async () => {
         gte: new Date(`${tahunAnggaran}-01-01`),
         lte: new Date(`${tahunAnggaran}-12-31`),
       },
+      satkerId: satkerId,
+      ...(!isOnLevelSatker && { unitKerjaId: unitKerjaId }),
     },
   });
   // map dataKegiatan to options
@@ -86,6 +111,26 @@ export const getOptionsKegiatan = async () => {
 
 export const getOptionsKegiatanOnAlurProses = async (proses: ALUR_PROSES) => {
   if (!proses) return [];
+
+  logger.info("getOptionsKegiatan");
+
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) return [];
+
+  const satkerId = pengguna.data.satkerId;
+  const unitKerjaId = pengguna.data.unitKerjaId;
+
+  // TODO: permission check
+  type AccessKegiatanLevel = "SATKER" | "UNIT_KERJA" | "ADMIN";
+  let accessKegiatanLevel: AccessKegiatanLevel;
+  if (satkerId === unitKerjaId) {
+    accessKegiatanLevel = "SATKER";
+  } else {
+    accessKegiatanLevel = "UNIT_KERJA";
+  }
+
+  const isOnLevelSatker = accessKegiatanLevel == "SATKER" ? true : false;
+
   let status: STATUS_PENGAJUAN = "DRAFT";
 
   switch (proses) {
@@ -115,6 +160,8 @@ export const getOptionsKegiatanOnAlurProses = async (proses: ALUR_PROSES) => {
           status: status,
         },
       },
+      satkerId: satkerId,
+      ...(!isOnLevelSatker && { unitKerjaId: unitKerjaId }), // dynamically add where clause here
     },
   });
   const optionsKegiatan = kegiatans.map((kegiatan) => ({

@@ -9,9 +9,14 @@ import {
 } from "@/components/tabel-expandable";
 import { Button } from "@/components/ui/button";
 import { getObPlainJadwalByKegiatanId } from "@/data/jadwal";
+import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
 import { cn } from "@/lib/utils";
 import { formatHariTanggal, formatTanggal } from "@/utils/date-format";
-import { Kegiatan, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
+import {
+  JENIS_PENGAJUAN,
+  Kegiatan,
+  STATUS_PENGAJUAN,
+} from "@prisma-honorarium/client";
 
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { ChevronRight, Eye } from "lucide-react";
@@ -121,8 +126,8 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     id: string;
     nama: string;
     tanggalKegiatan?: Date | string | null;
-    jenisPengajuan: string;
-    statusPengajuan: STATUS_PENGAJUAN | null;
+    jenisPengajuan?: JENIS_PENGAJUAN | null;
+    statusPengajuan?: STATUS_PENGAJUAN | null;
     diajukanOlehId?: string | null;
     diajukanOleh?: string | null;
     diajukanTanggal?: Date | string | null;
@@ -146,15 +151,83 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     console.log("Expand row:", rowId);
     // Implement your expand row logic here
 
+    let newDetails: RowDetail[] = [];
+
+    const riwayatRampungan =
+      await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(
+        rowId,
+        JENIS_PENGAJUAN.GENERATE_RAMPUNGAN
+      );
+
+    if (riwayatRampungan) {
+      const newRiwayatRampungan: RowDetail = {
+        id: riwayatRampungan.id,
+        nama: "Rampungan",
+        jenisPengajuan: riwayatRampungan.jenis,
+        statusPengajuan: riwayatRampungan.status,
+        diajukanOlehId: riwayatRampungan.diajukanOlehId,
+        diajukanOleh: riwayatRampungan.diajukanOleh.name,
+        diajukanTanggal: riwayatRampungan.diajukanTanggal,
+        diverifikasiTanggal: riwayatRampungan.diverifikasiTanggal,
+        disetujuiTanggal: riwayatRampungan.disetujuiTanggal,
+        dibayarTanggal: riwayatRampungan.dibayarTanggal,
+      };
+      newDetails.push(newRiwayatRampungan);
+    }
+
+    const riwayatPengajuanUhLuarNegeri =
+      await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(
+        rowId,
+        JENIS_PENGAJUAN.UH_DALAM_NEGERI
+      );
+
+    if (riwayatPengajuanUhLuarNegeri) {
+      const newRiwayatPengajuanUhLuarNegeri: RowDetail = {
+        id: riwayatPengajuanUhLuarNegeri.id,
+        nama: "Uang Harian Luar Negeri",
+        jenisPengajuan: riwayatPengajuanUhLuarNegeri.jenis,
+        statusPengajuan: riwayatPengajuanUhLuarNegeri.status,
+        diajukanOlehId: riwayatPengajuanUhLuarNegeri.diajukanOlehId,
+        diajukanOleh: riwayatPengajuanUhLuarNegeri.diajukanOleh.name,
+        diajukanTanggal: riwayatPengajuanUhLuarNegeri.diajukanTanggal,
+        diverifikasiTanggal: riwayatPengajuanUhLuarNegeri.diverifikasiTanggal,
+        disetujuiTanggal: riwayatPengajuanUhLuarNegeri.disetujuiTanggal,
+        dibayarTanggal: riwayatPengajuanUhLuarNegeri.dibayarTanggal,
+      };
+      newDetails.push(newRiwayatPengajuanUhLuarNegeri);
+    }
+
+    const riwayatPengajuanUhDalamNegeri =
+      await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(
+        rowId,
+        JENIS_PENGAJUAN.UH_LUAR_NEGERI
+      );
+
+    if (riwayatPengajuanUhDalamNegeri) {
+      const newRiwayatPengajuanUhDalamNegeri: RowDetail = {
+        id: riwayatPengajuanUhDalamNegeri.id,
+        nama: "Uang Harian Dalam Negeri",
+        jenisPengajuan: riwayatPengajuanUhDalamNegeri.jenis,
+        statusPengajuan: riwayatPengajuanUhDalamNegeri.status,
+        diajukanOlehId: riwayatPengajuanUhDalamNegeri.diajukanOlehId,
+        diajukanOleh: riwayatPengajuanUhDalamNegeri.diajukanOleh.name,
+        diajukanTanggal: riwayatPengajuanUhDalamNegeri.diajukanTanggal,
+        diverifikasiTanggal: riwayatPengajuanUhDalamNegeri.diverifikasiTanggal,
+        disetujuiTanggal: riwayatPengajuanUhDalamNegeri.disetujuiTanggal,
+        dibayarTanggal: riwayatPengajuanUhDalamNegeri.dibayarTanggal,
+      };
+      newDetails.push(newRiwayatPengajuanUhDalamNegeri);
+    }
+
     const jadwals = await getObPlainJadwalByKegiatanId(rowId);
     //console.log("Detail:", detail);
 
-    const newDetails: RowDetail[] = jadwals.map((jadwal) => {
+    const newDetailsJadwal: RowDetail[] = jadwals.map((jadwal) => {
       return {
         id: jadwal.id,
         nama: jadwal.kelas.nama,
         tanggalKegiatan: jadwal.tanggal,
-        jenisPengajuan: "Honorarium",
+        jenisPengajuan: jadwal.riwayatPengajuan?.jenis,
         // statusPengajuan: mapStatusLangkahToDesc(
         //   jadwal.statusPengajuanHonorarium
         // ),
@@ -167,6 +240,8 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         dibayarTanggal: jadwal.riwayatPengajuan?.dibayarTanggal,
       };
     });
+
+    newDetails.push(...newDetailsJadwal);
 
     const newRowDetails = {
       ...rowDetails,
@@ -196,7 +271,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
             <table className="table-auto w-full text-left border border-collapse">
               <thead>
                 <tr className="bg-gray-800 text-gray-200 h-12">
-                  <th className="border px-1">Kelas</th>
+                  <th className="border px-1">Keterangan/Kelas</th>
                   <th className="border px-1">Tanggal Kegiatan</th>
                   <th className="border px-1">Tanggal Pengajuan</th>
                   <th className="border px-1">Jenis Pengajuan</th>
@@ -217,7 +292,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                     </td>
                     <td className="border px-2">{detail.jenisPengajuan}</td>
                     <td className="border px-2">
-                      {<StatusBadge status={detail.statusPengajuan} />}
+                      {<StatusBadge status={detail.statusPengajuan ?? null} />}
                     </td>
                     <td className="border px-2">{detail.diajukanOleh}</td>
                     <td>
