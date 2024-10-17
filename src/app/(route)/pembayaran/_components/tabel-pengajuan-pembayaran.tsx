@@ -3,7 +3,7 @@ import { ObjPlainPembayaranIncludeKegiatan } from "@/actions/pembayaran";
 import { TabelGenericWithoutInlineEdit } from "@/components/tabel-generic-without-inline-edit";
 import { Button } from "@/components/ui/button";
 import { useSearchTerm } from "@/hooks/use-search-term";
-import { mapStatusLangkahToDesc } from "@/lib/constants";
+import { mapStatusLangkahToDesc, STATUS_PENGAJUAN } from "@/lib/constants";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import Link from "next/link";
 import { useState } from "react";
@@ -74,7 +74,7 @@ const TabelPengajuanPembayaran = ({
       accessorKey: "status",
       header: "Status",
       cell: (info) => {
-        return mapStatusLangkahToDesc(info.getValue() as string);
+        return mapStatusLangkahToDesc(info.getValue() as STATUS_PENGAJUAN);
       },
       footer: "Status",
     },

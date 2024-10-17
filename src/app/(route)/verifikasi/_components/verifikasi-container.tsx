@@ -4,7 +4,7 @@ import FloatingComponent from "@/components/floating-component";
 import PreviewKegiatan from "@/components/kegiatan";
 import PdfPreviewContainer from "@/components/pdf-preview-container";
 import useFileStore from "@/hooks/use-file-store";
-import { JenisPengajuan } from "@/types";
+import { JENIS_PENGAJUAN } from "@prisma-honorarium/client";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import VerfikasiSelectionContainer from "./verifikasi-selection-container";
@@ -22,7 +22,8 @@ const VerifikasiContainer = () => {
     console.log(value);
     setKegiatanId(value); // after this set, it will trigger re-render PreviewKegiatan
   };
-  const [jenisPengajuan, setJenisPengajuan] = useState<JenisPengajuan | null>();
+  const [jenisPengajuan, setJenisPengajuan] =
+    useState<JENIS_PENGAJUAN | null>();
 
   useEffect(() => {
     console.log("kegiatanId", kegiatanId);

@@ -1,12 +1,7 @@
+import { KegiatanWithDetail } from "@/actions/kegiatan";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { JenisPengajuan } from "@/types";
-import {
-  JENIS_PENGAJUAN,
-  Kegiatan,
-  LOKASI,
-  LogProses,
-} from "@prisma-honorarium/client";
+import { JENIS_PENGAJUAN, LOKASI, LogProses } from "@prisma-honorarium/client";
 import {
   Coins,
   FileStack,
@@ -27,10 +22,10 @@ interface MapLogProses {
 }
 
 interface ButtonsPengajuanProps {
-  jenisPengajuan: JenisPengajuan | null;
-  kegiatan: Kegiatan | null;
+  jenisPengajuan: JENIS_PENGAJUAN | null;
+  kegiatan: KegiatanWithDetail | null;
   logProses: LogProses[];
-  handleSelection: (jenis: JenisPengajuan) => void;
+  handleSelection: (jenis: JENIS_PENGAJUAN) => void;
 }
 
 const ButtonsPengajuan = ({
@@ -39,10 +34,12 @@ const ButtonsPengajuan = ({
   handleSelection,
   logProses,
 }: ButtonsPengajuanProps) => {
-  const [jenisPengajuan, setJenisPengajuan] = useState<JenisPengajuan | null>(
+  const [jenisPengajuan, setJenisPengajuan] = useState<JENIS_PENGAJUAN | null>(
     initialJenisPengajuan
   );
-  const [kegiatan, setKegiatan] = useState<Kegiatan | null>(initialKegiatan);
+  const [kegiatan, setKegiatan] = useState<KegiatanWithDetail | null>(
+    initialKegiatan
+  );
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
@@ -51,13 +48,13 @@ const ButtonsPengajuan = ({
 
   const [mapLogProses, setMapLogProses] = useState<MapLogProses | null>(null);
 
-  const handleOnClick = (jenis: JenisPengajuan) => {
+  const handleOnClick = (jenis: JENIS_PENGAJUAN) => {
     setJenisPengajuan(jenis);
     handleSelection(jenis);
     console.log("[logProses]", logProses);
   };
 
-  const handleSuccessPengajuanRampungan = (kegiatan: Kegiatan) => {
+  const handleSuccessPengajuanRampungan = (kegiatan: KegiatanWithDetail) => {
     // update existing kegiatan
     setKegiatan(kegiatan);
   };
@@ -73,13 +70,17 @@ const ButtonsPengajuan = ({
   }, [initialJenisPengajuan]);
 
   if (!kegiatan) return null;
+  // Check if there's an existing pengajuan rampungan
+  const pengajuanRampungan = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "GENERATE_RAMPUNGAN"
+  );
 
   return (
     <>
       <div className={cn("flex flex-wrap gap-2")}>
         {/* jika sudah ada generate rampungan, tidak bisa generate rampungan lagi */}
         <ButtonRiwayatRampungan
-          statusRampungan={kegiatan.statusRampungan}
+          statusRampungan={pengajuanRampungan?.status || null}
           jenisPengajuan={jenisPengajuan}
           handleOnClick={handleOnClick}
         />
@@ -159,8 +160,8 @@ const mappingLogProses = (logProses: LogProses[]) => {
 };
 
 interface ButtonRiwayatRampunganProps {
-  handleOnClick: (jenis: JenisPengajuan) => void;
-  jenisPengajuan?: JenisPengajuan | null;
+  handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
   statusRampungan: string | null;
 }
 const ButtonRiwayatRampungan = ({
@@ -186,8 +187,8 @@ const ButtonRiwayatRampungan = ({
 };
 
 interface ButtonAjukanUhDalamNegeriProps {
-  handleOnClick: (jenis: JenisPengajuan) => void;
-  jenisPengajuan?: JenisPengajuan | null;
+  handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
   statusRampungan: string | null;
   statusUhDalamNegeri: string | null;
 }
@@ -227,8 +228,8 @@ const ButtonAjukanUhDalamNegeri = ({
 };
 
 interface ButtonAjukanUhLuarNegeriProps {
-  handleOnClick: (jenis: JenisPengajuan) => void;
-  jenisPengajuan?: JenisPengajuan | null;
+  handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
   statusRampungan: string | null;
   statusUhLuarNegeri: string | null;
 }

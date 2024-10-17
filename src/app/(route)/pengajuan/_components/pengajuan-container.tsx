@@ -1,15 +1,13 @@
 "use client";
 import { getKegiatanById, KegiatanWithDetail } from "@/actions/kegiatan";
+import { getLogProses } from "@/actions/kegiatan/proses";
 import FloatingComponent from "@/components/floating-component";
 import PreviewKegiatan from "@/components/kegiatan";
 import PdfPreviewContainer from "@/components/pdf-preview-container";
-import { JenisPengajuan } from "@/types";
-import { LogProses } from "@prisma-honorarium/client";
+import useFileStore from "@/hooks/use-file-store";
+import { JENIS_PENGAJUAN, LogProses } from "@prisma-honorarium/client";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-
-import { getLogProses } from "@/actions/kegiatan/proses";
-import useFileStore from "@/hooks/use-file-store";
 import ButtonsPengajuan from "./buttons-pengajuan";
 import { DisplayFormPengajuanGenerateRampungan } from "./honorarium/display-form-pengajuan-generate-rampungan";
 import HonorariumContainer from "./honorarium/honorarium-container";
@@ -27,13 +25,13 @@ const PengajuanContainer = () => {
   const [kegiatanId, setKegiatanId] = useState<string | null>(null);
   const [kegiatan, setKegiatan] = useState<KegiatanWithDetail | null>(null);
   const [logProses, setLogProses] = useState<LogProses[]>([]);
-  const [jenisPengajuan, setJenisPengajuan] = useState<JenisPengajuan | null>(
+  const [jenisPengajuan, setJenisPengajuan] = useState<JENIS_PENGAJUAN | null>(
     null
   );
 
   const { fileUrl, isPreviewHidden } = useFileStore();
 
-  const handleSelection = (jenis: JenisPengajuan) => {
+  const handleSelection = (jenis: JENIS_PENGAJUAN) => {
     setJenisPengajuan(jenis);
   };
 

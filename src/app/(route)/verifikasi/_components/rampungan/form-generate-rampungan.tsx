@@ -4,17 +4,31 @@ import { updateStatusRampungan } from "@/actions/kegiatan/proses";
 import { Button } from "@/components/ui/button";
 
 interface FormGenerateRampunganProps {
-  kegiatanId: string;
+  kegiatan: KegiatanWithDetail | null;
   handleSelesai?: (kegiatan: KegiatanWithDetail) => void;
   handleGenerate?: () => void;
 }
 const FormGenerateRampungan = ({
-  kegiatanId,
+  kegiatan,
   handleGenerate = () => {},
   handleSelesai = () => {},
 }: FormGenerateRampunganProps) => {
+  if (!kegiatan) return null;
+
+  // destructure kegiatan
+  const { id: kegiatanId, riwayatPengajuan } = kegiatan;
+
+  // Check if there's an existing pengajuan rampungan
+  const pengajuanRampungan = riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "GENERATE_RAMPUNGAN"
+  );
+
+  // Render the form if GENERATE_RAMPUNGAN is selected and there's pengajuan rampungan with status SUBMITTED
+  if (!pengajuanRampungan || pengajuanRampungan.status !== "SUBMITTED")
+    return null;
+
   const handleClickSelesai = async () => {
-    const updateStatus = await updateStatusRampungan(kegiatanId, "selesai");
+    const updateStatus = await updateStatusRampungan(kegiatanId, "END");
     if (updateStatus.success) {
       handleSelesai(updateStatus.data);
       console.log("[updateStatus]", updateStatus);

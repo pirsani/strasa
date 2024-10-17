@@ -390,7 +390,7 @@ const handleProsesVerifikasiRevisi = async (
 
 interface FormProsesVerifikasiProps {
   jadwalId: string;
-  statusPengajuanHonorarium: STATUS_PENGAJUAN | string | null;
+  statusPengajuanHonorarium: STATUS_PENGAJUAN | null;
   onRevise?: (
     jadwalId: string,
     newStatus: STATUS_PENGAJUAN,
@@ -404,7 +404,7 @@ const FormProsesVerifikasi = ({
   onRevise = () => {},
   onApproved = () => {},
 }: FormProsesVerifikasiProps) => {
-  const [status, setStatus] = useState<string | null>(
+  const [status, setStatus] = useState<STATUS_PENGAJUAN | null>(
     statusPengajuanHonorarium
   );
   const [catatan, setCatatan] = useState<string>("");

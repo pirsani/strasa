@@ -2,45 +2,47 @@ import { JENIS_PENGAJUAN, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 export type {
   ALUR_PROSES,
   JENIS_PENGAJUAN,
+  LOKASI,
   STATUS_PENGAJUAN,
 } from "@prisma-honorarium/client";
-export type StatusLangkah =
-  | "Draft"
-  | "Submitted"
-  | "Revise"
-  | "Revised"
-  | "Verified"
-  | "Approved"
-  | "RequestToPay"
-  | "Paid"
-  | "End"
-  | null;
 
-export const validStatusLangkah: StatusLangkah[] = [
-  "Draft",
-  "Submitted",
-  "Revise",
-  "Revised",
-  "Verified",
-  "Approved",
-  "RequestToPay",
-  "Paid",
-  "End",
-  null,
-];
+// export type StatusLangkah =
+//   | "Draft"
+//   | "Submitted"
+//   | "Revise"
+//   | "Revised"
+//   | "Verified"
+//   | "Approved"
+//   | "RequestToPay"
+//   | "Paid"
+//   | "End"
+//   | null;
 
-// Convert valid statuses to a Set for O(1) lookup performance
-const validStatusLangkahSet = new Set<StatusLangkah>(validStatusLangkah);
+// export const validStatusLangkah: STATUS_PENGAJUAN[] = [
+//   "Draft",
+//   "Submitted",
+//   "Revise",
+//   "Revised",
+//   "Verified",
+//   "Approved",
+//   "RequestToPay",
+//   "Paid",
+//   "End",
+//   null,
+// ];
+
+// // Convert valid statuses to a Set for O(1) lookup performance
+// const validStatusLangkahSet = new Set<StatusLangkah>(validStatusLangkah);
 
 /**
  * Checks if a value is a valid StatusLangkah.
  *
  * @param value - The value to check.
  * @returns True if the value is a valid StatusLangkah, otherwise false.
- */
-export function isValidStatusLangkah(value: unknown): value is StatusLangkah {
-  return validStatusLangkahSet.has(value as StatusLangkah);
-}
+//  */
+// export function isValidStatusLangkah(value: unknown): value is StatusLangkah {
+//   return validStatusLangkahSet.has(value as StatusLangkah);
+// }
 
 /**
  * Gets a valid StatusLangkah if the provided value matches, otherwise returns null.
@@ -48,7 +50,7 @@ export function isValidStatusLangkah(value: unknown): value is StatusLangkah {
  * @param value - The value to check.
  * @returns The valid StatusLangkah or null if not valid.
  */
-// export function getStatusLangkah(value: unknown): StatusLangkah {
+// export function getStatusLangkah(value: unknown): STATUS_PENGAJUAN {
 //   return isValidStatusLangkah(value) ? (value as StatusLangkah) : null;
 // }
 
@@ -60,9 +62,9 @@ export const getStatusPengajuan = (
 };
 
 export const getJenisPengajuan = (
-  jenis: JENIS_PENGAJUAN | string | null
+  jenis?: JENIS_PENGAJUAN | string | null
 ): JENIS_PENGAJUAN | null => {
-  if (jenis === null || typeof jenis !== "string") return null;
+  if (!jenis || jenis === null || typeof jenis !== "string") return null;
   return JENIS_PENGAJUAN[jenis as keyof typeof JENIS_PENGAJUAN] || null;
 };
 
@@ -75,69 +77,71 @@ export const getJenisPengajuan = (
 //   "selesai",
 // ];
 
-export type AlurProses =
-  | "setup"
-  | "pengajuan"
-  | "verifikasi"
-  | "nominatif"
-  | "pembayaran"
-  | "selesai"
-  | null;
+// export type AlurProses =
+//   | "setup"
+//   | "pengajuan"
+//   | "verifikasi"
+//   | "nominatif"
+//   | "pembayaran"
+//   | "selesai"
+//   | null;
 
-export const LANGKAH = [
-  "setup",
-  "pengajuan",
-  "verifikasi",
-  "nominatif",
-  "pembayaran",
-  "selesai",
-];
+// export const LANGKAH = [
+//   "setup",
+//   "pengajuan",
+//   "verifikasi",
+//   "nominatif",
+//   "pembayaran",
+//   "selesai",
+// ];
 
-export const mapStatusLangkahToDesc = (status: string | null) => {
+export const mapStatusLangkahToDesc = (status: STATUS_PENGAJUAN | null) => {
   switch (status) {
-    case "Draft":
+    case "DRAFT":
       return "Draft";
-    case "Submitted":
+    case "SUBMITTED":
       return "Diajukan";
-    case "Approved":
-      return "Disetujui";
-    case "Revise":
+    case "REVISE":
       return "Revisi/Perbaiki";
-    case "Revised":
+    case "REVISED":
       return "Telah diperbaiki";
-    case "Verified":
+    case "APPROVED":
+      return "Disetujui";
+    case "VERIFIED":
       return "Telah diverifikasi";
-    case "RequestToPay":
+    case "REQUEST_TO_PAY":
       return "Permintaan pembayaran";
-    case "Paid":
+    case "PAID":
       return "Telah dibayar";
-    case "End":
+    case "DONE":
+    case "END":
       return "Proses selesai";
     default:
       return "Belum diproses";
   }
 };
 
-export const mapStatusLangkahToColor = (status: string | null) => {
+export const mapStatusLangkahToColor = (status: STATUS_PENGAJUAN | null) => {
   //return "text-white bg-red-800";
   switch (status) {
-    case "Draft":
+    case "DRAFT":
       return "bg-yellow-300 text-yellow-800";
-    case "Submitted":
+    case "SUBMITTED":
       return "bg-blue-300 text-blue-800";
-    case "Revise":
+    case "REVISE":
       return "bg-yellow-300 text-yellow-800";
-    case "Revised":
+    case "REVISED":
       return "bg-yellow-300 text-yellow-800";
-    case "Verified":
+    case "VERIFIED":
       return "bg-green-200 text-green-600";
-    case "Approved":
+    case "APPROVED":
       return "bg-green-400 text-green-200 ";
-    case "RequestToPay":
+    case "REQUEST_TO_PAY":
       return "bg-green-600 text-green-200";
-    case "Paid":
+    case "PAID":
       return "bg-green-700 text-green-200";
-    case "End":
+    case "DONE":
+    case "END":
       return "bg-blue-700 text-white";
     default:
       return "text-white bg-gray-800";

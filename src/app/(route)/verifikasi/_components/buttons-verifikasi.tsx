@@ -1,7 +1,12 @@
+import { KegiatanWithDetail } from "@/actions/kegiatan";
 import { Button } from "@/components/ui/button";
+//import { JENIS_PENGAJUAN, STATUS_PENGAJUAN } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { JenisPengajuan } from "@/types";
-import { Kegiatan, LOKASI } from "@prisma-honorarium/client";
+import {
+  JENIS_PENGAJUAN,
+  LOKASI,
+  STATUS_PENGAJUAN,
+} from "@prisma-honorarium/client";
 import {
   Coins,
   FileStack,
@@ -14,9 +19,9 @@ import {
 import { useEffect, useState } from "react";
 
 interface ButtonsVerifikasiProps {
-  handleSelection: (jenis: JenisPengajuan) => void;
-  kegiatan: Kegiatan | null;
-  jenisPengajuan: JenisPengajuan | null;
+  handleSelection: (jenis: JENIS_PENGAJUAN) => void;
+  kegiatan: KegiatanWithDetail | null;
+  jenisPengajuan: JENIS_PENGAJUAN | null;
   className?: string;
 }
 
@@ -26,9 +31,11 @@ const ButtonsVerifikasi = ({
   jenisPengajuan,
   className,
 }: ButtonsVerifikasiProps) => {
-  const [kegiatan, setKegiatan] = useState<Kegiatan | null>(initialKegiatan);
+  const [kegiatan, setKegiatan] = useState<KegiatanWithDetail | null>(
+    initialKegiatan
+  );
 
-  const handleOnClick = (jenis: JenisPengajuan) => {
+  const handleOnClick = (jenis: JENIS_PENGAJUAN) => {
     handleSelection(jenis);
   };
 
@@ -37,12 +44,24 @@ const ButtonsVerifikasi = ({
   }, [initialKegiatan]);
 
   if (!kegiatan) return null;
+
+  // Check if there's an existing pengajuan rampungan
+  const pengajuanRampungan = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "GENERATE_RAMPUNGAN"
+  );
+  const pengajuanUhDalamNegeri = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "UH_DALAM_NEGERI"
+  );
+  const pengajuanHonorarium = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "UH_LUAR_NEGERI"
+  );
+
   return (
     <div className={cn("flex flex-wrap gap-2", className)}>
       <ButtonRiwayatRampungan
         handleOnClick={() => handleOnClick("GENERATE_RAMPUNGAN")}
         jenisPengajuan={jenisPengajuan}
-        statusRampungan={kegiatan.statusRampungan}
+        statusRampungan={pengajuanRampungan?.status || null}
       />
       <Button
         variant="outline"
@@ -59,7 +78,7 @@ const ButtonsVerifikasi = ({
         <ButtonVerifikasiUhDalamNegeri
           handleOnClick={() => handleOnClick("UH_DALAM_NEGERI")}
           jenisPengajuan={jenisPengajuan}
-          statusRampungan={kegiatan.statusRampungan}
+          statusRampungan={pengajuanRampungan?.status || null}
           statusUhDalamNegeri={kegiatan.statusUhDalamNegeri}
         />
       )}
@@ -67,7 +86,7 @@ const ButtonsVerifikasi = ({
         <ButtonVerifikasiUhLuarNegeri
           handleOnClick={() => handleOnClick("UH_LUAR_NEGERI")}
           jenisPengajuan={jenisPengajuan}
-          statusRampungan={kegiatan.statusRampungan}
+          statusRampungan={pengajuanRampungan?.status || null}
           statusUhLuarNegeri={kegiatan.statusUhLuarNegeri}
         />
       )}
@@ -107,16 +126,16 @@ const ButtonsVerifikasi = ({
 };
 
 interface ButtonRiwayatRampunganProps {
-  handleOnClick: (jenis: JenisPengajuan) => void;
-  jenisPengajuan?: JenisPengajuan | null;
-  statusRampungan: string | null;
+  handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
+  statusRampungan: STATUS_PENGAJUAN | null;
 }
 const ButtonRiwayatRampungan = ({
   handleOnClick,
   jenisPengajuan,
   statusRampungan,
 }: ButtonRiwayatRampunganProps) => {
-  if (!statusRampungan || statusRampungan === "selesai") return null;
+  if (!statusRampungan || statusRampungan === STATUS_PENGAJUAN.END) return null;
 
   return (
     <Button
@@ -134,9 +153,9 @@ const ButtonRiwayatRampungan = ({
 };
 
 interface ButtonVerifikasiUhDalamNegeriProps {
-  handleOnClick: (jenis: JenisPengajuan) => void;
-  jenisPengajuan?: JenisPengajuan | null;
-  statusRampungan: string | null;
+  handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
+  statusRampungan: STATUS_PENGAJUAN | null;
   statusUhDalamNegeri: string | null;
 }
 
@@ -149,7 +168,8 @@ const ButtonVerifikasiUhDalamNegeri = ({
   //jika status rampungan belum ada atau selesai, maka button tidak muncul
   if (
     !statusRampungan ||
-    (statusRampungan !== "terverifikasi" && statusRampungan !== "selesai")
+    (statusRampungan !== STATUS_PENGAJUAN.VERIFIED &&
+      statusRampungan !== STATUS_PENGAJUAN.END)
   )
     return null;
   //jika status UH dalam negeri bukan pengajuan, maka button tidak muncul
@@ -174,8 +194,8 @@ const ButtonVerifikasiUhDalamNegeri = ({
 };
 
 interface ButtonVerifikasiUhLuarNegeriProps {
-  handleOnClick: (jenis: JenisPengajuan) => void;
-  jenisPengajuan?: JenisPengajuan | null;
+  handleOnClick: (jenis: JENIS_PENGAJUAN) => void;
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
   statusRampungan: string | null;
   statusUhLuarNegeri: string | null;
 }

@@ -1,7 +1,11 @@
 "use server";
 import { dbHonorarium } from "@/lib/db-honorarium";
 
-import { JENIS_PENGAJUAN, Kegiatan } from "@prisma-honorarium/client";
+import {
+  JENIS_PENGAJUAN,
+  Kegiatan,
+  STATUS_PENGAJUAN,
+} from "@prisma-honorarium/client";
 import { revalidatePath } from "next/cache";
 import { Logger } from "tslog";
 import { KegiatanWithDetail } from ".";
@@ -47,33 +51,53 @@ export const pengajuanGenerateRampungan = async (
   const penggunaId = pengguna.data.penggunaId;
   const satkerId = pengguna.data.satkerId;
 
-  const updateStatusRampungan = await dbHonorarium.kegiatan.update({
+  // console.log("[createLogProses]", updateStatusRampungan);
+
+  // check if pengajuan already exists
+  const existingPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
     where: {
-      id: kegiatanId,
-    },
-    data: {
-      statusRampungan: "pengajuan",
-    },
-    include: {
-      itinerary: true,
-      provinsi: true,
-      dokumenKegiatan: true,
-    },
-  });
-  console.log("[createLogProses]", updateStatusRampungan);
-
-  const buatPengajuan = await dbHonorarium.riwayatPengajuan.create({
-    data: {
-      jenis: "GENERATE_RAMPUNGAN",
       kegiatanId,
-      diajukanOlehId: penggunaId,
-      diajukanTanggal: new Date(),
-      status: "SUBMITTED",
-      createdBy: penggunaId,
+      jenis: "GENERATE_RAMPUNGAN",
+      OR: [
+        {
+          status: "SUBMITTED",
+        },
+        {
+          status: "REVISE",
+        },
+      ],
     },
   });
-  console.log("[createPengajuan]", buatPengajuan);
 
+  if (existingPengajuan) {
+    //jika sudah ada pengajuan generate rampungan, maka update status pengajuannya dan tanggal statusnya
+    const buatPengajuan = await dbHonorarium.riwayatPengajuan.update({
+      where: {
+        id: existingPengajuan.id,
+      },
+      data: {
+        jenis: "GENERATE_RAMPUNGAN",
+        diajukanOlehId: penggunaId,
+        diajukanTanggal: new Date(),
+        status: "SUBMITTED",
+        updatedBy: penggunaId,
+      },
+    });
+  } else {
+    // create new pengajuan
+    const buatPengajuan = await dbHonorarium.riwayatPengajuan.create({
+      data: {
+        jenis: "GENERATE_RAMPUNGAN",
+        kegiatanId,
+        diajukanOlehId: penggunaId,
+        diajukanTanggal: new Date(),
+        status: "SUBMITTED",
+        createdBy: penggunaId,
+      },
+    });
+  }
+
+  // create log proses
   const createLogProses = await dbHonorarium.logProses.create({
     data: {
       kegiatanId,
@@ -84,77 +108,78 @@ export const pengajuanGenerateRampungan = async (
       tglStatus: new Date(),
     },
   });
-  console.log("[createLogProses]", createLogProses);
+
+  // cari kegiatan dengan id yang sama sebagai kembalian data
+  const kegiatan = await getKegiatan(kegiatanId);
+  if (!kegiatan) {
+    // harusnya tidak akan pernah sampai ke sini
+    return {
+      success: false,
+      error: "E-KUSLN01",
+      message: "Silakan coba refresh halaman ini",
+    };
+  }
+
   revalidatePath("/pengajuan");
   return {
     success: true,
-    data: updateStatusRampungan,
+    data: kegiatan,
   };
 };
 
-export type StatusRampungan =
-  | "pengajuan"
-  | "terverifikasi"
-  | "revisi"
-  | "ditolak"
-  | "selesai";
 export const updateStatusRampungan = async (
   kegiatanId: string,
-  statusRampunganBaru: StatusRampungan
+  statusRampunganBaru: STATUS_PENGAJUAN
 ): Promise<ActionResponse<KegiatanWithDetail>> => {
   // TODO check permission disini untuk update status rampungan
   // allowed status: pengajuan, terverifikasi, revisi, ditolak, selesai
 
   let updateStatusRampungan;
   try {
-    updateStatusRampungan = await dbHonorarium.kegiatan.update({
+    const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
       where: {
-        id: kegiatanId,
-      },
-      data: {
-        statusRampungan: statusRampunganBaru,
-      },
-      include: {
-        itinerary: true,
-        provinsi: true,
-        dokumenKegiatan: true,
+        kegiatanId,
+        jenis: "GENERATE_RAMPUNGAN",
       },
     });
-  } catch (error) {
-    console.error("Error updateStatusRampungan", error);
+
+    if (!riwayatPengajuan) {
+      return {
+        success: false,
+        error: "E-KUSLN01",
+        message: "Silakan coba refresh halaman ini",
+      };
+    }
+    const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
+      where: {
+        id: riwayatPengajuan.id,
+      },
+      data: {
+        status: statusRampunganBaru,
+      },
+    });
+  } catch (error) {}
+
+  const kegiatan = await getKegiatan(kegiatanId);
+  if (!kegiatan) {
+    // harusnya tidak akan pernah sampai ke sini
     return {
       success: false,
-      error: "Error updateStatusRampungan",
-      message: "Error updateStatusRampungan",
+      error: "E-KUSLN01",
+      message: "Silakan coba refresh halaman ini",
     };
   }
 
   console.log("[updateStatusRampungan]", updateStatusRampungan);
   return {
     success: true,
-    data: updateStatusRampungan,
+    data: kegiatan,
   };
 };
 
-// "setup",
-// "pengajuan",
-// "verifikasi",
-// "nominatif",
-// "pembayaran",
-// "selesai",
-export type Status =
-  | "pengajuan"
-  | "terverifikasi"
-  | "revisi"
-  | "nominatif"
-  | "pembayaran"
-  | "dibayar"
-  | "ditolak"
-  | "selesai";
-
 export const updateStatusUhLuarNegeri = async (
   kegiatanId: string,
-  statusUhLuarNegeriBaru: Status
+  statusUhLuarNegeriBaru: STATUS_PENGAJUAN
 ): Promise<ActionResponse<KegiatanWithDetail>> => {
   try {
     const updatedKegiatan = await dbHonorarium.kegiatan.update({
@@ -179,7 +204,7 @@ export const updateStatusUhLuarNegeri = async (
     logger.error("Error updateStatusUhLuarNegeri", error);
     return {
       success: false,
-      error: "E-KUSLN01",
+      error: "E-URPSLN-01",
       message: "Error update Status Uh Luar Negeri",
     };
   }
@@ -187,28 +212,61 @@ export const updateStatusUhLuarNegeri = async (
 
 export const updateStatusUhDalamNegeri = async (
   kegiatanId: string,
-  statusUhDalamNegeriBaru: Status
+  statusUhDalamNegeriBaru: STATUS_PENGAJUAN
 ): Promise<ActionResponse<Kegiatan>> => {
   try {
-    const updatedKegiatan = await dbHonorarium.kegiatan.update({
+    const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
       where: {
-        id: kegiatanId,
-      },
-      data: {
-        statusUhDalamNegeri: statusUhDalamNegeriBaru,
+        kegiatanId,
+        jenis: "UH_DALAM_NEGERI",
       },
     });
-    console.log("[updatedKegiatan]", updatedKegiatan);
-    return {
-      success: true,
-      data: updatedKegiatan,
-    };
-  } catch (error) {
-    logger.error("Error updateStatusUhDalamNegeri", error);
+    if (!riwayatPengajuan) {
+      return {
+        success: false,
+        error: "E-URPSDN-01",
+        message: "Silakan coba refresh halaman ini",
+      };
+    }
+    const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
+      where: {
+        id: riwayatPengajuan.id,
+      },
+      data: {
+        status: statusUhDalamNegeriBaru,
+      },
+    });
+  } catch (error) {}
+  const kegiatan = await getKegiatan(kegiatanId);
+  if (!kegiatan) {
+    // harusnya tidak akan pernah sampai ke sini
     return {
       success: false,
       error: "E-KUSLN01",
-      message: "Error update Status Uh Dalam Negeri",
+      message: "Silakan coba refresh halaman ini",
     };
   }
+
+  console.log("[updateStatusRampungan]", updateStatusRampungan);
+  return {
+    success: true,
+    data: kegiatan,
+  };
+};
+
+const getKegiatan = async (
+  kegiatanId: string
+): Promise<KegiatanWithDetail | null> => {
+  const kegiatan = await dbHonorarium.kegiatan.findUnique({
+    where: {
+      id: kegiatanId,
+    },
+    include: {
+      itinerary: true,
+      provinsi: true,
+      dokumenKegiatan: true,
+      riwayatPengajuan: true,
+    },
+  });
+  return kegiatan;
 };

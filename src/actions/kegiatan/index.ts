@@ -9,6 +9,7 @@ import {
   //ALUR_PROSES,
   Organisasi,
   Provinsi,
+  RiwayatPengajuan,
 } from "@prisma-honorarium/client";
 import { Logger } from "tslog";
 import { getTahunAnggranPilihan } from "../pengguna/preference";
@@ -39,6 +40,7 @@ export interface KegiatanWithDetail extends Kegiatan {
   itinerary: Itinerary[] | null;
   provinsi: Provinsi | null;
   dokumenKegiatan: DokumenKegiatan[] | null;
+  riwayatPengajuan?: RiwayatPengajuan[] | null;
 }
 
 export const getKegiatanById = async (
@@ -54,6 +56,7 @@ export const getKegiatanById = async (
           createdAt: "desc",
         },
       },
+      riwayatPengajuan: true,
     },
   });
 
@@ -120,41 +123,3 @@ export const getOptionsKegiatanOnAlurProses = async (proses: ALUR_PROSES) => {
   }));
   return optionsKegiatan;
 };
-
-// export const getOptionsKegiatanOnAlurProses = async (proses: AlurProses) => {
-//   if (!proses) return [];
-//   let statusUh = "";
-//   let statusHonorarium = "";
-//   switch (proses) {
-//     case "nominatif":
-//       statusUh = "Approved";
-//       statusHonorarium = "Submitted";
-//       break;
-//     default:
-//       break;
-//   }
-
-//   console.log("proses", proses);
-//   const tahunAnggaran = await getTahunAnggranPilihan();
-//   const dataKegiatan = await dbHonorarium.kegiatan.findMany({
-//     where: {
-//       tanggalMulai: {
-//         gte: new Date(`${tahunAnggaran}-01-01`),
-//         lte: new Date(`${tahunAnggaran}-12-31`),
-//       },
-//       OR: [
-//         { statusUhDalamNegeri: statusUh },
-//         { statusUhLuarNegeri: statusUh },
-//         { statusHonorarium: statusHonorarium },
-//       ],
-//     },
-//   });
-//   // map dataKegiatan to options
-//   const optionsKegiatan = dataKegiatan.map((kegiatan) => ({
-//     value: kegiatan.id,
-//     // label: kegiatan.status + "-" + kegiatan.nama,
-//     label: kegiatan.nama,
-//   }));
-
-//   return optionsKegiatan;
-// };

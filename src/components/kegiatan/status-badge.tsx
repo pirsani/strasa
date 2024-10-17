@@ -1,6 +1,7 @@
 import {
   STATUS_PENGAJUAN,
   getStatusPengajuan,
+  mapStatusLangkahToColor,
   mapStatusLangkahToDesc,
 } from "@/lib/constants";
 
@@ -17,7 +18,7 @@ import {
 } from "lucide-react";
 
 interface StatusBadgeProps {
-  status: STATUS_PENGAJUAN | string | null;
+  status: STATUS_PENGAJUAN | null;
   className?: string;
 }
 
@@ -49,25 +50,26 @@ const StatusBadge = ({ status, className }: StatusBadgeProps) => {
     <div
       className={cn(
         "rounded-sm px-2 flex flex-row h-[24px] items-center",
-        status == "DRAFT"
-          ? "bg-yellow-300 text-yellow-800"
-          : status == "Submitted"
-          ? "bg-blue-300 text-blue-800"
-          : status == "REVISE"
-          ? "bg-yellow-300 text-yellow-800"
-          : status == "REVISED"
-          ? "bg-green-200 text-green-800"
-          : status == "VERIFIED"
-          ? "bg-green-200 text-green-800"
-          : status == "APPROVED"
-          ? "bg-green-400 text-green-800"
-          : status == "REQUEST_TO_PAY"
-          ? "bg-green-600 text-green-100"
-          : status == "PAID"
-          ? "bg-green-800 text-green-100"
-          : status == "END"
-          ? "bg-blue-700 text-white"
-          : "bg-gray-200 text-gray-500"
+        mapStatusLangkahToColor(status)
+        // status == "DRAFT"
+        //   ? "bg-yellow-300 text-yellow-800"
+        //   : status == "SUBMITTED"
+        //   ? "bg-blue-300 text-blue-800"
+        //   : status == "REVISE"
+        //   ? "bg-yellow-300 text-yellow-800"
+        //   : status == "REVISED"
+        //   ? "bg-green-200 text-green-800"
+        //   : status == "VERIFIED"
+        //   ? "bg-green-200 text-green-800"
+        //   : status == "APPROVED"
+        //   ? "bg-green-400 text-green-800"
+        //   : status == "REQUEST_TO_PAY"
+        //   ? "bg-green-600 text-green-100"
+        //   : status == "PAID"
+        //   ? "bg-green-800 text-green-100"
+        //   : status == "END"
+        //   ? "bg-blue-700 text-white"
+        //   : "bg-gray-200 text-gray-500"
       )}
     >
       <StatusIcon status={status} />

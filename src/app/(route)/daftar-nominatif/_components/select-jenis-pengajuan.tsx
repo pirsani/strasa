@@ -1,4 +1,5 @@
 "use client";
+import { getJenisPengajuan } from "@/lib/constants";
 import { randomStrimg } from "@/utils/random-string";
 import { JENIS_PENGAJUAN, Kegiatan } from "@prisma-honorarium/client";
 import { useEffect, useState } from "react";
@@ -7,7 +8,7 @@ import Select, { SingleValue } from "react-select";
 export type JenisPengajuan = JENIS_PENGAJUAN;
 
 interface Option {
-  value: JenisPengajuan | null;
+  value: JENIS_PENGAJUAN | null;
   label: string;
 }
 
@@ -20,8 +21,8 @@ const JENIS_PENGAJUAN_OPTIONS: Option[] = [
 
 interface SelectJenisPengajuanProps {
   fieldName: string;
-  value?: JenisPengajuan | string | null;
-  onChange: (value: JenisPengajuan | null) => void;
+  value?: JENIS_PENGAJUAN | string | null;
+  onChange: (value: JENIS_PENGAJUAN | null) => void;
   kegiatan?: Kegiatan;
 }
 export const SelectJenisPengajuan = ({
@@ -30,8 +31,8 @@ export const SelectJenisPengajuan = ({
   onChange = () => {},
   kegiatan,
 }: SelectJenisPengajuanProps) => {
-  const value = initValue as JenisPengajuan | null;
-  const [selectedValue, setSelectedValue] = useState<JenisPengajuan | null>(
+  const value = getJenisPengajuan(initValue);
+  const [selectedValue, setSelectedValue] = useState<JENIS_PENGAJUAN | null>(
     value ?? null
   );
   const genId = randomStrimg(5);
@@ -46,6 +47,7 @@ export const SelectJenisPengajuan = ({
 
   useEffect(() => {
     setSelectedValue(value ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initValue]);
 
   return (

@@ -1,12 +1,13 @@
 "use server";
-import { LANGKAH, StatusLangkah } from "./constants";
+import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
+//import { LANGKAH } from "./constants";
 
 // Define the Kegiatan interface with correct types
 export interface Kegiatan {
   id: number;
   langkahSekarang: string;
   langkahSelanjutnya: string | null;
-  status: StatusLangkah; // Ensure StatusLangkah includes all possible values
+  status: STATUS_PENGAJUAN; // Ensure StatusLangkah includes all possible values
   updatedAt?: Date;
 }
 
@@ -16,7 +17,7 @@ interface LogEntry {
   kegiatanId: string;
   langkahSekarang: string;
   langkahSelanjutnya: string | null;
-  status: StatusLangkah;
+  status: STATUS_PENGAJUAN;
   createdAt: Date;
 }
 
@@ -32,7 +33,7 @@ export const updateAlurLangkah = async (
   console.log("[AKSI]", aksi);
 
   // Handle the 'End' status case
-  if (kegiatan.status === "End") {
+  if (kegiatan.status === "END") {
     console.log("Kegiatan sudah selesai");
     return kegiatan;
   }
@@ -40,8 +41,8 @@ export const updateAlurLangkah = async (
   // Handle different actions
   switch (aksi) {
     case "Revise":
-      if (kegiatan.status !== "Paid") {
-        kegiatan.status = "Revise";
+      if (kegiatan.status !== "PAID") {
+        kegiatan.status = "REVISE";
       }
       break;
     case "Proceed":
@@ -65,16 +66,16 @@ export const updateAlurLangkah = async (
 // Function to handle 'Proceed' actions based on current status
 const handleProceedAction = (kegiatan: Kegiatan): Kegiatan => {
   switch (kegiatan.status) {
-    case "Draft":
-      kegiatan.status = "Submitted";
+    case "DRAFT":
+      kegiatan.status = "SUBMITTED";
       kegiatan.langkahSelanjutnya = tentukanLangkahSelanjutnya(
         kegiatan.langkahSekarang,
         kegiatan.status
       );
       break;
-    case "Submitted":
-      if (kegiatan.langkahSelanjutnya === "selesai") {
-        kegiatan.status = "Paid";
+    case "SUBMITTED":
+      if (kegiatan.langkahSelanjutnya === "END") {
+        kegiatan.status = "PAID";
         kegiatan.langkahSelanjutnya = "selesai"; // Stay at the final step
       } else {
         kegiatan.langkahSekarang =
@@ -85,8 +86,8 @@ const handleProceedAction = (kegiatan: Kegiatan): Kegiatan => {
         );
       }
       break;
-    case "Revised":
-      kegiatan.status = "Submitted";
+    case "REVISE":
+      kegiatan.status = "SUBMITTED";
       kegiatan.langkahSekarang =
         kegiatan.langkahSelanjutnya || kegiatan.langkahSekarang;
       kegiatan.langkahSelanjutnya = tentukanLangkahSelanjutnya(
@@ -94,13 +95,13 @@ const handleProceedAction = (kegiatan: Kegiatan): Kegiatan => {
         kegiatan.status
       );
       break;
-    case "Revise":
-      kegiatan.status = "Revised";
+    case "REVISED":
+      kegiatan.status = "VERIFIED";
       break;
-    case "Paid":
-      kegiatan.status = "End";
+    case "PAID":
+      kegiatan.status = "END";
       break;
-    case "End":
+    case "END":
       console.log("Kegiatan sudah selesai");
       break;
     default:
@@ -109,18 +110,33 @@ const handleProceedAction = (kegiatan: Kegiatan): Kegiatan => {
   return kegiatan;
 };
 
+const STATUS_PENGAJUAN_ARRAY: STATUS_PENGAJUAN[] = [
+  "DRAFT",
+  "SUBMITTED",
+  "REVISE",
+  "REVISED",
+  "VERIFIED",
+  "APPROVED",
+  "REQUEST_TO_PAY",
+  "PAID",
+  "DONE",
+  "END",
+];
 // Determine the next step based on the current step and status
 function tentukanLangkahSelanjutnya(
   langkahSekarang: string | null,
-  statusBaru: StatusLangkah
+  statusBaru: STATUS_PENGAJUAN
 ): string | null {
-  if (!langkahSekarang) return LANGKAH[0]; // Start from 'setup' if current step is null
+  if (!langkahSekarang) return STATUS_PENGAJUAN_ARRAY[0]; // Start from 'setup' if current step is null
 
-  const currentIndex = LANGKAH.indexOf(langkahSekarang);
-  if (currentIndex === -1 || currentIndex === LANGKAH.length - 1) return null; // Last step or not found
+  const currentIndex = STATUS_PENGAJUAN_ARRAY.indexOf(
+    langkahSekarang as STATUS_PENGAJUAN
+  );
+  if (currentIndex === -1 || currentIndex === STATUS_PENGAJUAN_ARRAY.length - 1)
+    return null; // Last step or not found
 
   // Move to the next step if status is 'Submitted' or 'Revised'
-  return statusBaru === "Submitted" || statusBaru === "Revised"
-    ? LANGKAH[currentIndex + 1]
+  return statusBaru === "SUBMITTED" || statusBaru === "REVISED"
+    ? STATUS_PENGAJUAN_ARRAY[currentIndex + 1]
     : null;
 }

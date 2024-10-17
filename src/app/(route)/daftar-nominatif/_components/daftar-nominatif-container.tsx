@@ -1,14 +1,12 @@
 "use client";
 import { getKegiatanById, KegiatanWithDetail } from "@/actions/kegiatan";
+import { getLogProses } from "@/actions/kegiatan/proses";
 import FloatingComponent from "@/components/floating-component";
 import PdfPreviewContainer from "@/components/pdf-preview-container";
-import { LogProses } from "@prisma-honorarium/client";
+import useFileStore from "@/hooks/use-file-store";
+import { JENIS_PENGAJUAN, LogProses } from "@prisma-honorarium/client";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-
-import { getLogProses } from "@/actions/kegiatan/proses";
-import { JenisPengajuan } from "@/app/(route)/daftar-nominatif/_components/select-jenis-pengajuan";
-import useFileStore from "@/hooks/use-file-store";
 import FormNominatifHonorarium from "./form-nominatif-honorarium";
 
 const SelectKegiatan = dynamic(
@@ -20,7 +18,7 @@ const DaftarNominatifContainer = () => {
   const [kegiatanId, setKegiatanId] = useState<string | null>(null);
   const [kegiatan, setKegiatan] = useState<KegiatanWithDetail | null>(null);
   const [logProses, setLogProses] = useState<LogProses[]>([]);
-  const [jenisPengajuan, setJenisPengajuan] = useState<JenisPengajuan | null>(
+  const [jenisPengajuan, setJenisPengajuan] = useState<JENIS_PENGAJUAN | null>(
     null
   );
 
@@ -65,7 +63,7 @@ const DaftarNominatifContainer = () => {
       <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-20 bg-gray-100 rounded-lg py-4 lg:px-4 p-2">
         <div className="w-full flex flex-col gap-2 ">
           <SelectKegiatan
-            proses={"nominatif"}
+            proses={"NOMINATIF"}
             inputId="kegiatan"
             onChange={handleKegiatanChange}
             className="w-full"

@@ -1,9 +1,9 @@
 import { KegiatanWithDetail } from "@/actions/kegiatan";
-import { JenisPengajuan } from "@/types";
+import { JENIS_PENGAJUAN } from "@prisma-honorarium/client";
 import FormPengajuanGenerateRampungan from "../form-pengajuan-generate-rampungan";
 
 interface DisplayFormPengajuanGenerateRampunganProps {
-  jenisPengajuan?: JenisPengajuan | null;
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
   kegiatan: KegiatanWithDetail | null;
   handleSuccess: (kegiatan: KegiatanWithDetail) => void; // harusnya update ke atas
 }
@@ -15,8 +15,15 @@ export const DisplayFormPengajuanGenerateRampungan = ({
 }: DisplayFormPengajuanGenerateRampunganProps) => {
   if (!kegiatan) return null;
 
+  const riwayatPengajuan = kegiatan.riwayatPengajuan;
+
+  // Check if there's an existing rampungan
+  const pengajuanRampungan = riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "GENERATE_RAMPUNGAN"
+  );
+
   // Render the form if GENERATE_RAMPUNGAN is selected and there's no existing rampungan
-  if (jenisPengajuan === "GENERATE_RAMPUNGAN" && !kegiatan.statusRampungan) {
+  if (jenisPengajuan === "GENERATE_RAMPUNGAN" && !pengajuanRampungan) {
     return (
       <FormPengajuanGenerateRampungan
         kegiatanId={kegiatan.id}
@@ -25,11 +32,10 @@ export const DisplayFormPengajuanGenerateRampungan = ({
     );
   }
 
-  // Render the status message if GENERATE_RAMPUNGAN is selected, rampungan exists, and is not verified
+  // Render the status message if GENERATE_RAMPUNGAN is selected, rampungan exists, and is SUBMITTED
   const shouldShowStatusMessage =
     jenisPengajuan === "GENERATE_RAMPUNGAN" &&
-    kegiatan.statusRampungan &&
-    kegiatan.statusRampungan !== "terverifikasi";
+    pengajuanRampungan?.status === "SUBMITTED";
 
   if (shouldShowStatusMessage) {
     return (

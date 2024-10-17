@@ -101,6 +101,7 @@ const FormNominatifPembayaran = ({
 
   useEffect(() => {
     handleReset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kegiatanId]);
 
   return (

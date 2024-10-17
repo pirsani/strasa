@@ -1,6 +1,6 @@
 import { KegiatanWithDetail } from "@/actions/kegiatan";
 import DaftarJadwal from "@/components/kegiatan/honorarium/daftar-jadwal";
-import { JenisPengajuan } from "@/types";
+import { JENIS_PENGAJUAN } from "@prisma-honorarium/client";
 import { useEffect, useState } from "react";
 import ButtonsVerifikasi from "./buttons-verifikasi";
 import FormGenerateRampungan from "./rampungan/form-generate-rampungan";
@@ -16,10 +16,10 @@ const VerfikasiSelectionContainer = ({
   const [kegiatan, setKegiatan] = useState<KegiatanWithDetail | null>(
     initialKegiatan
   );
-  const [jenisPengajuan, setJenisPengajuan] = useState<JenisPengajuan | null>(
+  const [jenisPengajuan, setJenisPengajuan] = useState<JENIS_PENGAJUAN | null>(
     null
   );
-  const handleSelection = (jenis: JenisPengajuan) => {
+  const handleSelection = (jenis: JENIS_PENGAJUAN) => {
     setJenisPengajuan(jenis);
   };
 
@@ -50,7 +50,7 @@ const VerfikasiSelectionContainer = ({
         <div className="flex flex-col gap-2 mt-6 w-full border-gray-300 border rounded-md p-2 shadow-lg">
           {jenisPengajuan == "GENERATE_RAMPUNGAN" && (
             <FormGenerateRampungan
-              kegiatanId={kegiatan.id}
+              kegiatan={kegiatan}
               handleSelesai={handleSelesaiRampungan}
             />
           )}

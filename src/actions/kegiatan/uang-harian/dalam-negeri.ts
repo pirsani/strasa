@@ -63,7 +63,7 @@ export const ajukanUhDalamNegeri = async (
     // step 3. update kegiatan status Uh Luar Negeri
     const kegiatanUpdated = await updateStatusUhDalamNegeri(
       dokumenUhDalamNegeri.kegiatanId,
-      "pengajuan"
+      "SUBMITTED"
     );
 
     return kegiatanUpdated;
