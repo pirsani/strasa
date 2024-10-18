@@ -34,8 +34,8 @@ import isDateLte from "@/utils/date";
 import { Itinerary } from "@/zod/schemas/itinerary";
 import { createId } from "@paralleldrive/cuid2";
 import { LOKASI } from "@prisma-honorarium/client";
-import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import ToastErrorContainer from "../../../../components/form/toast-error-children";
 
 //import Select, { SingleValue } from "react-select";
 // fix Warning: Extra attributes from the server: aria-activedescendant
@@ -176,12 +176,9 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
       if (!lte) {
         console.log("trigger validation", tanggalMulai, tanggalSelesai);
         toast.error(
-          <div className="flex flex-row bg-red-700 text-white -m-2 p-2  rounded-sm ">
-            <AlertCircle className="w-12 h-12 mr-2" />
-            <div>
-              Tanggal Mulai harus kurang dari atau sama dengan Tanggal Selesai
-            </div>
-          </div>,
+          <ToastErrorContainer>
+            Tanggal Mulai harus kurang dari atau sama dengan Tanggal Selesai
+          </ToastErrorContainer>,
           { position: "top-center" }
         );
         setValue("tanggalSelesai", tanggalMulai);

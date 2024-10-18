@@ -12,10 +12,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import isDateLte from "@/utils/date";
 import { Itinerary, itinerarySchema } from "@/zod/schemas/itinerary";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createId } from "@paralleldrive/cuid2";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import ToastErrorContainer from "../../../../components/form/toast-error-children";
 import SelectNegara from "./select-negara";
 //import SelectSbmNegara from "./select-sbm-negara";
 
@@ -35,11 +39,11 @@ interface FormItineraryProps {
   onCancel?: () => void;
   simpanDataItinerary?: (data: Itinerary) => void;
   className?: string;
-  itinerary?: Partial<Itinerary>;
+  itinerary?: Partial<Itinerary> | null;
 }
 const FormItinerary = ({
-  tanggalMulai = new Date(),
-  tanggalSelesai = new Date(),
+  tanggalMulai: initTanggalMulai = new Date(),
+  tanggalSelesai: initTanggalSelesai = new Date(),
   onCancel,
   simpanDataItinerary,
   className,
@@ -47,7 +51,15 @@ const FormItinerary = ({
 }: FormItineraryProps) => {
   const form = useForm<Itinerary>({
     resolver: zodResolver(itinerarySchema),
-    defaultValues: {},
+    defaultValues: itinerary ?? {
+      id: createId(),
+      tanggalMulai: initTanggalMulai,
+      tanggalSelesai: initTanggalSelesai,
+      dariLokasiId: "",
+      dariLokasi: "",
+      keLokasiId: "",
+      keLokasi: "",
+    },
   });
 
   const {
@@ -55,14 +67,53 @@ const FormItinerary = ({
     setValue,
     getValues,
     reset,
+    trigger,
     formState: { errors, isSubmitting },
   } = form;
+
+  const setNextItineraryFrom = (lastItinerary: Itinerary) => {
+    // add date plus 1 day
+    const tanggalSelesai = new Date(lastItinerary.tanggalMulai);
+    tanggalSelesai.setDate(lastItinerary.tanggalSelesai.getDate() + 1);
+
+    reset({
+      id: createId(),
+      tanggalMulai: tanggalMulai,
+      tanggalSelesai: tanggalSelesai,
+      dariLokasiId: lastItinerary.dariLokasiId,
+      dariLokasi: lastItinerary.dariLokasi,
+      keLokasiId: "",
+      keLokasi: "",
+    });
+  };
+
+  const tanggalMulai = form.watch("tanggalMulai");
+  const tanggalSelesai = form.watch("tanggalSelesai");
+
+  useEffect(() => {
+    console.log("watch tanggalMulai", tanggalMulai, tanggalSelesai);
+    if (tanggalMulai && tanggalSelesai) {
+      const lte = isDateLte(tanggalMulai, tanggalSelesai);
+      if (!lte) {
+        console.log("trigger validation", tanggalMulai, tanggalSelesai);
+        toast.error(
+          <ToastErrorContainer>
+            Tanggal Mulai harus kurang dari atau sama dengan Tanggal Selesai
+          </ToastErrorContainer>,
+          { position: "top-center" }
+        );
+        setValue("tanggalSelesai", tanggalMulai);
+        trigger("tanggalSelesai"); // this will trigger validation and transform the value to conform to zod schema
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tanggalMulai, tanggalSelesai]);
 
   const onSubmit = async (data: Itinerary) => {
     try {
       // TODO tanggal harus di dalam range
       simpanDataItinerary?.(data);
-      reset();
+      setNextItineraryFrom(data);
       console.log(data);
     } catch (error) {
       toast.error("Gagal menyimpan data itinerary");
@@ -86,6 +137,7 @@ const FormItinerary = ({
                     </FormLabel>
                     <FormControl>
                       <BasicDatePicker
+                        inputReadOnly={true}
                         name={field.name}
                         error={errors.tanggalMulai}
                         className="md:w-full"
@@ -110,11 +162,12 @@ const FormItinerary = ({
                     </FormLabel>
                     <FormControl>
                       <BasicDatePicker
+                        inputReadOnly={true}
                         name={field.name}
                         error={errors.tanggalSelesai}
                         className="md:w-full"
                         calendarOptions={{
-                          fromDate: new Date(new Date().getFullYear(), 0, 1),
+                          fromDate: new Date(tanggalMulai),
                           toDate: new Date(new Date().getFullYear(), 11, 31),
                         }}
                       />
@@ -143,6 +196,7 @@ const FormItinerary = ({
                         <SelectNegara
                           fieldName="dariLokasiId"
                           onChange={(option) => {
+                            console.log("option", option);
                             field.onChange(option ? option.value : null);
                             setValue(
                               "dariLokasi",
@@ -193,7 +247,7 @@ const FormItinerary = ({
               )}
             >
               <Button type="button" onClick={handleSubmit(onSubmit)}>
-                Tambah
+                Simpan
               </Button>
               <Button type="button" variant={"outline"} onClick={onCancel}>
                 Tutup

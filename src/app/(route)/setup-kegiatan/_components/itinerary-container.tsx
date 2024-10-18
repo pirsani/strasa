@@ -1,9 +1,11 @@
 "use client";
+import { Itinerary } from "@/zod/schemas/itinerary";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import DialogFormItinerary from "./dialog-form-itinerary";
-import TabelItinerary, { Itinerary } from "./tabel-itinerary";
+import FormItinerary from "./form-itinerary";
+import TabelItinerary from "./tabel-itinerary";
 
 interface ItineraryContainerProps {
   onItineraryChange?: (data: Itinerary[]) => void;
@@ -19,11 +21,31 @@ const ItineraryContainer = ({
     formState: { errors },
   } = useFormContext();
   const [data, setData] = useState<Itinerary[]>([]);
-  const handleFormSubmit = (data: Itinerary) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [editableRow, setEditableRow] = useState<Itinerary | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const handleFormSubmit = (itinerary: Itinerary) => {
     toast.info(
-      `Menyimpan data itinerary dari ${data.dariLokasi} ke ${data.keLokasi}`
+      `Menyimpan data itinerary dari ${itinerary.dariLokasi} ke ${itinerary.keLokasi}`
     );
-    setData((prev) => [...prev, data]);
+
+    // Check if the data is already in the list base on the id
+    const isDataExist = data.find((r) => r.id === itinerary.id);
+
+    // update the data if it's already exist
+    if (isDataExist) {
+      setData((prev) =>
+        prev.map((r) => {
+          if (r.id === itinerary.id) {
+            return itinerary;
+          }
+          return r;
+        })
+      );
+      return true;
+    } else {
+      setData((prev) => [...prev, itinerary]);
+    }
     return true;
   };
   const handleDelete = (row: Itinerary) => {
@@ -39,13 +61,25 @@ const ItineraryContainer = ({
     }
   };
 
+  const handleOnEdit = (row: Itinerary) => {
+    setEditableRow(row);
+    setIsOpen(true);
+  };
+
   return (
     <div className="w-full flex-grow flex flex-col">
-      <DialogFormItinerary handleFormSubmit={handleFormSubmit} />
+      <DialogFormItinerary open={isOpen} setOpen={setIsOpen}>
+        <FormItinerary
+          onCancel={() => setIsOpen(false)}
+          simpanDataItinerary={handleFormSubmit}
+          itinerary={editableRow}
+        />
+      </DialogFormItinerary>
       <div className="flex-grow overflow-auto">
         <TabelItinerary
           data={data}
           onDelete={handleDelete}
+          onEdit={handleOnEdit}
           onDataChange={handleOnDataChange}
         />
       </div>

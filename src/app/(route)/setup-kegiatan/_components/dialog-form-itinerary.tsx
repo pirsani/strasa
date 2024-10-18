@@ -9,35 +9,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Itinerary } from "@/zod/schemas/itinerary";
 import { Plus, Ticket } from "lucide-react";
-import { useState } from "react";
-import FormItinerary from "./form-itinerary";
 
 interface DialogFormItineraryProps {
-  onCancel?: () => void;
-  handleFormSubmit?: (data: Itinerary) => boolean;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  children?: React.ReactNode;
 }
 export const DialogFormItinerary = ({
-  onCancel: handleCancel,
-  handleFormSubmit = () => false,
+  open,
+  setOpen,
+  children,
 }: DialogFormItineraryProps) => {
-  const [open, setOpen] = useState(false);
-
-  const onCancel = () => {
-    handleCancel && handleCancel();
-    setOpen(false);
-  };
-
-  // Closes the dialog if the form submission is successful
-  const simpanDataItinerary = (data: Itinerary) => {
-    setOpen(handleFormSubmit(data));
-    // add to table
-    // if (isSuccess) {
-    //   setOpen(false);
-    // }
-  };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -54,10 +37,9 @@ export const DialogFormItinerary = ({
             Isi form di bawah untuk menambahkan Itinerary baru
           </DialogDescription>
         </DialogHeader>
-        <FormItinerary
-          onCancel={onCancel}
-          simpanDataItinerary={simpanDataItinerary}
-        />
+        <div className="w-full max-w-full h-min-[500px] overflow-hidden p-1">
+          {children}
+        </div>
       </DialogContent>
     </Dialog>
   );

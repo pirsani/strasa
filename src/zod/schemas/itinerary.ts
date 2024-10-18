@@ -7,36 +7,40 @@ const isValidDateString = (value: string): boolean => {
   return isValid(parsedDate);
 };
 
+// tanggal schema union of string and date agar pada saat input data akan diperlakukan sebagai string sebenernya
+// karena input tidak mengenal Date object
 interface TanggalSchemaOptions {
   message?: string;
   fieldLabel?: string;
 }
-
 const tanggalSchema = ({
   message = "",
   fieldLabel = "Tanggal",
 }: TanggalSchemaOptions) => {
-  return z
-    .string({ message: `${fieldLabel} harus diisi` })
-    .min(10, {
-      message: `format ${fieldLabel} harus yyyy-mm-dd`,
-    })
-    .max(10, {
-      message: `format ${fieldLabel} harus yyyy-mm-dd`,
-    })
-    .refine(isValidDateString, {
-      message: `format ${fieldLabel} harus yyyy-mm-dd`,
-    })
-    .transform((value) => parseISO(value)); // Ensure string is parsed to Date
+  return z.union([
+    z
+      .string({ message: `${fieldLabel} harus diisi` })
+      .min(10, {
+        message: `format ${fieldLabel} harus yyyy-mm-dd`,
+      })
+      .max(10, {
+        message: `format ${fieldLabel} harus yyyy-mm-dd`,
+      })
+      .refine(isValidDateString, {
+        message: `format ${fieldLabel} harus yyyy-mm-dd`,
+      })
+      .transform((value) => new Date(value)),
+    z.date(),
+  ]);
 };
-
 // Define the base itinerary schema
 export const baseItinerarySchema = z.object({
+  id: z.string().optional(),
   tanggalMulai: tanggalSchema({ fieldLabel: "Tanggal Mulai" }),
   tanggalSelesai: tanggalSchema({ fieldLabel: "Tanggal Selesai" }),
-  dariLokasiId: z.string(),
+  dariLokasiId: z.string().min(3, { message: "Dari Lokasi harus diisi" }),
   dariLokasi: z.string().optional().nullable(),
-  keLokasiId: z.string(),
+  keLokasiId: z.string().min(3, { message: "Ke Lokasi harus diisi" }),
   keLokasi: z.string().optional().nullable(),
 });
 

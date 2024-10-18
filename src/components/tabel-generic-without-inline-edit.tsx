@@ -470,6 +470,7 @@ export const KolomPilihanAksi2 = <T,>(
             case "edit":
               return (
                 <Button
+                  type="button"
                   key={item}
                   variant="secondary"
                   size="sm"
@@ -481,6 +482,7 @@ export const KolomPilihanAksi2 = <T,>(
             case "delete":
               return (
                 <Button
+                  type="button"
                   key={item}
                   variant="secondary"
                   size="sm"
@@ -492,6 +494,7 @@ export const KolomPilihanAksi2 = <T,>(
             case "view":
               return (
                 <Button
+                  type="button"
                   key={item}
                   variant="secondary"
                   size="sm"
@@ -503,6 +506,7 @@ export const KolomPilihanAksi2 = <T,>(
             case "print":
               return (
                 <Button
+                  type="button"
                   key={item}
                   variant="secondary"
                   size="sm"
@@ -514,6 +518,7 @@ export const KolomPilihanAksi2 = <T,>(
             case "other":
               return (
                 <Button
+                  type="button"
                   key={item}
                   variant="secondary"
                   size="sm"

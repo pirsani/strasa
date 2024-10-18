@@ -115,8 +115,17 @@ const InputDatePicker = ({
         placeholder="yyyy-mm-dd"
         type={"text"}
         id={name}
-        value={field.value ?? ""}
-        onChange={field.onChange}
+        value={
+          field.value && !isNaN(field.value.getTime())
+            ? format(field.value, calendarOptions?.dateFormat || "yyyy-M-dd")
+            : ""
+        }
+        onChange={(e) => {
+          const date = new Date(e.target.value);
+          if (!isNaN(date.getTime())) {
+            field.onChange(date);
+          }
+        }}
         className={cn(
           "form-control block w-full px-1 pl-10 py-2 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none peer"
         )}

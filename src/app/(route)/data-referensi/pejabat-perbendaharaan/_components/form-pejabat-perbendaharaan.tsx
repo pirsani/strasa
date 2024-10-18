@@ -1,8 +1,10 @@
 import { simpanPejabatPerbendaharaan } from "@/actions/pejabat-perbendaharaan";
 import BasicDatePicker from "@/components/form/date-picker/basic-date-picker";
 import RequiredLabel from "@/components/form/required";
+import SelectGolonganRuang from "@/components/form/select-golongan-ruang";
 import SelectJenisJabatanPerbendaharaan from "@/components/form/select-jenis-jabatan-perbendaharaan";
 import SelectSatkerAnggaran from "@/components/form/select-satker-anggaran";
+import ToastErrorContainer from "@/components/form/toast-error-children";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,12 +16,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import isDateLte from "@/utils/date";
 import {
   PejabatPerbendaharaan,
   pejabatPerbendaharaanSchema,
   PejabatPerbendaharaan as ZPejabatPerbendaharaan,
 } from "@/zod/schemas/pejabat-perbendaharaan";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -51,8 +55,14 @@ const FormPejabatPerbendaharaan = ({
   const {
     control,
     handleSubmit,
+    watch,
+    trigger,
+    setValue,
     formState: { errors, isSubmitting },
   } = form;
+
+  const tmtMulai = watch("tmtMulai");
+  const tmtSelesai = watch("tmtSelesai");
 
   const onSubmit = async (data: ZPejabatPerbendaharaan) => {
     // tidak ada file makan tidak perlu diubah menjadi form data
@@ -66,6 +76,25 @@ const FormPejabatPerbendaharaan = ({
       handleFormSubmitComplete?.(simpan.success);
     }
   };
+
+  useEffect(() => {
+    if (tmtMulai && tmtSelesai) {
+      const lte = isDateLte(tmtMulai, tmtSelesai);
+      if (!lte) {
+        console.log("trigger validation", tmtMulai, tmtSelesai);
+        toast.error(
+          <ToastErrorContainer>
+            Tanggal Mulai harus kurang dari atau sama dengan Tanggal Selesai
+          </ToastErrorContainer>,
+          { position: "top-center" }
+        );
+        setValue("tmtSelesai", tmtMulai);
+        // trigger("tanggalMulai");
+        trigger("tmtSelesai");
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tmtMulai, tmtSelesai]);
 
   return (
     <Form {...form}>
@@ -126,10 +155,10 @@ const FormPejabatPerbendaharaan = ({
               <FormItem>
                 <FormLabel>Gol/Ruang</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="format III/A IV/C"
-                    value={field.value ?? ""}
+                  <SelectGolonganRuang
+                    fieldName={field.name}
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 </FormControl>
                 <FormMessage />
@@ -192,6 +221,7 @@ const FormPejabatPerbendaharaan = ({
                 </FormLabel>
                 <FormControl>
                   <BasicDatePicker
+                    inputReadOnly
                     name={field.name}
                     error={errors.tmtMulai}
                     className="md:w-full"
@@ -213,11 +243,12 @@ const FormPejabatPerbendaharaan = ({
                 <FormLabel htmlFor="tmtMulai">Tanggal Selesai</FormLabel>
                 <FormControl>
                   <BasicDatePicker
+                    inputReadOnly
                     name={field.name}
                     error={errors.tmtSelesai}
                     className="md:w-full"
                     calendarOptions={{
-                      fromDate: new Date(new Date().getFullYear(), 0, 1),
+                      fromDate: new Date(tmtMulai),
                       toDate: new Date(new Date().getFullYear(), 11, 31),
                     }}
                   />

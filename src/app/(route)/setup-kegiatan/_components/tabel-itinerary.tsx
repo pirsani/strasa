@@ -2,7 +2,8 @@ import {
   KolomPilihanAksi2,
   TabelGenericWithoutInlineEdit,
 } from "@/components/tabel-generic-without-inline-edit";
-import { ColumnDef } from "@tanstack/react-table";
+import { Itinerary } from "@/zod/schemas/itinerary";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { format, formatDate } from "date-fns";
 import { useEffect, useState } from "react";
 
@@ -11,23 +12,26 @@ interface ValidationResult {
   message?: string[];
 }
 
-export interface Itinerary {
-  tanggalMulai: Date;
-  tanggalSelesai: Date;
-  dariLokasiId: string;
-  dariLokasi?: string | null;
-  keLokasiId: string;
-  keLokasi?: string | null;
-}
+// export interface Itinerary {
+//   id?: string;
+//   tanggalMulai: Date;
+//   tanggalSelesai: Date;
+//   dariLokasiId: string;
+//   dariLokasi?: string | null;
+//   keLokasiId: string;
+//   keLokasi?: string | null;
+// }
 
 interface TabelItineraryProps {
   data: Itinerary[];
   onDelete?: (row: Itinerary) => void;
+  onEdit?: (row: Itinerary) => void;
   onDataChange?: (isValid: boolean) => void;
 }
 const TabelItinerary = ({
   data,
   onDelete = () => {},
+  onEdit = () => {},
   onDataChange = () => {},
 }: TabelItineraryProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -40,6 +44,16 @@ const TabelItinerary = ({
     console.log("Delete", row);
     // Delete the row from the data
     onDelete && onDelete(row);
+  };
+
+  const handleEdit = (row: Row<Itinerary>) => {
+    console.log("Edit", row);
+    // Set the row as editable
+    setIsEditing(true);
+    setEditableRowIndex(row.id);
+    console.log("editableRowId", editableRowId);
+    console.log("row", row.original);
+    onEdit(row.original);
   };
 
   const columns: ColumnDef<Itinerary>[] = [
@@ -73,8 +87,9 @@ const TabelItinerary = ({
       accessorKey: "_additionalKolomAksi",
       header: "Aksi",
       cell: (info) =>
-        KolomPilihanAksi2<Itinerary>(info, ["delete"], isEditing, {
+        KolomPilihanAksi2<Itinerary>(info, ["delete", "edit"], isEditing, {
           onDelete: handleDelete,
+          onEdit: handleEdit,
         }),
       meta: { isKolomAksi: true },
       enableSorting: false, // Disable sorting for this column
