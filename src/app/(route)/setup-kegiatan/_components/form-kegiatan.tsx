@@ -160,6 +160,9 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
     if (lokasi === LOKASI.LUAR_NEGERI) {
       setValue("dokumenSuratSetnegSptjmCuid", "sptjm" + createId() + ".pdf");
     }
+    if (lokasi === LOKASI.DALAM_KOTA) {
+      setValue("provinsi", "31");
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lokasi]);
 
@@ -375,6 +378,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
                   </FormLabel>
                   <FormControl>
                     <SelectSbmProvinsi
+                      isDisabled={lokasi !== LOKASI.LUAR_KOTA}
                       fullKey={field.name}
                       onChange={field.onChange}
                       value={field.value}

@@ -7,6 +7,7 @@ interface SelectSbmProvinsiProps {
   fullKey: string;
   onChange: (value: string | null) => void;
   value: string | null;
+  isDisabled?: boolean;
 }
 
 interface Option {
@@ -18,6 +19,7 @@ const SelectSbmProvinsi = ({
   fullKey,
   onChange,
   value,
+  isDisabled = false,
 }: SelectSbmProvinsiProps) => {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedValue, setSelectedValue] = useState<string | null>(value);
@@ -51,6 +53,7 @@ const SelectSbmProvinsi = ({
 
   return (
     <Select
+      isDisabled={isDisabled}
       instanceId={fullKey}
       options={options}
       isClearable

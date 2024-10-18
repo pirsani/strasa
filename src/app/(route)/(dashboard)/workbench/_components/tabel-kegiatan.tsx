@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { getObPlainJadwalByKegiatanId } from "@/data/jadwal";
 import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
+import { cn } from "@/lib/utils";
 import { formatHariTanggal, formatTanggal } from "@/utils/date-format";
 import {
   JENIS_PENGAJUAN,
@@ -49,14 +50,16 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       header: "",
       cell: (info) => {
         return (
-          <Button variant={"ghost"}>
+          <Button
+            variant={"ghost"}
+            onClick={() => {
+              //console.log("info", info);
+              handleExpand(info.row.original.id, info.row.index);
+            }}
+          >
             <ChevronRight
               size={18}
-              //className={cn(expanded[info.row.index] && "rotate-90")}
-              onClick={() => {
-                //console.log("info", info);
-                handleExpand(info.row.original.id, info.row.index);
-              }}
+              className={cn(expanded[info.row.index] && "rotate-90")}
             />
           </Button>
         );
