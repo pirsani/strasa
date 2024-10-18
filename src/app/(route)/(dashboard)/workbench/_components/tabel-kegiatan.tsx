@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { getObPlainJadwalByKegiatanId } from "@/data/jadwal";
 import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
-import { cn } from "@/lib/utils";
 import { formatHariTanggal, formatTanggal } from "@/utils/date-format";
 import {
   JENIS_PENGAJUAN,
@@ -53,9 +52,9 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
           <Button variant={"ghost"}>
             <ChevronRight
               size={18}
-              className={cn(expanded[info.row.index] && "rotate-90")}
+              //className={cn(expanded[info.row.index] && "rotate-90")}
               onClick={() => {
-                console.log("info", info);
+                //console.log("info", info);
                 handleExpand(info.row.original.id, info.row.index);
               }}
             />
@@ -148,8 +147,16 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
   };
 
   const handleExpand = async (rowId: string, index: number) => {
-    console.log("Expand row:", rowId);
-    // Implement your expand row logic here
+    // console.log("Expand row:", rowId);
+    // check if already fetched or Check if the row is already expanded just close it
+    if (rowDetails[rowId] || expanded[index]) {
+      console.info("Row already expanded");
+      setExpanded((prev) => ({
+        ...prev,
+        [index]: !prev[index], // Allow multiple rows to be expanded
+      }));
+      return;
+    }
 
     let newDetails: RowDetail[] = [];
 

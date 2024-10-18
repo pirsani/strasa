@@ -121,10 +121,10 @@ export const TabelExpandable = <T, R>({
     setData(initialData);
   }, [initialData]);
 
-  useEffect(() => {
-    //console.log("updatedValues", updatedValues);
-    console.log("expanded updated", expanded);
-  }, [expanded]);
+  // useEffect(() => {
+  //   //console.log("updatedValues", updatedValues);
+  //   console.log("expanded updated", expanded);
+  // }, [expanded]);
 
   return (
     <div>
