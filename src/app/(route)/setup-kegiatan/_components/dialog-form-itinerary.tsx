@@ -37,9 +37,7 @@ export const DialogFormItinerary = ({
             Isi form di bawah untuk menambahkan Itinerary baru
           </DialogDescription>
         </DialogHeader>
-        <div className="w-full max-w-full h-min-[500px] overflow-hidden p-1">
-          {children}
-        </div>
+        {children}
       </DialogContent>
     </Dialog>
   );

@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { formatTanggal } from "@/utils/date-format";
 import { Locale, format, getYear } from "date-fns";
 import { id } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -115,11 +116,7 @@ const InputDatePicker = ({
         placeholder="yyyy-mm-dd"
         type={"text"}
         id={name}
-        value={
-          field.value && !isNaN(field.value.getTime())
-            ? format(field.value, calendarOptions?.dateFormat || "yyyy-M-dd")
-            : ""
-        }
+        value={formatTanggal(field.value, "yyyy-M-dd")}
         onChange={(e) => {
           const date = new Date(e.target.value);
           if (!isNaN(date.getTime())) {

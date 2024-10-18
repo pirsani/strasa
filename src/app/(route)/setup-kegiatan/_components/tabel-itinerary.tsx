@@ -7,20 +7,10 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { format, formatDate } from "date-fns";
 import { useEffect, useState } from "react";
 
-interface ValidationResult {
+export interface ValidationResult {
   isValid: boolean;
   message?: string[];
 }
-
-// export interface Itinerary {
-//   id?: string;
-//   tanggalMulai: Date;
-//   tanggalSelesai: Date;
-//   dariLokasiId: string;
-//   dariLokasi?: string | null;
-//   keLokasiId: string;
-//   keLokasi?: string | null;
-// }
 
 interface TabelItineraryProps {
   data: Itinerary[];
@@ -35,7 +25,7 @@ const TabelItinerary = ({
   onDataChange = () => {},
 }: TabelItineraryProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
+  //const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
   const [validation, setValidation] = useState<ValidationResult>({
     isValid: true,
   });
@@ -49,10 +39,10 @@ const TabelItinerary = ({
   const handleEdit = (row: Row<Itinerary>) => {
     console.log("Edit", row);
     // Set the row as editable
-    setIsEditing(true);
-    setEditableRowIndex(row.id);
-    console.log("editableRowId", editableRowId);
-    console.log("row", row.original);
+    //setIsEditing(true);
+    //setEditableRowIndex(row.id);
+    //console.log("editableRowId", editableRowId);
+    //console.log("row", row.original);
     onEdit(row.original);
   };
 
@@ -97,6 +87,7 @@ const TabelItinerary = ({
   ];
 
   useEffect(() => {
+    console.log(data);
     const validationResult = validateItineraryChain(data);
     setValidation(validationResult);
     onDataChange(validationResult.isValid);
@@ -109,8 +100,8 @@ const TabelItinerary = ({
         data={data}
         columns={columns}
         frozenColumnCount={1}
-        isEditing={isEditing}
-        editableRowId={editableRowId}
+        //isEditing={isEditing}
+        //editableRowId={editableRowId}
         hidePagination
       />
       <ValidationMessage validation={validation} />
@@ -120,7 +111,7 @@ const TabelItinerary = ({
 
 // Function to validate the itinerary chain
 
-const ValidationMessage = ({
+export const ValidationMessage = ({
   validation,
 }: {
   validation: ValidationResult;
@@ -140,7 +131,7 @@ const ValidationMessage = ({
   );
 };
 
-function validateItineraryChain(data: Itinerary[]): ValidationResult {
+export function validateItineraryChain(data: Itinerary[]): ValidationResult {
   if (data.length === 0)
     return {
       isValid: false,
@@ -167,17 +158,20 @@ function validateItineraryChain(data: Itinerary[]): ValidationResult {
     const message = [];
 
     // If there's a gap, return false (invalid itinerary)
+    //  `Invalid itinerary: [${previous.dariLokasi} to ${previous.keLokasi}] ${prevSelesai} next itinerary should start on ${prevSelesai} from ${previous.keLokasi} but found ${currentMulai} from ${current.dariLokasi}`
     if (current.tanggalMulai.getTime() !== endDayPrevious.getTime()) {
       message.push(
-        `Invalid itinerary: [${previous.dariLokasi} to ${previous.keLokasi}] ${prevSelesai} next itinerary should start on ${prevSelesai} from ${previous.keLokasi} \n\n
+        `Invalid itinerary: next itinerary should start on ${prevSelesai} from ${previous.keLokasi} \n\n
         but found ${currentMulai} from ${current.dariLokasi}`
       );
     }
 
     //if location is not chained return false
+    //         `Invalid itinerary: ${previous.keLokasi} is not connected to ${current.dariLokasi}, next itinerary should start from ${previous.keLokasi}`
+
     if (previous.keLokasiId !== current.dariLokasiId) {
       message.push(
-        `Invalid itinerary: ${previous.keLokasi} is not connected to ${current.dariLokasi}, next itinerary should start from ${previous.keLokasi}`
+        `Invalid itinerary: next itinerary should start from ${previous.keLokasi}`
       );
     }
 

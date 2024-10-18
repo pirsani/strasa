@@ -1,6 +1,7 @@
 "use client";
 import { getOptionsNegara } from "@/actions/negara";
 import { cn } from "@/lib/utils";
+import { randomStrimg } from "@/utils/random-string";
 import { useEffect, useState } from "react";
 import Select, { SingleValue } from "react-select";
 
@@ -39,9 +40,11 @@ const SelectNegara = ({
     fetchOptions();
   }, []);
 
+  const genId = randomStrimg(5);
   return (
     <Select
-      instanceId={fieldName}
+      instanceId={`${fieldName}-${genId}`}
+      id={`${fieldName}-${genId}`}
       options={options}
       isClearable
       onChange={
@@ -56,10 +59,11 @@ const SelectNegara = ({
       filterOption={(option, inputValue) =>
         option.label.toLowerCase().includes(inputValue.toLowerCase())
       }
-      styles={{
-        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-      }}
+      // styles={{
+      //   menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+      // }}
       className={cn("w-full", className)}
+      aria-labelledby={`${fieldName}-${genId}`}
     />
   );
 };

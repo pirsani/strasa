@@ -54,7 +54,9 @@ const FormItinerary = ({
     defaultValues: itinerary ?? {
       id: createId(),
       tanggalMulai: initTanggalMulai,
-      tanggalSelesai: initTanggalSelesai,
+      tanggalSelesai: new Date(
+        initTanggalSelesai.setDate(initTanggalMulai.getDate() + 1)
+      ),
       dariLokasiId: "",
       dariLokasi: "",
       keLokasiId: "",
@@ -73,15 +75,15 @@ const FormItinerary = ({
 
   const setNextItineraryFrom = (lastItinerary: Itinerary) => {
     // add date plus 1 day
-    const tanggalSelesai = new Date(lastItinerary.tanggalMulai);
-    tanggalSelesai.setDate(lastItinerary.tanggalSelesai.getDate() + 1);
+    const tanggalMulai = new Date(lastItinerary.tanggalSelesai);
+    tanggalSelesai.setDate(tanggalMulai.getDate() + 1);
 
     reset({
       id: createId(),
       tanggalMulai: tanggalMulai,
       tanggalSelesai: tanggalSelesai,
-      dariLokasiId: lastItinerary.dariLokasiId,
-      dariLokasi: lastItinerary.dariLokasi,
+      dariLokasiId: lastItinerary.keLokasiId,
+      dariLokasi: lastItinerary.keLokasi,
       keLokasiId: "",
       keLokasi: "",
     });
@@ -103,6 +105,7 @@ const FormItinerary = ({
           { position: "top-center" }
         );
         setValue("tanggalSelesai", tanggalMulai);
+        trigger("tanggalMulai");
         trigger("tanggalSelesai"); // this will trigger validation and transform the value to conform to zod schema
       }
     }
@@ -112,8 +115,8 @@ const FormItinerary = ({
   const onSubmit = async (data: Itinerary) => {
     try {
       // TODO tanggal harus di dalam range
-      simpanDataItinerary?.(data);
-      setNextItineraryFrom(data);
+      const saveSuccess = simpanDataItinerary?.(data);
+      saveSuccess && setNextItineraryFrom(data);
       console.log(data);
     } catch (error) {
       toast.error("Gagal menyimpan data itinerary");
