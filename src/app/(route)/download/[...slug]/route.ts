@@ -3,6 +3,7 @@ import downloadDokumenKegiatan from "./dokumen-kegiatan";
 import downloadDokumenNarasumber from "./dokumen-narasumber";
 import { downloadDokumenPengadaan } from "./generator-dokumen-pengadaan";
 import { downloadDokumenRampungan } from "./generator-rampungan";
+import { downloadDokumenSpd } from "./generator-spd";
 import { downloadTemplateExcel } from "./template-excel";
 
 export async function GET(
@@ -18,6 +19,8 @@ export async function GET(
   switch (jenisDokumen) {
     case "dokumen-pengadaan":
       return downloadDokumenPengadaan(req, slug);
+    case "dokumen-spd":
+      return downloadDokumenSpd(req, slug);
     case "dokumen-rampungan":
       return downloadDokumenRampungan(req, slug);
     case "template-excel":
