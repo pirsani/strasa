@@ -1,7 +1,6 @@
 import { isValid, parseISO } from "date-fns";
 import { z } from "zod";
 import { fileSchema } from "./file-schema";
-import { itineraryArraySchema, itinerarySchema } from "./itinerary";
 
 // Define the enum values as a Zod enum
 const LokasiEnum = z.enum(["DALAM_KOTA", "LUAR_KOTA", "LUAR_NEGERI"]);
@@ -126,7 +125,11 @@ export const kegiatanSchema = baseKegiatanSchema
       message: "Invalid itinerary. Periksa kembali itinerary kegiatan",
       path: ["isValidItinerary"],
     }
-  );
+  )
+  .refine((data) => data.tanggalMulai <= data.tanggalSelesai, {
+    message: "Tanggal Mulai harus kurang dari atau sama dengan Tanggal Selesai",
+    path: ["tanggalMulai"], // This will point the error to the tanggalMulai field
+  });
 
 export const kegiatanSchemaWithoutFile = baseKegiatanSchema.omit({
   dokumenNodinMemoSk: true,

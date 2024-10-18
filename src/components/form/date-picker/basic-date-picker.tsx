@@ -27,6 +27,7 @@ export interface CalendarOptions {
 }
 
 interface DatePickerProps {
+  inputReadOnly?: boolean;
   calendarOptions?: CalendarOptions;
   date?: Date;
   type?: string;
@@ -47,6 +48,7 @@ export const defaultCalendarOptions: CalendarOptions = {
   dateFormat: "yyyy-MM-dd", // 'dd-MM-yyyy' or 'yyyy-MM-dd
 };
 const InputDatePicker = ({
+  inputReadOnly = false,
   calendarOptions = defaultCalendarOptions,
   name,
   error,
@@ -107,6 +109,7 @@ const InputDatePicker = ({
   return (
     <div className={cn("flex flex-row mb-2", className && className)}>
       <input
+        readOnly={inputReadOnly}
         onBlur={handleBlur}
         onClick={handleOnCLick}
         placeholder="yyyy-mm-dd"

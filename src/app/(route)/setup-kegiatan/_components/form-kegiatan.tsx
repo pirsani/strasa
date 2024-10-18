@@ -30,9 +30,11 @@ import FormFileImmediateUpload from "@/components/form/form-file-immediate-uploa
 import { default as RequiredLabel } from "@/components/form/required";
 
 import { cn } from "@/lib/utils";
+import isDateLte from "@/utils/date";
 import { Itinerary } from "@/zod/schemas/itinerary";
 import { createId } from "@paralleldrive/cuid2";
 import { LOKASI } from "@prisma-honorarium/client";
+import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 //import Select, { SingleValue } from "react-select";
@@ -89,6 +91,8 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
   const dokumenNodinMemoSkCuid = form.watch("dokumenNodinMemoSkCuid");
   const dokumenSuratSetnegSptjmCuid = form.watch("dokumenSuratSetnegSptjmCuid");
   const dokumenSuratTugasCuid = form.watch("dokumenSuratTugasCuid");
+  const tanggalMulai = form.watch("tanggalMulai");
+  const tanggalSelesai = form.watch("tanggalSelesai");
 
   // Use a ref to store the folderCuid
   const folderCuidRef = useRef(createId());
@@ -166,6 +170,28 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lokasi]);
 
+  useEffect(() => {
+    if (tanggalMulai && tanggalSelesai) {
+      const lte = isDateLte(tanggalMulai, tanggalSelesai);
+      if (!lte) {
+        console.log("trigger validation", tanggalMulai, tanggalSelesai);
+        toast.error(
+          <div className="flex flex-row bg-red-700 text-white -m-2 p-2  rounded-sm ">
+            <AlertCircle className="w-12 h-12 mr-2" />
+            <div>
+              Tanggal Mulai harus kurang dari atau sama dengan Tanggal Selesai
+            </div>
+          </div>,
+          { position: "top-center" }
+        );
+        setValue("tanggalSelesai", tanggalMulai);
+        // trigger("tanggalMulai");
+        trigger("tanggalSelesai");
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tanggalMulai, tanggalSelesai]);
+
   const displayAllErrors = false;
 
   const LOKASI_OPTIONS = [
@@ -208,6 +234,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
                   </FormLabel>
                   <FormControl>
                     <BasicDatePicker
+                      inputReadOnly={true}
                       name={field.name}
                       error={errors.tanggalMulai}
                       className="md:w-full"
@@ -232,11 +259,12 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
                   </FormLabel>
                   <FormControl>
                     <BasicDatePicker
+                      inputReadOnly={true}
                       name={field.name}
                       error={errors.tanggalSelesai}
                       className="md:w-full"
                       calendarOptions={{
-                        fromDate: new Date(new Date().getFullYear(), 0, 1),
+                        fromDate: new Date(tanggalMulai),
                         toDate: new Date(new Date().getFullYear(), 11, 31),
                       }}
                     />
