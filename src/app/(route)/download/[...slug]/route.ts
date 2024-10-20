@@ -4,6 +4,8 @@ import downloadDokumenNarasumber from "./dokumen-narasumber";
 import { downloadDokumenPengadaan } from "./generator-dokumen-pengadaan";
 import { downloadDokumenRampungan } from "./generator-rampungan";
 import { downloadDokumenSpd } from "./generator-spd";
+import downloadSpdDaftarPeserta from "./generator-spd-daftar-peserta";
+import { downloadTest } from "./generator-tabel-nominatif";
 import { downloadTemplateExcel } from "./template-excel";
 
 export async function GET(
@@ -29,6 +31,10 @@ export async function GET(
       return downloadDokumenKegiatan(req, slug);
     case "narasumber":
       return downloadDokumenNarasumber(req, slug);
+    case "test":
+      return downloadTest(req, slug);
+    case "spd-peserta":
+      return downloadSpdDaftarPeserta(req, slug);
     default:
       return new NextResponse(`Download ${params.slug.join("/")}`);
   }

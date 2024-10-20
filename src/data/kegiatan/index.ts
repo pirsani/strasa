@@ -4,6 +4,7 @@ import {
   Kegiatan,
   Organisasi,
   PejabatPerbendaharaan,
+  PesertaKegiatan,
   Provinsi,
   Spd,
 } from "@prisma-honorarium/client";
@@ -45,6 +46,7 @@ export interface KegiatanIncludeSpd extends Kegiatan {
   bendahara?: PejabatPerbendaharaan | null;
   spd?: Spd | null;
   provinsi?: Provinsi | null;
+  pesertaKegiatan?: PesertaKegiatan[] | null;
 }
 export const getKegiatanIncludeSpd = async (
   kegiatanId: string
@@ -59,6 +61,7 @@ export const getKegiatanIncludeSpd = async (
       ppk: true,
       spd: true,
       provinsi: true,
+      pesertaKegiatan: true,
     },
   });
   return kegiatan;

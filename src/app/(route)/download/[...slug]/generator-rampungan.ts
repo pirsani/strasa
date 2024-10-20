@@ -11,6 +11,7 @@ import { NextResponse } from "next/server";
 import path from "path";
 import { PDFDocument, PDFForm } from "pdf-lib";
 import { generateSpdHalaman1 } from "./generator-spd";
+import { generateSpdDaftarPeserta } from "./generator-spd-daftar-peserta";
 
 // Fungsi generator rampungan memerlukan data peserta kegiatan untuk diisi ke dalam form
 // Fungsi fillFormRampungan digunakan untuk mengisi form rampungan dengan data kegiatan
@@ -241,7 +242,11 @@ export async function downloadDokumenRampungan(req: Request, slug: string[]) {
 
     const spdHalaman1 = await generateSpdHalaman1(kegiatan);
     const spdHalaman2 = await generateSpdHalaman2(kegiatan);
-    const completePdfBytes = await mergePdfs(spdHalaman1, spdHalaman2);
+
+    const spdDaftarPeserta = await generateSpdDaftarPeserta(req, slug);
+
+    const satuplusdua = await mergePdfs(spdHalaman1, spdHalaman2);
+    const completePdfBytes = await mergePdfs(satuplusdua, spdDaftarPeserta);
 
     return new NextResponse(completePdfBytes, {
       status: 200,
