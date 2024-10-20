@@ -323,85 +323,97 @@ async function insertPesertaDariExcel(
 
   // map itenerary dengan SBM
   // TODO cari GOLONGAN/RUANG dari SBM
-  const pesertaBaru = await Promise.all(
-    pesertaKegiatan.map(async (peserta) => {
-      // checks againts zod schema harusnya dilakukan disisi client saja
-      // anggap saja ini adalah data yang valid
+  try {
+    const pesertaBaru = await Promise.all(
+      pesertaKegiatan.map(async (peserta) => {
+        // checks againts zod schema harusnya dilakukan disisi client saja
+        // anggap saja ini adalah data yang valid
 
-      const golonganRuang = peserta["Golongan/Ruang"]
-        .toString()
-        .trim()
-        .toUpperCase();
+        const golonganRuang = peserta["Golongan/Ruang"]
+          .toString()
+          .trim()
+          .toUpperCase();
 
-      const pangkatGolonganId = cekGolonganRuang(golonganRuang);
-      // check if golonganRuang is valid
+        const pangkatGolonganId = cekGolonganRuang(golonganRuang);
+        // check if golonganRuang is valid
+        const tanggalBerangkat = new Date(peserta["Berangkat"]);
+        const tanggalKembali = new Date(peserta["Kembali"]);
 
-      console.log(peserta);
-      const pesertaBaru = await prisma.pesertaKegiatan.create({
-        data: {
-          nama: peserta["Nama"],
-          NIP: peserta["NIP"].toString(),
-          NIK: peserta["NIK"].toString().trim(),
-          NPWP: peserta["NPWP"].toString().trim(),
-          pangkatGolonganId: pangkatGolonganId,
-          eselon: peserta["Eselon"].toString(),
-          jabatan: peserta["Jabatan"].toString().trim(),
-          kegiatanId: kegiatanBaruId,
-          bank: peserta["Bank"].toString().trim(),
-          nomorRekening: peserta["Nomor Rekening"].toString().trim(),
-          namaRekening: peserta["Nama Rekening"].toString().trim(),
-          createdBy: penggunaId,
-          jumlahHari: 0, // Default to 0 HARDCODED
-        },
-      });
-
-      if (kegiatanLokasi !== "LUAR_NEGERI") {
-        const uangHarian = await prisma.uhDalamNegeri.create({
+        const pesertaBaru = await prisma.pesertaKegiatan.create({
           data: {
-            pesertaKegiatanId: pesertaBaru.id,
+            nama: peserta["Nama"],
+            NIP: peserta["NIP"].toString(),
+            NIK: peserta["NIK"].toString().trim(),
+            NPWP: peserta["NPWP"].toString().trim(),
+            pangkatGolonganId: pangkatGolonganId,
+            eselon: peserta["Eselon"].toString(),
+            jabatan: peserta["Jabatan"].toString().trim(),
+            golonganUhLuarNegeri: peserta["Golongan UH LN"].toString() ?? null,
+            tanggalBerangkat: tanggalBerangkat,
+            tanggalKembali: tanggalKembali,
+            kegiatanId: kegiatanBaruId,
+            bank: peserta["Bank"].toString().trim(),
+            nomorRekening: peserta["Nomor Rekening"].toString().trim(),
+            namaRekening: peserta["Nama Rekening"].toString().trim(),
             createdBy: penggunaId,
+            jumlahHari: 0, // Default to 0 HARDCODED
           },
         });
-      } else {
-        // generate untuk masing-masing peserta dan itinerary
-        let golonganUhLuarNegeri = peserta["Golongan UH LN"].toString() ?? null;
-        if (golonganUhLuarNegeri) {
-          golonganUhLuarNegeri = golonganUhLuarNegeri.trim().toUpperCase();
-          if (
-            golonganUhLuarNegeri !== "A" &&
-            golonganUhLuarNegeri !== "B" &&
-            golonganUhLuarNegeri !== "C" &&
-            golonganUhLuarNegeri !== "D"
-          ) {
-            golonganUhLuarNegeri = null;
-          }
-        }
-        // check if golonganUhLuarNegeri is valid
-        if (!golonganUhLuarNegeri) {
-          golonganUhLuarNegeri = getGolonganUhLuarNegeriFromGolonganRuang(
-            pesertaBaru.pangkatGolonganId
-          );
-        }
 
-        for (const it of itinerary) {
-          console.log("itinerary", it);
-          const uangHarian = await prisma.uhLuarNegeri.create({
+        logger.info("pesertaBaru", pesertaBaru);
+        logger.info("Extract from excel", peserta);
+
+        if (kegiatanLokasi !== "LUAR_NEGERI") {
+          const uangHarian = await prisma.uhDalamNegeri.create({
             data: {
-              dariLokasiId: it.dariLokasiId,
-              keLokasiId: it.keLokasiId,
               pesertaKegiatanId: pesertaBaru.id,
-              tanggalMulai: it.tanggalMulai,
-              tanggalSelesai: it.tanggalSelesai,
               createdBy: penggunaId,
-              golonganUh: golonganUhLuarNegeri,
             },
           });
-        }
-      }
+        } else {
+          // generate untuk masing-masing peserta dan itinerary
+          let golonganUhLuarNegeri =
+            peserta["Golongan UH LN"].toString() ?? null;
+          if (golonganUhLuarNegeri) {
+            golonganUhLuarNegeri = golonganUhLuarNegeri.trim().toUpperCase();
+            if (
+              golonganUhLuarNegeri !== "A" &&
+              golonganUhLuarNegeri !== "B" &&
+              golonganUhLuarNegeri !== "C" &&
+              golonganUhLuarNegeri !== "D"
+            ) {
+              golonganUhLuarNegeri = null;
+            }
+          }
+          // check if golonganUhLuarNegeri is valid
+          if (!golonganUhLuarNegeri) {
+            golonganUhLuarNegeri = getGolonganUhLuarNegeriFromGolonganRuang(
+              pesertaBaru.pangkatGolonganId
+            );
+          }
 
-      return pesertaBaru;
-    })
-  );
+          for (const it of itinerary) {
+            console.log("itinerary", it);
+            const uangHarian = await prisma.uhLuarNegeri.create({
+              data: {
+                dariLokasiId: it.dariLokasiId,
+                keLokasiId: it.keLokasiId,
+                pesertaKegiatanId: pesertaBaru.id,
+                tanggalMulai: it.tanggalMulai,
+                tanggalSelesai: it.tanggalSelesai,
+                createdBy: penggunaId,
+                golonganUh: golonganUhLuarNegeri,
+              },
+            });
+          }
+        }
+
+        return pesertaBaru;
+      })
+    );
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function insertDokumenSuratTugas(

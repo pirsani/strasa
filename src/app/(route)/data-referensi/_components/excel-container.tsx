@@ -102,7 +102,9 @@ const ExcelContainer = ({
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex flex-row items-center gap-4 mb-2">
           <Button>
-            <Link href={templateXlsx}>Unduh template xlsx</Link>
+            <Link href={templateXlsx} target="_blank">
+              Unduh template xlsx
+            </Link>
           </Button>
           <span>atau</span>
         </div>

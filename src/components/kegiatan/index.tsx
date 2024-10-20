@@ -94,7 +94,7 @@ const PreviewKegiatan = ({ kegiatan, className }: PreviewKegiatanProps) => {
             </div>
           )}
 
-          {kegiatan.spdId && (
+          {kegiatan.spd?.id && (
             <TextWithPreviewButton
               label="SPD"
               fileName={kegiatan.spd?.nomorSPD}

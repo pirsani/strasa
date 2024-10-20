@@ -506,8 +506,7 @@ model Kegiatan {
   pembayaran         Pembayaran[]           @relation("pembayaran_kegiatan")
   riwayatPengajuan   RiwayatPengajuan[]     @relation("riwayat_pengajuan_kegiatan")
   // spdId              String?                @map("spd_id")
-  spd                Spd?                   @relation(fields: [spdId], references: [id])
-  spdId              String?
+  spd                Spd?
 
   @@map("kegiatan")
 }
@@ -537,6 +536,8 @@ model PesertaKegiatan {
   jabatan                         String?
   eselon                          String?
   golonganUhLuarNegeri            String?          @map("golongan_uh_luar_negeri")
+  tanggalBerangkat                DateTime?        @map("tanggal_berangkat")
+  tanggalKembali                  DateTime?        @map("tanggal_kembali")
   email                           String?
   telp                            String?
   rekeningSendiri                 Boolean          @default(true) @map("rekening_sendiri")
@@ -551,9 +552,9 @@ model PesertaKegiatan {
   createdAt                       DateTime         @default(now()) @map("created_at")
   updatedBy                       String?          @map("updated_by")
   updatedAt                       DateTime?        @updatedAt @map("updated_at")
-  uhDalamNegeriId                 String?          @map("uh_dalam_negeri_id")
+  //uhDalamNegeriId                 String?          @map("uh_dalam_negeri_id")
   uhDalamNegeri                   UhDalamNegeri? // dalam negeri juga nantinya ada itinerari yang menyebakkan menjadi 1 to n relasi
-  uhLuarNegeriId                  String?          @map("uh_luar_negeri_id")
+  //uhLuarNegeriId                  String?          @map("uh_luar_negeri_id")
   uhLuarNegeri                    UhLuarNegeri[]
 
   @@unique([kegiatanId, NIK])
@@ -674,16 +675,16 @@ enum STATUS_PENGAJUAN {
 }
 
 model Spd {
-  id         String     @id @default(cuid())
-  nomorSPD   String     @unique @map("nomor_spd")
-  tanggalSPD DateTime   @map("tanggal_spd")
-  asWas      Json?      @map("as_was")
-  createdBy  String     @map("created_by")
-  createdAt  DateTime   @default(now()) @map("created_at")
-  updatedBy  String?    @map("updated_by")
-  updatedAt  DateTime?  @updatedAt @map("updated_at")
-  //kegiatanId String     @unique @map("kegiatan_id")
-  kegiatan   Kegiatan[]
+  id         String    @id @default(cuid())
+  nomorSPD   String    @unique @map("nomor_spd")
+  tanggalSPD DateTime  @map("tanggal_spd")
+  asWas      Json?     @map("as_was")
+  createdBy  String    @map("created_by")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedBy  String?   @map("updated_by")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+  kegiatanId String    @unique @map("kegiatan_id")
+  kegiatan   Kegiatan  @relation(fields: [kegiatanId], references: [id])
 
   @@map("spd")
 }

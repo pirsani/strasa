@@ -1,16 +1,18 @@
 export const columns = [
-  "ID",
+  "NO",
   "Nama",
   "NIP",
+  "NIK",
+  "NPWP",
   "Golongan/Ruang",
   "Jabatan",
   "Eselon",
-  "NIK",
-  "NPWP",
+  "Golongan UH LN",
+  "Berangkat",
+  "Kembali",
   "Nama Rekening",
   "Bank",
   "Nomor Rekening",
-  "Golongan UH LN",
 ];
 
 // NIP, Golongan/Ruang Boleh kosong karena bisa jadi bukan ASN

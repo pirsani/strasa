@@ -96,6 +96,7 @@ const PesertaContainer = ({
         maxColumns={9}
         name={fieldName}
         extractFromColumns={extractFromColumns}
+        dateColumns={["Berangkat", "Kembali"]}
       />
 
       {Object.keys(emptyValues).length > 0 && (

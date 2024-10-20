@@ -109,6 +109,8 @@ GRANT USAGE ON SCHEMA public TO prisma_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO prisma_user;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO prisma_user;
 
+CREATE ROLE new_power_user WITH LOGIN SUPERUSER PASSWORD 'your_password';
+
 
 # Exit psql
 \q

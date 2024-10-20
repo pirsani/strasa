@@ -183,6 +183,7 @@ export const generateSpd = async (spd: ZSpd): Promise<ActionResponse<Spd>> => {
         id: kegiatan.spd?.id || createId(),
       },
       create: {
+        kegiatanId: kegiatan.id,
         nomorSPD: nomorBaru,
         tanggalSPD: new Date(),
         createdBy: penggunaId,
@@ -201,7 +202,9 @@ export const generateSpd = async (spd: ZSpd): Promise<ActionResponse<Spd>> => {
         id: spd.kegiatanId,
       },
       data: {
-        spdId: upsertedSpd.id,
+        spd: {
+          connect: { id: upsertedSpd.id },
+        },
         ppkId: spd.ppkId,
       },
     });

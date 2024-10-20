@@ -1,7 +1,10 @@
+import { formatTanggal } from "../date-format";
+
 interface ParseExcelOptions {
   extractFromColumns: string[];
   sheetName?: string;
   range?: string; // Optional range of cells
+  dateColumns?: string[]; // Columns that contain date values
 }
 
 export interface ParseExcelResult {
@@ -26,10 +29,12 @@ const parseExcel = async (
     const data = new Uint8Array(arrayBuffer);
 
     // Dynamically import the xlsx library
-    const { read, utils } = await import('xlsx');
+    const { read, utils } = await import("xlsx");
 
     const workbook = read(data, { type: "array" });
     const sheetName = options.sheetName || workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+
     const { extractFromColumns } = options;
 
     // Read and parse the worksheet
@@ -77,7 +82,22 @@ const parseExcel = async (
       if (emptyColumns.length > 0) {
         emptyValues[rowIndex] = emptyColumns;
       }
+
+      // Convert date columns to Date objects and save to the row
+      // and then convert back to string for human-readable display
+      options.dateColumns?.forEach((col) => {
+        if (row[col]) {
+          const date = excelDateToJSDate(row[col]);
+          row[col] = formatTanggal(date, "yyyy-M-dd");
+        }
+      });
+
+      return row;
+
+      // Convert number columns to number objects
     });
+
+    console.log("[parseExcel] Valid Rows:", validRows);
 
     console.log(`[parseExcel] Parsed ${validRows.length} rows`);
     console.log("[parseExcel] Missing Columns:", missingColumns);
@@ -92,6 +112,12 @@ const parseExcel = async (
     console.error("Error parsing the file:", error);
     throw error;
   }
+};
+
+const excelDateToJSDate = (serial: number): Date => {
+  const excelEpoch = new Date(1899, 11, 30); // Excel epoch starts on December 30, 1899
+  const jsDate = new Date(excelEpoch.getTime() + serial * 24 * 60 * 60 * 1000);
+  return jsDate;
 };
 
 export default parseExcel;
