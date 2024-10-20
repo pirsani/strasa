@@ -248,6 +248,7 @@ async function createKegiatan(
       unitKerjaId: unitKerjaId,
       createdBy: penggunaId,
       provinsiId: dataparsed.provinsi,
+      kota: dataparsed.kota,
     },
   });
 }

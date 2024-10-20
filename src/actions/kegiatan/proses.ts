@@ -1,10 +1,13 @@
 "use server";
 import { dbHonorarium } from "@/lib/db-honorarium";
 
+import { generateNomorSpd } from "@/lib/spd";
+import { Spd as ZSpd } from "@/zod/schemas/spd";
 import { createId } from "@paralleldrive/cuid2";
 import {
   JENIS_PENGAJUAN,
   Kegiatan,
+  Spd,
   STATUS_PENGAJUAN,
 } from "@prisma-honorarium/client";
 import { revalidatePath } from "next/cache";
@@ -13,6 +16,7 @@ import { KegiatanWithDetail } from ".";
 import { getSessionPenggunaForAction } from "../pengguna";
 import { getPrismaErrorResponse } from "../prisma-error-response";
 import { ActionResponse } from "../response";
+
 // Create a Logger instance with custom settings
 const logger = new Logger({
   hideLogPositionForProduction: true,
@@ -127,6 +131,92 @@ export const pengajuanGenerateRampungan = async (
     success: true,
     data: kegiatan,
   };
+};
+
+export const generateSpd = async (spd: ZSpd): Promise<ActionResponse<Spd>> => {
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) {
+    return {
+      success: false,
+      error: "E-UAuth-01",
+      message: "User not found",
+    };
+  }
+  //TODO CHECK PERMISSION here
+  const { penggunaId, satkerId } = pengguna.data;
+
+  // check if already have spd
+  const kegiatan = await dbHonorarium.kegiatan.findFirst({
+    where: {
+      id: spd.kegiatanId,
+      satkerId,
+    },
+    include: {
+      spd: true,
+      ppk: true,
+      unitKerja: true,
+    },
+  });
+
+  let upsertedSpd: Spd | null = null;
+  if (kegiatan) {
+    // find the latest spd
+    const tahunKegiatan = kegiatan.tanggalMulai.getFullYear();
+    const latestSpd = await dbHonorarium.spd.findFirst({
+      where: {
+        createdAt: {
+          gte: new Date(tahunKegiatan, 0, 1),
+          lte: new Date(tahunKegiatan, 11, 31),
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    const nomorBaru = generateNomorSpd("18", latestSpd?.nomorSPD);
+    const asWas = {
+      ...spd,
+    };
+    const upsertedSpd = await dbHonorarium.spd.upsert({
+      where: {
+        id: kegiatan.spd?.id || createId(),
+      },
+      create: {
+        nomorSPD: nomorBaru,
+        tanggalSPD: new Date(),
+        createdBy: penggunaId,
+        createdAt: new Date(),
+        asWas: asWas,
+      },
+      update: {
+        updatedBy: penggunaId,
+        updatedAt: new Date(),
+        asWas: asWas,
+      },
+    });
+
+    const updateKegiatan = await dbHonorarium.kegiatan.update({
+      where: {
+        id: spd.kegiatanId,
+      },
+      data: {
+        spdId: upsertedSpd.id,
+        ppkId: spd.ppkId,
+      },
+    });
+
+    return {
+      success: true,
+      data: upsertedSpd,
+    };
+  } else {
+    return {
+      success: false,
+      error: "E-KUSLN01",
+      message: "Silakan coba refresh halaman ini",
+    };
+  }
 };
 
 const upsertRiwayatPengajuan = async (

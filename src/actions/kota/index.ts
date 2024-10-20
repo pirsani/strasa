@@ -137,8 +137,11 @@ export const deleteDataKota = async (
   }
 };
 
-export const getOptionsKota = async () => {
+export const getOptionsKota = async (provinsiId?: string | null) => {
   const dataKota = await dbHonorarium.kota.findMany({
+    where: {
+      ...(provinsiId && { provinsiId: provinsiId }),
+    },
     include: {
       provinsi: true,
     },
@@ -147,6 +150,8 @@ export const getOptionsKota = async () => {
   const optionsKota = dataKota.map((kota) => ({
     value: kota.id,
     label: kota.nama + "-" + kota.provinsi.nama,
+    idAndNama: kota.id + ";" + kota.nama,
+    kota: kota.nama,
     provinsiId: kota.provinsiId,
     provinsiNama: kota.provinsi.nama,
   }));

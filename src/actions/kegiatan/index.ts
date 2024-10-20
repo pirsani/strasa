@@ -10,6 +10,7 @@ import {
   Organisasi,
   Provinsi,
   RiwayatPengajuan,
+  Spd,
 } from "@prisma-honorarium/client";
 import { Logger } from "tslog";
 import { getSessionPenggunaForAction } from "../pengguna";
@@ -42,6 +43,7 @@ export interface KegiatanWithDetail extends Kegiatan {
   provinsi: Provinsi | null;
   dokumenKegiatan: DokumenKegiatan[] | null;
   riwayatPengajuan?: RiwayatPengajuan[] | null;
+  spd?: Spd | null;
 }
 
 export const getKegiatanById = async (
@@ -58,6 +60,7 @@ export const getKegiatanById = async (
         },
       },
       riwayatPengajuan: true,
+      spd: true,
     },
   });
 

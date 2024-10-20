@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import TextDokumenMultiFile from "./text-dokumen-multi-file";
 import TextDokumenWithPreviewButton from "./text-dokumen-with-preview-button";
+import TextWithPreviewButton from "./text-with-preview-button";
 
 interface PreviewKegiatanProps {
   kegiatan?: KegiatanWithDetail | null;
@@ -91,6 +92,14 @@ const PreviewKegiatan = ({ kegiatan, className }: PreviewKegiatanProps) => {
                 {kegiatan.lokasi}
               </span>
             </div>
+          )}
+
+          {kegiatan.spdId && (
+            <TextWithPreviewButton
+              label="SPD"
+              fileName={kegiatan.spd?.nomorSPD}
+              url={`/download/dokumen-rampungan/${kegiatan.id}`}
+            />
           )}
         </div>
       )}

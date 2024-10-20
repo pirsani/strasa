@@ -6,7 +6,9 @@ import Select, { SingleValue } from "react-select";
 interface SelectKotaProps {
   fieldName: string;
   onChange: (value: string | null) => void;
-  value: string | null;
+  value?: string | null;
+  provinsiId?: string | null;
+  isDisabled?: boolean;
 }
 
 interface Option {
@@ -14,16 +16,24 @@ interface Option {
   label: string;
 }
 
-export const SelectKota = ({ fieldName, onChange, value }: SelectKotaProps) => {
+export const SelectKota = ({
+  fieldName,
+  provinsiId,
+  onChange,
+  value,
+  isDisabled = false,
+}: SelectKotaProps) => {
   const [options, setOptions] = useState<Option[]>([]);
-  const [selectedValue, setSelectedValue] = useState<string | null>(value);
+  const [selectedValue, setSelectedValue] = useState<string | null>(
+    value ?? null
+  );
 
   useEffect(() => {
     const fetchOptions = async () => {
-      const optionKota = await getOptionsKota();
+      const optionKota = await getOptionsKota(provinsiId);
       if (optionKota) {
         const mappedOptions = optionKota.map((kota) => ({
-          value: kota.value,
+          value: kota.idAndNama,
           label: kota.label,
         }));
         setOptions(mappedOptions);
@@ -43,18 +53,31 @@ export const SelectKota = ({ fieldName, onChange, value }: SelectKotaProps) => {
     };
 
     fetchOptions();
-  }, [value]);
+  }, [value, provinsiId]);
+
+  const handleChange = (option: SingleValue<Option>) => {
+    const newValue = option ? option.value : null;
+
+    if (newValue) {
+      const defaultOption = options.find((option) => option.value === newValue);
+      setSelectedValue(newValue);
+      onChange(newValue); // Call onChange handler
+    } else {
+      setSelectedValue(null);
+    }
+  };
+
+  const setValue = (value: string | null) => {
+    return options.find((option) => option.value === selectedValue) || null;
+  };
 
   return (
     <Select
+      isDisabled={isDisabled}
       instanceId={fieldName}
       options={options}
       isClearable
-      onChange={(option: SingleValue<Option>) => {
-        const newValue = option ? option.value : null;
-        setSelectedValue(newValue); // Update local state
-        onChange(newValue); // Call onChange handler
-      }}
+      onChange={handleChange}
       value={options.find((option) => option.value === selectedValue) || null}
       getOptionLabel={(option) => option.label}
       getOptionValue={(option) => option.value.toString()}

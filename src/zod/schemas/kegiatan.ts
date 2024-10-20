@@ -48,6 +48,7 @@ export const baseKegiatanSchema = z.object({
   tanggalSelesai: tanggalSchema({ field: "Tanggal Selesai" }),
   lokasi: LokasiEnum, // Use the Zod enum schema for lokasi
   provinsi: z.string(),
+  kota: z.string().optional(),
   dokumenNodinMemoSk: fileSchema({
     required: true,
     message: "Dokumen Nodin/Memo/SK harus diupload",

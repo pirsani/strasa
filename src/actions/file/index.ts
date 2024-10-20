@@ -120,7 +120,11 @@ export async function saveDokumenKegiatanToFinalFolder(
           key as keyof typeof mapsCuidToJenisDokumen
         );
         if (!jenisDokumen) {
-          logger.error(value, "Jenis dokumen tidak ditemukan, skip key", key);
+          logger.warn(
+            value,
+            "key Object bukan dari mapsCuidToJenisDokumen, skip key",
+            key
+          );
           return;
         }
 

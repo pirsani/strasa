@@ -21,7 +21,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
 import { useEffect, useRef } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import ItineraryContainer from "./itinerary-container";
 import PesertaContainer from "./peserta-container";
 //import SelectSbmProvinsi from "./select-sbm-provinsi";
 import setupKegiatan from "@/actions/kegiatan/setup-kegiatan";
@@ -29,6 +28,7 @@ import CummulativeErrors from "@/components/form/cummulative-error";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
 import { default as RequiredLabel } from "@/components/form/required";
 
+import SelectKota from "@/components/form/select-kota";
 import { cn } from "@/lib/utils";
 import isDateLte from "@/utils/date";
 import { Itinerary } from "@/zod/schemas/itinerary";
@@ -36,6 +36,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { LOKASI } from "@prisma-honorarium/client";
 import { toast } from "sonner";
 import ToastErrorContainer from "../../../../components/form/toast-error-children";
+import ItineraryContainer from "./itinerary-container";
 
 //import Select, { SingleValue } from "react-select";
 // fix Warning: Extra attributes from the server: aria-activedescendant
@@ -93,6 +94,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
   const dokumenSuratTugasCuid = form.watch("dokumenSuratTugasCuid");
   const tanggalMulai = form.watch("tanggalMulai");
   const tanggalSelesai = form.watch("tanggalSelesai");
+  const provinsi = form.watch("provinsi");
 
   // Use a ref to store the folderCuid
   const folderCuidRef = useRef(createId());
@@ -407,6 +409,28 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
                       fullKey={field.name}
                       onChange={field.onChange}
                       value={field.value}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {lokasi === LOKASI.LUAR_KOTA && (
+            <FormField
+              control={form.control}
+              name="kota"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kota/Kabupaten</FormLabel>
+                  <FormControl>
+                    <SelectKota
+                      isDisabled={lokasi !== LOKASI.LUAR_KOTA}
+                      fieldName={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      provinsiId={provinsi}
                     />
                   </FormControl>
                   <FormMessage />

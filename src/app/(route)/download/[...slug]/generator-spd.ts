@@ -1,8 +1,19 @@
+import { KegiatanIncludeSpd } from "@/data/kegiatan";
+import { formatTanggal } from "@/utils/date-format";
+import { LOKASI } from "@prisma-honorarium/client";
+import { JsonValue } from "@prisma-honorarium/client/runtime/library";
 import { error } from "console";
+import { differenceInDays } from "date-fns";
 import { promises as fs } from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
 import { PDFDocument } from "pdf-lib";
+import { Logger } from "tslog";
+
+const logger = new Logger({
+  name: "[SPD-HALAMAN-1]",
+  hideLogPositionForProduction: true,
+});
 
 interface SpdTextfield {
   nomor: string;
@@ -23,6 +34,8 @@ interface SpdTextfield {
 const fillFormSpd = async (spdData: SpdTextfield) => {
   const pdfTemplateLocation = "src/templates/pdf/spd-1.pdf";
   const resolvedPathPdfTemplate = path.resolve(pdfTemplateLocation);
+  logger.info(resolvedPathPdfTemplate);
+  logger.info("[spdData]", spdData);
 
   try {
     await fs.access(resolvedPathPdfTemplate, fs.constants.R_OK);
@@ -38,7 +51,7 @@ const fillFormSpd = async (spdData: SpdTextfield) => {
     console.log("fields", fields);
 
     const setTextField = (name: string, text: string) => {
-      console.log(setTextField, name, text);
+      //console.log(setTextField, name, text);
       const textField = form.getTextField(name);
       textField.setText(text);
       //textField.setFontSize(fontSize);
@@ -50,17 +63,13 @@ const fillFormSpd = async (spdData: SpdTextfield) => {
     });
     form.flatten();
     const pdfBytes = await pdfDoc.save();
-    return new NextResponse(pdfBytes, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-        //"Content-Disposition": 'attachment; filename="f1.pdf"',
-      },
-    });
+
+    return pdfBytes;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
+    throw error;
   }
-  return new NextResponse("TEST ", { status: 200 });
+  //return new NextResponse("TEST ", { status: 200 });
 };
 
 export async function downloadDokumenSpd(req: Request, slug: string[]) {
@@ -90,5 +99,67 @@ export async function downloadDokumenSpd(req: Request, slug: string[]) {
     ttdPpkNip: "19343484848483",
   };
   console.log(dataSpd);
-  return fillFormSpd(dataSpd);
+  const pdfBytes = await fillFormSpd(dataSpd);
+  return new NextResponse(pdfBytes, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/pdf",
+      //"Content-Disposition": 'attachment; filename="f1.pdf"',
+    },
+  });
 }
+
+const findValueInAsWas = (asWas: JsonValue, key: string): any => {
+  // Ensure that asWas is an object (not null or primitive) before accessing the key
+  if (asWas && typeof asWas === "object" && !Array.isArray(asWas)) {
+    return (asWas as Record<string, any>)[key];
+  }
+  return undefined;
+};
+
+export const generateSpdHalaman1 = async (kegiatan: KegiatanIncludeSpd) => {
+  const { ppk, spd } = kegiatan;
+  if (!ppk || !spd) {
+    throw new Error("PPK or SPD not found");
+  }
+  const akun = findValueInAsWas(spd.asWas, "akun") ?? "-";
+  const keterangan = findValueInAsWas(spd.asWas, "keterangan") ?? "-";
+  const kota = kegiatan.kota?.split(";")[1] ?? ""; // di database disimpan dengan format idKota;nama
+  let tujuan = "";
+  if (kegiatan.lokasi !== LOKASI.LUAR_NEGERI) {
+    tujuan = kota + ", " + kegiatan.provinsi?.nama;
+  }
+  // find value of akun in aswas
+
+  const jumlahHari =
+    1 +
+    differenceInDays(
+      new Date(kegiatan.tanggalSelesai),
+      new Date(kegiatan.tanggalMulai)
+    );
+  const satker = kegiatan.satker.singkatan ?? kegiatan.satker.nama;
+  const dataSpd: SpdTextfield = {
+    nomor: spd.nomorSPD,
+    akun: akun,
+    tujuan: tujuan,
+    jumlahHari: jumlahHari.toString(),
+    keterangan: keterangan,
+    namaKegiatan: kegiatan.nama,
+    ppk: ppk.nama,
+    satker: satker + " - " + "Kementerian Luar Negeri",
+    tanggalDikeluarkan: formatTanggal(
+      spd.updatedAt ?? spd.createdAt,
+      "dd MMMM yyyy"
+    ),
+    tanggalBerangkat: formatTanggal(kegiatan.tanggalMulai, "dd MMMM yyyy"),
+    tanggalKembaliTiba: formatTanggal(kegiatan.tanggalSelesai, "dd MMMM yyyy"),
+    ttdPpkNama: ppk.nama,
+    ttdPpkNip: ppk.NIP || "-", // NIP is optional
+  };
+  try {
+    const pdfBytes = await fillFormSpd(dataSpd);
+    return pdfBytes;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -473,6 +473,7 @@ model Kegiatan {
   lokasi             LOKASI // enum 0, 1, 2
   provinsiId         String?
   provinsi           Provinsi?              @relation(fields: [provinsiId], references: [id])
+  kota               String?
   keterangan         String?
   status             String
   // statusRampungan     String?                @map("status_rampungan")
@@ -504,6 +505,9 @@ model Kegiatan {
   Jadwal             Jadwal[]
   pembayaran         Pembayaran[]           @relation("pembayaran_kegiatan")
   riwayatPengajuan   RiwayatPengajuan[]     @relation("riwayat_pengajuan_kegiatan")
+  // spdId              String?                @map("spd_id")
+  spd                Spd?                   @relation(fields: [spdId], references: [id])
+  spdId              String?
 
   @@map("kegiatan")
 }
@@ -667,6 +671,21 @@ enum STATUS_PENGAJUAN {
   PAID
   DONE
   END
+}
+
+model Spd {
+  id         String     @id @default(cuid())
+  nomorSPD   String     @unique @map("nomor_spd")
+  tanggalSPD DateTime   @map("tanggal_spd")
+  asWas      Json?      @map("as_was")
+  createdBy  String     @map("created_by")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedBy  String?    @map("updated_by")
+  updatedAt  DateTime?  @updatedAt @map("updated_at")
+  //kegiatanId String     @unique @map("kegiatan_id")
+  kegiatan   Kegiatan[]
+
+  @@map("spd")
 }
 
 model RiwayatPengajuan {
