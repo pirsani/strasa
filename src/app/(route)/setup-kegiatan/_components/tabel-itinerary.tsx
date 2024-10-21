@@ -131,6 +131,11 @@ export const ValidationMessage = ({
   );
 };
 
+// Helper function to get date without time
+function getDateOnly(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 export function validateItineraryChain(data: Itinerary[]): ValidationResult {
   if (data.length === 0)
     return {
@@ -157,12 +162,20 @@ export function validateItineraryChain(data: Itinerary[]): ValidationResult {
 
     const message = [];
 
-    // If there's a gap, return false (invalid itinerary)
-    //  `Invalid itinerary: [${previous.dariLokasi} to ${previous.keLokasi}] ${prevSelesai} next itinerary should start on ${prevSelesai} from ${previous.keLokasi} but found ${currentMulai} from ${current.dariLokasi}`
-    if (current.tanggalMulai.getTime() !== endDayPrevious.getTime()) {
+    // Check if current itinerary starts on after the previous itinerary ends
+    // get date only, ignore time
+    if (
+      getDateOnly(current.tanggalMulai).getTime() <
+      getDateOnly(endDayPrevious).getTime()
+    ) {
+      console.warn(
+        "INVALID Itinerary",
+        getDateOnly(current.tanggalMulai).getTime(),
+        getDateOnly(endDayPrevious).getTime()
+      );
       message.push(
-        `Invalid itinerary: next itinerary should start on ${prevSelesai} from ${previous.keLokasi} \n\n
-        but found ${currentMulai} from ${current.dariLokasi}`
+        `Invalid itinerary: next itinerary should start on ${prevSelesai} or later from ${previous.keLokasi} \n\n
+    but found ${currentMulai} from ${current.dariLokasi}`
       );
     }
 
@@ -171,7 +184,10 @@ export function validateItineraryChain(data: Itinerary[]): ValidationResult {
 
     if (previous.keLokasiId !== current.dariLokasiId) {
       message.push(
-        `Invalid itinerary: next itinerary should start from ${previous.keLokasi}`
+        `Invalid itinerary: on ${format(
+          current.tanggalMulai,
+          "yyyy-MM-dd"
+        )} next itinerary should start from ${previous.keLokasi}`
       );
     }
 

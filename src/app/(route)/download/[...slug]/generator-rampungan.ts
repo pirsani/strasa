@@ -1,17 +1,20 @@
-import {
-  getKegiatanById,
-  getKegiatanIncludeSpd,
-  KegiatanIncludeSpd,
-} from "@/data/kegiatan";
+import { getKegiatanIncludeSpd, KegiatanIncludeSpd } from "@/data/kegiatan";
 import { dbHonorarium } from "@/lib/db-honorarium";
-import { LOKASI, PejabatPerbendaharaan } from "@prisma-honorarium/client";
+import { formatTanggal } from "@/utils/date-format";
+import { LOKASI } from "@prisma-honorarium/client";
 import { format } from "date-fns";
 import { promises as fs } from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
 import { PDFDocument, PDFForm } from "pdf-lib";
+import { Logger } from "tslog";
 import { generateSpdHalaman1 } from "./generator-spd";
 import { generateSpdDaftarPeserta } from "./generator-spd-daftar-peserta";
+
+const logger = new Logger({
+  name: "[RAMPUNGAN]",
+  hideLogPositionForProduction: true,
+});
 
 // Fungsi generator rampungan memerlukan data peserta kegiatan untuk diisi ke dalam form
 // Fungsi fillFormRampungan digunakan untuk mengisi form rampungan dengan data kegiatan
@@ -31,15 +34,18 @@ interface RampunganData {
   namaPpk: string;
   nipPpk: string;
 
-  dari1: string;
-  ke1: string;
-  dari1tanggal: string;
+  dariKedudukan: string;
+  dariKedudukanTanggal?: string;
 
-  tiba2: string;
-  tiba2tanggal: string;
-  dari2: string;
-  ke2: string;
-  dari2tanggal: string;
+  dari1: string;
+  ke1?: string;
+  dari1tanggal?: string;
+
+  tiba2?: string;
+  tiba2tanggal?: string;
+  dari2?: string;
+  ke2?: string;
+  dari2tanggal?: string;
 
   tiba3?: string;
   tiba3tanggal?: string;
@@ -49,58 +55,68 @@ interface RampunganData {
 
   tiba4?: string;
   tiba4tanggal?: string;
-  dar4?: string;
+  dari4?: string;
   ke4?: string;
   dari4tanggal?: string;
 
   tiba5?: string;
   tiba5tanggal?: string;
-  dar5?: string;
+  dari5?: string;
   ke5?: string;
   dari5tanggal?: string;
 
-  tiba6: string;
-  tiba6tanggal: string;
+  tiba6?: string;
+  tiba6tanggal?: string;
+  dari6?: string;
+  ke6?: string;
+  dari6tanggal?: string;
+
+  tiba7?: string;
+  tiba7tanggal?: string;
+  dari7?: string;
+  ke7?: string;
+  dari7tanggal?: string;
+
+  tiba8?: string;
+  tiba8tanggal?: string;
+  dari8?: string;
+  ke8?: string;
+  dari8tanggal?: string;
+
+  tiba9?: string;
+  tiba9tanggal?: string;
+  dari9?: string;
+  ke9?: string;
+  dari9tanggal?: string;
+
+  tiba10?: string;
+  tiba10tanggal?: string;
+  dari10?: string;
+  ke10?: string;
+  dari10tanggal?: string;
+
+  tiba11?: string;
+  tiba11tanggal?: string;
+  dari11?: string;
+  ke11?: string;
+  dari11tanggal?: string;
+
+  tiba12?: string;
+  tiba12tanggal?: string;
+
+  tibaDiKedudukan?: string;
+  tibaDiKedudukanTanggal?: string;
 }
 
-const getDataRampungan = async (
-  kegiatanId: string,
-  ppk: PejabatPerbendaharaan
-): Promise<RampunganData | null> => {
-  const kegiatan = await getKegiatanById(kegiatanId);
-
-  if (!kegiatan) {
-    return null;
-  }
-
-  const rampunganData: RampunganData = {
-    namaPeserta: "Fulan",
-    //kegiatanId: kegiatan?.id,
-    namaPpk: "si Fulan",
-    nipPpk: "1234567890",
-
-    dari1: "Jakarta, DKI Jakarta",
-    ke1: "Bogor, Jawa Barat",
-    dari1tanggal: "10 Januari 2022",
-
-    tiba2: "Bogor, Jawa Barat",
-    tiba2tanggal: "10 Januari 2022",
-    dari2: "Bogor, Jawa Barat",
-    ke2: "Jakarta, DKI Jakarta",
-    dari2tanggal: "12 Januari 2022",
-
-    tiba6: "Jakarta, DKI Jakarta",
-    tiba6tanggal: "12 Januari 2022",
-  };
-
-  return rampunganData;
-};
-
 async function generateDataRampungan(kegiatan: KegiatanIncludeSpd) {
-  const { ppk, spd, provinsi } = kegiatan;
+  const { ppk, spd, provinsi, pesertaKegiatan: peserta } = kegiatan;
 
   if (!ppk || !spd) {
     throw new Error("PPK or SPD not found");
+  }
+
+  if (!peserta || peserta.length === 0) {
+    throw new Error("Peserta kegiatan not found");
   }
 
   const kota = kegiatan.kota?.split(";")[1] ?? ""; // di database disimpan dengan format idKota;nama
@@ -109,11 +125,12 @@ async function generateDataRampungan(kegiatan: KegiatanIncludeSpd) {
     tujuan = kota + ", " + kegiatan.provinsi?.nama;
   }
 
-  const peserta = await dbHonorarium.pesertaKegiatan.findMany({
-    where: {
-      kegiatanId: kegiatan.id,
-    },
-  });
+  //const peserta = kegiatan.pesertaKegiatan;
+  // const peserta = await dbHonorarium.pesertaKegiatan.findMany({
+  //   where: {
+  //     kegiatanId: kegiatan.id,
+  //   },
+  // });
 
   const rampunganDataArray: RampunganData[] = peserta.map((peserta) => {
     return {
@@ -122,19 +139,96 @@ async function generateDataRampungan(kegiatan: KegiatanIncludeSpd) {
       namaPpk: ppk.nama,
       nipPpk: ppk.NIP || "-",
 
+      dariKedudukan: "Jakarta, DKI Jakarta",
+      dariKedudukanTanggal: format(kegiatan.tanggalMulai, "dd MMMM yyyy"),
+
       dari1: "Jakarta, DKI Jakarta",
       ke1: tujuan,
       dari1tanggal: format(kegiatan.tanggalMulai, "dd MMMM yyyy"),
 
-      tiba2: tujuan,
-      tiba2tanggal: format(kegiatan.tanggalMulai, "dd MMMM yyyy"),
-      dari2: tujuan,
-      ke2: "Jakarta, DKI Jakarta",
-      dari2tanggal: format(kegiatan.tanggalSelesai, "dd MMMM yyyy"),
+      tiba1: tujuan,
+      tiba1tanggal: format(kegiatan.tanggalMulai, "dd MMMM yyyy"),
 
-      tiba6: "Jakarta, DKI Jakarta",
-      tiba6tanggal: format(kegiatan.tanggalSelesai, "dd MMMM yyyy"),
+      dari2tanggal: format(kegiatan.tanggalSelesai, "dd MMMM yyyy"),
+      ke2: "Jakarta, DKI Jakarta",
+      dari2: tujuan,
+      tiba2: "Jakarta, DKI Jakarta",
+      tiba2tanggal: format(kegiatan.tanggalSelesai, "dd MMMM yyyy"),
+
+      tibaDiKedudukan: "Jakarta, DKI Jakarta",
+      tibaDiKedudukanTanggal: format(kegiatan.tanggalSelesai, "dd MMMM yyyy"),
     };
+  });
+
+  return rampunganDataArray;
+}
+
+// saat ini hanya support multitujuan LN
+async function generateDataRampunganMultiTujuan(kegiatan: KegiatanIncludeSpd) {
+  const { ppk, spd, provinsi, pesertaKegiatan, itinerary } = kegiatan;
+
+  if (!ppk || !spd) {
+    throw new Error("PPK or SPD not found");
+  }
+
+  if (!itinerary || itinerary.length < 2) {
+    throw new Error("Itinerary not found or less than 2");
+  }
+
+  const peserta = await dbHonorarium.pesertaKegiatan.findMany({
+    where: {
+      kegiatanId: kegiatan.id,
+    },
+    include: {
+      uhLuarNegeri: {
+        orderBy: {
+          tanggalMulai: "asc",
+        },
+      },
+    },
+  });
+
+  const rampunganDataArray: RampunganData[] = peserta.map((peserta) => {
+    const uhPeserta = peserta.uhLuarNegeri;
+    // if (!uhPeserta || uhPeserta.length === 0) {
+    //   return;
+    // }
+
+    let rampunganData: RampunganData = {
+      namaPeserta: peserta.nama,
+      namaPpk: ppk.nama,
+      nipPpk: ppk.NIP || "-",
+      dari1: "Jakarta, DKI Jakarta",
+      dariKedudukan: "Jakarta, DKI Jakarta",
+    };
+
+    let i = 1;
+    uhPeserta.forEach((uh) => {
+      logger.debug("forEach uh", uh);
+      rampunganData = {
+        ...rampunganData,
+
+        [`dari${i}`]: uh.dariLokasiId,
+        [`ke${i}`]: uh.keLokasiId,
+        [`dari${i}tanggal`]: formatTanggal(uh.tanggalMulai),
+
+        [`tiba${i}`]: uh.keLokasiId,
+        [`tiba${i}tanggal`]: formatTanggal(uh.tanggalSelesai),
+      };
+      i++;
+    });
+    // tibaDiKedudukan
+    rampunganData = {
+      ...rampunganData,
+      [`dariKedudukanTanggal`]: rampunganData.dari1tanggal,
+      [`tibaDiKedudukan`]: "Jakarta, DKI Jakarta",
+      [`tibaDiKedudukanTanggal`]: format(
+        uhPeserta[uhPeserta.length - 1].tanggalSelesai,
+        "dd MMMM yyyy"
+      ),
+    };
+
+    return rampunganData;
   });
 
   return rampunganDataArray;
@@ -204,6 +298,49 @@ const fillFormRampungan = async (
 };
 
 export const generateSpdHalaman2 = async (kegiatan: KegiatanIncludeSpd) => {
+  const { ppk, spd, itinerary } = kegiatan;
+  if (!ppk || !spd) {
+    throw new Error("PPK or SPD not found");
+  }
+
+  let isMultiTujuan = false;
+  let dataRampunganArray: RampunganData[] = [];
+  if (
+    kegiatan.lokasi === LOKASI.LUAR_NEGERI &&
+    itinerary &&
+    itinerary.length > 1
+  ) {
+    isMultiTujuan = true;
+  }
+
+  if (isMultiTujuan) {
+    logger.debug("isMultiTujuan", itinerary);
+    dataRampunganArray = await generateDataRampunganMultiTujuan(kegiatan);
+    console.log("dataRampunganArray MultiTujuan", dataRampunganArray);
+  } else {
+    dataRampunganArray = await generateDataRampungan(kegiatan);
+  }
+
+  if (!dataRampunganArray) {
+    throw new Error("Rampungan data not found");
+  }
+
+  const pdfTemplateLocation = "src/templates/pdf/rampungan.pdf";
+  const templatePath = path.resolve(process.cwd(), pdfTemplateLocation);
+  await fs.access(templatePath, fs.constants.R_OK);
+
+  const pdfBytes = await fillFormRampungan(templatePath, dataRampunganArray);
+
+  //const pdfSpdBytes = await getPdfSpd(kegiatanId);
+  return pdfBytes;
+};
+
+/**
+ * untuk itinerary lebih dari 4 - 10
+ */
+export const generateSpdHalamanMultipage = async (
+  kegiatan: KegiatanIncludeSpd
+) => {
   const { ppk, spd } = kegiatan;
   if (!ppk || !spd) {
     throw new Error("PPK or SPD not found");
@@ -257,7 +394,10 @@ export async function downloadDokumenRampungan(req: Request, slug: string[]) {
     });
   } catch (error) {
     console.error(error);
-    return new NextResponse("Failed to generate PDF", { status: 500 });
+    const customeError = error instanceof Error ? error.message : "Error";
+    return new NextResponse(`Failed to generate PDF, ${customeError}`, {
+      status: 500,
+    });
   }
 }
 

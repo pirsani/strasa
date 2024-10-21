@@ -135,7 +135,7 @@ const FormItinerary = ({
                 render={({ field }) => (
                   <FormItem className="w-1/2">
                     <FormLabel htmlFor="tanggalMulai">
-                      Tanggal Mulai
+                      Tanggal Berangkat
                       <RequiredLabel />
                     </FormLabel>
                     <FormControl>
@@ -160,7 +160,7 @@ const FormItinerary = ({
                 render={({ field }) => (
                   <FormItem className="w-1/2">
                     <FormLabel htmlFor="tanggalSelesai">
-                      Tanggal Selesai
+                      Tanggal Tiba
                       <RequiredLabel />
                     </FormLabel>
                     <FormControl>

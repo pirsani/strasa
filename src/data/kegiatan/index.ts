@@ -1,5 +1,6 @@
 import { dbHonorarium } from "@/lib/db-honorarium";
 import {
+  Itinerary,
   Jadwal,
   Kegiatan,
   Organisasi,
@@ -47,6 +48,7 @@ export interface KegiatanIncludeSpd extends Kegiatan {
   spd?: Spd | null;
   provinsi?: Provinsi | null;
   pesertaKegiatan?: PesertaKegiatan[] | null;
+  itinerary?: Itinerary[] | null;
 }
 export const getKegiatanIncludeSpd = async (
   kegiatanId: string
@@ -62,6 +64,7 @@ export const getKegiatanIncludeSpd = async (
       spd: true,
       provinsi: true,
       pesertaKegiatan: true,
+      itinerary: true,
     },
   });
   return kegiatan;
