@@ -278,12 +278,14 @@ const generateTableRow = (
   y: number,
   rowHeight: number = 25
 ) => {
+  console.log("\n ======================================================== \n");
   logger.info(
     "[generateTableRow START startX, y, rowHeight]",
     startX,
     y,
     rowHeight
   );
+  logger.debug("[generateTableRow] row", row);
   const drawRow = (
     row: TableRow,
     tableColumnHeaders: TableColumnHeader[],
@@ -436,10 +438,19 @@ const generateTable = (
     // Iterate and generate row for each groupMembers
     // calculate subSumRow
     dataGroup.groupMembers.forEach((groupMembers, rowIndex) => {
-      rowCounterOnPage++;
+      console.log(
+        "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+      );
 
-      let startYDynamic = baseStartY + dataRowHeight * rowIndex;
-      logger.info("[beforeRowReset] startYDynamic", startYDynamic);
+      let startYDynamic = baseStartY + dataRowHeight * rowCounterOnPage;
+      logger.debug("[rowIndex rowCounterOnPage]", rowIndex, rowCounterOnPage);
+      logger.debug(
+        "[beforeRowReset] startYDynamic = baseStartY + dataRowHeight * rowCounterOnPage;",
+        startYDynamic,
+        baseStartY,
+        dataRowHeight,
+        rowIndex
+      );
 
       if (rowReset) {
         startYDynamic = controlStartYRowgroupMembers + dataRowHeight;
@@ -450,7 +461,7 @@ const generateTable = (
       if (isNewPageNeeded) {
         logger.info("[isNewPageNeeded-2-yes]", rowCounterOnPage);
 
-        rowCounterOnPage = 1;
+        rowCounterOnPage = 0;
         rowIterator = 0;
         dataGroupIterator = 0;
         rowReset = true;
@@ -479,6 +490,11 @@ const generateTable = (
       }
 
       logger.info("[BEFORE generateTableRow]", rowCounterOnPage);
+      logger.debug(
+        "[rowCounterOnPage rowIterator]",
+        rowCounterOnPage,
+        rowIterator
+      );
 
       generateTableRow(
         doc,
@@ -518,6 +534,8 @@ const generateTable = (
           // );
         }
       }
+
+      rowCounterOnPage++;
     });
 
     dataGroupIterator++;
@@ -597,6 +615,7 @@ export interface ReportHeader<T = any> {
     options: ReportHeaderOptions<T>
   ) => void;
   options: ReportHeaderOptions<T>;
+  pageNote?: string;
 }
 
 export interface TableDinamisOptions {
@@ -726,6 +745,10 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
       y2 = y1 + 50;
     }
 
+    // add page note if any
+    if (reportHeader && reportHeader.pageNote) {
+      drawCell(doc, reportHeader.pageNote, 600, 25, 200, "center", 6, 0, 0);
+    }
     generateReportFooter(doc, x1, x2, y1, y2, kiri, kanan);
 
     doc.end();

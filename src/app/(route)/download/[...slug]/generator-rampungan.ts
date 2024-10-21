@@ -243,7 +243,7 @@ export async function downloadDokumenRampungan(req: Request, slug: string[]) {
     const spdHalaman1 = await generateSpdHalaman1(kegiatan);
     const spdHalaman2 = await generateSpdHalaman2(kegiatan);
 
-    const spdDaftarPeserta = await generateSpdDaftarPeserta(req, slug);
+    const spdDaftarPeserta = await generateSpdDaftarPeserta(kegiatan);
 
     const satuplusdua = await mergePdfs(spdHalaman1, spdHalaman2);
     const completePdfBytes = await mergePdfs(satuplusdua, spdDaftarPeserta);

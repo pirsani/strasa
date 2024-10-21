@@ -209,12 +209,13 @@ const columns: TableColumnHeader[] = [
   },
 ];
 
-export async function generateSpdDaftarPeserta(req: Request, slug: string[]) {
+export async function generateSpdDaftarPeserta(
+  kegiatan: KegiatanIncludeSpd | null
+) {
   // Example table columns with nested subheaders
 
-  const kegiatan = await getKegiatanIncludeSpd("uqpugvsxn0vkr0zxo3mvywpe");
   if (!kegiatan) {
-    throw new Error("kegiatan not found");
+    throw new Error("E-SPDGDP-01 kegiatan not found");
   }
 
   const rows: TableRow[] = mapPesertaToTableRow(kegiatan.pesertaKegiatan);
@@ -257,6 +258,7 @@ export async function generateSpdDaftarPeserta(req: Request, slug: string[]) {
       reportHeader: {
         fn: generateReportHeader,
         options: reportHeaderOptions,
+        pageNote: kegiatan.spd?.nomorSPD || "",
       }, // custom header function
     };
     const pdfBuffer = await generateTabelDinamis(tabelDinamisOptions);
@@ -311,7 +313,11 @@ const mapPesertaToTableRow = (
 };
 
 export async function downloadSpdDaftarPeserta(req: Request, slug: string[]) {
-  const pdfBuffer = await generateSpdDaftarPeserta(req, slug);
+  const kegiatanId = slug[1];
+
+  const kegiatan = await getKegiatanIncludeSpd(kegiatanId);
+
+  const pdfBuffer = await generateSpdDaftarPeserta(kegiatan);
 
   return new NextResponse(pdfBuffer, {
     status: 200,
