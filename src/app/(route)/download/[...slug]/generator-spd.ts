@@ -17,6 +17,11 @@ const logger = new Logger({
 
 interface SpdTextfield {
   nomor: string;
+  namaPeserta: string;
+  nipPeserta: string;
+  golonganPeserta: string;
+  jabatanPeserta: string;
+  tingkat: string;
   ppk: string;
   namaKegiatan: string;
   tujuan: string;
@@ -84,6 +89,11 @@ export async function downloadDokumenSpd(req: Request, slug: string[]) {
   //const dataSpd = await getDataSpd(kegiatanId);
   const dataSpd: SpdTextfield = {
     nomor: "nosdasd",
+    namaPeserta: "TERLAMPIR",
+    nipPeserta: "TERLAMPIR",
+    golonganPeserta: "TERLAMPIR",
+    jabatanPeserta: "TERLAMPIR",
+    tingkat: "TERLAMPIR",
     akun: "343243",
     tujuan: "Banten",
     jumlahHari: "14",
@@ -118,10 +128,15 @@ const findValueInAsWas = (asWas: JsonValue, key: string): any => {
 };
 
 export const generateSpdHalaman1 = async (kegiatan: KegiatanIncludeSpd) => {
-  const { ppk, spd } = kegiatan;
+  const { ppk, spd, pesertaKegiatan } = kegiatan;
   if (!ppk || !spd) {
     throw new Error("PPK or SPD not found");
   }
+
+  if (!pesertaKegiatan || pesertaKegiatan.length === 0) {
+    throw new Error("Peserta kegiatan not found");
+  }
+
   const akun = findValueInAsWas(spd.asWas, "akun") ?? "-";
   const keterangan = findValueInAsWas(spd.asWas, "keterangan") ?? "-";
   const kota = kegiatan.kota?.split(";")[1] ?? ""; // di database disimpan dengan format idKota;nama
@@ -130,6 +145,12 @@ export const generateSpdHalaman1 = async (kegiatan: KegiatanIncludeSpd) => {
     tujuan = kota + ", " + kegiatan.provinsi?.nama;
   }
   // find value of akun in aswas
+
+  // if peserta > 1 nama dan lainnya di tulis terlampir
+  const isRombongan = pesertaKegiatan.length > 1;
+  const jumlahPeserta = pesertaKegiatan.length;
+
+  //if (isMoreThanOnePeserta) {} else {}
 
   const jumlahHari =
     1 +
@@ -140,6 +161,19 @@ export const generateSpdHalaman1 = async (kegiatan: KegiatanIncludeSpd) => {
   const satker = kegiatan.satker.singkatan ?? kegiatan.satker.nama;
   const dataSpd: SpdTextfield = {
     nomor: spd.nomorSPD,
+    namaPeserta: isRombongan
+      ? `TERLAMPIR  (${jumlahPeserta})`
+      : pesertaKegiatan[0].nama,
+    nipPeserta: isRombongan ? "TERLAMPIR" : pesertaKegiatan[0].NIP || "-",
+    golonganPeserta: isRombongan
+      ? "TERLAMPIR"
+      : pesertaKegiatan[0].pangkatGolonganId || "-",
+    jabatanPeserta: isRombongan
+      ? "TERLAMPIR"
+      : pesertaKegiatan[0].jabatan || "-",
+    tingkat: isRombongan
+      ? "TERLAMPIR"
+      : pesertaKegiatan[0].golonganUhLuarNegeri || "-",
     akun: akun,
     tujuan: tujuan,
     jumlahHari: jumlahHari.toString(),
