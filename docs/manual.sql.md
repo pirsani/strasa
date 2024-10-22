@@ -46,3 +46,28 @@ GRANT SELECT ON vkota_sekitar_jakarta TO public;
 GRANT SELECT ON vkota_sekitar_jakarta TO honuserd01;
 
 ```
+
+```sql
+ALTER TABLE itinerary
+RENAME COLUMN "tanggalMulai" TO tanggal_mulai;
+
+ALTER TABLE itinerary
+RENAME COLUMN "tanggalSelesai" TO tanggal_selesai;
+
+ALTER TABLE public.itinerary ADD tanggal_tiba timestamp(3);
+
+update itinerary set tanggal_tiba = tanggal_selesai ;
+
+ALTER TABLE itinerary
+ALTER COLUMN tanggal_tiba TYPE timestamp(3) USING tanggal_tiba::timestamp(3),
+ALTER COLUMN tanggal_tiba SET NOT NULL;
+
+
+ALTER TABLE uh_luar_negeri
+ADD COLUMN tanggal_tiba timestamp(3);
+
+update uh_luar_negeri set tanggal_tiba = tanggal_selesai ;
+
+ALTER TABLE uh_luar_negeri
+ALTER COLUMN tanggal_tiba SET NOT NULL;
+```

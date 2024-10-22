@@ -2,6 +2,8 @@ import { PesertaKegiatanLuarNegeri } from "@/actions/kegiatan/peserta/luar-neger
 import { TableCellInput } from "@/components/datatable/table-cell-input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { formatTanggal } from "@/utils/date-format";
+import { UhLuarNegeri } from "@prisma-honorarium/client";
 import {
   ColumnDef,
   flexRender,
@@ -19,7 +21,7 @@ interface RowData {
   [key: string]: any; // Replace with actual field names and types if known
 }
 // Define column structure
-const columns: ColumnDef<PesertaKegiatanLuarNegeri>[] = [
+const columns: ColumnDef<DetailUhLuarNegeriPeserta>[] = [
   {
     accessorKey: "nama",
     header: "Nama",
@@ -40,34 +42,39 @@ const columns: ColumnDef<PesertaKegiatanLuarNegeri>[] = [
     header: "Jabatan",
     cell: (info) => info.getValue(),
   },
+
+  {
+    accessorKey: "golonganUh",
+    header: "Golongan UH",
+    cell: (info) => info.getValue(),
+  },
   {
     accessorKey: "eselon",
     header: "Eselon",
     cell: (info) => info.getValue(),
   },
-  // {
-  //   accessorKey: "email",
-  //   header: "Email",
-  //   cell: (info) => info.getValue(),
-  // },
-  // {
-  //   accessorKey: "bank",
-  //   header: "Bank",
-  //   cell: (info) => info.getValue(),
-  // },
-  // {
-  //   accessorKey: "namaRekening",
-  //   header: "Nama Rekening",
-  //   cell: (info) => info.getValue(),
-  // },
-  // {
-  //   accessorKey: "nomorRekening",
-  //   header: "Nomor Rekening",
-  //   cell: (info) => info.getValue(),
-  // },
   {
-    accessorKey: "uhLuarNegeri.hFullboard",
-    header: "Hari Fullboard",
+    accessorKey: "keLokasiId",
+    header: "Negara",
+    cell: (info) => info.getValue(),
+  },
+  {
+    accessorKey: "tanggalMulai",
+    header: "Tanggal Mulai",
+    cell: (info) => {
+      return formatTanggal(info.getValue() as Date, "yyyy-M-dd");
+    },
+  },
+  {
+    accessorKey: "tanggalSelesai",
+    header: "Tanggal Selesai",
+    cell: (info) => {
+      return formatTanggal(info.getValue() as Date, "yyyy-M-dd");
+    },
+  },
+  {
+    accessorKey: "jamPerjalanan",
+    header: "Jam Perjalanan",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
         getValue,
@@ -81,8 +88,8 @@ const columns: ColumnDef<PesertaKegiatanLuarNegeri>[] = [
     },
   },
   {
-    accessorKey: "uhLuarNegeri.hFulldayHalfday",
-    header: "Hari Fullday/ Halfday",
+    accessorKey: "hPerjalanan",
+    header: "Hari Perjalanan",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
         getValue,
@@ -96,24 +103,8 @@ const columns: ColumnDef<PesertaKegiatanLuarNegeri>[] = [
     },
   },
   {
-    accessorKey: "uhLuarNegeri.hDalamKota",
-    header: "Hari Dalam Kota",
-    cell: ({ getValue, row, column, table }) =>
-      TableCellInput({
-        getValue,
-        row,
-        column,
-        table,
-        className: "h-18 items-center justify-center p-2 ",
-      }),
-    meta: {
-      className: "items-center justify-center p-0 max-w-18",
-    },
-  },
-
-  {
-    accessorKey: "uhLuarNegeri.hLuarKota",
-    header: "Hari Luar Kota",
+    accessorKey: "hUangHarian",
+    header: "Hari UH",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
         getValue,
@@ -127,7 +118,7 @@ const columns: ColumnDef<PesertaKegiatanLuarNegeri>[] = [
     },
   },
   {
-    accessorKey: "uhLuarNegeri.hDiklat",
+    accessorKey: "hDiklat",
     header: "Hari Diklat",
     cell: ({ getValue, row, column, table }) =>
       TableCellInput({
@@ -142,22 +133,7 @@ const columns: ColumnDef<PesertaKegiatanLuarNegeri>[] = [
     },
   },
   {
-    accessorKey: "uhLuarNegeri.hTransport",
-    header: "Hari Transport",
-    cell: ({ getValue, row, column, table }) =>
-      TableCellInput({
-        getValue,
-        row,
-        column,
-        table,
-        className: "h-18 items-center justify-center p-2 ",
-      }),
-    meta: {
-      className: "items-center justify-center p-0 max-w-18",
-    },
-  },
-  {
-    accessorKey: "uhLuarNegeri.jumlahHari",
+    accessorKey: "jumlahHari",
     header: "Jumlah Hari",
     cell: (info) => {
       const value = info.getValue() as number;
@@ -177,24 +153,32 @@ interface TabelHariPesertaKegiatanProps {
   data: PesertaKegiatanLuarNegeri[];
   onDataChange?: (data: PesertaKegiatanLuarNegeri[]) => void;
 }
+
+interface DetailUhLuarNegeriPeserta extends UhLuarNegeri {
+  nama: string;
+  NIP: string | null;
+  pangkatGolonganId: string | null;
+  jabatan: string | null;
+  eselon: string | null;
+}
 export const TabelHariPesertaKegiatan = ({
   data: defaultData,
   onDataChange = () => {},
 }: TabelHariPesertaKegiatanProps) => {
   const [data, setData] = useState(() => [...defaultData]);
+  const [uhLuarNegeri, setUhLuarNegeri] = useState<DetailUhLuarNegeriPeserta[]>(
+    []
+  );
   const [pageSize, setPageSize] = useState(10); // Set the initial page size
   const [pageIndex, setPageIndex] = useState(0); // Set the initial page index
   const [sorting, setSorting] = useState<SortingState>([]); // Explicitly define SortingState
   const [cumulativeWidths, setCumulativeWidths] = useState<number[]>([]);
   const colRefs = useRef<HTMLTableCellElement[]>([]);
   const frozenColumnCount = 1;
-  const [headerColumnHfullboard, setHeaderColumnHfullboard] = useState(0);
-  const [headerColumnHfulldayHalfday, setHeaderColumnHfulldayHalfday] =
-    useState(0);
-  const [headerColumnHluarKota, setHeaderColumnHluarKota] = useState(0);
-  const [headerColumnHdalamKota, setHeaderColumnHdalamKota] = useState(0);
-  const [headerColumnHdiklat, setHeaderColumnHdiklat] = useState(0);
-  const [headerColumnHtransport, setHeaderColumnHtransport] = useState(0);
+  const [headerColumnJamPerjalanan, setHeaderColumnJamPerjalanan] = useState(0);
+  const [headerColumnHPerjalanan, setHeaderColumnHPerjalanan] = useState(0);
+  const [headerColumnHUangHarian, setHeaderColumnHUangHarian] = useState(0);
+  const [headerColumnHDiklat, setHeaderColumnHdiklat] = useState(0);
   const [totalJumlahHari, setTotalJumlahHari] = useState(0);
 
   useEffect(() => {
@@ -203,37 +187,67 @@ export const TabelHariPesertaKegiatan = ({
   }, [data]);
 
   useEffect(() => {
+    let hPerjalanan = 0;
+    if (headerColumnJamPerjalanan && headerColumnJamPerjalanan !== 0) {
+      if (headerColumnJamPerjalanan % 24 === 0) {
+        hPerjalanan = headerColumnJamPerjalanan / 24;
+      } else {
+        hPerjalanan = Math.floor(headerColumnJamPerjalanan / 24) + 1;
+      }
+    }
+
+    setHeaderColumnHPerjalanan(hPerjalanan);
+    const updatedData = changeAllRowsColumnUhLuarNegeri(
+      uhLuarNegeri,
+      "hPerjalanan",
+      hPerjalanan
+    );
+    setUhLuarNegeri(updatedData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [headerColumnJamPerjalanan]);
+
+  useEffect(() => {
     const total =
-      headerColumnHfullboard +
-      headerColumnHfulldayHalfday +
-      headerColumnHdalamKota +
-      headerColumnHluarKota +
-      headerColumnHdiklat +
-      headerColumnHtransport;
+      headerColumnHPerjalanan + headerColumnHUangHarian + headerColumnHDiklat;
     setTotalJumlahHari(total);
 
-    const updatedPeserta = data.map((row) => {
+    const updatedPeserta = uhLuarNegeri.map((row) => {
       const newRow = calculateTotal(row);
       return newRow;
     });
 
-    setData(updatedPeserta);
+    setUhLuarNegeri(updatedPeserta);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    headerColumnHfullboard,
-    headerColumnHfulldayHalfday,
-    headerColumnHdalamKota,
-    headerColumnHluarKota,
-    headerColumnHdiklat,
-    headerColumnHtransport,
-  ]);
+  }, [headerColumnHPerjalanan, headerColumnHUangHarian, headerColumnHDiklat]);
 
   useEffect(() => {
     setData(defaultData);
   }, [defaultData]);
 
-  const table = useReactTable({
-    data,
+  useEffect(() => {
+    // Iterate over all peserta and get uhLuarNegeri flattened
+    const dataAllUhLuarNegeri: DetailUhLuarNegeriPeserta[] =
+      defaultData.flatMap((p) => {
+        if (!p.uhLuarNegeri) {
+          return [];
+        }
+        return p.uhLuarNegeri
+          .filter((item): item is DetailUhLuarNegeriPeserta => item !== null)
+          .map((item) => ({
+            ...item,
+            nama: p.nama,
+            NIP: p.NIP,
+            pangkatGolonganId: p.pangkatGolonganId,
+            jabatan: p.jabatan,
+            eselon: p.eselon,
+          }));
+      });
+
+    setUhLuarNegeri(dataAllUhLuarNegeri);
+  }, [defaultData]);
+
+  const table = useReactTable<DetailUhLuarNegeriPeserta>({
+    data: uhLuarNegeri,
     columns,
     pageCount: Math.ceil(data.length / pageSize), // Dynamic page count
     state: {
@@ -257,7 +271,7 @@ export const TabelHariPesertaKegiatan = ({
     },
     meta: {
       updateData: (rowIndex: number, columnId: string, value: string) => {
-        setData((old) =>
+        setUhLuarNegeri((old) =>
           old.map((row, index) => {
             if (index === rowIndex) {
               let parentObj = null;
@@ -287,7 +301,7 @@ export const TabelHariPesertaKegiatan = ({
                 };
 
                 const newRowWithUpdatedTotal = calculateTotal(
-                  newRow as PesertaKegiatanLuarNegeri
+                  newRow as DetailUhLuarNegeriPeserta
                 );
                 console.log("newRowWithUpdatedTotal", newRowWithUpdatedTotal);
                 return newRowWithUpdatedTotal;
@@ -325,56 +339,11 @@ export const TabelHariPesertaKegiatan = ({
   }, [frozenColumnCount, colRefs]); // Only run when frozen column count or refs change
   //[table.getRowModel().rows]); // Recalculate when rows change
 
-  interface HeaderInputColumnProps {
-    peserta: PesertaKegiatanLuarNegeri[];
-    field?: string;
-    setColumValaue?: React.Dispatch<React.SetStateAction<number>>;
-    value?: number;
-  }
-  const HeaderInputColumn = ({
-    peserta,
-    field,
-    setColumValaue,
-    value: initValue,
-  }: HeaderInputColumnProps) => {
-    const [value, setValue] = useState(initValue);
-
-    useEffect(() => {
-      setValue(initValue);
-    }, [initValue]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValue(parseInt(e.target.value));
-    };
-
-    const handleBlur = () => {
-      console.log("value", value);
-
-      if (!field) {
-        return;
-      }
-      const updatedPeserta = changeAllRowsColumnUhLuarNegeri(
-        peserta,
-        field,
-        value ? value : 0
-      );
-      setColumValaue && setColumValaue(value || 0);
-      setData((old) => updatedPeserta);
-      console.log("updatedPeserta", updatedPeserta);
-    };
-
-    return (
-      <th className="p-0 border border-gray-300 focus-within:border-blue-500 focus-within:border-2">
-        <input
-          placeholder="0"
-          value={value || 0}
-          onChange={handleChange}
-          className="w-full h-12 focus:ring-0 bg-transparent p-2 outline-none border-none"
-          onBlur={handleBlur}
-          tabIndex={0} // Ensure the input is focusable
-        />
-      </th>
-    );
+  const handleHeaderColumnBlur = (field: string, value: number) => {
+    //const updated = updateAll
+    const updated = changeAllRowsColumnUhLuarNegeri(uhLuarNegeri, field, value);
+    setUhLuarNegeri((prev) => updated);
+    console.log("[handleHeaderColumnBlur]", updated);
   };
 
   return (
@@ -472,44 +441,36 @@ export const TabelHariPesertaKegiatan = ({
                     })}
                   </tr>
                   <tr key={"_coli" + headerGroup.id}>
-                    <th colSpan={5} className="px-2 border border-gray-300">
+                    <th colSpan={9} className="px-2 border border-gray-300">
                       {""}
                     </th>
                     <HeaderInputColumn
-                      peserta={data}
-                      field="hFullboard"
-                      setColumValaue={setHeaderColumnHfullboard}
-                      value={headerColumnHfullboard}
+                      uhLuarNegeri={uhLuarNegeri}
+                      field="jamPerjalanan"
+                      setColumValaue={setHeaderColumnJamPerjalanan}
+                      onBlur={handleHeaderColumnBlur}
+                      value={headerColumnJamPerjalanan}
                     />
                     <HeaderInputColumn
-                      peserta={data}
-                      field="hFulldayHalfday"
-                      setColumValaue={setHeaderColumnHfulldayHalfday}
-                      value={headerColumnHfulldayHalfday}
+                      uhLuarNegeri={uhLuarNegeri}
+                      field="hPerjalanan"
+                      setColumValaue={setHeaderColumnHPerjalanan}
+                      onBlur={handleHeaderColumnBlur}
+                      value={headerColumnHPerjalanan}
                     />
                     <HeaderInputColumn
-                      peserta={data}
-                      field="hDalamKota"
-                      setColumValaue={setHeaderColumnHdalamKota}
-                      value={headerColumnHdalamKota}
+                      uhLuarNegeri={uhLuarNegeri}
+                      field="hUangHarian"
+                      setColumValaue={setHeaderColumnHUangHarian}
+                      onBlur={handleHeaderColumnBlur}
+                      value={headerColumnHUangHarian}
                     />
                     <HeaderInputColumn
-                      peserta={data}
-                      field="hLuarKota"
-                      setColumValaue={setHeaderColumnHluarKota}
-                      value={headerColumnHluarKota}
-                    />
-                    <HeaderInputColumn
-                      peserta={data}
+                      uhLuarNegeri={uhLuarNegeri}
                       field="hDiklat"
                       setColumValaue={setHeaderColumnHdiklat}
-                      value={headerColumnHdiklat}
-                    />
-                    <HeaderInputColumn
-                      peserta={data}
-                      field="hTransport"
-                      setColumValaue={setHeaderColumnHtransport}
-                      value={headerColumnHtransport}
+                      onBlur={handleHeaderColumnBlur}
+                      value={headerColumnHDiklat}
                     />
                     <th className="px-2 border border-gray-300">
                       {totalJumlahHari}
@@ -589,24 +550,81 @@ export const TabelHariPesertaKegiatan = ({
 };
 
 const changeAllRowsColumnUhLuarNegeri = (
-  peserta: PesertaKegiatanLuarNegeri[],
+  uhLuarNegeri: DetailUhLuarNegeriPeserta[],
   field: string,
   value: number
-): PesertaKegiatanLuarNegeri[] => {
-  return peserta.map((row) => {
-    if (!row.uhLuarNegeri) {
-      return row;
-    }
-    const uhLuarNegeri = row.uhLuarNegeri;
-    const newUh = {
-      ...uhLuarNegeri,
+): DetailUhLuarNegeriPeserta[] => {
+  console.info("[changeAllRowsColumnUhLuarNegeri]", field, value);
+  //console.info("[uhLuarNegeri]", uhLuarNegeri);
+
+  //return uhLuarNegeri;
+
+  const updated = uhLuarNegeri.map((row) => {
+    const newRow = {
+      ...row,
       [field]: value,
     };
-    return {
-      ...row,
-      ["uhLuarNegeri"]: newUh,
-    };
+    return newRow;
   });
+
+  return updated;
+  // return peserta.map((row) => {
+  //   if (!row.uhLuarNegeri) {
+  //     return row;
+  //   }
+  //   const uhLuarNegeri = row.uhLuarNegeri;
+  //   const newUh = {
+  //     ...uhLuarNegeri,
+  //     [field]: value,
+  //   };
+  //   return {
+  //     ...row,
+  //     ["uhLuarNegeri"]: newUh,
+  //   };
+  // });
+};
+
+interface HeaderInputColumnProps {
+  uhLuarNegeri: DetailUhLuarNegeriPeserta[];
+  field: string;
+  setColumValaue?: React.Dispatch<React.SetStateAction<number>>;
+  value?: number;
+  onBlur?: (field: string, value: number) => void;
+}
+const HeaderInputColumn = ({
+  uhLuarNegeri,
+  field,
+  setColumValaue,
+  value: initValue = 0,
+  onBlur = () => {},
+}: HeaderInputColumnProps) => {
+  const [value, setValue] = useState(initValue);
+
+  useEffect(() => {
+    setValue(initValue);
+  }, [initValue]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(parseInt(e.target.value));
+  };
+
+  const handleBlur = () => {
+    setColumValaue && setColumValaue(value || 0);
+    onBlur(field, value || 0);
+  };
+
+  return (
+    <th className="p-0 border border-gray-300 focus-within:border-blue-500 focus-within:border-2">
+      <input
+        placeholder="0"
+        value={value}
+        onChange={handleChange}
+        className="w-full h-12 focus:ring-0 bg-transparent p-2 outline-none border-none"
+        onBlur={handleBlur}
+        tabIndex={0} // Ensure the input is focusable
+      />
+    </th>
+  );
 };
 
 interface PaginationControlsProps<T> {
@@ -680,26 +698,30 @@ export const PaginationControls = <T,>({
 };
 
 function calculateTotal(
-  row: PesertaKegiatanLuarNegeri
-): PesertaKegiatanLuarNegeri {
-  if (!row.uhLuarNegeri) {
-    return row;
-  }
-  const fullboard = row.uhLuarNegeri?.hFullboard || 0;
-  const fulldayHalfday = row.uhLuarNegeri?.hFulldayHalfday || 0;
-  const dalamKota = row.uhLuarNegeri?.hDalamKota || 0;
-  const luarKota = row.uhLuarNegeri?.hLuarKota || 0;
-  const diklat = row.uhLuarNegeri?.hDiklat || 0;
-  const transport = row.uhLuarNegeri?.hTransport || 0;
-
-  const total: number =
-    fullboard + fulldayHalfday + dalamKota + luarKota + diklat + transport;
-
-  return {
-    ...row,
-    uhLuarNegeri: {
-      ...row.uhLuarNegeri,
-      jumlahHari: total,
-    },
+  uhLuarNegeri: DetailUhLuarNegeriPeserta
+): DetailUhLuarNegeriPeserta {
+  const newRow = {
+    ...uhLuarNegeri,
+    jumlahHari:
+      uhLuarNegeri.hPerjalanan +
+      uhLuarNegeri.hUangHarian +
+      uhLuarNegeri.hDiklat,
   };
+  return newRow;
+
+  // const hPerjalanan = row.uhLuarNegeri?.hPerjalanan || 0;
+  // const fulldayHalfday = row.uhLuarNegeri?.hFulldayHalfday || 0;
+  // const dalamKota = row.uhLuarNegeri?.hDalamKota || 0;
+  // const luarKota = row.uhLuarNegeri?.hLuarKota || 0;
+  // const diklat = row.uhLuarNegeri?.hDiklat || 0;
+  // const transport = row.uhLuarNegeri?.hTransport || 0;
+  // const total: number =
+  //   fullboard + fulldayHalfday + dalamKota + luarKota + diklat + transport;
+  // return {
+  //   ...row,
+  //   uhLuarNegeri: {
+  //     ...row.uhLuarNegeri,
+  //     jumlahHari: total,
+  //   },
+  // };
 }

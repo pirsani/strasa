@@ -598,12 +598,14 @@ model UhLuarNegeri {
   keLokasiId             String           @map("ke_lokasi_id")
   keLokasi               Negara           @relation(fields: [keLokasiId], references: [id], name: "ke_lokasi_uh_luar_negeri")
   tanggalMulai           DateTime         @map("tanggal_mulai")
+  tanggalTiba            DateTime         @map("tanggal_tiba")
   tanggalSelesai         DateTime         @map("tanggal_selesai")
   jumlahHari             Int              @default(0) @map("jumlah_hari") // harus di kasih trigger biar otomatis dihitung dari tanggal mulai dan selesai
   sbmUhLuarNegeriId      String?          @map("sbm_uh_luar_negeri_id") // akan mengacu ke id yg pencariannya berdasarkan negara dan golongan
   sbmUhLuarNegeri        SbmUhLuarNegeri? @relation(fields: [sbmUhLuarNegeriId], references: [id])
   golonganUh             String?          @map("golongan_uh") // enum A, B, C, D
   nominalGolonganUh      Int?             @default(0) @map("nominal_golongan_uh") // sesuai dengan golongan yg ada di SbmUhLuarNegeri, karena bersifat historis maka diambil dari SbmUhLuarNegeri, resiko perubahan nilai nominal golongan di SbmUhLuarNegeri harus dihandle di aplikasi
+  jamPerjalanan          Float            @default(0) @map("jam_perjalanan") // tidak perlu decimal karena tidak akan dikalikan dengan nominal sehingga presisi tidak terlalu penting karena hanya akan di mode 24 jam
   hPerjalanan            Int              @default(0) @map("h_perjalanan")
   uhPerjalanan           Int              @default(0) @map("uh_perjalanan")
   hUangHarian            Int              @default(0) @map("h_uang_harian")
@@ -630,8 +632,9 @@ model Itinerary {
   dariLokasi        Negara           @relation(fields: [dariLokasiId], references: [id], name: "dari_lokasi")
   keLokasiId        String
   keLokasi          Negara           @relation(fields: [keLokasiId], references: [id], name: "ke_lokasi")
-  tanggalMulai      DateTime
-  tanggalSelesai    DateTime
+  tanggalMulai      DateTime         @map("tanggal_mulai")
+  tanggalTiba       DateTime         @map("tanggal_tiba")
+  tanggalSelesai    DateTime         @map("tanggal_selesai")
   kegiatanId        String           @map("kegiatan_id")
   kegiatan          Kegiatan         @relation(fields: [kegiatanId], references: [id])
   createdBy         String           @map("created_by")

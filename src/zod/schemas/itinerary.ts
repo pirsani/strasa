@@ -37,7 +37,10 @@ const tanggalSchema = ({
 export const baseItinerarySchema = z.object({
   id: z.string().optional(),
   tanggalMulai: tanggalSchema({ fieldLabel: "Tanggal Mulai" }),
-  tanggalSelesai: tanggalSchema({ fieldLabel: "Tanggal Selesai" }),
+  tanggalTiba: tanggalSchema({ fieldLabel: "Tanggal Tiba" }),
+  tanggalSelesai: tanggalSchema({
+    fieldLabel: "Tanggal Selesai",
+  }),
   dariLokasiId: z.string().min(3, { message: "Dari Lokasi harus diisi" }),
   dariLokasi: z.string().optional().nullable(),
   keLokasiId: z.string().min(3, { message: "Ke Lokasi harus diisi" }),
@@ -46,7 +49,7 @@ export const baseItinerarySchema = z.object({
 
 // Ensure tanggalMulai is less than or equal to tanggalSelesai
 export const itinerarySchema = baseItinerarySchema.refine(
-  (data) => data.tanggalMulai.getTime() <= data.tanggalSelesai.getTime(),
+  (data) => data.tanggalMulai.getTime() <= data.tanggalTiba.getTime(),
   {
     message: "Tanggal Mulai harus kurang dari atau sama dengan Tanggal Selesai",
     path: ["tanggalMulai"], // Point the error to tanggalMulai field

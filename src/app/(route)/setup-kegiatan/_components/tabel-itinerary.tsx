@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 export interface ValidationResult {
   isValid: boolean;
   message?: string[];
+  itineraries?: Itinerary[];
 }
 
 interface TabelItineraryProps {
@@ -59,9 +60,15 @@ const TabelItinerary = ({
       cell: (info) => format(info.row.original.tanggalMulai, "yyyy-MM-dd"),
     },
     {
+      accessorKey: "tanggalTiba",
+      header: "Tanggal Tiba",
+      cell: (info) => format(info.row.original.tanggalTiba, "yyyy-MM-dd"),
+    },
+    {
       accessorKey: "tanggalSelesai",
       header: "Tanggal Selesai",
-      cell: (info) => format(info.row.original.tanggalSelesai, "yyyy-MM-dd"),
+      cell: (info) =>
+        format(info.row.original.tanggalSelesai || "", "yyyy-MM-dd"),
     },
     {
       accessorKey: "dariLokasi",
@@ -136,7 +143,23 @@ function getDateOnly(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
+function setTanggalSelesai(sortedItineraries: Itinerary[]): Itinerary[] {
+  // set tanggalSelesai for each itinerary
+  return sortedItineraries.map((itinerary, index, arr) => {
+    const nextItinerary = arr[index + 1]; // Get the next itinerary
+    const tanggalSelesai = nextItinerary
+      ? nextItinerary.tanggalMulai
+      : itinerary.tanggalTiba;
+
+    return {
+      ...itinerary,
+      tanggalSelesai, // Assign tanggalSelesai based on the logic
+    };
+  });
+}
+
 export function validateItineraryChain(data: Itinerary[]): ValidationResult {
+  console.info("validateItineraryChain", data);
   if (data.length === 0)
     return {
       isValid: false,
@@ -148,19 +171,29 @@ export function validateItineraryChain(data: Itinerary[]): ValidationResult {
     (a, b) => a.tanggalMulai.getTime() - b.tanggalMulai.getTime()
   );
 
+  // set tanggalSelesai for each itinerary
+  const sortedItinerariesWithTanggalSelesai = setTanggalSelesai(sortedData);
+
   // Iterate through the sorted data and check for gaps
-  for (let i = 1; i < sortedData.length; i++) {
-    const previous = sortedData[i - 1];
-    const current = sortedData[i];
+  for (let i = 1; i < sortedItinerariesWithTanggalSelesai.length; i++) {
+    const previous = sortedItinerariesWithTanggalSelesai[i - 1];
+    const current = sortedItinerariesWithTanggalSelesai[i];
 
     //const nextDayAfterPrevious = new Date(previous.tanggalSelesai);
     // nextDayAfterPrevious.setDate(nextDayAfterPrevious.getDate() + 1); // Check if current tanggalMulai is the day after the previous tanggalSelesai
-    const endDayPrevious = new Date(previous.tanggalSelesai);
+    const endDayPrevious = new Date(
+      previous.tanggalSelesai || previous.tanggalTiba
+    );
 
-    const prevSelesai = formatDate(previous.tanggalSelesai, "yyyy-MM-dd");
+    const prevSelesai = formatDate(
+      previous.tanggalSelesai || previous.tanggalTiba,
+      "yyyy-MM-dd"
+    );
     const currentMulai = formatDate(current.tanggalMulai, "yyyy-MM-dd");
 
     const message = [];
+
+    console.log("previous", previous, "current", current);
 
     // Check if current itinerary starts on after the previous itinerary ends
     // get date only, ignore time
@@ -202,6 +235,7 @@ export function validateItineraryChain(data: Itinerary[]): ValidationResult {
   // If no gaps were found, return true (valid itinerary)
   return {
     isValid: true,
+    itineraries: sortedItinerariesWithTanggalSelesai,
   };
 }
 

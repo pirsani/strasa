@@ -23,11 +23,12 @@ export const TableCellInput = <T,>({
   className,
   type = "number",
 }: ITableCellProps<T>) => {
-  //const initialValue = getValue();
-  const [value, setValue] = useState(getValue());
+  // Provide a default value if getValue() returns undefined
+  const initialValue = getValue() ?? (type === "number" ? 0 : "");
+  const [value, setValue] = useState(initialValue);
 
   useEffect(() => {
-    setValue(getValue());
+    setValue(getValue() ?? (type === "number" ? 0 : ""));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getValue()]);
 

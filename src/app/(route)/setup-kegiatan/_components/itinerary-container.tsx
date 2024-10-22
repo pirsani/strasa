@@ -29,6 +29,7 @@ const ItineraryContainer = ({
   const [isEditing, setIsEditing] = useState(false);
 
   const handleFormSubmit = (itinerary: Itinerary) => {
+    console.log("handleFormSubmit", itinerary);
     // Check if the data is already in the list base on the id
     const isDataExist = data.find((r) => r.id === itinerary.id);
 
@@ -55,14 +56,17 @@ const ItineraryContainer = ({
       }
 
       // set data if iteneraryChain.isValid
-      setData((prev) =>
-        prev.map((r) => {
-          if (r.id === itinerary.id) {
-            return itinerary;
-          }
-          return r;
-        })
-      );
+      // setData((prev) =>
+      //   prev.map((r) => {
+      //     if (r.id === itinerary.id) {
+      //       return itinerary;
+      //     }
+      //     return r;
+      //   })
+      // );
+
+      iteneraryChain.itineraries && setData(iteneraryChain.itineraries);
+
       setEditableRow(null);
       return true;
     } else {
@@ -73,7 +77,9 @@ const ItineraryContainer = ({
         return false;
       }
       // set data
-      setData((prev) => [...prev, itinerary]);
+      iteneraryChain.itineraries && setData(iteneraryChain.itineraries);
+
+      //setData((prev) => [...prev, itinerary]);
     }
 
     toast.info(

@@ -400,6 +400,7 @@ async function insertPesertaDariExcel(
                 keLokasiId: it.keLokasiId,
                 pesertaKegiatanId: pesertaBaru.id,
                 tanggalMulai: it.tanggalMulai,
+                tanggalTiba: it.tanggalTiba,
                 tanggalSelesai: it.tanggalSelesai,
                 createdBy: penggunaId,
                 golonganUh: golonganUhLuarNegeri,

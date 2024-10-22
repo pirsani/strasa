@@ -213,7 +213,7 @@ async function generateDataRampunganMultiTujuan(kegiatan: KegiatanIncludeSpd) {
         [`dari${i}tanggal`]: formatTanggal(uh.tanggalMulai),
 
         [`tiba${i}`]: uh.keLokasiId,
-        [`tiba${i}tanggal`]: formatTanggal(uh.tanggalSelesai),
+        [`tiba${i}tanggal`]: formatTanggal(uh.tanggalTiba),
       };
       i++;
     });
@@ -223,7 +223,7 @@ async function generateDataRampunganMultiTujuan(kegiatan: KegiatanIncludeSpd) {
       [`dariKedudukanTanggal`]: rampunganData.dari1tanggal,
       [`tibaDiKedudukan`]: "Jakarta, DKI Jakarta",
       [`tibaDiKedudukanTanggal`]: format(
-        uhPeserta[uhPeserta.length - 1].tanggalSelesai,
+        uhPeserta[uhPeserta.length - 1].tanggalTiba,
         "dd MMMM yyyy"
       ),
     };
