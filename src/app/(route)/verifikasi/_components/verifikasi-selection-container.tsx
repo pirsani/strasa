@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ButtonsVerifikasi from "./buttons-verifikasi";
 import FormGenerateRampungan from "./rampungan/form-generate-rampungan";
 import UangHarianDalamNegeriContainer from "./uang-harian/dalam-negeri-container";
+import UangHarianLuarNegeriContainer from "./uang-harian/luar-negeri-container";
 
 interface VerfikasiSelectionContainerProps {
   kegiatan: KegiatanWithDetail | null;
@@ -61,7 +62,7 @@ const VerfikasiSelectionContainer = ({
             <UangHarianDalamNegeriContainer kegiatan={kegiatan} />
           )}
           {jenisPengajuan == "UH_LUAR_NEGERI" && (
-            <div>Verifikasi UH Luar Negeri</div>
+            <UangHarianLuarNegeriContainer kegiatan={kegiatan} />
           )}
           {jenisPengajuan == "PENGGANTIAN_REINBURSEMENT" && (
             <div>Verifikasi Penggantian Reinbursement</div>

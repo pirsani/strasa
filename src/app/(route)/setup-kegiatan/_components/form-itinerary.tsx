@@ -76,6 +76,9 @@ const FormItinerary = ({
   const setNextItineraryFrom = (lastItinerary: Itinerary) => {
     // add date plus 1 day
     const tanggalMulai = new Date(lastItinerary.tanggalSelesai);
+    const tanggalSelesai = new Date(tanggalMulai);
+    //console.log("lastItinerary", lastItinerary);
+    //console.log("tanggalMulai", tanggalMulai.setDate(1));
     tanggalSelesai.setDate(tanggalMulai.getDate() + 1);
 
     reset({
@@ -119,7 +122,8 @@ const FormItinerary = ({
       saveSuccess && setNextItineraryFrom(data);
       console.log(data);
     } catch (error) {
-      toast.error("Gagal menyimpan data itinerary");
+      console.error("Gagal menyimpan data itinerary", error);
+      //toast.error("Gagal menyimpan data itinerary");
     }
     console.log(data);
   };
