@@ -1,9 +1,9 @@
 import { PesertaKegiatanLuarNegeri } from "@/actions/kegiatan/peserta/luar-negeri";
+import { DetailUhLuarNegeriPeserta } from "@/actions/kegiatan/uang-harian/verifikasi-luar-negeri";
 import { TableCellInput } from "@/components/datatable/table-cell-input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatTanggal } from "@/utils/date-format";
-import { UhLuarNegeri } from "@prisma-honorarium/client";
 import {
   ColumnDef,
   flexRender,
@@ -152,23 +152,18 @@ const columns: ColumnDef<DetailUhLuarNegeriPeserta>[] = [
 interface TabelHariPesertaKegiatanProps {
   data: PesertaKegiatanLuarNegeri[];
   onDataChange?: (data: PesertaKegiatanLuarNegeri[]) => void;
+  onDetailUhLuarNegeriChange?: (data: DetailUhLuarNegeriPeserta[]) => void;
 }
 
-interface DetailUhLuarNegeriPeserta extends UhLuarNegeri {
-  nama: string;
-  NIP: string | null;
-  pangkatGolonganId: string | null;
-  jabatan: string | null;
-  eselon: string | null;
-}
 export const TabelHariPesertaKegiatan = ({
   data: defaultData,
   onDataChange = () => {},
+  onDetailUhLuarNegeriChange = () => {},
 }: TabelHariPesertaKegiatanProps) => {
   const [data, setData] = useState(() => [...defaultData]);
-  const [uhLuarNegeri, setUhLuarNegeri] = useState<DetailUhLuarNegeriPeserta[]>(
-    []
-  );
+  const [detailUhLuarNegeriPeserta, setDetailUhLuarNegeriPeserta] = useState<
+    DetailUhLuarNegeriPeserta[]
+  >([]);
   const [pageSize, setPageSize] = useState(10); // Set the initial page size
   const [pageIndex, setPageIndex] = useState(0); // Set the initial page index
   const [sorting, setSorting] = useState<SortingState>([]); // Explicitly define SortingState
@@ -198,11 +193,11 @@ export const TabelHariPesertaKegiatan = ({
 
     setHeaderColumnHPerjalanan(hPerjalanan);
     const updatedData = changeAllRowsColumnUhLuarNegeri(
-      uhLuarNegeri,
+      detailUhLuarNegeriPeserta,
       "hPerjalanan",
       hPerjalanan
     );
-    setUhLuarNegeri(updatedData);
+    setDetailUhLuarNegeriPeserta(updatedData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [headerColumnJamPerjalanan]);
 
@@ -211,12 +206,12 @@ export const TabelHariPesertaKegiatan = ({
       headerColumnHPerjalanan + headerColumnHUangHarian + headerColumnHDiklat;
     setTotalJumlahHari(total);
 
-    const updatedPeserta = uhLuarNegeri.map((row) => {
+    const updatedData = detailUhLuarNegeriPeserta.map((row) => {
       const newRow = calculateTotal(row);
       return newRow;
     });
 
-    setUhLuarNegeri(updatedPeserta);
+    setDetailUhLuarNegeriPeserta(updatedData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [headerColumnHPerjalanan, headerColumnHUangHarian, headerColumnHDiklat]);
 
@@ -226,7 +221,7 @@ export const TabelHariPesertaKegiatan = ({
 
   useEffect(() => {
     // Iterate over all peserta and get uhLuarNegeri flattened
-    const dataAllUhLuarNegeri: DetailUhLuarNegeriPeserta[] =
+    const flatDataUhLuarNegeriPeserta: DetailUhLuarNegeriPeserta[] =
       defaultData.flatMap((p) => {
         if (!p.uhLuarNegeri) {
           return [];
@@ -243,11 +238,16 @@ export const TabelHariPesertaKegiatan = ({
           }));
       });
 
-    setUhLuarNegeri(dataAllUhLuarNegeri);
+    setDetailUhLuarNegeriPeserta(flatDataUhLuarNegeriPeserta);
   }, [defaultData]);
 
+  useEffect(() => {
+    onDetailUhLuarNegeriChange(detailUhLuarNegeriPeserta);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detailUhLuarNegeriPeserta]);
+
   const table = useReactTable<DetailUhLuarNegeriPeserta>({
-    data: uhLuarNegeri,
+    data: detailUhLuarNegeriPeserta,
     columns,
     pageCount: Math.ceil(data.length / pageSize), // Dynamic page count
     state: {
@@ -271,7 +271,7 @@ export const TabelHariPesertaKegiatan = ({
     },
     meta: {
       updateData: (rowIndex: number, columnId: string, value: string) => {
-        setUhLuarNegeri((old) =>
+        setDetailUhLuarNegeriPeserta((old) =>
           old.map((row, index) => {
             if (index === rowIndex) {
               let parentObj = null;
@@ -341,8 +341,12 @@ export const TabelHariPesertaKegiatan = ({
 
   const handleHeaderColumnBlur = (field: string, value: number) => {
     //const updated = updateAll
-    const updated = changeAllRowsColumnUhLuarNegeri(uhLuarNegeri, field, value);
-    setUhLuarNegeri((prev) => updated);
+    const updated = changeAllRowsColumnUhLuarNegeri(
+      detailUhLuarNegeriPeserta,
+      field,
+      value
+    );
+    setDetailUhLuarNegeriPeserta((prev) => updated);
     console.log("[handleHeaderColumnBlur]", updated);
   };
 
@@ -445,28 +449,28 @@ export const TabelHariPesertaKegiatan = ({
                       {""}
                     </th>
                     <HeaderInputColumn
-                      uhLuarNegeri={uhLuarNegeri}
+                      uhLuarNegeri={detailUhLuarNegeriPeserta}
                       field="jamPerjalanan"
                       setColumValaue={setHeaderColumnJamPerjalanan}
                       onBlur={handleHeaderColumnBlur}
                       value={headerColumnJamPerjalanan}
                     />
                     <HeaderInputColumn
-                      uhLuarNegeri={uhLuarNegeri}
+                      uhLuarNegeri={detailUhLuarNegeriPeserta}
                       field="hPerjalanan"
                       setColumValaue={setHeaderColumnHPerjalanan}
                       onBlur={handleHeaderColumnBlur}
                       value={headerColumnHPerjalanan}
                     />
                     <HeaderInputColumn
-                      uhLuarNegeri={uhLuarNegeri}
+                      uhLuarNegeri={detailUhLuarNegeriPeserta}
                       field="hUangHarian"
                       setColumValaue={setHeaderColumnHUangHarian}
                       onBlur={handleHeaderColumnBlur}
                       value={headerColumnHUangHarian}
                     />
                     <HeaderInputColumn
-                      uhLuarNegeri={uhLuarNegeri}
+                      uhLuarNegeri={detailUhLuarNegeriPeserta}
                       field="hDiklat"
                       setColumValaue={setHeaderColumnHdiklat}
                       onBlur={handleHeaderColumnBlur}

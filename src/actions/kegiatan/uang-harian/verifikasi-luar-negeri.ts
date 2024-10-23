@@ -1,10 +1,16 @@
 "use server";
+import { PesertaKegiatanLuarNegeri } from "@/actions/kegiatan/peserta/luar-negeri";
 import { getSessionPenggunaForAction } from "@/actions/pengguna";
 import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
 import { dbHonorarium } from "@/lib/db-honorarium";
+import {
+  SbmUhLuarNegeri,
+  STATUS_PENGAJUAN,
+  UhLuarNegeri,
+} from "@prisma-honorarium/client";
 import { Logger } from "tslog";
-import { PesertaKegiatanLuarNegeri } from "../peserta/luar-negeri";
+import { updateStatusUhLuarNegeri } from "../proses";
 
 const logger = new Logger({
   hideLogPositionForProduction: true,
@@ -12,8 +18,19 @@ const logger = new Logger({
 
 const SetujuiPengajuanUhLuarNegeri = async (
   kegiatanId: string,
-  pesertaKegiatan: PesertaKegiatanLuarNegeri[]
+  pesertaKegiatan: PesertaKegiatanLuarNegeri[],
+  detailUhLuarNegeriPeserta: DetailUhLuarNegeriPeserta[] | null
 ): Promise<ActionResponse<boolean>> => {
+  logger.debug("SetujuiPengajuanUhLuarNegeri", kegiatanId);
+  if (!detailUhLuarNegeriPeserta) {
+    return {
+      success: false,
+      error: "E-SPUHDN-01",
+      message: "Detail peserta uang harian luar negeri tidak ditemukan",
+    };
+  }
+  //logger.debug("detailUhLuarNegeriPeserta", detailUhLuarNegeriPeserta);
+
   try {
     const pengguna = await getSessionPenggunaForAction();
     if (!pengguna.success) {
@@ -47,6 +64,7 @@ const SetujuiPengajuanUhLuarNegeri = async (
     const negaraInItinerary = kegiatan.itinerary.map((it) => it.keLokasiId);
     // filter IDN because it's not a foreign country
     const negara = negaraInItinerary.filter((n) => n !== "IDN");
+    logger.debug("negara", negara);
 
     // find SBM that exist in itinerary
     const tahunSbm = kegiatan.tanggalMulai.getFullYear();
@@ -59,7 +77,7 @@ const SetujuiPengajuanUhLuarNegeri = async (
       },
     });
 
-    logger.debug("sbm", sbm);
+    //logger.debug("sbm", sbm);
 
     if (!sbm || sbm.length === 0) {
       const error = `E-SBMUHDN-01`;
@@ -89,52 +107,68 @@ const SetujuiPengajuanUhLuarNegeri = async (
       };
     }
 
+    let x = 0;
     const transactionUpdate = await dbHonorarium.$transaction(
       async (prisma) => {
-        const peserta = pesertaKegiatan.map(async (p) => {
-          const uhLuarNegeri = p.uhLuarNegeri;
-          if (uhLuarNegeri) {
-            // iterate through each uhLuarNegeri
-            // update status to approved
-
-            for (const uh of uhLuarNegeri) {
-              const sbmNegara = sbm.find((s) => s.negaraId === uh.keLokasiId);
-              logger.debug("negaraId sbmNegara ", uh.keLokasiId, sbmNegara);
-              const updateEachUh = await prisma.uhLuarNegeri.update({
-                where: {
-                  id: uh.id,
-                },
-                data: {
-                  updatedAt: new Date(),
-                },
-              });
-              // logger.debug("[SetujuiPengajuanUhLuarNegeri] updateEachUh", {
-              //   updateEachUh,
-              // });
-            }
-
-            //return updatedUhLuarNegeriPerPeserta;
+        // iterate detailUhLuarNegeriPeserta
+        for (const d of detailUhLuarNegeriPeserta) {
+          const sbmNegara = sbm.find((s) => s.negaraId === d.keLokasiId);
+          //hardcoded for IDN, do not UPDATE IDN
+          if (!sbmNegara || d.keLokasiId === "IDN") {
+            //logger.debug("detailUhLuarNegeriPeserta SKIP", d);
+            continue;
           }
-          // insert your logic here
-        });
 
-        await Promise.all(peserta);
-        return peserta;
+          if (d.jumlahHari === 0) {
+            logger.debug("detailUhLuarNegeriPeserta SKIP", d);
+            continue;
+          }
+
+          const golonganUh: GolonganKeys = ("golongan" + d.golonganUh ||
+            "D") as GolonganKeys;
+          //getNominalUhLuarNegeri
+          const nominal = await getNominalUhLuarNegeri(sbmNegara, golonganUh);
+          //logger.debug("getNominalUhLuarNegeri", nominal);
+          if (!nominal) {
+            continue;
+          }
+
+          const updated = await prisma.uhLuarNegeri.update({
+            where: {
+              id: d.id,
+              pesertaKegiatanId: d.pesertaKegiatanId,
+            },
+            data: {
+              nominalGolonganUh: Number(nominal),
+              jumlahHari: d.jumlahHari,
+              jamPerjalanan: d.jamPerjalanan,
+              hPerjalanan: d.hPerjalanan,
+              uhPerjalanan: nominal.times(d.hPerjalanan).times(0.4),
+              hUangHarian: d.hUangHarian,
+              uhUangHarian: nominal.times(d.jumlahHari),
+              hDiklat: d.hDiklat,
+              uhDiklat: nominal.times(d.jumlahHari).times(0.8),
+              updatedAt: new Date(),
+            },
+          });
+        }
+
+        //update riwayat kegiatan
+        //const updatedRiwayatPengajuan = await updateRiwayat
+
+        return true;
       }
     );
 
-    // update riwayat kegiatan
-    //const updatedRiwayatPengajuan = await updateRiwayat
+    const updated = await updateStatusUhLuarNegeri(
+      kegiatanId,
+      STATUS_PENGAJUAN.APPROVED
+    );
 
-    // const updated = await updateStatusUhLuarNegeri(
-    //   kegiatanId,
-    //   STATUS_PENGAJUAN.APPROVED
-    // );
-
-    // logger.info("[SUCCESS SetujuiPengajuanUhLuarNegeri]", {
-    //   transactionUpdate,
-    //   updated,
-    // });
+    logger.info("[SUCCESS SetujuiPengajuanUhLuarNegeri]", {
+      transactionUpdate,
+      updated,
+    });
 
     // all peserta updated
     return {
@@ -145,6 +179,25 @@ const SetujuiPengajuanUhLuarNegeri = async (
     console.error("[ERROR SetujuiPengajuanUhLuarNegeri]", error);
     return getPrismaErrorResponse(error as Error);
   }
+};
+
+export interface DetailUhLuarNegeriPeserta extends UhLuarNegeri {
+  nama: string;
+  NIP: string | null;
+  pangkatGolonganId: string | null;
+  jabatan: string | null;
+  eselon: string | null;
+}
+
+type GolonganKeys = "golonganA" | "golonganB" | "golonganC" | "golonganD";
+
+export const getNominalUhLuarNegeri = async (
+  sbm: SbmUhLuarNegeri,
+  golonganUh: GolonganKeys
+) => {
+  const nominal = sbm[golonganUh];
+  logger.debug("[getNominalUhLuarNegeri]", nominal);
+  return nominal;
 };
 
 export default SetujuiPengajuanUhLuarNegeri;

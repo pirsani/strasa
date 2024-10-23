@@ -20,10 +20,22 @@ const VerifikasiDataDukungUangHarianLuarNegeri = ({
     (dokumen) => dokumen.jenisDokumenId === "rampungan-terstempel"
   );
 
+  const suratPersetujuanJaldisSetneg = dokumenKegiatan?.find(
+    (dokumen) => dokumen.jenisDokumenId === "surat-persetujuan-jaldis-setneg"
+  );
+
+  const paspor = dokumenKegiatan?.find(
+    (dokumen) => dokumen.jenisDokumenId === "paspor"
+  );
+
+  const tikerBoardingPass = dokumenKegiatan?.find(
+    (dokumen) => dokumen.jenisDokumenId === "tiket-boarding-pass"
+  );
+
   return (
-    <div className="">
+    <div className="" id="VDDKUHLN-8789">
       <h1 className="font-semibold text-lg py-2 p-2 border-b border-gray-300">
-        Data Dukung Pengajuan Uang Harian Dalam Negeri
+        Data Dukung Pengajuan Uang Harian Luar Negeri
       </h1>
       <div className="flex flex-col gap-8 p-2 pb-8">
         <div className="w-full flex flex-col gap-2">
@@ -42,6 +54,18 @@ const VerifikasiDataDukungUangHarianLuarNegeri = ({
           <TextDokumenWithPreviewButton
             label="Rampungan yang distempel"
             dokumen={rampungan}
+          />
+
+          <TextDokumenWithPreviewButton
+            label="Surat Persetujuan Jaldis Setneg"
+            dokumen={suratPersetujuanJaldisSetneg}
+          />
+
+          <TextDokumenWithPreviewButton label="Paspor" dokumen={paspor} />
+
+          <TextDokumenWithPreviewButton
+            label="Tiket Boarding Pass"
+            dokumen={tikerBoardingPass}
           />
         </div>
       </div>

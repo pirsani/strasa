@@ -257,7 +257,8 @@ function getGolonganUhLuarNegeriFromGolonganRuang(
   golonganRuang: string | null
 ): "A" | "B" | "C" | "D" | null {
   if (!golonganRuang) {
-    return null;
+    // jika tidak ada golongan ruang, maka default ke D yang terendah
+    return "D";
   }
 
   let gl = golonganRuang.trim();
@@ -275,6 +276,7 @@ function getGolonganUhLuarNegeriFromGolonganRuang(
       golongaUhLuarNegeri = "C";
       break;
     default:
+      golongaUhLuarNegeri = "D";
       break;
   }
   return golongaUhLuarNegeri;

@@ -607,11 +607,11 @@ model UhLuarNegeri {
   nominalGolonganUh      Int?             @default(0) @map("nominal_golongan_uh") // sesuai dengan golongan yg ada di SbmUhLuarNegeri, karena bersifat historis maka diambil dari SbmUhLuarNegeri, resiko perubahan nilai nominal golongan di SbmUhLuarNegeri harus dihandle di aplikasi
   jamPerjalanan          Float            @default(0) @map("jam_perjalanan") // tidak perlu decimal karena tidak akan dikalikan dengan nominal sehingga presisi tidak terlalu penting karena hanya akan di mode 24 jam
   hPerjalanan            Int              @default(0) @map("h_perjalanan")
-  uhPerjalanan           Int              @default(0) @map("uh_perjalanan")
+  uhPerjalanan           Decimal          @default(0) @map("uh_perjalanan")
   hUangHarian            Int              @default(0) @map("h_uang_harian")
-  uhUangHarian           Int              @default(0) @map("uh_uang_harian")
+  uhUangHarian           Decimal          @default(0) @map("uh_uang_harian")
   hDiklat                Int              @default(0) @map("h_diklat")
-  uhDiklat               Int              @default(0) @map("uh_diklat")
+  uhDiklat               Decimal          @default(0) @map("uh_diklat")
   dokumenBuktiPembayaran String?          @map("dokumen_bukti_pembayaran")
   createdBy              String           @map("created_by")
   createdAt              DateTime         @default(now()) @map("created_at")

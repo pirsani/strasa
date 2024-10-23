@@ -8,6 +8,7 @@ import useFileStore from "@/hooks/use-file-store";
 import { JENIS_PENGAJUAN, LogProses } from "@prisma-honorarium/client";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import VerifikasiDataDukungUangHarianLuarNegeri from "../../verifikasi/_components/uang-harian/data-dukung-luar-negeri";
 import ButtonsPengajuan from "./buttons-pengajuan";
 import { DisplayFormPengajuanGenerateRampungan } from "./honorarium/display-form-pengajuan-generate-rampungan";
 import HonorariumContainer from "./honorarium/honorarium-container";
@@ -30,6 +31,21 @@ const PengajuanContainer = () => {
   );
 
   const { fileUrl, isPreviewHidden } = useFileStore();
+
+  // Check if there's an existing pengajuan rampungan
+  const pengajuanRampungan = kegiatan?.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "GENERATE_RAMPUNGAN"
+  );
+  const pengajuanUhDalamNegeri = kegiatan?.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "UH_DALAM_NEGERI"
+  );
+  const pengajuanUhLuarNegeri = kegiatan?.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "UH_LUAR_NEGERI"
+  );
+
+  const pengajuanHonorarium = kegiatan?.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "HONORARIUM"
+  );
 
   const handleSelection = (jenis: JENIS_PENGAJUAN) => {
     setJenisPengajuan(jenis);
@@ -92,8 +108,6 @@ const PengajuanContainer = () => {
             logProses={logProses}
           />
 
-          <span>{jenisPengajuan}</span>
-
           <DisplayFormPengajuanGenerateRampungan
             jenisPengajuan={jenisPengajuan}
             kegiatan={kegiatan}
@@ -111,9 +125,26 @@ const PengajuanContainer = () => {
           {jenisPengajuan == "UH_DALAM_NEGERI" && kegiatan && (
             <UhDalamNegeriContainer kegiatanId={kegiatan.id} />
           )}
-          {jenisPengajuan == "UH_LUAR_NEGERI" && kegiatan && (
-            <UhLuarNegeriContainer kegiatanId={kegiatan.id} />
-          )}
+
+          {/*
+          hanya tampilkan form pengajuan jika status pengajuan belum submitted atau revisi
+          */}
+          {(!pengajuanUhLuarNegeri ||
+            pengajuanUhLuarNegeri.status === "REVISE") &&
+            jenisPengajuan == "UH_LUAR_NEGERI" &&
+            kegiatan && <UhLuarNegeriContainer kegiatanId={kegiatan.id} />}
+
+          {/*
+          jika status pengajuan sudah submitted, maka tampilkan data dukung
+          */}
+          {pengajuanUhLuarNegeri &&
+            pengajuanUhLuarNegeri.status !== "REVISE" &&
+            jenisPengajuan == "UH_LUAR_NEGERI" && (
+              <VerifikasiDataDukungUangHarianLuarNegeri
+                dokumenKegiatan={kegiatan?.dokumenKegiatan}
+              />
+            )}
+
           {jenisPengajuan == "PENGGANTIAN_REINBURSEMENT" && (
             <PenggantianContainer />
           )}

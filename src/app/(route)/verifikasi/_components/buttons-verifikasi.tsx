@@ -52,8 +52,12 @@ const ButtonsVerifikasi = ({
   const pengajuanUhDalamNegeri = kegiatan.riwayatPengajuan?.find(
     (riwayat) => riwayat.jenis === "UH_DALAM_NEGERI"
   );
-  const pengajuanHonorarium = kegiatan.riwayatPengajuan?.find(
+  const pengajuanUhLuarNegeri = kegiatan.riwayatPengajuan?.find(
     (riwayat) => riwayat.jenis === "UH_LUAR_NEGERI"
+  );
+
+  const pengajuanHonorarium = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "HONORARIUM"
   );
 
   return (
@@ -87,7 +91,7 @@ const ButtonsVerifikasi = ({
           handleOnClick={() => handleOnClick("UH_LUAR_NEGERI")}
           jenisPengajuan={jenisPengajuan}
           statusRampungan={pengajuanRampungan?.status || null}
-          statusUhLuarNegeri={pengajuanHonorarium?.status || null}
+          statusUhLuarNegeri={pengajuanUhLuarNegeri?.status || null}
         />
       )}
 
@@ -212,6 +216,7 @@ const ButtonVerifikasiUhLuarNegeri = ({
     (statusRampungan !== "VERIFIED" && statusRampungan !== "END")
   )
     return null;
+
   //jika status UH dalam negeri bukan pengajuan, maka button tidak muncul
   if (!statusUhLuarNegeri || statusUhLuarNegeri !== "SUBMITTED") return null;
 

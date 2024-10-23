@@ -2,6 +2,7 @@
 import { KegiatanWithDetail } from "@/actions/kegiatan";
 import { LOKASI } from "@prisma-honorarium/client";
 //import { Kegiatan } from "@/zod/schemas/kegiatan";
+import { mapStatusLangkahToDesc } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import TextDokumenMultiFile from "./text-dokumen-multi-file";
@@ -35,6 +36,20 @@ const PreviewKegiatan = ({ kegiatan, className }: PreviewKegiatanProps) => {
 
   const dokumenJadwal = dokumenKegiatan?.find(
     (dokumen) => dokumen.jenisDokumenId === "jadwal-kegiatan"
+  );
+
+  const pengajuanRampungan = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "GENERATE_RAMPUNGAN"
+  );
+  const pengajuanUhDalamNegeri = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "UH_DALAM_NEGERI"
+  );
+  const pengajuanUhLuarNegeri = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "UH_LUAR_NEGERI"
+  );
+
+  const pengajuanHonorarium = kegiatan.riwayatPengajuan?.find(
+    (riwayat) => riwayat.jenis === "HONORARIUM"
   );
 
   return (
@@ -94,6 +109,13 @@ const PreviewKegiatan = ({ kegiatan, className }: PreviewKegiatanProps) => {
             </div>
           )}
 
+          {pengajuanRampungan && (
+            <RowText
+              label="Status Rampungan"
+              value={mapStatusLangkahToDesc(pengajuanRampungan.status)}
+            />
+          )}
+
           {kegiatan.spd?.id && (
             <TextWithPreviewButton
               label="SPD"
@@ -101,10 +123,37 @@ const PreviewKegiatan = ({ kegiatan, className }: PreviewKegiatanProps) => {
               url={`/download/dokumen-rampungan/${kegiatan.id}`}
             />
           )}
+
+          {pengajuanUhLuarNegeri && (
+            <RowText
+              label="Status UH Luar Negeri"
+              value={mapStatusLangkahToDesc(pengajuanUhLuarNegeri.status)}
+            />
+          )}
+
+          {pengajuanUhDalamNegeri && (
+            <RowText
+              label="Status UH Dalam Negeri"
+              value={mapStatusLangkahToDesc(pengajuanUhDalamNegeri.status)}
+            />
+          )}
         </div>
       )}
     </div>
   );
 };
+
+interface RowTextProps {
+  label: string;
+  value: string;
+}
+const RowText = ({ label, value }: RowTextProps) => (
+  <div className="flex flex-col">
+    <span className="text-gray-700">{label}</span>
+    <span className=" bg-gray-100 border border-gray-300 rounded px-2 py-1 w-full">
+      {value}
+    </span>
+  </div>
+);
 
 export default PreviewKegiatan;

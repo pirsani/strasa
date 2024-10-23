@@ -256,6 +256,11 @@ const ButtonAjukanUhLuarNegeri = ({
     (statusRampungan !== "VERIFIED" && statusRampungan !== "END")
   )
     return null;
+
+  const buttonText = statusUhLuarNegeri
+    ? "UH Luar Negeri telah diajukan"
+    : "Ajukan UH Luar Negeri";
+
   return (
     <Button
       variant="outline"
@@ -269,7 +274,7 @@ const ButtonAjukanUhLuarNegeri = ({
         <Globe size={24} />
         <PlaneTakeoff size={24} />
       </div>
-      <span className="hidden sm:block">Ajukan UH Luar Negeri</span>
+      <span className="hidden sm:block">{buttonText}</span>
     </Button>
   );
 };
