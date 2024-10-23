@@ -2,6 +2,7 @@ import SimpanJadwalKelasNarasumber from "@/actions/honorarium/narasumber/narasum
 import CummulativeErrors from "@/components/form/cummulative-error";
 import InputDatePicker from "@/components/form/date-picker/input-date-picker";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
+import InputFileImmediateUpload from "@/components/form/input-file-immediate-upload";
 import RequiredLabel from "@/components/form/required";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import useFileStore from "@/hooks/use-file-store";
 import { cn } from "@/lib/utils";
 import { Jadwal, jadwalSchema } from "@/zod/schemas/jadwal";
@@ -76,6 +78,20 @@ const FormJadwal = ({
   const dokumenKonfirmasiKesediaanMengajarCuid = form.watch(
     "dokumenKonfirmasiKesediaanMengajarCuid"
   );
+
+  const [dokumenKonfirmasiNarasaumber, setDokumenKonfirmasiNarasumber] =
+    useState<string[]>([]);
+
+  const handleNarasumberChange = (narasumbers?: string[] | string | null) => {
+    if (narasumbers) {
+      // check if narasumbers is an array
+      if (Array.isArray(narasumbers)) {
+        setDokumenKonfirmasiNarasumber(narasumbers);
+      } else {
+        setDokumenKonfirmasiNarasumber([narasumbers]);
+      }
+    }
+  };
 
   const handleReset = () => {
     reset({
@@ -250,7 +266,10 @@ const FormJadwal = ({
                 <SelectNarasumber
                   isMulti
                   inputId={field.name}
-                  onChange={field.onChange}
+                  onChange={(values, labels) => {
+                    field.onChange(values);
+                    handleNarasumberChange(labels);
+                  }}
                   values={field.value}
                 />
               </FormControl>
@@ -258,6 +277,19 @@ const FormJadwal = ({
             </FormItem>
           )}
         />
+
+        {dokumenKonfirmasiNarasaumber.map((dokumen, index) => (
+          <div className="flex flex-col gap-2" key={dokumen}>
+            <Label className="">
+              Konfirmasi kesediaan {dokumen.split("-")[1]}
+            </Label>
+            <InputFileImmediateUpload
+              cuid={dokumen.split("-")[0]}
+              folder={kegiatanId + "/narsum/konfirmasi"}
+              name={dokumen.split("-")[1]}
+            />
+          </div>
+        ))}
 
         <FormField
           control={control}
@@ -305,29 +337,7 @@ const FormJadwal = ({
             </FormItem>
           )}
         />
-        <FormField
-          control={control}
-          name="dokumenKonfirmasiKesediaanMengajar"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Lembar Konfirmasi Kesediaan Mengajar
-                <RequiredLabel />
-              </FormLabel>
-              <FormControl>
-                <FormFileImmediateUpload
-                  cuid={dokumenKonfirmasiKesediaanMengajarCuid}
-                  folder={kegiatanId}
-                  name={field.name}
-                  onFileChange={handleFileChange}
-                  onFileUploadComplete={handleFileUploadCompleted}
-                  className="bg-white"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <CummulativeErrors errors={errors} verbose={false} />
         <div
           className={cn("flex flex-col sm:flex-row  sm:justify-end gap-2 mt-6")}

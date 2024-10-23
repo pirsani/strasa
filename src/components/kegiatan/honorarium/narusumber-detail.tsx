@@ -1,9 +1,12 @@
 import { updateJumlahJpJadwalNarasumber } from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
 import { OptionSbm } from "@/actions/sbm";
 import ButtonEye from "@/components/button-eye-open-document";
+import InputFileImmediateUpload from "@/components/form/input-file-immediate-upload";
 import { Button } from "@/components/ui/button";
 import { getBesaranPajakHonorarium } from "@/lib/pajak";
 import formatCurrency from "@/utils/format-currency";
+import { randomStrimg } from "@/utils/random-string";
+import { createId } from "@paralleldrive/cuid2";
 import {
   ALUR_PROSES,
   JadwalNarasumber,
@@ -173,8 +176,10 @@ const NarasumberDetail = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proses, statusPengajuanHonorarium]);
 
+  const genId = randomStrimg(5);
+  const cuid = createId();
   return (
-    <div>
+    <div id={`CKHND-Narasumber-${genId}`}>
       <RowNarasumber text="Nama" value={narasumber.nama} />
       <RowNarasumber
         text="Golongan/Ruang"
@@ -189,8 +194,7 @@ const NarasumberDetail = ({
       <RowNarasumber text="Nomor Rekening" value={narasumber.nomorRekening} />
       <RowNarasumberWithInput text="lembar konfirmasi">
         <div className="w-full flex justify-between">
-          <span>nama file</span>
-          <ButtonEye url="/templates/pdf-placeholder.pdf" />
+          <LembarKonfirmasi cuid={cuid} jadwalNarasumber={jadwalNarasumber} />
         </div>
       </RowNarasumberWithInput>
       <RowNarasumberWithInput text="Jenis Honorarium">
@@ -246,6 +250,30 @@ const RowNarasumber = ({ text, value }: RowNarasumberProps) => {
       <div className="w-2/3">{value}</div>
     </div>
   );
+};
+
+interface LembarKonfirmasiProps {
+  jadwalNarasumber: JadwalNarasumber;
+  cuid: string;
+}
+const LembarKonfirmasi = ({
+  jadwalNarasumber,
+  cuid,
+}: LembarKonfirmasiProps) => {
+  const lk = jadwalNarasumber.dokumenKonfirmasiKesediaanMengajar;
+  if (!lk || lk === "") {
+    return (
+      <>
+        <InputFileImmediateUpload
+          cuid={cuid}
+          folder={jadwalNarasumber.narasumberId}
+          name="dokumenKonfirmasiKesediaanMengajar"
+        />
+      </>
+    );
+  } else {
+    <ButtonEye url="/templates/pdf-placeholder.pdf" />;
+  }
 };
 
 const RowNarasumberWithInput = ({
