@@ -1,7 +1,6 @@
 import { updateJumlahJpJadwalNarasumber } from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
 import { OptionSbm } from "@/actions/sbm";
 import ButtonEye from "@/components/button-eye-open-document";
-import InputFileImmediateUpload from "@/components/form/input-file-immediate-upload";
 import { Button } from "@/components/ui/button";
 import { getBesaranPajakHonorarium } from "@/lib/pajak";
 import formatCurrency from "@/utils/format-currency";
@@ -192,10 +191,8 @@ const NarasumberDetail = ({
       <RowNarasumber text="Bank" value={narasumber.bank} />
       <RowNarasumber text="Nama Rekening" value={narasumber.namaRekening} />
       <RowNarasumber text="Nomor Rekening" value={narasumber.nomorRekening} />
-      <RowNarasumberWithInput text="lembar konfirmasi">
-        <div className="w-full flex justify-between">
-          <LembarKonfirmasi cuid={cuid} jadwalNarasumber={jadwalNarasumber} />
-        </div>
+      <RowNarasumberWithInput text="Lembar konfirmasi">
+        <LembarKonfirmasi jadwalNarasumber={jadwalNarasumber} cuid={cuid} />
       </RowNarasumberWithInput>
       <RowNarasumberWithInput text="Jenis Honorarium">
         <SelectSbmHonorarium
@@ -261,19 +258,32 @@ const LembarKonfirmasi = ({
   cuid,
 }: LembarKonfirmasiProps) => {
   const lk = jadwalNarasumber.dokumenKonfirmasiKesediaanMengajar;
-  if (!lk || lk === "") {
+  const id = jadwalNarasumber.id;
+  const narasumberId = jadwalNarasumber.narasumberId;
+
+  if (lk && lk !== "")
     return (
-      <>
-        <InputFileImmediateUpload
-          cuid={cuid}
-          folder={jadwalNarasumber.narasumberId}
-          name="dokumenKonfirmasiKesediaanMengajar"
+      <div className="flex flex-row w-full justify-end">
+        <ButtonEye
+          url={`/download/konfirmasi-kesediaan-mengajar/${narasumberId}/${id}`}
         />
-      </>
+      </div>
     );
-  } else {
-    <ButtonEye url="/templates/pdf-placeholder.pdf" />;
-  }
+  else return null;
+
+  // if (!lk || lk === "") {
+  //   return (
+  //     <>
+  //       <InputFileImmediateUpload
+  //         cuid={cuid}
+  //         folder={jadwalNarasumber.narasumberId}
+  //         name="dokumenKonfirmasiKesediaanMengajar"
+  //       />
+  //     </>
+  //   );
+  // } else {
+  //   <ButtonEye url="/templates/pdf-placeholder.pdf" />;
+  // }
 };
 
 const RowNarasumberWithInput = ({

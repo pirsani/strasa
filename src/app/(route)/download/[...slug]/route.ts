@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import downloadDokumenKegiatan from "./dokumen-kegiatan";
-import downloadDokumenNarasumber from "./dokumen-narasumber";
+import downloadDokumenNarasumber, {
+  downloadDokumenKonfirmasiKesediaanMengajar,
+} from "./dokumen-narasumber";
 import { downloadDokumenPengadaan } from "./generator-dokumen-pengadaan";
 import { downloadDokumenRampungan } from "./generator-rampungan";
 import { downloadDokumenSpd } from "./generator-spd";
@@ -35,6 +37,8 @@ export async function GET(
       return downloadTest(req, slug);
     case "spd-peserta":
       return downloadSpdDaftarPeserta(req, slug);
+    case "konfirmasi-kesediaan-mengajar":
+      return downloadDokumenKonfirmasiKesediaanMengajar(req, slug);
     default:
       return new NextResponse(`Download ${params.slug.join("/")}`);
   }
