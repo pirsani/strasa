@@ -67,8 +67,7 @@ export const SimpanJadwalKelasNarasumber = async (
             dokumenDaftarHadir: moveFileResult?.dokumenDaftarHadirPath,
             dokumenUndanganNarasumber:
               moveFileResult?.dokumenUndanganNarasumberPath,
-            dokumenKonfirmasiKesediaanMengajar:
-              moveFileResult?.dokumenKonfirmasiKesediaanMengajarPath,
+
             tanggal: jadwal.tanggal,
             createdBy: penggunaId,
             createdAt: new Date(),
@@ -84,6 +83,13 @@ export const SimpanJadwalKelasNarasumber = async (
           const asWas = {
             narasumber: JSON.parse(JSON.stringify(narsum)),
           };
+
+          const dokumenKonfirmasiKesediaanMengajar =
+            moveFileResult?.dokumenKonfirmasiNarasumber.find((dokumen) => {
+              const lastPart = path.parse(dokumen).name;
+              //const [idNarasumber, _ext] = dokumen.split(".");
+              return lastPart === narasumberId;
+            });
           //const asWasJson = asWas;
           await prisma.jadwalNarasumber.upsert({
             where: {
@@ -101,6 +107,8 @@ export const SimpanJadwalKelasNarasumber = async (
               jadwalId: jadwalUpsert.id,
               narasumberId: narasumberId,
               jumlahJamPelajaran: jadwal.jumlahJamPelajaran,
+              dokumenKonfirmasiKesediaanMengajar:
+                dokumenKonfirmasiKesediaanMengajar,
               createdBy: penggunaId,
               createdAt: new Date(),
               asWas,
@@ -173,7 +181,7 @@ export const deleteJadwalKelasNarasumber = async (
 interface ResultSaveFileToFinalFolder {
   dokumenDaftarHadirPath: string | null;
   dokumenUndanganNarasumberPath: string | null;
-  dokumenKonfirmasiKesediaanMengajarPath: string | null;
+  dokumenKonfirmasiNarasumber: string[];
 }
 const saveFileToFinalFolder = async (
   data: Jadwal,
@@ -182,7 +190,7 @@ const saveFileToFinalFolder = async (
   let result: ResultSaveFileToFinalFolder = {
     dokumenDaftarHadirPath: null,
     dokumenUndanganNarasumberPath: null,
-    dokumenKonfirmasiKesediaanMengajarPath: null,
+    dokumenKonfirmasiNarasumber: [],
   };
   console.log(
     "dokumenCuids",
@@ -190,9 +198,10 @@ const saveFileToFinalFolder = async (
     data.dokumenUndanganNarasumberCuid
   );
   if (
+    !data.id ||
     !data.dokumenDaftarHadirCuid ||
     !data.dokumenUndanganNarasumberCuid ||
-    !data.dokumenKonfirmasiKesediaanMengajarCuid
+    data.dokumenKonfirmasiNarasumber.length === 0
   ) {
     return null;
   }
@@ -204,7 +213,7 @@ const saveFileToFinalFolder = async (
           in: [
             data.dokumenDaftarHadirCuid,
             data.dokumenUndanganNarasumberCuid,
-            data.dokumenKonfirmasiKesediaanMengajarCuid,
+            ...data.dokumenKonfirmasiNarasumber,
           ],
         },
       },
@@ -220,9 +229,15 @@ const saveFileToFinalFolder = async (
       BASE_PATH_UPLOAD,
       tahunKegiatan.toString(),
       data.kegiatanId,
-      "jadwal-kelas-narasumber"
+      "jadwal-kelas-narasumber",
+      data.id
     );
-    const tempPath = path.posix.join(BASE_PATH_UPLOAD, "temp", data.kegiatanId);
+    const tempPath = path.posix.join(
+      BASE_PATH_UPLOAD,
+      "temp",
+      data.kegiatanId,
+      data.id
+    );
 
     for (const file of uploadedFile) {
       const finalPathFile = path.posix.join(finalPath, file.id);
@@ -246,6 +261,8 @@ const saveFileToFinalFolder = async (
         result.dokumenDaftarHadirPath = relativePathFile;
       } else if (file.id === data.dokumenUndanganNarasumberCuid) {
         result.dokumenUndanganNarasumberPath = relativePathFile;
+      } else {
+        result.dokumenKonfirmasiNarasumber.push(relativePathFile);
       }
     }
     logger.info("collecting log file to be updated in database");

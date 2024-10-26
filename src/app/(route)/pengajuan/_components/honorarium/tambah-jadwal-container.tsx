@@ -44,6 +44,9 @@ const TambahJadwalContainer = ({
       <DialogContent
         className="flex flex-col w-full sm:min-w-[750px] max-h-[calc(100vh-50px)]"
         onEscapeKeyDown={handleEscapeKeyDown}
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
       >
         <DialogHeader>
           <DialogTitle>Jadwal Kelas Pengajar</DialogTitle>

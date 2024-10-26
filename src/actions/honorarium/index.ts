@@ -30,7 +30,8 @@ export const getOptionsNarasumber = async () => {
   // map dataNarasumber to options
   const optionsNarasumber = dataNarasumber.map((narasumber) => ({
     value: narasumber.id,
-    label: narasumber.NIP + "-" + narasumber.nama,
+    label: narasumber.id + "-" + narasumber.nama,
+    //id: narasumber.id,
   }));
 
   return optionsNarasumber;

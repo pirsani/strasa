@@ -41,7 +41,6 @@ const FormJadwal = ({
     id: createId(),
     dokumenDaftarHadirCuid: "daftarHadir" + createId() + ".pdf",
     dokumenUndanganNarasumberCuid: "undangan" + createId() + ".pdf",
-    dokumenKonfirmasiKesediaanMengajarCuid: "konfirmasi" + createId() + ".pdf",
   });
   const form = useForm<Jadwal>({
     resolver: zodResolver(jadwalSchema),
@@ -51,6 +50,7 @@ const FormJadwal = ({
       narasumberIds: [],
       kelasId: "",
       materiId: "",
+      dokumenKonfirmasiNarasumber: [],
       ...generateCuids(),
     },
   });
@@ -67,6 +67,7 @@ const FormJadwal = ({
     handleSubmit,
     control,
     reset,
+    trigger,
     formState: { errors, isSubmitting },
   } = form;
 
@@ -75,29 +76,32 @@ const FormJadwal = ({
   const dokumenUndanganNarasumberCuid = form.watch(
     "dokumenUndanganNarasumberCuid"
   );
-  const dokumenKonfirmasiKesediaanMengajarCuid = form.watch(
-    "dokumenKonfirmasiKesediaanMengajarCuid"
-  );
+  const dokumenKonfirmasiNarasumber = form.watch("dokumenKonfirmasiNarasumber");
 
-  const [dokumenKonfirmasiNarasaumber, setDokumenKonfirmasiNarasumber] =
-    useState<string[]>([]);
+  const [narasumberSelected, setNarasumberSelected] = useState<string[]>([]);
 
   const handleNarasumberChange = (narasumbers?: string[] | string | null) => {
     if (narasumbers) {
+      console.log(narasumbers);
       // check if narasumbers is an array
       if (Array.isArray(narasumbers)) {
-        setDokumenKonfirmasiNarasumber(narasumbers);
+        //setValue("dokumenKonfirmasiNarasumber", narasumbers);
+        setNarasumberSelected(narasumbers);
       } else {
-        setDokumenKonfirmasiNarasumber([narasumbers]);
+        // setValue("dokumenKonfirmasiNarasumber", [narasumbers]);
+        setNarasumberSelected([narasumbers]);
       }
     }
   };
 
   const handleReset = () => {
+    setNarasumberSelected([]);
+
     reset({
       kegiatanId,
       tanggal: new Date(),
       narasumberIds: [],
+      dokumenKonfirmasiNarasumber: [],
       kelasId: "",
       materiId: "",
       ...generateCuids(), // regenerate new cuids here
@@ -130,11 +134,20 @@ const FormJadwal = ({
     }
   };
 
+  const handleFileUploadDokumenKonfirmasiCompleted = (field: string) => {
+    const narasumberId = field.split("-")[0] + ".pdf";
+    console.log("File uploaded", field, narasumberId);
+    setValue("dokumenKonfirmasiNarasumber", [
+      ...dokumenKonfirmasiNarasumber,
+      narasumberId,
+    ]);
+    trigger("dokumenKonfirmasiNarasumber");
+  };
+
   const onSubmit = async (data: Jadwal) => {
     const {
       dokumenDaftarHadir,
       dokumenUndanganNarasumber,
-      dokumenKonfirmasiKesediaanMengajar,
       ...jadwalWithoutFile
     } = data;
     console.log(data);
@@ -278,15 +291,16 @@ const FormJadwal = ({
           )}
         />
 
-        {dokumenKonfirmasiNarasaumber.map((dokumen, index) => (
+        {narasumberSelected.map((dokumen, index) => (
           <div className="flex flex-col gap-2" key={dokumen}>
             <Label className="">
               Konfirmasi kesediaan {dokumen.split("-")[1]}
             </Label>
             <InputFileImmediateUpload
               cuid={dokumen.split("-")[0]}
-              folder={kegiatanId + "/narsum/konfirmasi"}
-              name={dokumen.split("-")[1]}
+              folder={kegiatanId + "/" + jadwalId}
+              name={dokumen}
+              onFileUploadComplete={handleFileUploadDokumenKonfirmasiCompleted}
             />
           </div>
         ))}
@@ -303,7 +317,7 @@ const FormJadwal = ({
               <FormControl>
                 <FormFileImmediateUpload
                   cuid={dokumenDaftarHadirCuid}
-                  folder={kegiatanId}
+                  folder={kegiatanId + "/" + jadwalId}
                   name={field.name}
                   onFileChange={handleFileChange}
                   onFileUploadComplete={handleFileUploadCompleted}
@@ -326,7 +340,7 @@ const FormJadwal = ({
               <FormControl>
                 <FormFileImmediateUpload
                   cuid={dokumenUndanganNarasumberCuid}
-                  folder={kegiatanId}
+                  folder={kegiatanId + "/" + jadwalId}
                   name={field.name}
                   onFileChange={handleFileChange}
                   onFileUploadComplete={handleFileUploadCompleted}
