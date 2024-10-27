@@ -15,6 +15,7 @@ export const formatCurrency = (
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: currency,
+    maximumFractionDigits: 0,
   }).format(decimalAmount.toNumber()); // Convert back to number for formatting
 };
 

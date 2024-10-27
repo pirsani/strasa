@@ -29,7 +29,15 @@ export interface KegiatanWithSatker extends Kegiatan {
 export const getKegiatan = async (
   kegiatan?: string
 ): Promise<KegiatanWithSatker[]> => {
+  const tahunAnggaran = await getTahunAnggranPilihan();
+
   const dataKegiatan = await dbHonorarium.kegiatan.findMany({
+    where: {
+      tanggalMulai: {
+        gte: new Date(`${tahunAnggaran}-01-01`),
+        lte: new Date(`${tahunAnggaran}-12-31`),
+      },
+    },
     include: {
       satker: true,
       unitKerja: true,

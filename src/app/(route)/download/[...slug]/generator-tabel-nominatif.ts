@@ -206,6 +206,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
   const tableOptions: TableOptions = {
     startX: 30,
     startY: 75,
+    startYonFirstPage: 130,
     headerRowHeight: 25,
     headerNumberingRowHeight: 15,
     dataRowHeight: 60,

@@ -5,6 +5,7 @@ import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
 import { getJadwalIncludeKegiatan } from "@/data/narasumber/jadwal";
 import { dbHonorarium } from "@/lib/db-honorarium";
+import { getBesaranPajakHonorarium, getDpp } from "@/lib/pajak";
 import { createId } from "@paralleldrive/cuid2";
 import { JENIS_PENGAJUAN, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import { Logger } from "tslog";
@@ -158,19 +159,82 @@ const updateStatusPengajuanPembayaran = async (
 };
 
 export const updateJumlahJpJadwalNarasumber = async (
-  jadwalId: string,
+  jadwalNarasumberId: string,
   jumlahJp: number,
   jenisHonorariumId: string | null
 ): Promise<ActionResponse<Boolean>> => {
-  console.log(jadwalId, jumlahJp, jenisHonorariumId);
+  console.log(jadwalNarasumberId, jumlahJp, jenisHonorariumId);
+
+  if (!jenisHonorariumId) {
+    return {
+      success: false,
+      message: "Jenis Honorarium harus dipilih",
+      error: "E-UJP-003",
+    };
+  }
+
+  const sbmHonorarium = await dbHonorarium.sbmHonorarium.findFirst({
+    where: {
+      id: jenisHonorariumId,
+    },
+  });
+
+  if (!sbmHonorarium) {
+    return {
+      success: false,
+      message: "Jenis Honorarium tidak ditemukan",
+      error: "E-UJP-004",
+    };
+  }
+
+  const jadwalNarasumber = await dbHonorarium.jadwalNarasumber.findFirst({
+    where: {
+      id: jadwalNarasumberId,
+    },
+    include: {
+      narasumber: true,
+    },
+  });
+
+  if (!jadwalNarasumber || !jadwalNarasumber.jumlahJamPelajaran) {
+    return {
+      success: false,
+      message: "Jadwal Narasumber tidak ditemukan",
+      error: "E-UJP-005",
+    };
+  }
+
+  const jumlahBruto = jadwalNarasumber.jumlahJamPelajaran.times(
+    sbmHonorarium.besaran
+  );
+
+  const pangkatGolonganId = jadwalNarasumber.narasumber.pangkatGolonganId;
+  const npwp = jadwalNarasumber.narasumber.NPWP;
+  const tarifPajak = getBesaranPajakHonorarium(pangkatGolonganId, npwp);
+  const pajakDPP = getDpp(jumlahBruto, pangkatGolonganId);
+  const pph21 = pajakDPP.times(tarifPajak.besaranPajak);
+  const jumlahDiterima = jumlahBruto.minus(pph21);
+
+  logger.debug(
+    tarifPajak.besaranPajak.toString(),
+    pajakDPP.toString(),
+    pph21.toString(),
+    jumlahDiterima.toString()
+  );
+
   try {
     const updateStatus = await dbHonorarium.jadwalNarasumber.update({
       where: {
-        id: jadwalId,
+        id: jadwalNarasumberId,
       },
       data: {
         jumlahJamPelajaran: jumlahJp,
         jenisHonorariumId: jenisHonorariumId,
+        besaranHonorarium: sbmHonorarium.besaran,
+        pajakTarif: tarifPajak.besaranPajak,
+        pajakDPP: pajakDPP,
+        pph21: pph21,
+        jumlahDiterima: jumlahDiterima,
       },
     });
 
@@ -187,6 +251,7 @@ export const updateJumlahJpJadwalNarasumber = async (
       data: true,
     };
   } catch (error) {
+    logger.error("[updateJumlahJpJadwalNarasumber]", error);
     return {
       success: false,
       message: "failed to save data",

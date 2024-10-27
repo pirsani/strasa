@@ -8,6 +8,8 @@ import { downloadDokumenRampungan } from "./generator-rampungan";
 import { downloadDokumenSpd } from "./generator-spd";
 import downloadSpdDaftarPeserta from "./generator-spd-daftar-peserta";
 import { downloadTest } from "./generator-tabel-nominatif";
+import downloadNominatifHonorarium from "./generator-tabel-nominatif-honorarium";
+import downloadNominatifUhDalamNegeri from "./generator-tabel-nominatif-uh-dalam-negeri";
 import { downloadTemplateExcel } from "./template-excel";
 
 export async function GET(
@@ -35,6 +37,10 @@ export async function GET(
       return downloadDokumenNarasumber(req, slug);
     case "test":
       return downloadTest(req, slug);
+    case "nominatif-honorarium":
+      return downloadNominatifHonorarium(req, slug);
+    case "nominatif-uh-dalam-negeri":
+      return downloadNominatifUhDalamNegeri(req, slug);
     case "spd-peserta":
       return downloadSpdDaftarPeserta(req, slug);
     case "konfirmasi-kesediaan-mengajar":

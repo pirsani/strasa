@@ -76,11 +76,13 @@ const justifyBetween = (
   // add space 10
   const space = -10;
   try {
+    logger.debug("fullValue", fullValue);
     // Set the font size before measuring the width of the space character
     doc.fontSize(fontSize);
 
     // Use a regular expression to split the currency symbol from the value
-    const match = fullValue.match(/^([^\d\s]+)\s*(\d.+)$/);
+    //const match = fullValue.match(/^([^\d\s]+)\s*(\d.+)$/);
+    const match = fullValue.match(/^([^\d\s]+)\s*([\d,.]+)$/);
 
     if (!match) {
       throw new Error(
@@ -423,6 +425,7 @@ const generateTable = (
   tableData: DataGroup[],
   startX: number,
   startY: number,
+  startYonFirstPage: number,
   headerRowHeight: number = 25,
   headerNumberingRowHeight: number = 20,
   dataRowHeight: number = 25
@@ -581,7 +584,8 @@ const generateTable = (
 
     drawCell(
       doc,
-      `halaman ${page} ${dataGroup.nama} dataGroupIterator ${dataGroupIterator} dataGroupIndex ${dataGroupIndex}`,
+      //`halaman ${page} ${dataGroup.nama} dataGroupIterator ${dataGroupIterator} dataGroupIndex ${dataGroupIndex}`,
+      `${dataGroup.nama}`,
       startX,
       dividerStartY,
       totalWidth,
@@ -868,6 +872,7 @@ const generateReportFooter = (
 export interface TableOptions {
   startX: number; // x-coordinate for the start of the table
   startY: number; // y-coordinate for the start of the table
+  startYonFirstPage: number; // y-coordinate for the start of the table on the first page
   headerRowHeight: number; // tinggi untuk masing-masing baris header
   headerNumberingRowHeight: number; // tinggi untuk baris header nomor dibawah header
   dataRowHeight: number; // tinggi untuk masing-masing row data
@@ -878,6 +883,7 @@ export interface TableFooterOptions {
 }
 
 export interface TableDinamisOptions {
+  layout?: "landscape" | "portrait";
   satker: string;
   tableTitle: string;
   tableSubtitle: string;
@@ -900,6 +906,7 @@ export async function generateTabelDinamis(
   //desctucturing
 
   const {
+    layout = "landscape",
     satker,
     tableTitle,
     tableSubtitle,
@@ -915,6 +922,7 @@ export async function generateTabelDinamis(
     headerRowHeight,
     headerNumberingRowHeight,
     dataRowHeight,
+    startYonFirstPage,
   } = tableOptions;
   const customFontPath = path.resolve(
     process.cwd(),
@@ -925,7 +933,7 @@ export async function generateTabelDinamis(
     font: customFontPath,
     size: "A4",
     margins: { top: 15, bottom: 15, left: 10, right: 15 },
-    layout: "landscape",
+    layout: layout,
   });
 
   // Buffers to hold PDF data
@@ -955,6 +963,7 @@ export async function generateTabelDinamis(
       tableData,
       startX,
       startY,
+      startYonFirstPage,
       headerRowHeight,
       headerNumberingRowHeight,
       dataRowHeight

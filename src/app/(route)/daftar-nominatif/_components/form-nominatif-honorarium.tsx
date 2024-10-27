@@ -99,6 +99,32 @@ const FormNominatifPembayaran = ({
     });
   };
 
+  const handleGenerate = () => {
+    switch (jenisPengajuan) {
+      case "HONORARIUM":
+        window.open(
+          `/download/nominatif-honorarium/${kegiatanId}/${jadwalId}`,
+          "_blank"
+        );
+        break;
+      case "UH_LUAR_NEGERI":
+        window.open(
+          `/download/nominatif-uh-luar-negeri/${kegiatanId}`,
+          "_blank"
+        );
+        break;
+      case "UH_DALAM_NEGERI":
+        window.open(
+          `/download/nominatif-uh-dalam-negeri/${kegiatanId}`,
+          "_blank"
+        );
+        break;
+      default:
+        break;
+    }
+    console.log(jadwalId);
+  };
+
   useEffect(() => {
     handleReset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -201,7 +227,12 @@ const FormNominatifPembayaran = ({
             />
           </div>
           <div className="flex flex-row gap-2 justify-end">
-            <Button className="bg-green-700" type="button">
+            <Button
+              className="bg-green-700"
+              type="button"
+              disabled={!jenisPengajuan}
+              onClick={handleGenerate}
+            >
               <WandSparkles size={20} />
               <span>Generate</span>
             </Button>

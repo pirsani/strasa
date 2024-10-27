@@ -22,8 +22,12 @@ export const getBesaranPajakHonorarium = (
   const golongan = golonganRuang?.split("/")[0];
   let besaranPajakMemilikiNpwp: Decimal = new Decimal(0);
   let besaranTanpaNpwp: Decimal | null = null;
+  let besaranPajak: Decimal = new Decimal(0);
 
   switch (golongan) {
+    case "I":
+    case "II":
+      besaranPajakMemilikiNpwp = new Decimal(0);
     case "III":
       besaranPajakMemilikiNpwp = new Decimal(0.05);
       break;
@@ -31,14 +35,33 @@ export const getBesaranPajakHonorarium = (
       besaranPajakMemilikiNpwp = new Decimal(0.15);
       break;
     default:
+      besaranPajakMemilikiNpwp = new Decimal(0.05);
       break;
   }
 
   if (!npwp || npwp === "" || npwp === "-") {
-    besaranPajakMemilikiNpwp = besaranPajakMemilikiNpwp.times(new Decimal(1.2));
+    besaranTanpaNpwp = besaranPajakMemilikiNpwp.times(new Decimal(1.2));
+    besaranPajak = besaranTanpaNpwp;
+  } else {
+    besaranPajak = besaranPajakMemilikiNpwp;
   }
 
-  return { besaranPajakMemilikiNpwp, besaranTanpaNpwp };
+  return { besaranPajakMemilikiNpwp, besaranTanpaNpwp, besaranPajak };
 
   // jika tidak ada npwp maka 20 persen
+};
+
+//dpp = dasar pengenaan pajak
+export const getDpp = (
+  bruto: number | Decimal,
+  golonganRuang?: string | null
+) => {
+  // jika tikdak punya golongan ruang maka bukan ASN dpp = 50%
+  // jika ada golongan ruang maka dpp = 100%
+  const brutoDecimal = new Decimal(bruto);
+  if (!golonganRuang || golonganRuang === "" || golonganRuang === "-") {
+    return brutoDecimal.times(new Decimal(0.5));
+  } else {
+    return brutoDecimal;
+  }
 };
