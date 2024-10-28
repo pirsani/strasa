@@ -24,7 +24,7 @@ interface SelectJenisPengajuanProps {
   fieldName: string;
   value?: JENIS_PENGAJUAN | string | null;
   onChange: (value: JENIS_PENGAJUAN | null) => void;
-  kegiatan?: KegiatanWithDetail;
+  kegiatan?: KegiatanWithDetail | null;
 }
 export const SelectJenisPengajuan = ({
   fieldName,
@@ -50,6 +50,10 @@ export const SelectJenisPengajuan = ({
     setSelectedValue(value ?? null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initValue]);
+
+  if (!kegiatan) {
+    return null;
+  }
 
   return (
     <Select
@@ -78,7 +82,7 @@ export const SelectJenisPengajuan = ({
 };
 
 const createOptionsBaseOnKegiatan = (
-  kegiatan?: KegiatanWithDetail
+  kegiatan?: KegiatanWithDetail | null
 ): Option[] => {
   if (!kegiatan) {
     return JENIS_PENGAJUAN_OPTIONS;

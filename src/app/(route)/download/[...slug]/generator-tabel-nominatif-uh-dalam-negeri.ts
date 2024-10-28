@@ -7,6 +7,7 @@ import generateTabelDinamis, {
   TableOptions,
   TableRow,
 } from "@/lib/pdf/tabel-nominatif-dinamis-uh";
+import { formatTanggal } from "@/utils/date-format";
 import formatCurrency from "@/utils/format-currency";
 import { NextResponse } from "next/server";
 import { Logger } from "tslog";
@@ -155,6 +156,26 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     throw new Error(message);
   }
 
+  const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
+    where: {
+      kegiatanId,
+      jenis: "UH_DALAM_NEGERI",
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      bendahara: true,
+      ppk: true,
+    },
+  });
+
+  if (!riwayatPengajuan) {
+    throw new Error("Riwayat pengajuan not found");
+  }
+
+  const { bendahara, ppk } = riwayatPengajuan;
+
   const {
     fullboard: sbmUhFullboard,
     fulldayHalfday: sbmUhFulldayHalfday,
@@ -288,9 +309,24 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     const titleText = `DAFTAR NOMINATIF UANG HARIAN`;
     const subtitleText = kegiatan.nama.toUpperCase();
 
+    const hariIni = formatTanggal(new Date());
+
     const footerOptions: TableFooterOptions = {
-      kiri: { text: "test", nama: "fulan", NIP: "6537327432" },
-      kanan: { text: "test", nama: "fulan", NIP: "6537327432" },
+      kiri: {
+        text: "Mengetahui/Menyetujui\nPejabat Pembuat Komitmen:",
+        nama: ppk?.nama ?? "",
+        NIP: ppk?.NIP ?? "",
+      },
+      kanan: {
+        text: `Yang Membayarkan,\nBendaharaPengeluaran`,
+        nama: bendahara?.nama ?? "",
+        NIP: bendahara?.NIP ?? "",
+      },
+      placeAndDateText: {
+        place: "Jakarta, ",
+        date: hariIni,
+        position: "kanan",
+      },
     };
 
     const tabelDinamisOptions: TableDinamisOptions = {

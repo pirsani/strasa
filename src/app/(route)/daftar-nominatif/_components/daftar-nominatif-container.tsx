@@ -7,7 +7,9 @@ import useFileStore from "@/hooks/use-file-store";
 import { JENIS_PENGAJUAN, LogProses } from "@prisma-honorarium/client";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import FormNominatifHonorarium from "./form-nominatif-honorarium";
+import { default as FormNominatifPembayaranHonorarium } from "./form-nominatif-honorarium";
+import FormNominatifPembayaranUh from "./form-nominatif-uh";
+import SelectJenisPengajuan from "./select-jenis-pengajuan";
 
 const SelectKegiatan = dynamic(
   () => import("@/components/form/select-kegiatan"),
@@ -70,13 +72,32 @@ const DaftarNominatifContainer = () => {
             value={kegiatanId ?? ""}
           />
         </div>
+        <div className="w-full flex flex-col gap-2">
+          <SelectJenisPengajuan
+            kegiatan={kegiatan}
+            fieldName="jenisPengajuan"
+            value={jenisPengajuan}
+            onChange={setJenisPengajuan}
+          />
+        </div>
         <div>
-          {kegiatan && (
-            <FormNominatifHonorarium
+          {kegiatan && jenisPengajuan && jenisPengajuan === "HONORARIUM" && (
+            <FormNominatifPembayaranHonorarium
               kegiatan={kegiatan}
               onSuccess={handleOnSuccess}
             />
           )}
+
+          {kegiatan &&
+            jenisPengajuan &&
+            (jenisPengajuan === "UH_LUAR_NEGERI" ||
+              jenisPengajuan === "UH_DALAM_NEGERI") && (
+              <FormNominatifPembayaranUh
+                jenisPengajuan={jenisPengajuan}
+                kegiatan={kegiatan}
+                onSuccess={handleOnSuccess}
+              />
+            )}
         </div>
       </div>
       <FloatingComponent hide={isPreviewHidden} onHide={handleOnHide}>

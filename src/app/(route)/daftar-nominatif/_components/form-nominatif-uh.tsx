@@ -1,8 +1,6 @@
-import {
-  pengajuanPembayaranHonorarium,
-  updateBendaharaPpkNominatifHonorarium,
-} from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
+import { pengajuanPembayaranHonorarium } from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
 import { KegiatanWithDetail } from "@/actions/kegiatan";
+import updateBendaharaPpkNominatifUhDalamNegeri from "@/actions/kegiatan/uang-harian/nominatif-dalam-negeri";
 import CummulativeErrors from "@/components/form/cummulative-error";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
 import RequiredLabel from "@/components/form/required";
@@ -17,6 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { JENIS_PENGAJUAN } from "@/lib/constants";
 import {
   NominatifPembayaran,
   nominatifPembayaranSchema,
@@ -27,18 +26,19 @@ import { WandSparkles } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import SelectJadwalHonorarium from "./select-jadwal-honorarium";
 
-interface FormNominatifPembayaranHonorariumProps {
+interface FormNominatifPembayaranUhProps {
   kegiatan: KegiatanWithDetail;
   onCanceled?: () => void;
   onSuccess?: (data: NominatifPembayaran) => void;
+  jenisPengajuan: JENIS_PENGAJUAN;
 }
-const FormNominatifPembayaranHonorarium = ({
+const FormNominatifPembayaranUh = ({
   kegiatan,
   onCanceled = () => {},
   onSuccess = () => {},
-}: FormNominatifPembayaranHonorariumProps) => {
+  jenisPengajuan: initJenisPengajuan,
+}: FormNominatifPembayaranUhProps) => {
   const kegiatanId = kegiatan.id;
   const form = useForm<NominatifPembayaran>({
     resolver: zodResolver(nominatifPembayaranSchema),
@@ -46,7 +46,7 @@ const FormNominatifPembayaranHonorarium = ({
       id: createId(),
       buktiPajakCuid: "buktiPajak" + createId() + ".pdf",
       kegiatanId: kegiatanId ?? "",
-      jenisPengajuan: "HONORARIUM",
+      jenisPengajuan: initJenisPengajuan,
       jadwalId: "",
       bendaharaId: "",
       ppkId: "",
@@ -95,7 +95,7 @@ const FormNominatifPembayaranHonorarium = ({
       id: createId(),
       buktiPajakCuid: "buktiPajak" + createId() + ".pdf",
       kegiatanId: kegiatanId ?? "",
-      jenisPengajuan: "HONORARIUM",
+      jenisPengajuan: initJenisPengajuan,
       jadwalId: "",
       bendaharaId: "",
       ppkId: "",
@@ -104,26 +104,6 @@ const FormNominatifPembayaranHonorarium = ({
 
   const handleGenerate = async () => {
     switch (jenisPengajuan) {
-      case "HONORARIUM":
-        //update pengajuan honorarium
-        if (!jadwalId || !bendaharaId || !ppkId) {
-          return;
-        }
-        const updateBendaharaPpk = await updateBendaharaPpkNominatifHonorarium(
-          jadwalId,
-          bendaharaId,
-          ppkId
-        );
-        if (updateBendaharaPpk.success) {
-          window.open(
-            `/download/nominatif-honorarium/${kegiatanId}/${jadwalId}/${bendaharaId}/${ppkId}`,
-            "_blank"
-          );
-        } else {
-          toast.error("Gagal generate nominatif honorarium");
-        }
-
-        break;
       case "UH_LUAR_NEGERI":
         window.open(
           `/download/nominatif-uh-luar-negeri/${kegiatanId}`,
@@ -131,6 +111,12 @@ const FormNominatifPembayaranHonorarium = ({
         );
         break;
       case "UH_DALAM_NEGERI":
+        const updateBendaharaPpk =
+          await updateBendaharaPpkNominatifUhDalamNegeri(
+            kegiatanId,
+            bendaharaId,
+            ppkId
+          );
         window.open(
           `/download/nominatif-uh-dalam-negeri/${kegiatanId}`,
           "_blank"
@@ -154,29 +140,6 @@ const FormNominatifPembayaranHonorarium = ({
           className="flex flex-col gap-4 w-full"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="flex flex-row gap-2">
-            <FormField
-              control={control}
-              name="jadwalId"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>
-                    Jadwal Kelas Materi <RequiredLabel />
-                  </FormLabel>
-                  <FormControl>
-                    <SelectJadwalHonorarium
-                      kegiatanId={kegiatanId}
-                      fieldName="jadwalId"
-                      value={field.value ?? ""}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
           <div className="flex flex-row gap-2">
             <FormField
               control={control}
@@ -285,4 +248,4 @@ const FormNominatifPembayaranHonorarium = ({
   );
 };
 
-export default FormNominatifPembayaranHonorarium;
+export default FormNominatifPembayaranUh;

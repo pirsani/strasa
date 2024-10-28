@@ -806,8 +806,37 @@ const generateReportFooter = (
   y1: number,
   y2: number,
   kiri: { text: string; nama: string; NIP: string },
-  kanan: { text: string; nama: string; NIP: string }
+  kanan: { text: string; nama: string; NIP: string },
+  placeAndDateText?: PlaceAndDateText
 ) => {
+  if (placeAndDateText) {
+    if (placeAndDateText.position === "kiri") {
+      drawCell(
+        doc,
+        placeAndDateText.place + placeAndDateText.date,
+        x1,
+        y1 - 12,
+        250,
+        "center",
+        11,
+        0,
+        0
+      );
+    } else {
+      drawCell(
+        doc,
+        placeAndDateText.place + placeAndDateText.date,
+        x2,
+        y1 - 12,
+        250,
+        "center",
+        11,
+        0,
+        0
+      );
+    }
+  }
+
   drawCell(doc, kiri.text, x1, y1, 250, "center", 11, 0, 0);
 
   drawCell(doc, `${kiri.nama}`, x1, y2, 250, "center", 11, 0, 0, true);
@@ -849,9 +878,17 @@ export interface TableOptions {
   headerNumberingRowHeight: number; // tinggi untuk baris header nomor dibawah header
   dataRowHeight: number; // tinggi untuk masing-masing row data
 }
+
+interface PlaceAndDateText {
+  place: string;
+  date: string;
+  position: "kiri" | "kanan";
+}
+
 export interface TableFooterOptions {
   kiri: { text: string; nama: string; NIP: string };
   kanan: { text: string; nama: string; NIP: string };
+  placeAndDateText?: PlaceAndDateText;
 }
 
 export interface TableDinamisOptions {
@@ -954,7 +991,7 @@ export async function generateTabelDinamis(
     //   .stroke(); // Apply the stroke to draw the line
 
     // mulai dari sini generate footer
-    const { kiri, kanan } = tableFooterOptions;
+    const { kiri, kanan, placeAndDateText } = tableFooterOptions;
     // const ppk = {
     //   text: "Mengetahui,\nPejabat Pembuat Komitmen",
     //   nama: "Fulan bin Fulan",
@@ -968,7 +1005,9 @@ export async function generateTabelDinamis(
     const doctWidth = doc.page.width;
     console.log("doc.page.width", doctWidth);
 
-    let y1 = currentY + 20;
+    const add12ifPlaceAndDateText = placeAndDateText ? 12 : 0;
+
+    let y1 = currentY + 20 + add12ifPlaceAndDateText;
     let y2 = y1 + 50;
     let x1 = startX;
     let x2 = doctWidth - 300;
@@ -985,7 +1024,7 @@ export async function generateTabelDinamis(
       y2 = y1 + 50;
     }
 
-    generateReportFooter(doc, x1, x2, y1, y2, kiri, kanan);
+    generateReportFooter(doc, x1, x2, y1, y2, kiri, kanan, placeAndDateText);
 
     doc.end();
     // Wait for 'end' event to ensure the document generation is complete
