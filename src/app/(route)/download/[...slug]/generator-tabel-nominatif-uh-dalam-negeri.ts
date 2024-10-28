@@ -6,7 +6,7 @@ import generateTabelDinamis, {
   TableFooterOptions,
   TableOptions,
   TableRow,
-} from "@/lib/pdf/tabel-nominatif-dinamis";
+} from "@/lib/pdf/tabel-nominatif-dinamis-uh";
 import formatCurrency from "@/utils/format-currency";
 import { NextResponse } from "next/server";
 import { Logger } from "tslog";

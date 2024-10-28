@@ -1,5 +1,8 @@
+import {
+  pengajuanPembayaranHonorarium,
+  updateBendaharaPpkNominatifHonorarium,
+} from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
 import { KegiatanWithDetail } from "@/actions/kegiatan";
-import { pengajuanPembayaran } from "@/actions/pembayaran";
 import SelectJenisPengajuan from "@/app/(route)/daftar-nominatif/_components/select-jenis-pengajuan";
 import CummulativeErrors from "@/components/form/cummulative-error";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
@@ -63,6 +66,8 @@ const FormNominatifPembayaran = ({
   const jenisPengajuan = watch("jenisPengajuan");
   const buktiPajakCuid = watch("buktiPajakCuid");
   const jadwalId = watch("jadwalId");
+  const bendaharaId = watch("bendaharaId");
+  const ppkId = watch("ppkId");
   const isPengajuanHonorarium = jenisPengajuan === "HONORARIUM";
 
   const handleFileChange = (file: File | null) => {
@@ -71,10 +76,9 @@ const FormNominatifPembayaran = ({
 
   const onSubmit = async (data: NominatifPembayaran) => {
     console.log(data);
-    onSuccess(data);
     const { dokumenBuktiPajak, ...nominatifPembayaranWithoutFile } = data;
 
-    const pembayaran = await pengajuanPembayaran(
+    const pembayaran = await pengajuanPembayaranHonorarium(
       nominatifPembayaranWithoutFile
     );
 
@@ -99,13 +103,27 @@ const FormNominatifPembayaran = ({
     });
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     switch (jenisPengajuan) {
       case "HONORARIUM":
-        window.open(
-          `/download/nominatif-honorarium/${kegiatanId}/${jadwalId}`,
-          "_blank"
+        //update pengajuan honorarium
+        if (!jadwalId || !bendaharaId || !ppkId) {
+          return;
+        }
+        const updateBendaharaPpk = await updateBendaharaPpkNominatifHonorarium(
+          jadwalId,
+          bendaharaId,
+          ppkId
         );
+        if (updateBendaharaPpk.success) {
+          window.open(
+            `/download/nominatif-honorarium/${kegiatanId}/${jadwalId}/${bendaharaId}/${ppkId}`,
+            "_blank"
+          );
+        } else {
+          toast.error("Gagal generate nominatif honorarium");
+        }
+
         break;
       case "UH_LUAR_NEGERI":
         window.open(

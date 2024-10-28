@@ -471,7 +471,6 @@ const generateTable = (
     sumRowHeight; // 20 is sumRowHeight
   let controlStartYRowgroupMembers = controlBaseStartY + heightDivider;
   let dataGroupIterator = 0;
-  let rowIterator = 0;
   let page = 1;
   let rowCounterOnPage = 0;
 
@@ -490,7 +489,6 @@ const generateTable = (
     if (dataGroupIndex !== 0) {
       length = tableData[dataGroupIndex - 1].groupMembers.length;
     }
-    const totalHeightDivider = dataGroupIterator * heightDivider;
     const totalHeightRow = rowCounterOnPage * dataRowHeight;
 
     // hanya tambahkan sumRowHeight jika page > 1 karena di page 1 tidak ada pindahan jumlah
@@ -620,7 +618,6 @@ const generateTable = (
         logger.info("[isNewPageNeeded-2-yes]", rowCounterOnPage);
 
         rowCounterOnPage = 1;
-        rowIterator = 0;
         dataGroupIterator = 0;
         rowReset = true;
 
@@ -685,7 +682,6 @@ const generateTable = (
       } else {
         logger.info("[isNewPageNeeded-2-no]", rowCounterOnPage);
 
-        rowIterator++;
         rowReset = false;
 
         logger.info("[summableColumns]", summableColumns);

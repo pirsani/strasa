@@ -150,6 +150,8 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
 
   const kegiatanId = slug[1];
   const jadwalId = slug[2];
+  // const bendaharaId = slug[3];
+  // const ppkId = slug[4];
 
   const kegiatan = await dbHonorarium.kegiatan.findFirst({
     where: {
@@ -190,6 +192,20 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
   if (!kegiatan || !jadwal) {
     return new NextResponse("Kegiatan not found", { status: 404 });
   }
+
+  const jadwal0 = jadwal[0];
+  const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
+    where: {
+      id: jadwal0.riwayatPengajuanId!,
+      //jenis: "NOMINATIF",
+    },
+    include: {
+      bendahara: true,
+      ppk: true,
+    },
+  });
+  const bendahara = riwayatPengajuan?.bendahara;
+  const ppk = riwayatPengajuan?.ppk;
 
   const jadwals: DataGroup[] = jadwal.map((jadwal) => {
     const jadwalNarasumber = jadwal.jadwalNarasumber;
@@ -255,15 +271,25 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     headerNumberingRowHeight: 15,
     dataRowHeight: 60,
   };
+
+  const hariIni = formatTanggal(new Date());
+  const footerOptions: TableFooterOptions = {
+    kiri: {
+      text: "Mengetahui,\nPejabat Pembuat Komitmen",
+      nama: ppk?.nama || "-",
+      NIP: ppk?.NIP || "-",
+    },
+    kanan: {
+      text: `Jakarta, ${hariIni}\nYang Membayarkan`,
+      nama: bendahara?.nama || "-",
+      NIP: bendahara?.NIP || "-",
+    },
+  };
+
   try {
     const satker = "Pusat Pendidikan dan Pelatihan ";
     const titleText = `DAFTAR NOMINATIF HONORARIUM NARASUMBER/PEMBAHAS PAKAR/ PRAKTISI/ PROFESIONAL`;
     const subtitleText = kegiatan.nama.toUpperCase();
-
-    const footerOptions: TableFooterOptions = {
-      kiri: { text: "test", nama: "fulan", NIP: "6537327432" },
-      kanan: { text: "test", nama: "fulan", NIP: "6537327432" },
-    };
 
     const tabelDinamisOptions: TableDinamisOptions = {
       satker,

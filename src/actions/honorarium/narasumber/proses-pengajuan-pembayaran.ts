@@ -1,18 +1,53 @@
 "use server";
 
+import { moveFileToFinalFolder } from "@/actions/file";
 import { getSessionPenggunaForAction } from "@/actions/pengguna";
 import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
+import { BASE_PATH_UPLOAD } from "@/app/api/upload/config";
 import { getJadwalIncludeKegiatan } from "@/data/narasumber/jadwal";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { getBesaranPajakHonorarium, getDpp } from "@/lib/pajak";
+import { NominatifPembayaranWithoutFile } from "@/zod/schemas/nominatif-pembayaran";
 import { createId } from "@paralleldrive/cuid2";
 import { JENIS_PENGAJUAN, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
+import fse from "fs-extra";
+import path from "path";
 import { Logger } from "tslog";
 
 const logger = new Logger({
   hideLogPositionForProduction: true,
 });
+
+interface ObjRiwayatPengajuanUpdate {
+  status: STATUS_PENGAJUAN;
+  diverifikasiOlehId?: string;
+  disetujuiOlehId?: string;
+  dimintaPembayaranOlehId?: string;
+  dibayarOlehId?: string;
+  diselesaikanOlehId?: string;
+  catatanRevisi?: string;
+  catatanPermintaaPembayaran?: string;
+
+  diverifikasiTanggal?: Date;
+  disetujuiTanggal?: Date;
+  dimintaPembayaranTanggal?: Date;
+  dibayarTanggal?: Date;
+  diselesaikanTanggal?: Date;
+
+  ppkId?: string;
+  bendaharaId?: string;
+
+  dokumenBuktiPajak?: string;
+  dokumenBuktiPembayaran?: string;
+}
+
+interface ObjCreateRiwayatPengajuan {
+  jenis: JENIS_PENGAJUAN;
+  status: STATUS_PENGAJUAN;
+  diajukanOlehId: string;
+  diajukanTanggal: Date;
+}
 
 const updateStatusPengajuanPembayaran = async (
   jadwalId: string,
@@ -42,32 +77,9 @@ const updateStatusPengajuanPembayaran = async (
   const penggunaId = pengguna.data.penggunaId;
   const penggunaName = pengguna.data.penggunaName;
 
-  interface ObjRiwayatPengajuanUpdate {
-    status: STATUS_PENGAJUAN;
-    diverifikasiOlehId?: string;
-    disetujuiOlehId?: string;
-    dimintaPembayaranOlehId?: string;
-    dibayarOlehId?: string;
-    diselesaikanOlehId?: string;
-    catatanRevisi?: string;
-
-    diverifikasiTanggal?: Date;
-    disetujuiTanggal?: Date;
-    dimintaPembayaranTanggal?: Date;
-    dibayarTanggal?: Date;
-    diselesaikanTanggal?: Date;
-  }
-
   let objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
     status: status,
   };
-
-  interface ObjCreateRiwayatPengajuan {
-    jenis: JENIS_PENGAJUAN;
-    status: STATUS_PENGAJUAN;
-    diajukanOlehId: string;
-    diajukanTanggal: Date;
-  }
 
   let objCreateRiwayatPengajuan: ObjCreateRiwayatPengajuan = {
     status: "SUBMITTED",
@@ -256,6 +268,160 @@ export const updateJumlahJpJadwalNarasumber = async (
       success: false,
       message: "failed to save data",
       error: "E-UJP-002",
+    };
+  }
+};
+
+export const updateBendaharaPpkNominatifHonorarium = async (
+  jadwalId: string,
+  bendaharaId: string,
+  ppkId: string
+): Promise<ActionResponse<Boolean>> => {
+  const jadwal = await dbHonorarium.jadwal.findFirst({
+    where: {
+      id: jadwalId,
+    },
+  });
+
+  if (!jadwal || !jadwal.riwayatPengajuanId) {
+    return {
+      success: false,
+      message: "Jadwal not found",
+      error: "E-UBP-001",
+    };
+  }
+
+  const riwayatPengajuanId = jadwal.riwayatPengajuanId;
+
+  let objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
+    status: "APPROVED",
+    bendaharaId: bendaharaId,
+    ppkId: ppkId,
+  };
+
+  try {
+    const transaction = await dbHonorarium.$transaction(async (prisma) => {
+      const updateRiwayatPengajuan = await prisma.riwayatPengajuan.update({
+        where: {
+          id: riwayatPengajuanId || createId(),
+        },
+        data: {
+          ...objRiwayatPengajuanUpdate,
+        },
+      });
+    });
+  } catch (error) {
+    logger.error("[updateBendaharaPpkNominatifHonorarium]", error);
+    return getPrismaErrorResponse(error as Error);
+  }
+  return {
+    success: true,
+    data: true,
+  };
+};
+
+export const pengajuanPembayaranHonorarium = async (
+  data: NominatifPembayaranWithoutFile
+): Promise<ActionResponse<NominatifPembayaranWithoutFile>> => {
+  let objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
+    status: "REQUEST_TO_PAY",
+  };
+
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) {
+    return pengguna;
+  }
+  // TODO memastikan bahwa pengguna yang mengajukan adalah satker pengguna yang terkait dengan kegiatan
+  const satkerId = pengguna.data.satkerId;
+  const unitKerjaId = pengguna.data.unitKerjaId;
+  const penggunaId = pengguna.data.penggunaId;
+  const penggunaName = pengguna.data.penggunaName;
+
+  objRiwayatPengajuanUpdate.dimintaPembayaranOlehId = penggunaId;
+  objRiwayatPengajuanUpdate.dimintaPembayaranTanggal = new Date();
+  objRiwayatPengajuanUpdate.catatanPermintaaPembayaran = data.catatan;
+
+  try {
+    if (!data.jadwalId || !data.bendaharaId || !data.ppkId) {
+      return {
+        success: false,
+        error: "E-RTP-001",
+        message: "Data tidak lengkap",
+      };
+    }
+
+    const jadwal = await dbHonorarium.jadwal.findFirst({
+      where: {
+        id: data.jadwalId,
+      },
+      include: {
+        kegiatan: true,
+      },
+    });
+
+    if (!jadwal || !jadwal.riwayatPengajuanId) {
+      return {
+        success: false,
+        error: "E-RTP-002",
+        message: "Jadwal not found",
+      };
+    }
+
+    const tahun = jadwal.kegiatan.tanggalMulai.getFullYear().toString();
+
+    const tempPath = path.posix.join(BASE_PATH_UPLOAD, "temp", data.kegiatanId);
+    const finalPath = path.posix.join(
+      BASE_PATH_UPLOAD,
+      tahun,
+      data.kegiatanId,
+      "jadwal-kelas-narasumber",
+      data.jadwalId
+    );
+
+    const finalPathFile = path.posix.join(finalPath, data.buktiPajakCuid);
+    const tempPathFile = path.posix.join(tempPath, data.buktiPajakCuid);
+    const resolvedPathFile = path.resolve(finalPathFile);
+    const resolvedTempPathFile = path.resolve(tempPathFile);
+    // check if temp file exists
+    // Get the filename from the resolved path
+    const filename = path.basename(resolvedPathFile);
+    const fileExists = await fse.pathExists(resolvedTempPathFile);
+    if (!fileExists) {
+      logger.error(
+        `File ${filename} not found in ${resolvedTempPathFile}, skipping moving file to final folder`
+      );
+      return {
+        success: false,
+        error: "E-RTP-002",
+        message: "file belum terupload",
+      };
+    }
+
+    await moveFileToFinalFolder(resolvedTempPathFile, resolvedPathFile);
+    const relativePath = path.posix.relative(BASE_PATH_UPLOAD, finalPathFile);
+    objRiwayatPengajuanUpdate.dokumenBuktiPajak = relativePath;
+
+    logger.debug(objRiwayatPengajuanUpdate);
+
+    const upsertRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
+      where: {
+        id: jadwal.riwayatPengajuanId,
+      },
+      data: {
+        ...objRiwayatPengajuanUpdate,
+      },
+    });
+
+    return {
+      success: true,
+      data: data,
+    };
+  } catch (error) {
+    logger.error("[pengajuanPembayaranHonorarium]", error);
+    return {
+      success: false,
+      error: "E-RTP-003",
+      message: "unknown error. please contact administrator",
     };
   }
 };

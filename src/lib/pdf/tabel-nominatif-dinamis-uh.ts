@@ -1,3 +1,4 @@
+import Decimal from "decimal.js";
 import { once } from "events";
 import path from "path";
 import PDFDocument from "pdfkit"; // Importing PDFDocument as a value
@@ -75,11 +76,13 @@ const justifyBetween = (
   // add space 10
   const space = -10;
   try {
+    //logger.debug("fullValue", fullValue);
     // Set the font size before measuring the width of the space character
     doc.fontSize(fontSize);
 
     // Use a regular expression to split the currency symbol from the value
-    const match = fullValue.match(/^([^\d\s]+)\s*(\d.+)$/);
+    //const match = fullValue.match(/^([^\d\s]+)\s*(\d.+)$/);
+    const match = fullValue.match(/^([^\d\s]+)\s*([\d,.]+)$/);
 
     if (!match) {
       throw new Error(
@@ -170,7 +173,7 @@ const isHasSubHeader = (column: TableColumnHeader): boolean => {
 };
 
 // Updated drawCell function
-export const drawCell = (
+const drawCell = (
   doc: InstanceType<typeof PDFDocument>,
   text: string,
   x: number,
@@ -212,14 +215,44 @@ export const drawCell = (
   });
 };
 
+const generateNumberingHeader = (
+  doc: InstanceType<typeof PDFDocument>,
+  flatColumns: TableColumnHeader[],
+  startX: number,
+  startY: number,
+  rowHeight: number = 20
+) => {
+  //logger.info("[generateNumberingHeader START]");
+
+  flatColumns.forEach((column, index) => {
+    const columnXOffset = getColumnXOffset(flatColumns, index);
+    const columnStartX = startX + columnXOffset;
+    const columnStartY = startY + rowHeight;
+
+    // Draw the header text
+    drawCell(
+      doc,
+      column.headerNumberingString || String(index + 1),
+      columnStartX,
+      columnStartY,
+      column.width,
+      "center"
+    );
+
+    doc.rect(columnStartX, columnStartY, column.width, rowHeight).stroke();
+  });
+
+  //logger.info("[generateNumberingHeader END]");
+};
+
 const generateTableHeader = (
   doc: InstanceType<typeof PDFDocument>,
   tableColumnHeaders: TableColumnHeader[],
   startX: number,
   startY: number,
-  rowHeight: number = 25
+  rowHeight: number = 20
 ) => {
-  logger.info("[generateTableHeader START at x,y]", startX, startY);
+  //logger.info("[generateTableHeader START]");
 
   // find max level recursively
   const maxLevel = findMaxLevel(tableColumnHeaders);
@@ -267,7 +300,7 @@ const generateTableHeader = (
   drawHeader(tableColumnHeaders, startX, startY);
 
   // Draw the border around the header
-  logger.info("[generateTableHeader END]");
+  //logger.info("[generateTableHeader END]");
 };
 
 const generateTableRow = (
@@ -276,16 +309,8 @@ const generateTableRow = (
   tableColumnHeaders: TableColumnHeader[],
   startX: number,
   y: number,
-  rowHeight: number = 25
+  rowHeight: number = 20
 ) => {
-  console.log("\n ======================================================== \n");
-  logger.info(
-    "[generateTableRow START startX, y, rowHeight]",
-    startX,
-    y,
-    rowHeight
-  );
-  logger.debug("[generateTableRow] row", row);
   const drawRow = (
     row: TableRow,
     tableColumnHeaders: TableColumnHeader[],
@@ -327,6 +352,68 @@ const generateTableRow = (
   drawRow(row, tableColumnHeaders, startX, y, rowHeight);
 };
 
+const sumData = (data: Decimal[][]): Decimal[] => {
+  return data.reduce(
+    (acc, row) => {
+      return acc.map((value, index) => value.plus(row[index]));
+    },
+    data[0].map(() => new Decimal(0))
+  );
+};
+
+const generateSumRow = (
+  textNarasiJumlah: string,
+  doc: InstanceType<typeof PDFDocument>,
+  data: Decimal[][],
+  deepestColumns: TableColumnHeader[],
+  startX: number,
+  lastY: number,
+  sumRowHeight: number = 25,
+  width: number = 200
+) => {
+  // add summary before new page
+  const currentY = doc.y;
+  console.log("[currentY before new page]", currentY);
+  doc.rect(startX, lastY, width, sumRowHeight).stroke();
+
+  const acummulatedSum = sumData(data);
+
+  let i = 0;
+  deepestColumns.forEach((column, index) => {
+    const columnXOffset = getColumnXOffset(deepestColumns, index);
+    const columnStartX = startX + columnXOffset;
+    const columnStartY = lastY;
+
+    // Draw the header text
+    //drawCell(doc, "nilai", columnStartX, columnStartY, column.width, "center");
+    if (column.isSummable) {
+      let val = String(acummulatedSum[i]);
+      if (column.format === "currency") {
+        const currValue = formatCurrency(
+          acummulatedSum[i],
+          "id-ID",
+          column.currency
+        );
+        // Spread value across column width if needed to fit the text Rp 1.000.000,00 -> Rp   1.000.000,00
+        val = justifyBetween(String(currValue), column.width, 8, doc);
+      }
+
+      doc.rect(columnStartX, columnStartY, column.width, sumRowHeight).stroke();
+      drawCell(
+        doc,
+        val,
+        columnStartX,
+        columnStartY,
+        column.width,
+        column.align
+      );
+      i++;
+    }
+  });
+
+  drawCell(doc, textNarasiJumlah, startX, lastY, width, "left", 10, 5, 0);
+};
+
 export interface DataGroup {
   nama: string; // nama group
   groupMembers: TableRow[]; // TableRow[] ini dari DataGroupNarasumber
@@ -340,9 +427,10 @@ const generateTable = (
   startY: number,
   startYonFirstPage: number,
   headerRowHeight: number = 25,
+  headerNumberingRowHeight: number = 20,
   dataRowHeight: number = 25
 ) => {
-  logger.info("===generateTable===");
+  //logger.info("===generateTable===");
   const deepestColumns = getDeepestColumns(tableColumnHeaders);
   const maxLevel = findMaxLevel(tableColumnHeaders);
   const totalHeightHeader = maxLevel * headerRowHeight;
@@ -351,32 +439,46 @@ const generateTable = (
   // count total width
   const totalWidth = getTotalTableWidth(deepestColumns);
 
-  logger.info("[PREPARATION DONE]");
+  // filter deepest column that isSummable === true
+  const summableColumns = deepestColumns.filter((column) => column.isSummable);
+  let pageSums = summableColumns.map(() => new Decimal(0));
+  const pageSumsArray: Decimal[][] = []; // Explicitly define the type
+  const resetSums = () => {
+    pageSumsArray.push([...pageSums]);
+    pageSums = summableColumns.map(() => new Decimal(0));
+  };
 
-  // generate table header for page 1
-  generateTableHeader(
+  //logger.info("[PREPARATION DONE]");
+
+  generateTableHeader(doc, tableColumnHeaders, startX, startY, headerRowHeight);
+  generateNumberingHeader(
     doc,
-    tableColumnHeaders,
+    deepestColumns,
     startX,
-    startYonFirstPage,
-    headerRowHeight
+    startY + totalHeightHeader + headerRowHeight - headerNumberingRowHeight,
+    headerNumberingRowHeight
   );
 
+  let sumRowHeight = 20;
   const heightDivider = 15;
   // generate table row
   // untuk halaman 2 dan selanjutnya
-  let controlBaseStartYOnFirstPage =
-    startYonFirstPage + headerRowHeight + totalHeightHeader;
-  let controlBaseStartY = startY + headerRowHeight + totalHeightHeader;
+  let controlBaseStartY =
+    startY +
+    totalHeightHeader +
+    headerRowHeight +
+    headerNumberingRowHeight +
+    sumRowHeight; // 20 is sumRowHeight
   let controlStartYRowgroupMembers = controlBaseStartY;
   let dataGroupIterator = 0;
-  let rowIterator = 0;
   let page = 1;
   let rowCounterOnPage = 0;
 
   // iterate dataGroup
+  let newGroup = false;
   tableData.forEach((dataGroup, dataGroupIndex) => {
-    logger.info("[tableData ITERATE dataGroupIndex]", dataGroupIndex);
+    newGroup = true;
+    //logger.info("[tableData ITERATE dataGroupIndex]", dataGroupIndex);
 
     console.log("\n");
     console.log("[page]", page);
@@ -391,36 +493,49 @@ const generateTable = (
     }
     const totalHeightRow = rowCounterOnPage * dataRowHeight;
 
-    // base start untuk tabel halaman 1 berbeda dengan halaman 2 dst
-    const controlBaseY =
-      page === 1 ? controlBaseStartYOnFirstPage : controlBaseStartY;
-    let baseStartY = controlBaseY + totalHeightRow; // gradualle increase baseStartY
-
-    console.log(
-      "[page] startY totalHeightHeader baseStartY",
-      page,
-      startY,
-      totalHeightHeader,
-      baseStartY
-    );
+    // hanya tambahkan sumRowHeight jika page > 1 karena di page 1 tidak ada pindahan jumlah
+    // tambahkan headerNumberingRowHeight di halaman 1
+    const addedSumRowHeight =
+      page == 1 ? headerNumberingRowHeight : sumRowHeight;
+    let baseStartY =
+      startY +
+      totalHeightHeader +
+      headerRowHeight +
+      totalHeightRow +
+      addedSumRowHeight;
 
     // divider row dengan nama kelas
+    let dividerStartY = baseStartY + 3 + dataGroupIterator * heightDivider;
 
-    const isNewPageNeeded = baseStartY > availableHeight;
+    const isNewPageNeeded =
+      dividerStartY + heightDivider + dataRowHeight > availableHeight;
 
     if (isNewPageNeeded) {
-      logger.info("[isNewPageNeeded-1-yes]", isNewPageNeeded);
+      //logger.info("[isNewPageNeeded-1-yes]", isNewPageNeeded);
 
       // reset startY
       rowCounterOnPage = 0;
       dataGroupIterator = 0;
 
       // generate sum row before new page
+      resetSums();
+      const lastY = dividerStartY - 3; // plus 3 agar tulisan tidak berada tepat di garis
+      generateSumRow(
+        "Jumlah yang dipindahkan",
+        doc,
+        pageSumsArray,
+        deepestColumns,
+        startX,
+        lastY,
+        20,
+        totalWidth
+      );
 
       doc.addPage(); // new page
       page++;
       console.log("[NEW PAGE] on new divider", page);
-      baseStartY = controlBaseStartY; // reset baseStartY on new page
+      baseStartY = controlBaseStartY;
+      dividerStartY = baseStartY + 3;
       generateTableHeader(
         doc,
         tableColumnHeaders,
@@ -428,9 +543,32 @@ const generateTable = (
         startY,
         headerRowHeight
       );
+      generateNumberingHeader(
+        doc,
+        deepestColumns,
+        startX,
+        startY + totalHeightHeader + headerRowHeight - headerNumberingRowHeight,
+        headerNumberingRowHeight
+      );
+      generateSumRow(
+        "Jumlah Pindahan",
+        doc,
+        pageSumsArray,
+        deepestColumns,
+        startX,
+        startY + totalHeightHeader + headerRowHeight + headerNumberingRowHeight,
+        sumRowHeight,
+        totalWidth
+      );
     } else {
       //console.log("[CONTINUE]", dataGroupIndex);
-      logger.info("[isNewPageNeeded-1-no]", isNewPageNeeded);
+      //logger.info("[isNewPageNeeded-1-no]", isNewPageNeeded);
+    }
+
+    let startYRowgroupMembers =
+      baseStartY + (dataGroupIterator + 1) * heightDivider;
+    if (isNewPageNeeded) {
+      startYRowgroupMembers = controlStartYRowgroupMembers;
     }
 
     let rowReset = false;
@@ -438,33 +576,40 @@ const generateTable = (
     // Iterate and generate row for each groupMembers
     // calculate subSumRow
     dataGroup.groupMembers.forEach((groupMembers, rowIndex) => {
-      console.log("#########################################################");
+      //logger.info("[rowCounterOnPage]", rowCounterOnPage);
 
       let startYDynamic = baseStartY + dataRowHeight * rowCounterOnPage;
-      logger.debug("[rowIndex rowCounterOnPage]", rowIndex, rowCounterOnPage);
-      logger.debug(
-        "[beforeRowReset] startYDynamic = baseStartY + dataRowHeight * rowCounterOnPage;",
-        startYDynamic,
-        baseStartY,
-        dataRowHeight,
-        rowIndex
-      );
-
       if (rowReset) {
         startYDynamic = controlStartYRowgroupMembers + dataRowHeight;
-        logger.info("[rowReset] startYDynamic", startYDynamic);
+        // logger.info(
+        //   "[rowReset] startYDynamic",
+        //   startYDynamic,
+        //   rowCounterOnPage
+        // );
       }
-
       const isNewPageNeeded = startYDynamic + dataRowHeight > availableHeight;
       if (isNewPageNeeded) {
-        logger.info("[isNewPageNeeded-2-yes]", rowCounterOnPage);
+        //logger.info("[isNewPageNeeded-2-yes]", rowCounterOnPage);
 
         rowCounterOnPage = 0;
-        rowIterator = 0;
         dataGroupIterator = 0;
         rowReset = true;
 
         // generate sum row before new page
+        resetSums();
+        console.log("Page Sums:", pageSumsArray);
+        console.log(pageSumsArray[page - 1]); // array is zero based
+        const dataSum = pageSumsArray[page - 1];
+        generateSumRow(
+          "Jumlah yang dipindahkan",
+          doc,
+          pageSumsArray,
+          deepestColumns,
+          startX,
+          startYDynamic,
+          20,
+          totalWidth
+        );
 
         doc.addPage(); // new page
         page++;
@@ -472,7 +617,8 @@ const generateTable = (
 
         // reset startY
         startYDynamic = controlBaseStartY;
-        baseStartY = controlBaseStartY; // reset baseStartY on new page
+        baseStartY = controlBaseStartY;
+        startYRowgroupMembers = controlStartYRowgroupMembers;
         generateTableHeader(
           doc,
           tableColumnHeaders,
@@ -480,19 +626,59 @@ const generateTable = (
           startY,
           headerRowHeight
         );
+        generateNumberingHeader(
+          doc,
+          deepestColumns,
+          startX,
+          startY +
+            totalHeightHeader +
+            headerRowHeight -
+            headerNumberingRowHeight,
+          headerNumberingRowHeight
+        );
+        // add sum row jumlah pindahan
+        generateSumRow(
+          "Jumlah Pindahan",
+          doc,
+          pageSumsArray,
+          deepestColumns,
+          startX,
+          startYDynamic - sumRowHeight,
+          sumRowHeight,
+          totalWidth
+        );
+        summableColumns.forEach((column, columnIndex) => {
+          const columnValue = groupMembers[column.field as string];
+          pageSums[columnIndex] = pageSums[columnIndex].plus(
+            new Decimal(columnValue)
+          );
+        });
       } else {
-        logger.info("[isNewPageNeeded-2-no]", rowCounterOnPage);
+        //logger.info("[isNewPageNeeded-2-no]", rowCounterOnPage);
 
-        rowIterator++;
         rowReset = false;
+
+        //logger.info("[summableColumns]", summableColumns);
+
+        // sum row
+        summableColumns.forEach((column, columnIndex) => {
+          const columnValue = groupMembers[column.field as string];
+          // check if columns is number
+
+          // Check if columnValue is a number
+          if (typeof columnValue === "number" || !isNaN(Number(columnValue))) {
+            pageSums[columnIndex] = pageSums[columnIndex].plus(
+              new Decimal(columnValue)
+            );
+          } else {
+            logger.warn(
+              `Skipping non-numeric value in column ${column.field}: ${columnValue}`
+            );
+          }
+        });
       }
 
-      logger.info("[BEFORE generateTableRow]", rowCounterOnPage);
-      logger.debug(
-        "[rowCounterOnPage rowIterator]",
-        rowCounterOnPage,
-        rowIterator
-      );
+      //logger.info("[BEFORE generateTableRow]", rowCounterOnPage);
 
       generateTableRow(
         doc,
@@ -503,17 +689,30 @@ const generateTable = (
         dataRowHeight
       );
 
-      logger.info("[AFTER generateTableRow]", rowCounterOnPage);
+      //logger.info("[AFTER generateTableRow]", rowCounterOnPage);
 
       // if last row, generate sum row
       if (
         dataGroupIndex === tableData.length - 1 &&
         rowIndex === dataGroup.groupMembers.length - 1
       ) {
+        resetSums();
         const lastY = startYDynamic + dataRowHeight;
         // setelah row terakhir perlu footer yang berisi tanggal dan ttd
         // maka jika tidak cukup tinggi, maka perlu new page
-        const isNewPageNeeded = lastY + 80 > availableHeight; // 80 = footer height
+        const isNewPageNeeded = lastY + 100 > availableHeight;
+
+        console.log("Last Page Sums:", pageSumsArray);
+        generateSumRow(
+          isNewPageNeeded ? "Jumlah yang dipindahkan" : "Jumlah Total",
+          doc,
+          pageSumsArray,
+          deepestColumns,
+          startX,
+          lastY,
+          20,
+          totalWidth
+        );
 
         console.log("isNewPageNeeded", isNewPageNeeded);
         if (isNewPageNeeded) {
@@ -523,16 +722,48 @@ const generateTable = (
           // reset startY
           startYDynamic = controlBaseStartY;
           baseStartY = controlBaseStartY;
-          // generateTableHeader(
-          //   doc,
-          //   tableColumnHeaders,
-          //   startX,
-          //   startY,
-          //   headerRowHeight
-          // );
+          startYRowgroupMembers = controlStartYRowgroupMembers;
+          generateTableHeader(
+            doc,
+            tableColumnHeaders,
+            startX,
+            startY,
+            headerRowHeight
+          );
+          generateNumberingHeader(
+            doc,
+            deepestColumns,
+            startX,
+            startY +
+              totalHeightHeader +
+              headerRowHeight -
+              headerNumberingRowHeight,
+            headerNumberingRowHeight
+          );
+          // add sum row jumlah pindahan
+          generateSumRow(
+            "Jumlah Pindahan",
+            doc,
+            pageSumsArray,
+            deepestColumns,
+            startX,
+            startYDynamic - sumRowHeight,
+            sumRowHeight,
+            totalWidth
+          );
+          generateSumRow(
+            "Jumlah Total",
+            doc,
+            pageSumsArray,
+            deepestColumns,
+            startX,
+            startYDynamic,
+            sumRowHeight,
+            totalWidth
+          );
         }
       }
-
+      newGroup = false;
       rowCounterOnPage++;
     });
 
@@ -542,9 +773,9 @@ const generateTable = (
 
 export const generateReportHeader = (
   doc: InstanceType<typeof PDFDocument>,
-  satker: string = "",
-  headerText: string = "",
-  subHeaderText: string = ""
+  satker: string,
+  headerText: string,
+  subHeaderText: string
 ) => {
   drawCell(
     doc,
@@ -580,12 +811,34 @@ const generateReportFooter = (
   drawCell(doc, kiri.text, x1, y1, 250, "center", 11, 0, 0);
 
   drawCell(doc, `${kiri.nama}`, x1, y2, 250, "center", 11, 0, 0, true);
-  drawCell(doc, `${kiri.NIP}`, x1, y2 + 12, 250, "center", 11, 0, 0, false);
+  drawCell(
+    doc,
+    `NIP. ${kiri.NIP}`,
+    x1,
+    y2 + 12,
+    250,
+    "center",
+    11,
+    0,
+    0,
+    false
+  );
 
   drawCell(doc, kanan.text, x2, y1, 250, "center", 11, 0, 0);
   drawCell(doc, `${kanan.nama}`, x2, y2, 250, "center", 11, 0, 0, true);
 
-  drawCell(doc, `${kanan.NIP}`, x2, y2 + 12, 250, "center", 11, 0, 0, false);
+  drawCell(
+    doc,
+    `NIP. ${kanan.NIP}`,
+    x2,
+    y2 + 12,
+    250,
+    "center",
+    11,
+    0,
+    0,
+    false
+  );
 };
 
 export interface TableOptions {
@@ -601,36 +854,31 @@ export interface TableFooterOptions {
   kanan: { text: string; nama: string; NIP: string };
 }
 
-export interface ReportHeaderOptions<T> {
-  data: T;
-}
-
-// Define a type for the reportHeader function
-export interface ReportHeader<T = any> {
-  // Default to any to avoid making it generic
-  fn: (
-    doc: InstanceType<typeof PDFDocument>,
-    options: ReportHeaderOptions<T>
-  ) => void;
-  options: ReportHeaderOptions<T>;
-  pageNote?: string;
-}
-
 export interface TableDinamisOptions {
-  satker?: string;
-  tableTitle?: string;
-  tableSubtitle?: string;
+  layout?: "landscape" | "portrait";
+  satker: string;
+  tableTitle: string;
+  tableSubtitle: string;
   tableData: DataGroup[];
   tableColumnHeaders: TableColumnHeader[];
   tableOptions: TableOptions;
   tableFooterOptions: TableFooterOptions;
-  layout?: "landscape" | "portrait";
-  reportHeader?: ReportHeader;
 }
 
-export async function generateTabelDinamis(options: TableDinamisOptions) {
-  //desctucturing options
+export async function generateTabelDinamis(
+  options: TableDinamisOptions
+  // satker: string,
+  // tableTitle: string,
+  // tableSubtitle: string,
+  // tableData: DataGroup[],
+  // tableColumnHeaders: TableColumnHeader[],
+  // tableOptions: TableOptions,
+  // tableFooterOptions: TableFooterOptions
+) {
+  //desctucturing
+
   const {
+    layout = "landscape",
     satker,
     tableTitle,
     tableSubtitle,
@@ -638,8 +886,6 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
     tableColumnHeaders,
     tableOptions,
     tableFooterOptions,
-    layout,
-    reportHeader,
   } = options;
 
   const {
@@ -650,7 +896,6 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
     dataRowHeight,
     startYonFirstPage,
   } = tableOptions;
-
   const customFontPath = path.resolve(
     process.cwd(),
     "fonts/helvetica/Helvetica.ttf"
@@ -672,14 +917,17 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
   // Generate PDF content
 
   try {
-    // Generate report header
-    // if (reportHeader) is supplied in options then use that function
-    // else use default report header
-    if (reportHeader) {
-      reportHeader.fn(doc, reportHeader.options);
-    } else {
-      generateReportHeader(doc, satker, tableTitle, tableSubtitle);
-    }
+    //doc.rect(10, 10, 820, 560).stroke(); // reference
+    // const lineStartX = 10; // x-coordinate for the start of the line
+    // const lineEndX = 820; // x-coordinate for the end of the line
+    // const lineY = 560; // y-coordinate for the line
+
+    // doc
+    //   .moveTo(lineStartX, lineY) // Move to the start of the line
+    //   .lineTo(lineEndX, lineY) // Draw the line to the end point
+    //   .stroke(); // Apply the stroke to draw the line
+
+    generateReportHeader(doc, satker, tableTitle, tableSubtitle);
 
     generateTable(
       doc,
@@ -689,6 +937,7 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
       startY,
       startYonFirstPage,
       headerRowHeight,
+      headerNumberingRowHeight,
       dataRowHeight
     );
 
@@ -699,15 +948,9 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
     let currentY = doc.y;
     console.log(`Current X: ${currentX}, Current Y: ${currentY}`);
 
-    // Generate a line for debugging purposes
     // doc
     //   .moveTo(startX, currentY + dataRowHeight) // Move to the start of the line
     //   .lineTo(currentX + 10, currentY + dataRowHeight) // Draw the line to the end point
-    //   .stroke(); // Apply the stroke to draw the line
-
-    // doc
-    //   .moveTo(startX, currentY + 80 + dataRowHeight) // Move to the start of the line
-    //   .lineTo(currentX + 10, currentY + 80 + dataRowHeight) // Draw the line to the end point
     //   .stroke(); // Apply the stroke to draw the line
 
     // mulai dari sini generate footer
@@ -725,15 +968,14 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
     const doctWidth = doc.page.width;
     console.log("doc.page.width", doctWidth);
 
-    let y1 = currentY + dataRowHeight;
+    let y1 = currentY + 20;
     let y2 = y1 + 50;
     let x1 = startX;
     let x2 = doctWidth - 300;
 
     // check if need to add page if the last row is near the end of the page
-    const availableHeight = doc.page.height; // 60 is margin
-    const isPageNeeded = y1 > availableHeight;
-    logger.debug("isPageNeeded", isPageNeeded, y1 + startY, availableHeight);
+    const availableHeight = doc.page.height - 60;
+    const isPageNeeded = y1 + 75 > availableHeight;
     if (isPageNeeded) {
       doc.addPage();
       // tambahkan total lagi disini ?
@@ -743,10 +985,6 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
       y2 = y1 + 50;
     }
 
-    // add page note if any
-    if (reportHeader && reportHeader.pageNote) {
-      drawCell(doc, reportHeader.pageNote, 600, 25, 200, "center", 6, 0, 0);
-    }
     generateReportFooter(doc, x1, x2, y1, y2, kiri, kanan);
 
     doc.end();
