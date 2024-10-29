@@ -107,6 +107,22 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       footer: "Nama",
     },
     {
+      accessorKey: "tanggalMulai",
+      header: "Mulai",
+      cell: (info) => {
+        return formatHariTanggal(info.getValue() as Date);
+      },
+      footer: "Mulai",
+    },
+    {
+      accessorKey: "tanggalSelesai",
+      header: "Selesai",
+      cell: (info) => {
+        return formatHariTanggal(info.getValue() as Date);
+      },
+      footer: "Selesai",
+    },
+    {
       //accessorKey: "kode",
       id: "aksi",
       header: "",

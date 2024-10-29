@@ -49,7 +49,7 @@ const StatusBadge = ({ status, className }: StatusBadgeProps) => {
   return (
     <div
       className={cn(
-        "rounded-sm px-2 flex flex-row h-[24px] items-center",
+        "rounded-sm px-2 flex flex-row items-center",
         mapStatusLangkahToColor(status)
         // status == "DRAFT"
         //   ? "bg-yellow-300 text-yellow-800"

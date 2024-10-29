@@ -6,6 +6,7 @@ import CummulativeErrors from "@/components/form/cummulative-error";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
 import RequiredLabel from "@/components/form/required";
 import SelectBendahara from "@/components/form/select-bendahara";
+import InfoKurs from "@/components/info-kurs";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { JENIS_PENGAJUAN } from "@/lib/constants";
+import { KursResponse } from "@/utils/kurs-bi";
 import {
   NominatifPembayaran,
   nominatifPembayaranSchema,
@@ -24,7 +26,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { WandSparkles } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -69,6 +71,7 @@ const FormNominatifPembayaranUh = ({
   const bendaharaId = watch("bendaharaId");
   const ppkId = watch("ppkId");
   const isPengajuanHonorarium = jenisPengajuan === "HONORARIUM";
+  const [kurs, setKurs] = useState<KursResponse | null>(null);
 
   const handleFileChange = (file: File | null) => {
     // Do nothing if the file is null
@@ -262,6 +265,7 @@ const FormNominatifPembayaranUh = ({
           </div>
         </form>
       </Form>
+      <div>{jenisPengajuan === "UH_LUAR_NEGERI" && <InfoKurs />}</div>
     </div>
   );
 };
