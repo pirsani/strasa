@@ -10,6 +10,7 @@ import downloadSpdDaftarPeserta from "./generator-spd-daftar-peserta";
 import { downloadTest } from "./generator-tabel-nominatif";
 import downloadNominatifHonorarium from "./generator-tabel-nominatif-honorarium";
 import downloadNominatifUhDalamNegeri from "./generator-tabel-nominatif-uh-dalam-negeri";
+import downloadNominatifUhLuarNegeri from "./generator-tabel-nominatif-uh-luar-negeri";
 import { downloadTemplateExcel } from "./template-excel";
 
 export async function GET(
@@ -41,6 +42,8 @@ export async function GET(
       return downloadNominatifHonorarium(req, slug);
     case "nominatif-uh-dalam-negeri":
       return downloadNominatifUhDalamNegeri(req, slug);
+    case "nominatif-uh-luar-negeri":
+      return downloadNominatifUhLuarNegeri(req, slug);
     case "spd-peserta":
       return downloadSpdDaftarPeserta(req, slug);
     case "konfirmasi-kesediaan-mengajar":

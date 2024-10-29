@@ -612,6 +612,7 @@ model UhLuarNegeri {
   uhUangHarian           Decimal          @default(0) @map("uh_uang_harian")
   hDiklat                Int              @default(0) @map("h_diklat")
   uhDiklat               Decimal          @default(0) @map("uh_diklat")
+  kurs                   Int?             @default(0)
   dokumenBuktiPembayaran String?          @map("dokumen_bukti_pembayaran")
   createdBy              String           @map("created_by")
   createdAt              DateTime         @default(now()) @map("created_at")

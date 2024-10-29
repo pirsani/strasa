@@ -120,7 +120,7 @@ const UangHarianLuarNegeriContainer = ({
         </>
       )}
 
-      {statusPengajuan === "SUBMITTED" || (
+      {statusPengajuan === "SUBMITTED" && (
         <div className="flex flex-col w-full gap-2">
           <div>
             <h3 className="text-lg font-bold">Keterangan Revisi</h3>

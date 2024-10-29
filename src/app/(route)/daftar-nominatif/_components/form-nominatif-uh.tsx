@@ -1,6 +1,7 @@
-import { pengajuanPembayaranHonorarium } from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
 import { KegiatanWithDetail } from "@/actions/kegiatan";
+import { pengajuanPembayaranUangHarian } from "@/actions/kegiatan/uang-harian/nominatif";
 import updateBendaharaPpkNominatifUhDalamNegeri from "@/actions/kegiatan/uang-harian/nominatif-dalam-negeri";
+import updateBendaharaPpkNominatifUhLuarNegeri from "@/actions/kegiatan/uang-harian/nominatif-luar-negeri";
 import CummulativeErrors from "@/components/form/cummulative-error";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
 import RequiredLabel from "@/components/form/required";
@@ -77,7 +78,7 @@ const FormNominatifPembayaranUh = ({
     console.log(data);
     const { dokumenBuktiPajak, ...nominatifPembayaranWithoutFile } = data;
 
-    const pembayaran = await pengajuanPembayaranHonorarium(
+    const pembayaran = await pengajuanPembayaranUangHarian(
       nominatifPembayaranWithoutFile
     );
 
@@ -85,7 +86,7 @@ const FormNominatifPembayaranUh = ({
       toast.success("Pengajuan pembayaran berhasil diajukan");
       onSuccess(data);
     } else {
-      toast.error("Pengajuan pembayaran gagal diajukan");
+      toast.error(`Pengajuan pembayaran gagal diajukan ${pembayaran.message}`);
     }
   };
 
@@ -105,22 +106,39 @@ const FormNominatifPembayaranUh = ({
   const handleGenerate = async () => {
     switch (jenisPengajuan) {
       case "UH_LUAR_NEGERI":
-        window.open(
-          `/download/nominatif-uh-luar-negeri/${kegiatanId}`,
-          "_blank"
-        );
+        const updateBendaharaPpkUhLn =
+          await updateBendaharaPpkNominatifUhLuarNegeri(
+            kegiatanId,
+            bendaharaId,
+            ppkId
+          );
+        if (updateBendaharaPpkUhLn.success) {
+          window.open(
+            `/download/nominatif-uh-luar-negeri/${kegiatanId}`,
+            "_blank"
+          );
+        } else {
+          toast.error("Gagal mengupdate bendahara dan ppk");
+        }
+
         break;
       case "UH_DALAM_NEGERI":
-        const updateBendaharaPpk =
+        const updateBendaharaPpkUhDn =
           await updateBendaharaPpkNominatifUhDalamNegeri(
             kegiatanId,
             bendaharaId,
             ppkId
           );
-        window.open(
-          `/download/nominatif-uh-dalam-negeri/${kegiatanId}`,
-          "_blank"
-        );
+
+        if (updateBendaharaPpkUhDn.success) {
+          window.open(
+            `/download/nominatif-uh-dalam-negeri/${kegiatanId}`,
+            "_blank"
+          );
+        } else {
+          toast.error("Gagal mengupdate bendahara dan ppk");
+        }
+
         break;
       default:
         break;
