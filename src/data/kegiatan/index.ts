@@ -1,5 +1,7 @@
 import { dbHonorarium } from "@/lib/db-honorarium";
+import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import {
+  DokumenKegiatan,
   Itinerary,
   Jadwal,
   Kegiatan,
@@ -7,8 +9,12 @@ import {
   PejabatPerbendaharaan,
   PesertaKegiatan,
   Provinsi,
+  RiwayatPengajuan,
   Spd,
+  UhDalamNegeri,
+  UhLuarNegeri,
 } from "@prisma-honorarium/client";
+import Decimal from "decimal.js";
 
 export interface KegiatanIncludeSatker extends Kegiatan {
   satker: Organisasi;
@@ -68,4 +74,58 @@ export const getKegiatanIncludeSpd = async (
     },
   });
   return kegiatan;
+};
+
+type ObjPlainUhLuarNegeri = Omit<
+  UhLuarNegeri,
+  "uhPerjalanan" | "uhUangHarian" | "uhDiklat"
+> & {
+  uhPerjalanan: number | Decimal | null;
+  uhUangHarian: number | Decimal | null;
+  uhDiklat: number | Decimal | null;
+};
+
+export interface PesertaKegiatanIncludeUh extends PesertaKegiatan {
+  uhDalamNegeri?: UhDalamNegeri | null;
+  uhLuarNegeri?: ObjPlainUhLuarNegeri[] | null;
+}
+
+export interface KegiatanIncludeAllDetail extends Kegiatan {
+  itinerary: Itinerary[] | null;
+  provinsi: Provinsi | null;
+  dokumenKegiatan: DokumenKegiatan[] | null;
+  riwayatPengajuan?: RiwayatPengajuan[] | null;
+  spd?: Spd | null;
+  pesertaKegiatan?: PesertaKegiatanIncludeUh[] | null;
+}
+
+export const getKegiatanWithAllDetailById = async (
+  id: string
+): Promise<KegiatanIncludeAllDetail | null> => {
+  const kegiatan = await dbHonorarium.kegiatan.findUnique({
+    where: { id },
+    include: {
+      itinerary: true,
+      provinsi: true,
+      dokumenKegiatan: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+      riwayatPengajuan: true,
+      spd: true,
+      pesertaKegiatan: {
+        include: {
+          uhDalamNegeri: true,
+          uhLuarNegeri: true,
+        },
+      },
+    },
+  });
+
+  const ObjPlain =
+    convertSpecialTypesToPlain<KegiatanIncludeAllDetail>(kegiatan);
+
+  console.log(kegiatan);
+  return ObjPlain;
 };
