@@ -294,7 +294,9 @@ export const TabelHariPesertaKegiatan = ({
               } else {
                 newRow = {
                   ...newRow,
-                  [actualColumnId]: value,
+                  [actualColumnId]: Number.isNaN(parseInt(value))
+                    ? 0
+                    : parseInt(value),
                 };
               }
               return newRow;

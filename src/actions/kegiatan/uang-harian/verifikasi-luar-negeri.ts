@@ -16,12 +16,12 @@ const logger = new Logger({
   hideLogPositionForProduction: true,
 });
 
-const SetujuiPengajuanUhLuarNegeri = async (
+const setujuiPengajuanUhLuarNegeri = async (
   kegiatanId: string,
   pesertaKegiatan: PesertaKegiatanLuarNegeri[],
   detailUhLuarNegeriPeserta: DetailUhLuarNegeriPeserta[] | null
 ): Promise<ActionResponse<boolean>> => {
-  logger.debug("SetujuiPengajuanUhLuarNegeri", kegiatanId);
+  logger.debug("setujuiPengajuanUhLuarNegeri", kegiatanId);
   if (!detailUhLuarNegeriPeserta) {
     return {
       success: false,
@@ -165,7 +165,7 @@ const SetujuiPengajuanUhLuarNegeri = async (
       STATUS_PENGAJUAN.APPROVED
     );
 
-    logger.info("[SUCCESS SetujuiPengajuanUhLuarNegeri]", {
+    logger.info("[SUCCESS setujuiPengajuanUhLuarNegeri]", {
       transactionUpdate,
       updated,
     });
@@ -176,7 +176,7 @@ const SetujuiPengajuanUhLuarNegeri = async (
       data: true,
     };
   } catch (error) {
-    console.error("[ERROR SetujuiPengajuanUhLuarNegeri]", error);
+    console.error("[ERROR setujuiPengajuanUhLuarNegeri]", error);
     return getPrismaErrorResponse(error as Error);
   }
 };
@@ -200,4 +200,4 @@ export const getNominalUhLuarNegeri = async (
   return nominal;
 };
 
-export default SetujuiPengajuanUhLuarNegeri;
+export default setujuiPengajuanUhLuarNegeri;

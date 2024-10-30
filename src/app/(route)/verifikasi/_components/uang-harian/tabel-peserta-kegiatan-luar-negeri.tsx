@@ -246,6 +246,10 @@ export const TabelHariPesertaKegiatan = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detailUhLuarNegeriPeserta]);
 
+  const recalculateHPerjalanan = (jamPerjalanan: number) => {
+    return Math.min(Math.ceil(jamPerjalanan / 24), 4);
+  };
+
   const table = useReactTable<DetailUhLuarNegeriPeserta>({
     data: detailUhLuarNegeriPeserta,
     columns,
@@ -308,10 +312,18 @@ export const TabelHariPesertaKegiatan = ({
               } else {
                 newRow = {
                   ...newRow,
-                  [actualColumnId]: value,
+                  [actualColumnId]: Number.isNaN(parseInt(value))
+                    ? 0
+                    : parseInt(value),
                 };
               }
-              return newRow;
+              const h = recalculateHPerjalanan(newRow.jamPerjalanan);
+              const updatedRow = {
+                ...newRow,
+                hPerjalanan: h,
+                jumlahHari: h + newRow.hUangHarian + newRow.hDiklat,
+              };
+              return updatedRow;
             }
             return row;
           })

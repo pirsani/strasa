@@ -2,7 +2,7 @@ import { KegiatanWithDetail } from "@/actions/kegiatan";
 import getPesertaKegiatanDalamNegeri, {
   PesertaKegiatanDalamNegeri,
 } from "@/actions/kegiatan/peserta/dalam-negeri";
-import SetujuiPengajuanUhDalamNegeri from "@/actions/kegiatan/uang-harian/verifikasi-dalam-negeri";
+import setujuiPengajuanUhDalamNegeri from "@/actions/kegiatan/uang-harian/verifikasi-dalam-negeri";
 import FloatingComponent from "@/components/floating-component";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -58,7 +58,7 @@ const UangHarianDalamNegeriContainer = ({
       toast.error("Silakan periksa kembali data peserta");
       return;
     }
-    const updated = await SetujuiPengajuanUhDalamNegeri(
+    const updated = await setujuiPengajuanUhDalamNegeri(
       kegiatan?.id,
       pesertaUpdated
     );

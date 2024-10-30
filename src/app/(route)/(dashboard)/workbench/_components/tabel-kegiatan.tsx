@@ -69,12 +69,12 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         className: "w-[50px]",
       },
     },
-    {
-      accessorKey: "unitKerja.singkatan",
-      header: "Unit Kerja",
-      cell: (info) => info.getValue(),
-      footer: "Kode",
-    },
+    // {
+    //   accessorKey: "unitKerja.singkatan",
+    //   header: "Unit Kerja",
+    //   cell: (info) => info.getValue(),
+    //   footer: "Kode",
+    // },
     // {
     //   //accessorKey: "kode",
     //   header: "Tanggal Pengajuan",
@@ -93,12 +93,6 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     //     showOnExpand: true,
     //   },
     // },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: (info) => info.getValue(),
-      footer: "Status",
-    },
 
     {
       accessorKey: "nama",
@@ -110,7 +104,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       accessorKey: "tanggalMulai",
       header: "Mulai",
       cell: (info) => {
-        return formatHariTanggal(info.getValue() as Date);
+        return formatTanggal(info.getValue() as Date, "yyyy-M-dd");
       },
       footer: "Mulai",
     },
@@ -118,10 +112,17 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       accessorKey: "tanggalSelesai",
       header: "Selesai",
       cell: (info) => {
-        return formatHariTanggal(info.getValue() as Date);
+        return formatTanggal(info.getValue() as Date, "yyyy-M-dd");
       },
       footer: "Selesai",
     },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: (info) => info.getValue(),
+      footer: "Status",
+    },
+
     {
       //accessorKey: "kode",
       id: "aksi",

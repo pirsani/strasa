@@ -13,7 +13,7 @@ const logger = new Logger({
   hideLogPositionForProduction: true,
 });
 
-const SetujuiPengajuanUhDalamNegeri = async (
+const setujuiPengajuanUhDalamNegeri = async (
   kegiatanId: string,
   pesertaKegiatan: PesertaKegiatanDalamNegeri[]
 ): Promise<ActionResponse<boolean>> => {
@@ -141,7 +141,7 @@ const SetujuiPengajuanUhDalamNegeri = async (
       STATUS_PENGAJUAN.APPROVED
     );
 
-    logger.info("[SUCCESS SetujuiPengajuanUhDalamNegeri]", {
+    logger.info("[SUCCESS setujuiPengajuanUhDalamNegeri]", {
       transactionUpdate,
       updated,
     });
@@ -152,9 +152,9 @@ const SetujuiPengajuanUhDalamNegeri = async (
       data: true,
     };
   } catch (error) {
-    console.error("[ERROR SetujuiPengajuanUhDalamNegeri]", error);
+    console.error("[ERROR setujuiPengajuanUhDalamNegeri]", error);
     return getPrismaErrorResponse(error as Error);
   }
 };
 
-export default SetujuiPengajuanUhDalamNegeri;
+export default setujuiPengajuanUhDalamNegeri;

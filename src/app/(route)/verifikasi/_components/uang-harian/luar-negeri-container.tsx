@@ -3,7 +3,7 @@ import {
   getPesertaKegiatanLuarNegeriExcludeIDN,
   PesertaKegiatanLuarNegeri,
 } from "@/actions/kegiatan/peserta/luar-negeri";
-import SetujuiPengajuanUhLuarNegeri, {
+import setujuiPengajuanUhLuarNegeri, {
   DetailUhLuarNegeriPeserta,
 } from "@/actions/kegiatan/uang-harian/verifikasi-luar-negeri";
 import FloatingComponent from "@/components/floating-component";
@@ -58,6 +58,8 @@ const UangHarianLuarNegeriContainer = ({
   const handleDetailUhLuarNegeriPesertaChange = (
     data: DetailUhLuarNegeriPeserta[]
   ) => {
+    //console.log("DetailUhLuarNegeriPeserta change");
+    //console.log(data);
     setDetailUhLuarNegeriPeserta(data);
   };
 
@@ -72,7 +74,7 @@ const UangHarianLuarNegeriContainer = ({
       toast.error("Silakan periksa kembali data peserta");
       return;
     }
-    const updated = await SetujuiPengajuanUhLuarNegeri(
+    const updated = await setujuiPengajuanUhLuarNegeri(
       kegiatan?.id,
       pesertaUpdated,
       detailUhLuarNegeriPeserta
