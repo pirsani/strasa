@@ -712,27 +712,34 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
 
     // mulai dari sini generate footer
     const { kiri, kanan } = tableFooterOptions;
-    // const ppk = {
-    //   text: "Mengetahui,\nPejabat Pembuat Komitmen",
-    //   nama: "Fulan bin Fulan",
-    //   NIP: "1234567890",
-    // };
-    // const bendahara = {
-    //   text: "Bendahara",
-    //   nama: "Fulan bin Fulan",
-    //   NIP: "1234567890",
-    // };
+
     const doctWidth = doc.page.width;
     console.log("doc.page.width", doctWidth);
 
+    //calculate how many lines needed for footer by counting \n in text
+    let footerLines = 0;
+    if (kiri.text) {
+      footerLines = kiri.text.split("\n").length;
+    }
+    if (kanan.text) {
+      const lines = kanan.text.split("\n").length;
+      if (lines > footerLines) {
+        footerLines = lines;
+      }
+    }
+
+    // tambahkan y1 dengan tinggi footer line
+    const defaultRangeY1Y2 = 50;
+    const additionalHeight = defaultRangeY1Y2 + footerLines * 10;
+
     let y1 = currentY + dataRowHeight;
-    let y2 = y1 + 50;
+    let y2 = y1 + additionalHeight;
     let x1 = startX;
     let x2 = doctWidth - 300;
 
     // check if need to add page if the last row is near the end of the page
     const availableHeight = doc.page.height; // 60 is margin
-    const isPageNeeded = y1 > availableHeight;
+    const isPageNeeded = y2 > availableHeight;
     logger.debug("isPageNeeded", isPageNeeded, y1 + startY, availableHeight);
     if (isPageNeeded) {
       doc.addPage();
@@ -740,7 +747,7 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
       x1 = startX;
       x2 = doctWidth - 300;
       y1 = startY;
-      y2 = y1 + 50;
+      y2 = y1 + additionalHeight;
     }
 
     // add page note if any

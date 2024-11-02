@@ -217,8 +217,12 @@ export async function generateSpdDaftarPeserta(
   if (!kegiatan) {
     throw new Error("E-SPDGDP-01 kegiatan not found");
   }
+  const { ppk, spd, pesertaKegiatan } = kegiatan;
+  if (!ppk || !spd) {
+    throw new Error("PPK or SPD not found");
+  }
 
-  const rows: TableRow[] = mapPesertaToTableRow(kegiatan.pesertaKegiatan);
+  const rows: TableRow[] = mapPesertaToTableRow(pesertaKegiatan);
 
   const peserta: DataGroup = {
     nama: "Peserta",
@@ -237,10 +241,14 @@ export async function generateSpdDaftarPeserta(
       dataRowHeight: 60,
     };
 
+    const kananText = `Jakarta, ${formatTanggal(
+      spd.tanggalSPD
+    )} \n Mengetahui/Menyetujui, \n Pejabat Pembuat Komitmen`;
+
     const footerOptions: TableFooterOptions = {
       // kiri: { text: "test", nama: "fulan", NIP: "6537327432" },
       kiri: { text: "", nama: "", NIP: "" },
-      kanan: { text: "test", nama: "fulan", NIP: "NIP. 6537327432" },
+      kanan: { text: kananText, nama: ppk.nama, NIP: `NIP. ${ppk.NIP}` },
     };
 
     const reportHeaderOptions: ReportHeaderOptions<KegiatanIncludeSpd> = {
@@ -293,7 +301,7 @@ const mapPesertaToTableRow = (
     const jumlahHariDinas =
       p.tanggalBerangkat &&
       p.tanggalKembali &&
-      differenceInDays(p.tanggalBerangkat, p.tanggalKembali) + 1;
+      differenceInDays(p.tanggalKembali, p.tanggalBerangkat) + 1;
     return {
       no: n,
       peserta: `${p.nama} \n ${p.NIP} \n ${p.jabatan} \n ${p.pangkatGolonganId}`,
