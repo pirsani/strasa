@@ -311,12 +311,14 @@ export const updateStatusRampungan = async (
 
 export const updateStatusUhLuarNegeri = async (
   kegiatanId: string,
-  statusUhLuarNegeriBaru: STATUS_PENGAJUAN
+  statusUhLuarNegeriBaru: STATUS_PENGAJUAN,
+  catatan?: string | null
 ): Promise<ActionResponse<KegiatanWithDetail>> => {
   const updated = await upsertRiwayatPengajuan(
     kegiatanId,
     statusUhLuarNegeriBaru,
-    "UH_LUAR_NEGERI"
+    "UH_LUAR_NEGERI",
+    catatan
   );
 
   return updated;
@@ -324,12 +326,14 @@ export const updateStatusUhLuarNegeri = async (
 
 export const updateStatusUhDalamNegeri = async (
   kegiatanId: string,
-  statusUhDalamNegeriBaru: STATUS_PENGAJUAN
+  statusUhDalamNegeriBaru: STATUS_PENGAJUAN,
+  catatan?: string | null
 ): Promise<ActionResponse<Kegiatan>> => {
   const updated = await upsertRiwayatPengajuan(
     kegiatanId,
     statusUhDalamNegeriBaru,
-    "UH_DALAM_NEGERI"
+    "UH_DALAM_NEGERI",
+    catatan
   );
 
   return updated;

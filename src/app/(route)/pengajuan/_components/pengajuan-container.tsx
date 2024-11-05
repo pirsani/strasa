@@ -8,7 +8,6 @@ import useFileStore from "@/hooks/use-file-store";
 import { JENIS_PENGAJUAN, LogProses } from "@prisma-honorarium/client";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import VerifikasiDataDukungUangHarianLuarNegeri from "../../verifikasi/_components/uang-harian/data-dukung-luar-negeri";
 import ButtonsPengajuan from "./buttons-pengajuan";
 import { DisplayFormPengajuanGenerateRampungan } from "./honorarium/display-form-pengajuan-generate-rampungan";
 import HonorariumContainer from "./honorarium/honorarium-container";
@@ -127,23 +126,15 @@ const PengajuanContainer = () => {
           )}
 
           {/*
-          hanya tampilkan form pengajuan jika status pengajuan belum submitted atau revisi
+          tampilkan form pengajuan uang harian luar negeri
           */}
-          {(!pengajuanUhLuarNegeri ||
-            pengajuanUhLuarNegeri.status === "REVISE") &&
-            jenisPengajuan == "UH_LUAR_NEGERI" &&
-            kegiatan && <UhLuarNegeriContainer kegiatanId={kegiatan.id} />}
-
-          {/*
-          jika status pengajuan sudah submitted, maka tampilkan data dukung
-          */}
-          {pengajuanUhLuarNegeri &&
-            pengajuanUhLuarNegeri.status !== "REVISE" &&
-            jenisPengajuan == "UH_LUAR_NEGERI" && (
-              <VerifikasiDataDukungUangHarianLuarNegeri
-                dokumenKegiatan={kegiatan?.dokumenKegiatan}
-              />
-            )}
+          {jenisPengajuan == "UH_LUAR_NEGERI" && kegiatan && (
+            <UhLuarNegeriContainer
+              kegiatanId={kegiatan.id}
+              riwayatPengajuan={pengajuanUhLuarNegeri}
+              dokumenKegiatan={kegiatan.dokumenKegiatan}
+            />
+          )}
 
           {jenisPengajuan == "PENGGANTIAN_REINBURSEMENT" && (
             <PenggantianContainer />

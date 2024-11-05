@@ -11,8 +11,10 @@ const Kegiatan = async ({ params }: { params: { slug: string[] } }) => {
   }
 
   return (
-    <div className="p-4 pb-24 h-auto min-h-full flex flex-col bg-gray-300">
-      <h1 className="mb-2"> Kegiatan </h1>
+    <div className="p-4 pb-24 h-auto min-h-full flex flex-col bg-gray-300 gap-2">
+      <h1 className="mb-2 bg-gray-500 text-gray-50 p-2 ">
+        Kegiatan : <span>{kegiatan?.nama}</span>
+      </h1>
       <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-20 bg-gray-100 rounded-lg py-4 lg:px-4 p-2">
         <PreviewKegiatan kegiatan={kegiatan} />
       </div>

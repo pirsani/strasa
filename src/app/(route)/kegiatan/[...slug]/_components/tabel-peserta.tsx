@@ -117,7 +117,7 @@ export const TabelPesertaKegiatan = ({
     setData(initialData);
   }, [initialData]);
   return (
-    <div className="bg-white p-2 mt-2 rounded-sm">
+    <div className="bg-white p-2">
       <TabelGenericWithoutInlineEdit
         data={filteredData}
         columns={columns}

@@ -181,6 +181,42 @@ const setujuiPengajuanUhLuarNegeri = async (
   }
 };
 
+export const revisiPengajuanUhLuarNegeri = async (
+  kegiatanId: string,
+  catatan?: string | null
+): Promise<ActionResponse<boolean>> => {
+  //update status riwayat pengajuan
+  try {
+    const pengguna = await getSessionPenggunaForAction();
+    if (!pengguna.success) {
+      return pengguna;
+    }
+
+    const satkerId = pengguna.data.satkerId;
+    const unitKerjaId = pengguna.data.unitKerjaId;
+    const penggunaId = pengguna.data.penggunaId;
+
+    const updated = await updateStatusUhLuarNegeri(
+      kegiatanId,
+      STATUS_PENGAJUAN.REVISE,
+      catatan
+    );
+
+    return {
+      success: true,
+      data: true,
+    };
+  } catch (error) {
+    console.error("[ERROR revisiPengajuanUhLuarNegeri]", error);
+    return {
+      success: false,
+      error: "E-RPUHDN-01",
+      message:
+        "Terjadi kesalahan saat revisi pengajuan uang harian luar negeri",
+    };
+  }
+};
+
 export interface DetailUhLuarNegeriPeserta extends UhLuarNegeri {
   nama: string;
   NIP: string | null;

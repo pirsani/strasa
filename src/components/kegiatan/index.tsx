@@ -125,10 +125,18 @@ const PreviewKegiatan = ({ kegiatan, className }: PreviewKegiatanProps) => {
           )}
 
           {pengajuanUhLuarNegeri && (
-            <RowText
-              label="Status UH Luar Negeri"
-              value={mapStatusLangkahToDesc(pengajuanUhLuarNegeri.status)}
-            />
+            <>
+              <RowText
+                label="Status UH Luar Negeri"
+                value={mapStatusLangkahToDesc(pengajuanUhLuarNegeri.status)}
+              />
+              {pengajuanUhLuarNegeri.status === "REVISE" && (
+                <RowText
+                  label="Catatan Revisi"
+                  value={pengajuanUhLuarNegeri.catatanRevisi || "-"}
+                />
+              )}
+            </>
           )}
 
           {pengajuanUhDalamNegeri && (

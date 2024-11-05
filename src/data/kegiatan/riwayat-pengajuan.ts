@@ -58,3 +58,29 @@ export const getRiwayatPengajuanByKegiatanIdAndJenisPengajuan = async (
   });
   return riwayat;
 };
+
+export const getRiwayatPengajuanByKegiatanIdAndJenisPengajuanIn = async (
+  kegiatanId: string,
+  jenis: JENIS_PENGAJUAN[]
+): Promise<RiwayatPengajuanIncludePengguna[] | null> => {
+  const riwayat = await dbHonorarium.riwayatPengajuan.findMany({
+    where: {
+      kegiatanId,
+      jenis: {
+        in: jenis,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      diajukanOleh: true,
+      diverifikasiOleh: true,
+      disetujuiOleh: true,
+      dimintaPembayaranOleh: true,
+      dibayarOleh: true,
+      diselesaikanOleh: true,
+    },
+  });
+  return riwayat;
+};

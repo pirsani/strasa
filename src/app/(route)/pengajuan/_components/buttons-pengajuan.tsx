@@ -257,9 +257,19 @@ const ButtonAjukanUhLuarNegeri = ({
   )
     return null;
 
-  const buttonText = statusUhLuarNegeri
-    ? "UH Luar Negeri telah diajukan"
-    : "Ajukan UH Luar Negeri";
+  let buttonText = "Ajukan UH Luar Negeri";
+
+  if (statusUhLuarNegeri && statusUhLuarNegeri === "APPROVED") {
+    buttonText = "UH Luar Negeri telah disetujui";
+  } else if (statusUhLuarNegeri === "SUBMITTED") {
+    buttonText = "UH Luar Negeri telah diajukan";
+  } else if (statusUhLuarNegeri === "REVISE") {
+    buttonText = "UH Luar Negeri perlu revisi";
+  }
+
+  // const buttonText = statusUhLuarNegeri
+  //   ? "UH Luar Negeri telah diajukan"
+  //   : "Ajukan UH Luar Negeri";
 
   return (
     <Button
