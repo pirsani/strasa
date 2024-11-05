@@ -11,10 +11,13 @@ declare module "next-auth" {
     nip?: string | null;
     unitKerjaId?: string | null; // ini basically adalah organisasiId
     unitKerjaNama?: string | null;
+    unitKerjaNamaSingkat?: string | null;
     satkerId?: string | null; // sedangkan ini adalah organisasiId terdekat yang merupakan satker anggaran
     satkerNama?: string | null;
+    satkerNamaSingkat?: string | null;
     organisasiId?: string | null;
     organisasiNama?: string | null;
+    organisasiNamaSingkat?: string | null;
     roles?: string[];
     permissions?: string[];
   }

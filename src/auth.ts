@@ -63,8 +63,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             ...user,
             unitKerjaId: user.organisasiId,
             unitKerjaNama: user.organisasi?.nama,
+            unitKerjaNamaSingkat: user.organisasi?.singkatan,
             satkerId: satkerAnggaran?.id,
             satkerNama: satkerAnggaran?.nama,
+            satkerNamaSingkat: satkerAnggaran?.singkatan,
           };
         }
         return null;
@@ -89,8 +91,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.nip = token.nip as string;
       session.user.unitKerjaId = token.unitKerjaId as string;
       session.user.unitKerjaNama = token.unitKerjaNama as string;
+      session.user.unitKerjaNamaSingkat = token.unitKerjaNamaSingkat as string;
       session.user.satkerId = token.satkerId as string;
       session.user.satkerNama = token.satkerNama as string;
+      session.user.satkerNamaSingkat = token.satkerNamaSingkat as string;
       session.user.roles = token.roles as string[];
       session.user.permissions = token.permissions as string[];
       return session;
@@ -105,8 +109,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.nip = user.nip;
         token.unitKerjaId = user.unitKerjaId;
         token.unitKerjaNama = user.unitKerjaNama;
+        token.unitKerjaNamaSingkat = user.unitKerjaNamaSingkat;
         token.satkerId = user.satkerId;
         token.satkerNama = user.satkerNama;
+        token.satkerNamaSingkat = user.satkerNamaSingkat;
         token.roles = user.roles;
         token.permissions = user.permissions;
       }
