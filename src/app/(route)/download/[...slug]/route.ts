@@ -23,33 +23,38 @@ export async function GET(
   const jenisDokumen = slug[0];
   console.log(jenisDokumen);
 
-  switch (jenisDokumen) {
-    case "dokumen-pengadaan":
-      return downloadDokumenPengadaan(req, slug);
-    case "dokumen-spd":
-      return downloadDokumenSpd(req, slug);
-    case "dokumen-rampungan":
-      return downloadDokumenRampungan(req, slug);
-    case "template-excel":
-      return downloadTemplateExcel(req, slug);
-    case "dokumen-kegiatan":
-      return downloadDokumenKegiatan(req, slug);
-    case "narasumber":
-      return downloadDokumenNarasumber(req, slug);
-    case "test":
-      return downloadTest(req, slug);
-    case "nominatif-honorarium":
-      return downloadNominatifHonorarium(req, slug);
-    case "nominatif-uh-dalam-negeri":
-      return downloadNominatifUhDalamNegeri(req, slug);
-    case "nominatif-uh-luar-negeri":
-      return downloadNominatifUhLuarNegeri(req, slug);
-    case "spd-peserta":
-      return downloadSpdDaftarPeserta(req, slug);
-    case "konfirmasi-kesediaan-mengajar":
-      return downloadDokumenKonfirmasiKesediaanMengajar(req, slug);
-    default:
-      return new NextResponse(`Download ${params.slug.join("/")}`);
+  try {
+    switch (jenisDokumen) {
+      case "dokumen-pengadaan":
+        return downloadDokumenPengadaan(req, slug);
+      case "dokumen-spd":
+        return downloadDokumenSpd(req, slug);
+      case "dokumen-rampungan":
+        return downloadDokumenRampungan(req, slug);
+      case "template-excel":
+        return downloadTemplateExcel(req, slug);
+      case "dokumen-kegiatan":
+        return downloadDokumenKegiatan(req, slug);
+      case "narasumber":
+        return downloadDokumenNarasumber(req, slug);
+      case "test":
+        return downloadTest(req, slug);
+      case "nominatif-honorarium":
+        return downloadNominatifHonorarium(req, slug);
+      case "nominatif-uh-dalam-negeri":
+        return downloadNominatifUhDalamNegeri(req, slug);
+      case "nominatif-uh-luar-negeri":
+        return downloadNominatifUhLuarNegeri(req, slug);
+      case "spd-peserta":
+        return downloadSpdDaftarPeserta(req, slug);
+      case "konfirmasi-kesediaan-mengajar":
+        return downloadDokumenKonfirmasiKesediaanMengajar(req, slug);
+      default:
+        return new NextResponse(`Download ${params.slug.join("/")}`);
+    }
+  } catch (error) {
+    console.error(error);
+    return new NextResponse("Error", { status: 200 });
   }
 }
 

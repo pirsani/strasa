@@ -166,6 +166,27 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     // to new page
   };
 
+  const handleViewRiwayatPengajuan =
+    (kegiatanId: string, detail: RowDetail) => () => {
+      console.log("View detail:", detail);
+      // Implement your view logic here
+      // view pdf
+      switch (detail.jenisPengajuan) {
+        case JENIS_PENGAJUAN.GENERATE_RAMPUNGAN:
+          window.open(`/download/dokumen-rampungan/${kegiatanId}`, "_blank");
+          return;
+        case JENIS_PENGAJUAN.HONORARIUM:
+          window.open(
+            `/download/nominatif-honorarium/${kegiatanId}/${detail.id}`,
+            "_blank"
+          );
+          return;
+        case JENIS_PENGAJUAN.UH_DALAM_NEGERI:
+          return;
+        case JENIS_PENGAJUAN.UH_LUAR_NEGERI:
+          return;
+      }
+    };
   const handleExpand = async (rowId: string, index: number) => {
     // console.log("Expand row:", rowId);
     // check if already fetched or Check if the row is already expanded just close it
@@ -327,6 +348,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                         variant="outline"
                         size="sm"
                         className="text-blue-800"
+                        onClick={handleViewRiwayatPengajuan(row.id, detail)}
                       >
                         <Eye size={18} />
                       </Button>

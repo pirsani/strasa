@@ -8,6 +8,7 @@ import generateTabelDinamis, {
   TableRow,
 } from "@/lib/pdf/tabel-nominatif-dinamis";
 import { formatTanggal } from "@/utils/date-format";
+import Decimal from "decimal.js";
 import { NextResponse } from "next/server";
 import { Logger } from "tslog";
 
@@ -217,11 +218,20 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
         "\n" +
         jadwalNarasumber.narasumber.id +
         "\n" +
+        jadwalNarasumber.narasumber?.pangkatGolonganId +
+        "\n" +
         jadwalNarasumber.narasumber?.NPWP;
 
-      const jp = jadwalNarasumber.jumlahJamPelajaran!;
-      const besaran = jadwalNarasumber.besaranHonorarium!;
-      const tarif = jadwalNarasumber.pajakTarif!.times(100);
+      const jp = jadwalNarasumber.jumlahJamPelajaran || new Decimal(0);
+      const besaran = jadwalNarasumber.besaranHonorarium || new Decimal(0);
+      const pajakTarif = jadwalNarasumber.pajakTarif || new Decimal(0);
+
+      if (jp.lte(0) || besaran.lte(0)) {
+        //throw new Error("Jumlah jam pelajaran atau besaran honorarium kosong");
+        logger.warn(`Jumlah jam pelajaran atau besaran honorarium kosong`);
+      }
+
+      const tarif = pajakTarif.times(100);
       const jumlahBruto = jp.times(besaran);
       const bank =
         jadwalNarasumber.narasumber?.namaRekening +
