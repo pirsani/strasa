@@ -22,7 +22,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import PesertaContainer from "./peserta-container";
-//import SelectSbmProvinsi from "./select-sbm-provinsi";
+//import SelectProvinsi from "./select-sbm-provinsi";
 import setupKegiatan from "@/actions/kegiatan/setup-kegiatan";
 import CummulativeErrors from "@/components/form/cummulative-error";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
@@ -41,7 +41,7 @@ import ItineraryContainer from "./itinerary-container";
 //import Select, { SingleValue } from "react-select";
 // fix Warning: Extra attributes from the server: aria-activedescendant
 // Dynamically import Select to avoid SSR
-const SelectSbmProvinsi = dynamic(() => import("./select-sbm-provinsi"), {
+const SelectProvinsi = dynamic(() => import("./select-provinsi"), {
   ssr: false,
   loading: () => <p>Loading provinsi...</p>,
 });
@@ -393,7 +393,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
               <ItineraryContainer onItineraryChange={handleItineraryChange} />
             </>
           )}
-          {lokasi != LOKASI.LUAR_NEGERI && (
+          {lokasi === LOKASI.LUAR_KOTA && (
             <FormField
               control={form.control}
               name="provinsi"
@@ -404,8 +404,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
                     <RequiredLabel />
                   </FormLabel>
                   <FormControl>
-                    <SelectSbmProvinsi
-                      isDisabled={lokasi !== LOKASI.LUAR_KOTA}
+                    <SelectProvinsi
                       fullKey={field.name}
                       onChange={field.onChange}
                       value={field.value}

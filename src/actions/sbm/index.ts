@@ -42,6 +42,23 @@ export const getOptionsProvinsi = async () => {
   return optionsProvinsi;
 };
 
+export const getOptionsProvinsiExcludeJakarta = async () => {
+  const dataProvinsi = await dbHonorarium.provinsi.findMany({
+    where: {
+      kode: {
+        not: "31", // exclude DKI Jakarta
+      },
+    },
+  });
+  // map dataProvinsi to options
+  const optionsProvinsi = dataProvinsi.map((provinsi) => ({
+    value: provinsi.id,
+    label: provinsi.nama,
+  }));
+
+  return optionsProvinsi;
+};
+
 const currentYear = new Date().getFullYear();
 
 export const getSbmHonorarium = async (tahun: number = currentYear) => {
