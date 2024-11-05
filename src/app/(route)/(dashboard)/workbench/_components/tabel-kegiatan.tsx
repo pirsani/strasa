@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { getObPlainJadwalByKegiatanId } from "@/data/jadwal";
 import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
 import { cn } from "@/lib/utils";
-import { formatHariTanggal, formatTanggal } from "@/utils/date-format";
+import { formatTanggal } from "@/utils/date-format";
 import {
   JENIS_PENGAJUAN,
   Kegiatan,
@@ -104,7 +104,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       accessorKey: "tanggalMulai",
       header: "Mulai",
       cell: (info) => {
-        return formatTanggal(info.getValue() as Date, "yyyy-M-dd");
+        return formatTanggal(info.getValue() as Date, "dd-M-yyyy");
       },
       footer: "Mulai",
     },
@@ -112,7 +112,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       accessorKey: "tanggalSelesai",
       header: "Selesai",
       cell: (info) => {
-        return formatTanggal(info.getValue() as Date, "yyyy-M-dd");
+        return formatTanggal(info.getValue() as Date, "dd-M-yyyy");
       },
       footer: "Selesai",
     },
@@ -312,10 +312,10 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                   <tr key={detail.id} className="even:bg-slate-100 h-10">
                     <td className="border px-2">{detail.nama}</td>
                     <td className="border px-2">
-                      {formatHariTanggal(detail.tanggalKegiatan)}
+                      {formatTanggal(detail.tanggalKegiatan, "dd-M-yyyy")}
                     </td>
                     <td className="border px-2">
-                      {formatTanggal(detail.diajukanTanggal)}
+                      {formatTanggal(detail.diajukanTanggal, "dd-M-yyyy")}
                     </td>
                     <td className="border px-2">{detail.jenisPengajuan}</td>
                     <td className="border px-2">
