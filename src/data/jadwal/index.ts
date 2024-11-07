@@ -9,6 +9,7 @@ import {
   Kelas,
   Materi,
   Narasumber,
+  SbmHonorarium,
   STATUS_PENGAJUAN,
 } from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
@@ -36,6 +37,7 @@ export type JadwalPlainObject = Omit<
 
 export interface JadwalNarsum extends JadwalNarasumber {
   narasumber: Narasumber;
+  jenisHonorarium?: SbmHonorarium | null;
 }
 
 export interface Narsum extends Narasumber {}
@@ -217,9 +219,20 @@ export const getJadwalById = async (
     include: {
       kelas: true,
       materi: true,
+      riwayatPengajuan: {
+        include: {
+          diajukanOleh: true,
+          diverifikasiOleh: true,
+          disetujuiOleh: true,
+          dimintaPembayaranOleh: true,
+          dibayarOleh: true,
+          diselesaikanOleh: true,
+        },
+      },
       jadwalNarasumber: {
         include: {
           narasumber: true,
+          jenisHonorarium: true,
         },
       },
     },
