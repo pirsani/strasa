@@ -1,12 +1,12 @@
 import { OptionSbm } from "@/actions/sbm";
 import NarasumberListItem from "@/components/kegiatan/honorarium/narasumber-list-item";
-import { JadwalKelasNarasumber } from "@/data/jadwal";
+import { ObjPlainJadwalKelasNarasumber } from "@/data/jadwal";
 import { formatHariTanggal } from "@/utils/date-format";
 import { ALUR_PROSES, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
 
 interface JadwalProps {
-  jadwal: JadwalKelasNarasumber;
+  jadwal: ObjPlainJadwalKelasNarasumber;
   proses: ALUR_PROSES;
 }
 const Jadwal = ({ jadwal, proses }: JadwalProps & { proses: ALUR_PROSES }) => {

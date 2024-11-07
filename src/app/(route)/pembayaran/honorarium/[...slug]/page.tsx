@@ -1,7 +1,8 @@
 import FloatingPdfPreviewContainer from "@/components/floating-pdf-preview-container";
 import PreviewKegiatan from "@/components/kegiatan";
-import { getJadwalById } from "@/data/jadwal";
+import { getJadwalById, ObjPlainJadwalKelasNarasumber } from "@/data/jadwal";
 import { getKegiatanWithAllDetailById } from "@/data/kegiatan";
+import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import FormPembayaran from "../_components/form-pembayaran";
 import Jadwal from "../_components/jadwal";
 
@@ -14,6 +15,8 @@ const PembayaranHonorariumPage = async ({
   const jadwalId = params.slug[1];
   const kegiatan = await getKegiatanWithAllDetailById(kegiatanId);
   const jadwal = await getJadwalById(jadwalId);
+  const plainObjectJadwal =
+    convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber>(jadwal);
 
   if (!kegiatan || !jadwal || !jadwal.riwayatPengajuanId) {
     return <div>Not found</div>;
@@ -28,7 +31,7 @@ const PembayaranHonorariumPage = async ({
         <PreviewKegiatan kegiatan={kegiatan} />
       </div>
       <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-4 bg-gray-100 rounded-lg py-4 lg:px-4 p-2">
-        <Jadwal jadwal={jadwal} proses={"PEMBAYARAN"} />
+        <Jadwal jadwal={plainObjectJadwal} proses={"PEMBAYARAN"} />
       </div>
       <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-4 bg-gray-100 rounded-lg py-4 lg:px-4 p-2">
         <FormPembayaran riwayatPengajuanId={jadwal.riwayatPengajuanId} />
