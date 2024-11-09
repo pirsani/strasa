@@ -296,7 +296,7 @@ const RowNarasumberWithInput = ({
   className?: string;
 }) => {
   return (
-    <div className="flex flex-row w-full border border-blue-200 h-12 bg-blue-100 p-1">
+    <div className="flex flex-row w-full border border-blue-200 h-12 bg-blue-100 justify-center items-center pl-2">
       <div className="w-1/3">{text}</div>
       <div className="w-2/3 flex">{children}</div>
     </div>

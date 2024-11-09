@@ -1,9 +1,12 @@
 import FloatingPdfPreviewContainer from "@/components/floating-pdf-preview-container";
 import PreviewKegiatan from "@/components/kegiatan";
-import { getJadwalById, ObjPlainJadwalKelasNarasumber } from "@/data/jadwal";
+import {
+  getJadwalByRiwayatPengajuanId,
+  ObjPlainJadwalKelasNarasumber,
+} from "@/data/jadwal";
 import { getKegiatanWithAllDetailById } from "@/data/kegiatan";
 import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
-import FormPembayaran from "../_components/form-pembayaran";
+import ContainerPembayaran from "../_components/container-pembayaran";
 import Jadwal from "../_components/jadwal";
 
 const PembayaranHonorariumPage = async ({
@@ -12,9 +15,9 @@ const PembayaranHonorariumPage = async ({
   params: { slug: string[] };
 }) => {
   const kegiatanId = params.slug[0];
-  const jadwalId = params.slug[1];
+  const riwayatPengajuanId = params.slug[1];
   const kegiatan = await getKegiatanWithAllDetailById(kegiatanId);
-  const jadwal = await getJadwalById(jadwalId);
+  const jadwal = await getJadwalByRiwayatPengajuanId(riwayatPengajuanId);
   const plainObjectJadwal =
     convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber>(jadwal);
 
@@ -34,7 +37,10 @@ const PembayaranHonorariumPage = async ({
         <Jadwal jadwal={plainObjectJadwal} proses={"PEMBAYARAN"} />
       </div>
       <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-4 bg-gray-100 rounded-lg py-4 lg:px-4 p-2">
-        <FormPembayaran riwayatPengajuanId={jadwal.riwayatPengajuanId} />
+        <ContainerPembayaran
+          riwayatPengajuanId={riwayatPengajuanId}
+          statusPengajuanHonorarium={jadwal.riwayatPengajuan?.status}
+        />
       </div>
       <FloatingPdfPreviewContainer />
     </div>

@@ -318,7 +318,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
           <td colSpan={8} className=" pb-4">
             <table className="table-auto w-full text-left border border-collapse">
               <thead>
-                <tr className="bg-gray-800 text-gray-200 h-12">
+                <tr className="bg-gray-400 text-white h-12">
                   <th className="border px-1">Keterangan/Kelas</th>
                   <th className="border px-1">Tanggal Kegiatan</th>
                   <th className="border px-1">Tanggal Pengajuan</th>

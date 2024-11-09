@@ -1,6 +1,6 @@
 import { getSessionPengguna } from "@/actions/pengguna";
 import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
-import { getObjPlainPembayaran } from "@/data/pembayaran";
+import { getObjPlainPengajuanPembayaran } from "@/data/pembayaran";
 import TabelPengajuanPembayaran from "./_components/tabel-pengajuan-pembayaran";
 
 const PembayaranPage = async () => {
@@ -12,11 +12,14 @@ const PembayaranPage = async () => {
   const tahun = await getTahunAnggranPilihan();
   const satkerId = pengguna.data?.satkerId ?? "";
 
-  const dataPembayaran = await getObjPlainPembayaran(satkerId, tahun);
+  const dataPengajuanPembayaran = await getObjPlainPengajuanPembayaran(
+    satkerId,
+    tahun
+  );
   return (
     <div className="p-4 pb-24 h-auto min-h-full flex flex-col ">
       <h1 className="mb-2">Alur Proses &gt; 1. Pembayaran </h1>
-      <TabelPengajuanPembayaran data={dataPembayaran} />
+      <TabelPengajuanPembayaran data={dataPengajuanPembayaran} />
     </div>
   );
 };

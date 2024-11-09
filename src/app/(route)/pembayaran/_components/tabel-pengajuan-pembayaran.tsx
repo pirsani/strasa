@@ -1,25 +1,26 @@
 "use client";
-import { ObjPlainPembayaranIncludeKegiatan } from "@/actions/pembayaran";
 import { TabelGenericWithoutInlineEdit } from "@/components/tabel-generic-without-inline-edit";
 import { Button } from "@/components/ui/button";
+import { RiwayatPengajuanIncludeKegiatan } from "@/data/pembayaran";
 import { useSearchTerm } from "@/hooks/use-search-term";
 import { mapStatusLangkahToDesc, STATUS_PENGAJUAN } from "@/lib/constants";
+import { formatTanggal } from "@/utils/date-format";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import Link from "next/link";
 import { useState } from "react";
 
 interface TabelPengajuanPembayaranProps {
-  data?: ObjPlainPembayaranIncludeKegiatan[];
+  data?: RiwayatPengajuanIncludeKegiatan[];
 }
 const TabelPengajuanPembayaran = ({
   data: initialData = [],
 }: TabelPengajuanPembayaranProps) => {
   const [dataPembayaran, setDataPembayaran] =
-    useState<ObjPlainPembayaranIncludeKegiatan[]>(initialData);
+    useState<RiwayatPengajuanIncludeKegiatan[]>(initialData);
   const [isEditing, setIsEditing] = useState(false);
   const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
   const [originalData, setOriginalData] =
-    useState<ObjPlainPembayaranIncludeKegiatan | null>(null);
+    useState<RiwayatPengajuanIncludeKegiatan | null>(null);
 
   const { searchTerm } = useSearchTerm();
   const sortedDataPembayaran = dataPembayaran.sort((obj1, obj2) => {
@@ -39,18 +40,37 @@ const TabelPengajuanPembayaran = ({
     return searchWords.every(
       (word) =>
         row.kegiatan.nama?.toLowerCase().includes(word) ||
-        row.jenisPengajuan.toLowerCase().includes(word)
+        row.jenis.toLowerCase().includes(word)
     );
   });
 
-  const handleEdit = (row: Row<ObjPlainPembayaranIncludeKegiatan>) => {};
-  const handleDelete = (row: ObjPlainPembayaranIncludeKegiatan) => {};
+  const handleEdit = (row: Row<RiwayatPengajuanIncludeKegiatan>) => {};
+  const handleDelete = (row: RiwayatPengajuanIncludeKegiatan) => {};
 
   const handleGenerate = (jadwalId: string) => {
     console.log(jadwalId);
   };
 
-  const columns: ColumnDef<ObjPlainPembayaranIncludeKegiatan>[] = [
+  const rowRiwayatToHref = (row: RiwayatPengajuanIncludeKegiatan) => {
+    const jenisPengajuan = row.jenis;
+    let hrefTo = "#";
+    switch (jenisPengajuan) {
+      case "HONORARIUM":
+        hrefTo = `/pembayaran/honorarium/${row.kegiatanId}/${row.id}`;
+        break;
+      case "UH_DALAM_NEGERI":
+        hrefTo = `/pembayaran/uh-dalam-negeri/${row.kegiatanId}/${row.id}`;
+        break;
+      case "UH_LUAR_NEGERI":
+        hrefTo = `/pembayaran/uh-luar-negeri/${row.kegiatanId}/${row.id}`;
+        break;
+      default:
+        break;
+    }
+    return hrefTo;
+  };
+
+  const columns: ColumnDef<RiwayatPengajuanIncludeKegiatan>[] = [
     {
       id: "rowNumber",
       header: "#",
@@ -65,10 +85,25 @@ const TabelPengajuanPembayaran = ({
       footer: "Kelas",
     },
     {
-      accessorKey: "jenisPengajuan",
+      accessorKey: "jenis",
       header: "Pengajuan",
       cell: (info) => info.getValue(),
       footer: "Pengajuan",
+    },
+    {
+      accessorKey: "dimintaPembayaranTanggal",
+      header: "Tanggal",
+      cell: (info) => {
+        const date = formatTanggal(info.getValue() as Date, "dd-M-yyyy");
+        return date;
+      },
+      footer: "Tanggal",
+    },
+    {
+      accessorKey: "keterangan",
+      header: "Keterangan",
+      cell: (info) => info.getValue(),
+      footer: "Keterangan",
     },
     {
       accessorKey: "status",
@@ -78,20 +113,12 @@ const TabelPengajuanPembayaran = ({
       },
       footer: "Status",
     },
-    {
-      accessorKey: "createdAt",
-      header: "Tanggal Pengajuan",
-      cell: (info) => {
-        const date = new Date(info.getValue() as string);
-        return date.toLocaleDateString();
-      },
-      footer: "Kelas",
-    },
+
     {
       accessorKey: "_additionalKolomAksi",
       header: "Aksi",
       cell: ({ row }) => {
-        const hrefTo = `/pembayaran/${row.original.id}`;
+        const hrefTo = rowRiwayatToHref(row.original);
         return (
           <div className="flex gap-2">
             <Link href={hrefTo}>

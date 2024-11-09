@@ -239,3 +239,35 @@ export const getJadwalById = async (
   });
   return jadwal;
 };
+
+export const getJadwalByRiwayatPengajuanId = async (
+  riwayatPengajuanId: string
+): Promise<JadwalKelasNarasumber | null> => {
+  const jadwal = await dbHonorarium.jadwal.findFirst({
+    where: {
+      riwayatPengajuanId: riwayatPengajuanId,
+    },
+    include: {
+      kegiatan: true,
+      kelas: true,
+      materi: true,
+      riwayatPengajuan: {
+        include: {
+          diajukanOleh: true,
+          diverifikasiOleh: true,
+          disetujuiOleh: true,
+          dimintaPembayaranOleh: true,
+          dibayarOleh: true,
+          diselesaikanOleh: true,
+        },
+      },
+      jadwalNarasumber: {
+        include: {
+          narasumber: true,
+          jenisHonorarium: true,
+        },
+      },
+    },
+  });
+  return jadwal;
+};

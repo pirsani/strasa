@@ -112,7 +112,7 @@ export const mapStatusLangkahToColor = (status: STATUS_PENGAJUAN | null) => {
     case "REQUEST_TO_PAY":
       return "bg-green-600 text-green-200";
     case "PAID":
-      return "bg-green-700 text-green-200";
+      return "bg-green-700 text-white";
     case "DONE":
     case "END":
       return "bg-blue-700 text-white";

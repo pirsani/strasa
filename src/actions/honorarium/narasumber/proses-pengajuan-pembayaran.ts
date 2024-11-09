@@ -5,6 +5,7 @@ import { getSessionPenggunaForAction } from "@/actions/pengguna";
 import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
 import { BASE_PATH_UPLOAD } from "@/app/api/upload/config";
+import { getJadwalByRiwayatPengajuanId } from "@/data/jadwal";
 import { getJadwalIncludeKegiatan } from "@/data/narasumber/jadwal";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { getBesaranPajakHonorarium, getDpp } from "@/lib/pajak";
@@ -424,6 +425,113 @@ export const pengajuanPembayaranHonorarium = async (
       message: "unknown error. please contact administrator",
     };
   }
+};
+
+export const updateBuktiPembayaranHonorarium = async (
+  riwayatPengajuanId: string,
+  buktiPembayaranCuid: string
+): Promise<ActionResponse<STATUS_PENGAJUAN>> => {
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) {
+    return pengguna;
+  }
+  const jadwal = await getJadwalByRiwayatPengajuanId(riwayatPengajuanId);
+  if (!jadwal || !jadwal.riwayatPengajuan || !jadwal.kegiatan) {
+    return {
+      success: false,
+      error: "E-UPPH-001",
+      message: "Jadwal not found or Riwayat pengajuan not found",
+    };
+  }
+  if (jadwal.riwayatPengajuan.status !== "REQUEST_TO_PAY") {
+    return {
+      success: false,
+      error: "E-UPPH-002",
+      message: `Riwayat pengajuan status [${jadwal.riwayatPengajuan.status}] not valid for this action`,
+    };
+  }
+
+  // find uploaded file and then move it to final folder
+  const tahun = jadwal.kegiatan.tanggalMulai.getFullYear().toString();
+
+  const tempPath = path.posix.join(
+    BASE_PATH_UPLOAD,
+    "temp",
+    riwayatPengajuanId
+  );
+  const finalPath = path.posix.join(
+    BASE_PATH_UPLOAD,
+    tahun,
+    jadwal.kegiatanId,
+    "jadwal-kelas-narasumber",
+    jadwal.id
+  );
+
+  const fileBuktiPembayaran = buktiPembayaranCuid + ".pdf";
+  const finalNamafile = "bukti_bayar_" + fileBuktiPembayaran;
+
+  const finalPathFile = path.posix.join(finalPath, finalNamafile);
+  const tempPathFile = path.posix.join(tempPath, fileBuktiPembayaran);
+  const resolvedPathFile = path.resolve(finalPathFile);
+  const resolvedTempPathFile = path.resolve(tempPathFile);
+  // check if temp file exists
+  // Get the filename from the resolved path
+  const filename = path.basename(resolvedPathFile);
+  const fileExists = await fse.pathExists(resolvedTempPathFile);
+  if (!fileExists) {
+    logger.error(
+      `File ${filename} not found in ${resolvedTempPathFile}, skipping moving file to final folder`
+    );
+    return {
+      success: false,
+      error: "E-RTP-002",
+      message: "file belum terupload",
+    };
+  }
+
+  await moveFileToFinalFolder(resolvedTempPathFile, resolvedPathFile);
+  const relativePath = path.posix.relative(BASE_PATH_UPLOAD, finalPathFile);
+
+  const objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
+    status: "PAID",
+    dibayarOlehId: pengguna.data.penggunaId,
+    dibayarTanggal: new Date(),
+    dokumenBuktiPembayaran: relativePath,
+  };
+
+  const updatedRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
+    where: {
+      id: riwayatPengajuanId,
+    },
+    data: {
+      ...objRiwayatPengajuanUpdate,
+    },
+  });
+
+  if (!updatedRiwayatPengajuan) {
+    return {
+      success: false,
+      error: "E-UPPH-003",
+      message: "failed to update riwayat pengajuan",
+    };
+  }
+
+  return {
+    success: true,
+    data: "PAID",
+  };
+};
+
+const pengecekanPengguna = async () => {
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) {
+    return pengguna;
+  }
+  // TODO memastikan bahwa pengguna yang mengajukan adalah satker pengguna yang terkait dengan kegiatan
+  const satkerId = pengguna.data.satkerId;
+  const unitKerjaId = pengguna.data.unitKerjaId;
+  const penggunaId = pengguna.data.penggunaId;
+  const penggunaName = pengguna.data.penggunaName;
 };
 
 export default updateStatusPengajuanPembayaran;

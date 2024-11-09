@@ -4,6 +4,7 @@ import { ObjPlainJadwalKelasNarasumber } from "@/data/jadwal";
 import { formatHariTanggal } from "@/utils/date-format";
 import { ALUR_PROSES, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
+import DlNominatifHonorarium from "./dl-nominatif-honorarium";
 
 interface JadwalProps {
   jadwal: ObjPlainJadwalKelasNarasumber;
@@ -72,6 +73,7 @@ const Jadwal = ({ jadwal, proses }: JadwalProps & { proses: ALUR_PROSES }) => {
           Catatan: {jadwal.riwayatPengajuan?.catatanRevisi || "-"}
         </div>
       </div>
+      <DlNominatifHonorarium status={status} jadwal={jadwal} />
     </div>
   );
 };

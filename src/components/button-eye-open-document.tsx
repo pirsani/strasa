@@ -29,7 +29,7 @@ const ButtonEye = ({ url }: ButtonEyeProps) => {
       type="button"
       variant={"outline"}
       className={cn(
-        "border-blue-500 h-11 w-11 p-0 hover:bg-blue-300",
+        "border-blue-500 h-12 w-12 p-0 hover:bg-blue-300",
         fileUrl === url && "bg-blue-500 text-white"
       )}
       onClick={setUrl}
