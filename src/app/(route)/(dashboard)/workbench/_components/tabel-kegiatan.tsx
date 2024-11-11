@@ -145,6 +145,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     id: string;
     nama: string;
     tanggalKegiatan?: Date | string | null;
+    pengajuanId?: string | null;
     jenisPengajuan?: JENIS_PENGAJUAN | null;
     statusPengajuan?: STATUS_PENGAJUAN | null;
     diajukanOlehId?: string | null;
@@ -171,19 +172,51 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       console.log("View detail:", detail);
       // Implement your view logic here
       // view pdf
+
+      //
+      if (!detail.jenisPengajuan || !detail.statusPengajuan) return;
       switch (detail.jenisPengajuan) {
         case JENIS_PENGAJUAN.GENERATE_RAMPUNGAN:
           window.open(`/download/dokumen-rampungan/${kegiatanId}`, "_blank");
           return;
         case JENIS_PENGAJUAN.HONORARIUM:
+          if (detail.statusPengajuan === STATUS_PENGAJUAN.PAID) {
+            window.open(
+              `/download/bukti-pembayaran/${detail.pengajuanId}`,
+              "_blank"
+            );
+            return;
+          }
           window.open(
             `/download/nominatif-honorarium/${kegiatanId}/${detail.id}`,
             "_blank"
           );
           return;
         case JENIS_PENGAJUAN.UH_DALAM_NEGERI:
+          if (detail.statusPengajuan === STATUS_PENGAJUAN.PAID) {
+            window.open(
+              `/download/bukti-pembayaran/${detail.pengajuanId}`,
+              "_blank"
+            );
+            return;
+          }
+          window.open(
+            `/download/nominatif-uh-dalam-negeri/${kegiatanId}/${detail.id}`,
+            "_blank"
+          );
           return;
         case JENIS_PENGAJUAN.UH_LUAR_NEGERI:
+          if (detail.statusPengajuan === STATUS_PENGAJUAN.PAID) {
+            window.open(
+              `/download/bukti-pembayaran/${detail.pengajuanId}`,
+              "_blank"
+            );
+            return;
+          }
+          window.open(
+            `/download/nominatif-uh-luar-negeri/${kegiatanId}/${detail.id}`,
+            "_blank"
+          );
           return;
       }
     };
@@ -211,6 +244,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       const newRiwayatRampungan: RowDetail = {
         id: riwayatRampungan.id,
         nama: "Rampungan",
+        pengajuanId: riwayatRampungan.id,
         jenisPengajuan: riwayatRampungan.jenis,
         statusPengajuan: riwayatRampungan.status,
         diajukanOlehId: riwayatRampungan.diajukanOlehId,
@@ -233,6 +267,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       const newRiwayatPengajuanUhLuarNegeri: RowDetail = {
         id: riwayatPengajuanUhLuarNegeri.id,
         nama: "Uang Harian Luar Negeri",
+        pengajuanId: riwayatPengajuanUhLuarNegeri.id,
         jenisPengajuan: riwayatPengajuanUhLuarNegeri.jenis,
         statusPengajuan: riwayatPengajuanUhLuarNegeri.status,
         diajukanOlehId: riwayatPengajuanUhLuarNegeri.diajukanOlehId,
@@ -255,6 +290,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       const newRiwayatPengajuanUhDalamNegeri: RowDetail = {
         id: riwayatPengajuanUhDalamNegeri.id,
         nama: "Uang Harian Dalam Negeri",
+        pengajuanId: riwayatPengajuanUhDalamNegeri.id,
         jenisPengajuan: riwayatPengajuanUhDalamNegeri.jenis,
         statusPengajuan: riwayatPengajuanUhDalamNegeri.status,
         diajukanOlehId: riwayatPengajuanUhDalamNegeri.diajukanOlehId,
@@ -279,6 +315,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         // statusPengajuan: mapStatusLangkahToDesc(
         //   jadwal.statusPengajuanHonorarium
         // ),
+        pengajuanId: jadwal.riwayatPengajuan?.id,
         statusPengajuan: jadwal.riwayatPengajuan?.status || null,
         diajukanOlehId: jadwal.riwayatPengajuan?.diajukanOlehId,
         diajukanOleh: jadwal.riwayatPengajuan?.diajukanOleh?.name,
@@ -390,7 +427,15 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
 
   useEffect(() => {
     setData(initialData);
+    // reset expanded state
+    setExpanded({});
+    setRowDetails({});
   }, [initialData]);
+
+  if (!data) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <TabelExpandable

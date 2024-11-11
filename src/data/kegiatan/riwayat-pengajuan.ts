@@ -161,3 +161,25 @@ export const getRiwayatPengajuanByKegiatanIdAndJenisPengajuanIn = async (
   });
   return riwayat;
 };
+
+export interface StatusCount {
+  status: STATUS_PENGAJUAN;
+  count: number;
+}
+
+export const getDistinctStatusPengajuan = async (
+  tahunAnggaran: number
+): Promise<StatusCount[] | null> => {
+  try {
+    const result = await dbHonorarium.$queryRaw<StatusCount[]>`
+      SELECT status, COUNT(*) as count
+      FROM riwayat_pengajuan
+      WHERE EXTRACT(YEAR FROM diajukan_tanggal) = ${tahunAnggaran}
+      GROUP BY status
+    `;
+    return result.length ? result : null;
+  } catch (error) {
+    console.error("Error fetching distinct status pengajuan:", error);
+    return null;
+  }
+};

@@ -46,7 +46,7 @@ export const downloadDokumenBuktiPembayaran = async (
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename=${createId()}.pdf`, // inline or attachment
+        "Content-Disposition": `inline; filename=${createId()}.pdf`, // inline or attachment
       },
     });
     //const id = slug[2];
