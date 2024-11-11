@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { downloadDokumenBuktiPembayaran } from "./dokumen-bukti-pembayaran";
 import downloadDokumenKegiatan from "./dokumen-kegiatan";
 import downloadDokumenNarasumber, {
   downloadDokumenBuktiPembayaranNarasumber,
@@ -50,6 +51,8 @@ export async function GET(
         return downloadSpdDaftarPeserta(req, slug);
       case "konfirmasi-kesediaan-mengajar":
         return downloadDokumenKonfirmasiKesediaanMengajar(req, slug);
+      case "bukti-pembayaran":
+        return downloadDokumenBuktiPembayaran(req, slug);
       case "bukti-pembayaran-narasumber":
         return downloadDokumenBuktiPembayaranNarasumber(req, slug);
       default:

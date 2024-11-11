@@ -6,20 +6,26 @@ const InfoKurs = () => {
   useEffect(() => {
     const fetchKurs = async () => {
       const k = await getKursBankIndonesia(new Date());
-      if (k) setKurs(k);
+      if (k) {
+        k.tengah = (k.beli + k.jual) / 2;
+        setKurs(k);
+      }
     };
     fetchKurs();
   }, []);
 
   return (
     <div>
-      <h1>Info Kurs BI</h1>
       {kurs ? (
-        <div>
-          <p>
-            Beli: {kurs.beli} | Jual: {kurs.jual} | Tanggal: {kurs.tanggal}
-          </p>
-        </div>
+        <>
+          <h1>Info Kurs BI, Tanggal: {kurs.tanggal} </h1>
+
+          <div>
+            <p>
+              Beli: {kurs.beli} | Jual: {kurs.jual} | Tengah: {kurs.tengah}
+            </p>
+          </div>
+        </>
       ) : (
         <p>Loading...</p>
       )}

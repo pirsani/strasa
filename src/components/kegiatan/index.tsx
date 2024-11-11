@@ -136,14 +136,36 @@ const PreviewKegiatan = ({ kegiatan, className }: PreviewKegiatanProps) => {
                   value={pengajuanUhLuarNegeri.catatanRevisi || "-"}
                 />
               )}
+              {(pengajuanUhLuarNegeri.status === "REQUEST_TO_PAY" ||
+                pengajuanUhLuarNegeri.status === "PAID" ||
+                pengajuanUhLuarNegeri.status === "DONE" ||
+                pengajuanUhLuarNegeri.status === "END") && (
+                <TextWithPreviewButton
+                  label="Daftar Nominatif"
+                  fileName={"daftar-nominatif-uh-luar-negeri.pdf"}
+                  url={`/download/nominatif-uh-luar-negeri/${kegiatan.id}`}
+                />
+              )}
             </>
           )}
 
           {pengajuanUhDalamNegeri && (
-            <RowText
-              label="Status UH Dalam Negeri"
-              value={mapStatusLangkahToDesc(pengajuanUhDalamNegeri.status)}
-            />
+            <>
+              <RowText
+                label="Status UH Dalam Negeri"
+                value={mapStatusLangkahToDesc(pengajuanUhDalamNegeri.status)}
+              />
+              {(pengajuanUhDalamNegeri.status === "REQUEST_TO_PAY" ||
+                pengajuanUhDalamNegeri.status === "PAID" ||
+                pengajuanUhDalamNegeri.status === "DONE" ||
+                pengajuanUhDalamNegeri.status === "END") && (
+                <TextWithPreviewButton
+                  label="Daftar Nominatif"
+                  fileName={"daftar-nominatif-uh-dalam-negeri.pdf"}
+                  url={`/download/nominatif-uh-dalam-negeri/${kegiatan.id}`}
+                />
+              )}
+            </>
           )}
         </div>
       )}

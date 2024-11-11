@@ -23,7 +23,7 @@ export interface TableColumnHeader {
 }
 
 export interface TableRow {
-  [key: string]: string | number;
+  [key: string]: string | number | Decimal;
 }
 
 // Function to add underlined text with correct alignment
@@ -318,6 +318,7 @@ const generateTableRow = (
     y: number,
     rowHeight: number
   ) => {
+    console.log("[drawRow] row", row);
     Object.entries(row).forEach(([key, value]) => {
       const column = tableColumnHeaders.find((column) => column.field === key);
       if (!column) {

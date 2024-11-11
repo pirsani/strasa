@@ -4,6 +4,7 @@ import { parseStringPromise } from "xml2js";
 export interface KursResponse {
   beli: number;
   jual: number;
+  tengah?: number;
   tanggal: string;
 }
 

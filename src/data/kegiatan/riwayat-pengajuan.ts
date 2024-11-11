@@ -5,7 +5,38 @@ import {
   JENIS_PENGAJUAN,
   Kegiatan,
   RiwayatPengajuan,
+  STATUS_PENGAJUAN,
 } from "@prisma-honorarium/client";
+
+export interface ObjRiwayatPengajuanUpdate {
+  status: STATUS_PENGAJUAN;
+  diverifikasiOlehId?: string;
+  disetujuiOlehId?: string;
+  dimintaPembayaranOlehId?: string;
+  dibayarOlehId?: string;
+  diselesaikanOlehId?: string;
+  catatanRevisi?: string;
+  catatanPermintaaPembayaran?: string;
+
+  diverifikasiTanggal?: Date;
+  disetujuiTanggal?: Date;
+  dimintaPembayaranTanggal?: Date;
+  dibayarTanggal?: Date;
+  diselesaikanTanggal?: Date;
+
+  ppkId?: string;
+  bendaharaId?: string;
+
+  dokumenBuktiPajak?: string;
+  dokumenBuktiPembayaran?: string;
+}
+
+export interface ObjCreateRiwayatPengajuan {
+  jenis: JENIS_PENGAJUAN;
+  status: STATUS_PENGAJUAN;
+  diajukanOlehId: string;
+  diajukanTanggal: Date;
+}
 
 export interface RiwayatPengajuanIncludePengguna extends RiwayatPengajuan {
   kegiatan?: Kegiatan;

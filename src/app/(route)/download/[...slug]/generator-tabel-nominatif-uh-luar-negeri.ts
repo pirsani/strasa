@@ -8,6 +8,7 @@ import generateTabelDinamis, {
   TableRow,
 } from "@/lib/pdf/tabel-nominatif-dinamis-uh";
 import { formatTanggal } from "@/utils/date-format";
+import getKursBankIndonesia from "@/utils/kurs-bi";
 import { SbmUhLuarNegeri } from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
 import { NextResponse } from "next/server";
@@ -38,14 +39,14 @@ const columns: TableColumnHeader[] = [
     header: "NAMA/NIP/Jabatan/Golongan",
     headerNumberingString: "2",
     field: "namaNipNpwp",
-    width: 90,
+    width: 150,
     align: "left",
   },
 
   {
     level: 1,
     header: "Penerimaan",
-    width: 370,
+    width: 400,
     align: "center",
     subHeader: [
       {
@@ -53,7 +54,7 @@ const columns: TableColumnHeader[] = [
         header: "Jenis",
         headerNumberingString: "3",
         field: "jenis",
-        width: 70,
+        width: 100,
         align: "center",
       },
       {
@@ -70,7 +71,7 @@ const columns: TableColumnHeader[] = [
         headerNumberingString: "4",
         field: "usd",
         width: 45,
-        align: "center",
+        align: "right",
       },
       {
         level: 2,
@@ -84,7 +85,7 @@ const columns: TableColumnHeader[] = [
       },
       {
         level: 2,
-        header: "Jumlah",
+        header: "Jumlah (USD)",
         headerNumberingString: "7",
         field: "jumlah",
         //format: "currency",
@@ -103,7 +104,7 @@ const columns: TableColumnHeader[] = [
       },
       {
         level: 2,
-        header: "Total",
+        header: "Total (Rp.)",
         headerNumberingString: "9",
         field: "total",
         format: "currency",
@@ -169,6 +170,9 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
         in: negara,
       },
     },
+    include: {
+      negara: true,
+    },
   });
 
   //logger.debug("sbm", sbm);
@@ -190,6 +194,15 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     logger.error(error, message);
     throw new Error(message);
   }
+
+  //get kurs Bank Indonesia
+  const kurs = await getKursBankIndonesia(new Date());
+  if (!kurs) {
+    throw new Error("Kurs not found");
+  }
+
+  const kursTengah = (kurs.jual + kurs.beli) / 2;
+  kurs.tengah = kursTengah;
 
   const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
     where: {
@@ -222,28 +235,33 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     golonganUhLuarNegeri: GolonganUhLuarNegeri
   ) => {
     if (!golonganUhLuarNegeri) {
-      return 0;
+      return { namaNegara: "", sbmGolongan: 0 };
     }
     const sbmLokasi = sbm.find((s) => s.negaraId === lokasiId);
     if (sbmLokasi) {
       const golonganKey =
         `golongan${golonganUhLuarNegeri}` as keyof SbmUhLuarNegeri;
-      return sbmLokasi[golonganKey] as number;
+      const sbmGolongan = sbmLokasi[golonganKey] as number;
+      const namaNegara = sbmLokasi.negara.nama;
+      //return sbmLokasi[golonganKey] as number;
+      return { namaNegara, sbmGolongan };
     }
-    return 0;
+    return { namaNegara: "", sbmGolongan: 0 };
   };
 
   const rows: TableRow[] = pesertaKegiatan.map((peserta) => {
     n += 1;
     const golonganUhLuarNegeri = peserta.golonganUhLuarNegeri;
+    const pangkatGolonganId = peserta.pangkatGolonganId ?? "-";
+    const nip = peserta.NIP ?? "-";
     const namaNipNpwp =
       peserta.nama +
       "\n" +
-      peserta.NIP +
+      nip +
       "\n" +
       peserta.jabatan +
       "\n" +
-      peserta.pangkatGolonganId;
+      pangkatGolonganId;
 
     const bank =
       peserta.namaRekening + "\n" + peserta.bank + "\n" + peserta.nomorRekening;
@@ -252,6 +270,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     let besaran = "";
     let jumlah = "";
     let persentase = "";
+    let totalUsd = new Decimal(0);
     let total = 0;
     let hr = "";
     let usd = "";
@@ -259,29 +278,29 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       const coefUhp = new Decimal(0.4);
       const uhLuarNegeri = peserta.uhLuarNegeri;
       uhLuarNegeri.forEach((uh) => {
-        const sbmLokasi = getSbmLokasi(
+        const { namaNegara, sbmGolongan } = getSbmLokasi(
           uh.keLokasiId,
           uh.golonganUh as GolonganUhLuarNegeri
         );
         logger.debug("uh", uh);
         if (uh.hUangHarian) {
           persentase += "100%\n";
-          jenis += "UH" + uh.keLokasiId + "\n";
-          besaran += sbmLokasi.toString() + "\n";
-          usd += sbmLokasi.toString() + "\n";
+          jenis += "UH-" + namaNegara + "\n";
+          besaran += sbmGolongan.toString() + "\n";
+          usd += sbmGolongan.toString() + "\n";
           jumlah += uh.uhUangHarian.toString() + "\n";
-          total += 0;
+          totalUsd = totalUsd.add(uh.uhUangHarian);
           hr += uh.hUangHarian.toString() + "\n";
         }
 
         if (uh.hPerjalanan) {
-          const uhp = coefUhp.times(sbmLokasi);
+          const uhp = coefUhp.times(sbmGolongan);
           persentase += "40%\n";
-          jenis += "UHP " + uh.keLokasiId + "\n";
+          jenis += "UHP-" + namaNegara + "\n";
           besaran += uhp.toString() + "\n";
           usd += uhp.toString() + "\n";
           jumlah += uh.uhPerjalanan.toString() + "\n";
-          total += 0;
+          totalUsd = totalUsd.add(uh.uhPerjalanan);
           hr += uh.hPerjalanan.toString() + "\n";
         }
       });
@@ -290,7 +309,10 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       // jumlah = peserta.uhLuarNegeri.jumlah;
       // persentase = peserta.uhLuarNegeri.persentase;
       // total = peserta.uhLuarNegeri.total;
+      total = totalUsd.times(kursTengah).toNumber();
     }
+
+    console.log("[totalUsd]", totalUsd);
 
     return {
       no: n.toString(),
@@ -321,7 +343,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
   // const jadwals = [jadwal1];
 
   const tableOptions: TableOptions = {
-    startX: 30,
+    startX: 75,
     startY: 75,
     startYonFirstPage: 130,
     headerRowHeight: 25,

@@ -59,10 +59,8 @@ const TabelPengajuanPembayaran = ({
         hrefTo = `/pembayaran/honorarium/${row.kegiatanId}/${row.id}`;
         break;
       case "UH_DALAM_NEGERI":
-        hrefTo = `/pembayaran/uh-dalam-negeri/${row.kegiatanId}/${row.id}`;
-        break;
       case "UH_LUAR_NEGERI":
-        hrefTo = `/pembayaran/uh-luar-negeri/${row.kegiatanId}/${row.id}`;
+        hrefTo = `/pembayaran/uh/${row.kegiatanId}/${row.id}`;
         break;
       default:
         break;
