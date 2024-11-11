@@ -52,8 +52,12 @@ const FormSbmTransporDalamKotaPulangPergi = ({
       if (sbmTransporDalamKota.success) {
         toast.success(`Berhasil menyimpan data SBM Transpor Dalam Kota `);
         form.reset();
+        handleFormSubmitComplete?.(sbmTransporDalamKota.success);
+      } else {
+        toast.error(
+          `Gagal menyimpan data sbmTransporDalamKota ${sbmTransporDalamKota.message}`
+        );
       }
-      handleFormSubmitComplete?.(sbmTransporDalamKota.success);
     } catch (error) {
       toast.error("Gagal menyimpan data sbmTransporDalamKota");
     }

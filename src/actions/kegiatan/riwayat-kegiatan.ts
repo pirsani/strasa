@@ -1,15 +1,23 @@
 "use server";
 
+import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { KegiatanWithSatker } from "./index";
 
 export const getKegiatanHasStatusPengajuan = async (
-  status: STATUS_PENGAJUAN
+  status: STATUS_PENGAJUAN | null
 ): Promise<KegiatanWithSatker[]> => {
+  const tahunAnggaran = await getTahunAnggranPilihan();
   const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findMany({
     where: {
-      status: status,
+      kegiatan: {
+        tanggalMulai: {
+          gte: new Date(`${tahunAnggaran}-01-01`),
+          lte: new Date(`${tahunAnggaran}-12-31`),
+        },
+      },
+      ...(status && { status }),
     },
     include: {
       kegiatan: {

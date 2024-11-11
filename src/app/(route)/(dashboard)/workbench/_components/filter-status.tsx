@@ -35,6 +35,16 @@ const FilterStatus = ({
             [{item.count.toString()}] {mapStatusLangkahToDesc(item.status)}
           </Button>
         ))}
+        <Button
+          className={cn(
+            "bg-gray-500",
+            filterSelected === null && "ring-2 ring-black"
+          )}
+          onClick={() => onChange(null)}
+          type="button"
+        >
+          Semua
+        </Button>
       </div>
     </div>
   );

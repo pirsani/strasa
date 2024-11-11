@@ -3,7 +3,7 @@ import { KegiatanWithSatker } from "@/actions/kegiatan";
 import { getKegiatanHasStatusPengajuan } from "@/actions/kegiatan/riwayat-kegiatan";
 import { StatusCount } from "@/data/kegiatan/riwayat-pengajuan";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterStatus from "./filter-status";
 import TabelKegiatan from "./tabel-kegiatan";
 
@@ -22,19 +22,21 @@ const ContainerTabelWithFilterStatus = ({
 
   const handleOnStatusChange = async (status: STATUS_PENGAJUAN | null) => {
     setFilterStatus(status);
-    if (status !== null) {
-      setData([]);
-      const kegiatan = await getKegiatanHasStatusPengajuan(status);
-      setData(kegiatan);
-    }
+    setData([]);
+    const kegiatan = await getKegiatanHasStatusPengajuan(status);
+    setData(kegiatan);
   };
+
+  useEffect(() => {
+    setData(initialKegiatan);
+  }, [initialKegiatan]);
 
   if (!status) {
     return <div>Not found</div>;
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       <div className="flex flex-row w-full items-end justify-end px-2">
         <FilterStatus
           status={status}
