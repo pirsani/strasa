@@ -730,6 +730,13 @@ model RiwayatPengajuan {
   dokumenBuktiPajak      String? @map("dokumen_bukti_pajak")
   dokumenBuktiPembayaran String? @map("dokumen_bukti_pembayaran")
 
+  jumlahPerkiraanPembayaran  Int? @default(0) @map("jumlah_perkiraan_pembayaran")
+  jumlahPermintaanPembayaran Int? @default(0) @map("jumlah_permintaan_pembayaran")
+  jumlahPembayaran           Int? @default(0) @map("jumlah_pembayaran") // jumlah yang dibayar
+  jumlahPembulatan           Int? @default(0) @map("jumlah_pembulatan") // pembulatan untuk menghindari koma info awal pembulatan adalah per seribu
+
+  extraInfo Json? @map("extra_info")
+
   createdBy String    @map("created_by")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedBy String?   @map("updated_by")

@@ -205,8 +205,21 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       ppk: true,
     },
   });
+
+  if (!riwayatPengajuan) {
+    throw new Error("Riwayat pengajuan not found");
+  }
+
   const bendahara = riwayatPengajuan?.bendahara;
   const ppk = riwayatPengajuan?.ppk;
+
+  type InputJsonValue =
+    | string
+    | number
+    | boolean
+    | null
+    | { [key: string]: InputJsonValue }
+    | InputJsonValue[];
 
   const jadwals: DataGroup[] = jadwal.map((jadwal) => {
     const jadwalNarasumber = jadwal.jadwalNarasumber;
@@ -310,7 +323,25 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       tableOptions: tableOptions,
       tableFooterOptions: footerOptions,
     };
-    const pdfBuffer = await generateTabelDinamis(tabelDinamisOptions);
+    const { pdfBuffer, pageSumsArray, summableColumns } =
+      await generateTabelDinamis(tabelDinamisOptions);
+
+    const summableFields = summableColumns.map((column) => column.field);
+
+    // update riwayat pengajuan
+    const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
+      where: {
+        id: riwayatPengajuan.id,
+      },
+      data: {
+        extraInfo: {
+          summableFields: summableFields as unknown as InputJsonValue,
+          pageSumsArray: pageSumsArray as unknown as InputJsonValue,
+          jadwals: jadwals as unknown as InputJsonValue, // Convert jadwals to a JSON-compatible value
+        },
+      },
+    });
+
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {

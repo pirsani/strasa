@@ -377,7 +377,7 @@ const generateSumRow = (
   console.log("[currentY before new page]", currentY);
   doc.rect(startX, lastY, width, sumRowHeight).stroke();
 
-  const acummulatedSum = sumData(data);
+  const accumulatedSum = sumData(data);
 
   let i = 0;
   deepestColumns.forEach((column, index) => {
@@ -388,10 +388,10 @@ const generateSumRow = (
     // Draw the header text
     //drawCell(doc, "nilai", columnStartX, columnStartY, column.width, "center");
     if (column.isSummable) {
-      let val = String(acummulatedSum[i]);
+      let val = String(accumulatedSum[i]);
       if (column.format === "currency") {
         const currValue = formatCurrency(
-          acummulatedSum[i],
+          accumulatedSum[i],
           "id-ID",
           column.currency
         );

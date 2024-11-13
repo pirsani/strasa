@@ -230,7 +230,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       tableOptions: tableOptions,
       tableFooterOptions: footerOptions,
     };
-    const pdfBuffer = await generateTabelDinamis(tabelDinamisOptions);
+    const { pdfBuffer } = await generateTabelDinamis(tabelDinamisOptions);
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
