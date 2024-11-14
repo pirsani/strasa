@@ -11,7 +11,7 @@ const logger = new Logger({
 export interface TableColumnHeader {
   header: string;
   headerNumberingString?: string;
-  field?: String;
+  field?: string;
   isSummable?: boolean; // Indicates if the column values can be summed
   format?: "number" | "currency" | "date";
   currency?: "IDR" | "USD" | "EUR";

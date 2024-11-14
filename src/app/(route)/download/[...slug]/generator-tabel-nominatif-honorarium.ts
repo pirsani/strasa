@@ -11,6 +11,7 @@ import { formatTanggal } from "@/utils/date-format";
 import Decimal from "decimal.js";
 import { NextResponse } from "next/server";
 import { Logger } from "tslog";
+import { sumPageSumsArray } from "./utils";
 
 const logger = new Logger({
   hideLogPositionForProduction: true,
@@ -327,18 +328,23 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       await generateTabelDinamis(tabelDinamisOptions);
 
     const summableFields = summableColumns.map((column) => column.field);
-
+    // Calculate the sums and map to summableFields
+    const summedFields = sumPageSumsArray(pageSumsArray, summableFields);
     // update riwayat pengajuan
+    // Explicitly create the extraInfo object with properties in the desired order
+    const extraInfo: { [key: string]: InputJsonValue } = {
+      summedFields: summedFields as unknown as InputJsonValue,
+      summableFields: summableFields as unknown as InputJsonValue,
+      pageSumsArray: pageSumsArray as unknown as InputJsonValue,
+      jadwals: jadwals as unknown as InputJsonValue,
+    };
+
     const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
       where: {
         id: riwayatPengajuan.id,
       },
       data: {
-        extraInfo: {
-          summableFields: summableFields as unknown as InputJsonValue,
-          pageSumsArray: pageSumsArray as unknown as InputJsonValue,
-          jadwals: jadwals as unknown as InputJsonValue, // Convert jadwals to a JSON-compatible value
-        },
+        extraInfo: extraInfo,
       },
     });
 

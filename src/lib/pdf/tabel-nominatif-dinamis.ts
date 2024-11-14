@@ -12,7 +12,7 @@ const logger = new Logger({
 export interface TableColumnHeader {
   header: string;
   headerNumberingString?: string;
-  field?: String;
+  field?: string;
   isSummable?: boolean; // Indicates if the column values can be summed
   format?: "number" | "currency" | "date";
   currency?: "IDR" | "USD" | "EUR";
@@ -76,7 +76,7 @@ const justifyBetween = (
   // add space 10
   const space = -10;
   try {
-    logger.debug("fullValue", fullValue);
+    //logger.debug("fullValue", fullValue);
     // Set the font size before measuring the width of the space character
     doc.fontSize(fontSize);
 
@@ -222,7 +222,7 @@ const generateNumberingHeader = (
   startY: number,
   rowHeight: number = 20
 ) => {
-  logger.info("[generateNumberingHeader START]");
+  // logger.info("[generateNumberingHeader START]");
 
   flatColumns.forEach((column, index) => {
     const columnXOffset = getColumnXOffset(flatColumns, index);
@@ -242,7 +242,7 @@ const generateNumberingHeader = (
     doc.rect(columnStartX, columnStartY, column.width, rowHeight).stroke();
   });
 
-  logger.info("[generateNumberingHeader END]");
+  //logger.info("[generateNumberingHeader END]");
 };
 
 const generateTableHeader = (
@@ -252,7 +252,7 @@ const generateTableHeader = (
   startY: number,
   rowHeight: number = 20
 ) => {
-  logger.info("[generateTableHeader START]");
+  //logger.info("[generateTableHeader START]");
 
   // find max level recursively
   const maxLevel = findMaxLevel(tableColumnHeaders);
@@ -300,7 +300,7 @@ const generateTableHeader = (
   drawHeader(tableColumnHeaders, startX, startY);
 
   // Draw the border around the header
-  logger.info("[generateTableHeader END]");
+  //logger.info("[generateTableHeader END]");
 };
 
 const generateTableRow = (
@@ -601,23 +601,51 @@ const generateTable = (
 
     let rowReset = false;
 
+    /*
+    contoh jika data dalam 1 group ada 15 data 
+    kemudian jika setiap halaman hanya bisa menampung 5 data 
+    maka pada row ke 6 akan pindah ke halaman baru
+    pada row ke 7, akan menerima sinyal reset = true; // pada saat ini index(6) dan rowCounterOnPage(1) ini yg memulai reset untu rowCounterOnPage
+    sehingga untu row ke 8, akan dicek jika index(7) tidak sama dengan rowCounterOnPage(2) 
+    index disini adalah anggota group,
+    jika masih satu group maka posisi startYDynamic = startYDynamic - 15 ( karena tidak ada header grup baru)
+
+    //ENHANCEMENT : sebenernya akan lebih mudah jika semua halaman juga mempunyai header grup
+    */
     // Iterate and generate row for each groupMembers
     // calculate subSumRow
     dataGroup.groupMembers.forEach((groupMembers, rowIndex) => {
-      rowCounterOnPage++;
+      //logger.info("[rowCounterOnPage]", rowIndex, rowCounterOnPage);
 
-      logger.info("[rowCounterOnPage]", rowCounterOnPage);
+      let startYDynamic =
+        startYRowgroupMembers + dataRowHeight * rowCounterOnPage;
 
-      let startYDynamic = startYRowgroupMembers + dataRowHeight * rowIndex;
       if (rowReset) {
         startYDynamic = controlStartYRowgroupMembers + dataRowHeight - 15;
+        logger.debug(
+          "[startYDynamic] isReset=y ",
+          rowIndex,
+          rowCounterOnPage,
+          startYDynamic
+        );
+      } else {
+        // rowCounterOnPage != rowIndex berarti masih satu grup
+        if (rowCounterOnPage != rowIndex) {
+          startYDynamic = startYDynamic - 15;
+        }
       }
+      logger.debug(
+        "[startYDynamic]",
+        rowIndex,
+        rowCounterOnPage,
+        startYDynamic
+      );
 
       const isNewPageNeeded = startYDynamic + dataRowHeight > availableHeight;
       if (isNewPageNeeded) {
-        logger.info("[isNewPageNeeded-2-yes]", rowCounterOnPage);
+        logger.info("[isNewPageNeeded-2-yes]", rowIndex, rowCounterOnPage);
 
-        rowCounterOnPage = 1;
+        rowCounterOnPage = 0;
         dataGroupIterator = 0;
         rowReset = true;
 
@@ -680,11 +708,10 @@ const generateTable = (
           );
         });
       } else {
-        logger.info("[isNewPageNeeded-2-no]", rowCounterOnPage);
+        //logger.info("[isNewPageNeeded-2-no]", rowCounterOnPage);
+        //logger.info("[summableColumns]", summableColumns);
 
         rowReset = false;
-
-        logger.info("[summableColumns]", summableColumns);
 
         // sum row
         summableColumns.forEach((column, columnIndex) => {
@@ -789,6 +816,7 @@ const generateTable = (
           );
         }
       }
+      rowCounterOnPage++;
     });
 
     dataGroupIterator++;

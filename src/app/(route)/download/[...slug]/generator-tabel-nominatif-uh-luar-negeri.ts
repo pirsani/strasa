@@ -13,6 +13,7 @@ import { SbmUhLuarNegeri } from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
 import { NextResponse } from "next/server";
 import { Logger } from "tslog";
+import { sumPageSumsArray } from "./utils";
 
 const logger = new Logger({
   hideLogPositionForProduction: true,
@@ -47,14 +48,14 @@ const columns: TableColumnHeader[] = [
     header: "NAMA/NIP/Jabatan/Golongan",
     headerNumberingString: "2",
     field: "namaNipNpwp",
-    width: 150,
+    width: 125,
     align: "left",
   },
 
   {
     level: 1,
     header: "Penerimaan",
-    width: 400,
+    width: 420,
     align: "center",
     subHeader: [
       {
@@ -73,18 +74,18 @@ const columns: TableColumnHeader[] = [
         width: 25,
         align: "center",
       },
+      // {
+      //   level: 2,
+      //   header: "USD",
+      //   headerNumberingString: "4",
+      //   field: "usd",
+      //   width: 45,
+      //   align: "right",
+      // },
       {
         level: 2,
-        header: "USD",
-        headerNumberingString: "4",
-        field: "usd",
-        width: 45,
-        align: "right",
-      },
-      {
-        level: 2,
-        header: "Besaran",
-        headerNumberingString: "6",
+        header: "Besaran(USD)",
+        headerNumberingString: "5",
         field: "besaran",
         // format: "currency",
         // currency: "IDR",
@@ -94,7 +95,7 @@ const columns: TableColumnHeader[] = [
       {
         level: 2,
         header: "Jumlah (USD)",
-        headerNumberingString: "7",
+        headerNumberingString: "6",
         field: "jumlah",
         //format: "currency",
         //currency: "IDR",
@@ -105,14 +106,28 @@ const columns: TableColumnHeader[] = [
       {
         level: 2,
         header: "%",
-        headerNumberingString: "8",
+        headerNumberingString: "7",
         field: "persentase",
         width: 35,
         align: "right",
       },
       {
         level: 2,
-        header: "Total (Rp.)",
+        header: "Total (USD)",
+        headerNumberingString: "8",
+        field: "totalUsd",
+        format: "currency",
+        currency: "USD",
+        numberFormatOptions: {
+          maximumFractionDigits: 2,
+        },
+        isSummable: true,
+        width: 65,
+        align: "right",
+      },
+      {
+        level: 2,
+        header: "Total (Rp)",
         headerNumberingString: "9",
         field: "total",
         format: "currency",
@@ -209,8 +224,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     throw new Error("Kurs not found");
   }
 
-  const kursTengah = (kurs.jual + kurs.beli) / 2;
-  kurs.tengah = kursTengah;
+  const kursTengah = kurs.tengah ?? 0;
 
   const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
     where: {
@@ -317,7 +331,11 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       // jumlah = peserta.uhLuarNegeri.jumlah;
       // persentase = peserta.uhLuarNegeri.persentase;
       // total = peserta.uhLuarNegeri.total;
-      total = totalUsd.times(kursTengah).toNumber();
+      const roundedAmount = totalUsd
+        .times(kursTengah)
+        .toFixed(0, Decimal.ROUND_FLOOR);
+
+      total = Number(roundedAmount);
     }
 
     console.log("[totalUsd]", totalUsd);
@@ -326,6 +344,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       no: n.toString(),
       jenis,
       hr,
+      totalUsd,
       usd,
       besaran,
       jumlah,
@@ -398,6 +417,9 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
 
     const summableFields = summableColumns.map((column) => column.field);
 
+    // Calculate the sums and map to summableFields
+    const summedFields = sumPageSumsArray(pageSumsArray, summableFields);
+
     // update riwayat pengajuan
     const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
       where: {
@@ -405,6 +427,8 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       },
       data: {
         extraInfo: {
+          kurs: kurs as unknown as InputJsonValue,
+          summedFields: summedFields as unknown as InputJsonValue,
           summableFields: summableFields as unknown as InputJsonValue,
           pageSumsArray: pageSumsArray as unknown as InputJsonValue,
           dataGroup: dataGroup as unknown as InputJsonValue, // Convert jadwals to a JSON-compatible value

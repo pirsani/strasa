@@ -32,6 +32,7 @@ const getKursBankIndonesia = async (
     return {
       beli: beliSubkurslokal,
       jual: jualSubkurslokal,
+      tengah: (beliSubkurslokal + jualSubkurslokal) / 2,
       tanggal: tglSubkurslokal.split("T")[0],
     };
   } catch (error) {

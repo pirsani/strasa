@@ -11,6 +11,7 @@ import { formatTanggal } from "@/utils/date-format";
 import formatCurrency from "@/utils/format-currency";
 import { NextResponse } from "next/server";
 import { Logger } from "tslog";
+import { sumPageSumsArray } from "./utils";
 
 const logger = new Logger({
   hideLogPositionForProduction: true,
@@ -352,6 +353,9 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
 
     const summableFields = summableColumns.map((column) => column.field);
 
+    // Calculate the sums and map to summableFields
+    const summedFields = sumPageSumsArray(pageSumsArray, summableFields);
+
     // update riwayat pengajuan
     const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
       where: {
@@ -359,6 +363,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       },
       data: {
         extraInfo: {
+          summedFields: summedFields as unknown as InputJsonValue,
           summableFields: summableFields as unknown as InputJsonValue,
           pageSumsArray: pageSumsArray as unknown as InputJsonValue,
           dataGroup: dataGroup as unknown as InputJsonValue, // Convert jadwals to a JSON-compatible value

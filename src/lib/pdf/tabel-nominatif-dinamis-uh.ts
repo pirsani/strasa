@@ -12,10 +12,11 @@ const logger = new Logger({
 export interface TableColumnHeader {
   header: string;
   headerNumberingString?: string;
-  field?: String;
+  field?: string;
   isSummable?: boolean; // Indicates if the column values can be summed
   format?: "number" | "currency" | "date";
   currency?: "IDR" | "USD" | "EUR";
+  numberFormatOptions?: Intl.NumberFormatOptions;
   level: number;
   width: number;
   align: "left" | "center" | "right";
@@ -336,7 +337,8 @@ const generateTableRow = (
         const currValue = formatCurrency(
           value as number,
           "id-ID",
-          column.currency
+          column.currency,
+          column.numberFormatOptions?.maximumFractionDigits
         );
         // Spread value across column width if needed to fit the text Rp 1.000.000,00 -> Rp   1.000.000,00
         val = justifyBetween(String(currValue), column.width, 8, doc);
