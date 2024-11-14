@@ -260,7 +260,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     const riwayatPengajuanUhLuarNegeri =
       await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(
         rowId,
-        JENIS_PENGAJUAN.UH_DALAM_NEGERI
+        JENIS_PENGAJUAN.UH_LUAR_NEGERI
       );
 
     if (riwayatPengajuanUhLuarNegeri) {
@@ -283,7 +283,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     const riwayatPengajuanUhDalamNegeri =
       await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(
         rowId,
-        JENIS_PENGAJUAN.UH_LUAR_NEGERI
+        JENIS_PENGAJUAN.UH_DALAM_NEGERI
       );
 
     if (riwayatPengajuanUhDalamNegeri) {
