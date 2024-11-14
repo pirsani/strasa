@@ -16,6 +16,14 @@ const logger = new Logger({
   hideLogPositionForProduction: true,
 });
 
+type InputJsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: InputJsonValue }
+  | InputJsonValue[];
+
 interface Jadwal {
   nama: string; // nama kelas
   tanggal: string;
@@ -339,7 +347,24 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       tableOptions: tableOptions,
       tableFooterOptions: footerOptions,
     };
-    const pdfBuffer = await generateTabelDinamis(tabelDinamisOptions);
+    const { pdfBuffer, summableColumns, pageSumsArray } =
+      await generateTabelDinamis(tabelDinamisOptions);
+
+    const summableFields = summableColumns.map((column) => column.field);
+
+    // update riwayat pengajuan
+    const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
+      where: {
+        id: riwayatPengajuan.id,
+      },
+      data: {
+        extraInfo: {
+          summableFields: summableFields as unknown as InputJsonValue,
+          pageSumsArray: pageSumsArray as unknown as InputJsonValue,
+          dataGroup: dataGroup as unknown as InputJsonValue, // Convert jadwals to a JSON-compatible value
+        },
+      },
+    });
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {

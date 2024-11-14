@@ -151,7 +151,7 @@ const findMaxLevel = (tableColumnHeaders: TableColumnHeader[]): number => {
   return maxLevel;
 };
 
-const getDeepestColumns = (
+export const getDeepestColumns = (
   tableColumnHeaders: TableColumnHeader[]
 ): TableColumnHeader[] => {
   let deepestColumns: TableColumnHeader[] = [];
@@ -353,7 +353,7 @@ const generateTableRow = (
   drawRow(row, tableColumnHeaders, startX, y, rowHeight);
 };
 
-const sumData = (data: Decimal[][]): Decimal[] => {
+export const sumData = (data: Decimal[][]): Decimal[] => {
   return data.reduce(
     (acc, row) => {
       return acc.map((value, index) => value.plus(row[index]));
@@ -770,6 +770,8 @@ const generateTable = (
 
     dataGroupIterator++;
   });
+
+  return { summableColumns, pageSumsArray };
 };
 
 export const generateReportHeader = (
@@ -967,7 +969,7 @@ export async function generateTabelDinamis(
 
     generateReportHeader(doc, satker, tableTitle, tableSubtitle);
 
-    generateTable(
+    const { summableColumns, pageSumsArray } = generateTable(
       doc,
       tableColumnHeaders,
       tableData,
@@ -1032,7 +1034,8 @@ export async function generateTabelDinamis(
     await once(doc, "end");
     // Concatenate the buffers once the PDF generation is complete
     const pdfBuffer = Buffer.concat(buffers);
-    return pdfBuffer;
+    return { pdfBuffer, summableColumns, pageSumsArray };
+
     // Return a NextResponse with the PDF content
     // return new NextResponse(pdfBuffer, {
     //   status: 200,
