@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { downloadDokumenAkhir } from "./dokumen-akhir";
 import { downloadDokumenBuktiPembayaran } from "./dokumen-bukti-pembayaran";
 import downloadDokumenKegiatan from "./dokumen-kegiatan";
 import downloadDokumenNarasumber, {
@@ -55,6 +56,8 @@ export async function GET(
         return downloadDokumenBuktiPembayaran(req, slug);
       case "bukti-pembayaran-narasumber":
         return downloadDokumenBuktiPembayaranNarasumber(req, slug);
+      case "dokumen-akhir":
+        return downloadDokumenAkhir(req, slug);
       default:
         return new NextResponse(`Download ${params.slug.join("/")}`);
     }

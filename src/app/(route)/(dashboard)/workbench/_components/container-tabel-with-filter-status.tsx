@@ -1,5 +1,5 @@
 "use client";
-import { KegiatanWithSatker } from "@/actions/kegiatan";
+import { KegiatanIncludeSatker } from "@/actions/kegiatan";
 import { getKegiatanHasStatusPengajuan } from "@/actions/kegiatan/riwayat-kegiatan";
 import { StatusCount } from "@/data/kegiatan/riwayat-pengajuan";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
@@ -8,7 +8,7 @@ import FilterStatus from "./filter-status";
 import TabelKegiatan from "./tabel-kegiatan";
 
 interface ContainerTabelWithFilterStatusProps {
-  kegiatan: KegiatanWithSatker[];
+  kegiatan: KegiatanIncludeSatker[];
   status: StatusCount[] | null;
 }
 const ContainerTabelWithFilterStatus = ({

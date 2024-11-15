@@ -729,6 +729,8 @@ model RiwayatPengajuan {
 
   dokumenBuktiPajak      String? @map("dokumen_bukti_pajak")
   dokumenBuktiPembayaran String? @map("dokumen_bukti_pembayaran")
+  dokumentasi            String? @map("dokumentasi")
+  dokumenLaporanKegiatan String? @map("dokumen_laporan_kegiatan")
 
   jumlahPerkiraanPembayaran  Int? @default(0) @map("jumlah_perkiraan_pembayaran")
   jumlahPermintaanPembayaran Int? @default(0) @map("jumlah_permintaan_pembayaran")

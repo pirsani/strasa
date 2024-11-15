@@ -3,11 +3,11 @@
 import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { dbHonorarium } from "@/lib/db-honorarium";
-import { KegiatanWithSatker } from "./index";
+import { KegiatanIncludeSatker } from "./index";
 
 export const getKegiatanHasStatusPengajuan = async (
   status: STATUS_PENGAJUAN | null
-): Promise<KegiatanWithSatker[]> => {
+): Promise<KegiatanIncludeSatker[]> => {
   const tahunAnggaran = await getTahunAnggranPilihan();
   const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findMany({
     where: {

@@ -21,14 +21,14 @@ const logger = new Logger({
   name: "KEGIATAN",
 });
 
-export interface KegiatanWithSatker extends Kegiatan {
+export interface KegiatanIncludeSatker extends Kegiatan {
   satker: Organisasi;
   unitKerja: Organisasi;
 }
 
 export const getKegiatan = async (
   kegiatan?: string
-): Promise<KegiatanWithSatker[]> => {
+): Promise<KegiatanIncludeSatker[]> => {
   const tahunAnggaran = await getTahunAnggranPilihan();
 
   const dataKegiatan = await dbHonorarium.kegiatan.findMany({

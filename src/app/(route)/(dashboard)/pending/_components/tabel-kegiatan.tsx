@@ -8,8 +8,7 @@ import {
   TabelExpandable,
 } from "@/components/tabel-expandable";
 import { Button } from "@/components/ui/button";
-import { getObPlainJadwalByKegiatanId } from "@/data/jadwal";
-import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
+import { RiwayatPengajuanIncludePengguna } from "@/data/kegiatan/riwayat-pengajuan";
 import { cn } from "@/lib/utils";
 import { formatTanggal } from "@/utils/date-format";
 import {
@@ -22,11 +21,16 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { ChevronRight, Eye } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { DialogUnggahDokumen } from "./dialog-unggah-dokumen";
 
 interface TabelKegiatanProps {
   data: KegiatanIncludeSatker[];
+  riwayatPengajuan: RiwayatPengajuanIncludePengguna[];
 }
-export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
+export const TabelKegiatan = ({
+  data: initialData,
+  riwayatPengajuan,
+}: TabelKegiatanProps) => {
   const [data, setData] = useState<KegiatanIncludeSatker[]>(initialData);
   const [isEditing, setIsEditing] = useState(false);
   const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
@@ -116,12 +120,6 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       },
       footer: "Selesai",
     },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: (info) => info.getValue(),
-      footer: "Status",
-    },
 
     {
       //accessorKey: "kode",
@@ -143,7 +141,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
 
   interface RowDetail {
     id: string;
-    nama: string;
+    keterangan?: string;
     tanggalKegiatan?: Date | string | null;
     pengajuanId?: string | null;
     jenisPengajuan?: JENIS_PENGAJUAN | null;
@@ -154,6 +152,8 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     diverifikasiTanggal?: Date | string | null;
     disetujuiTanggal?: Date | string | null;
     dibayarTanggal?: Date | string | null;
+    hasDokumentasi?: boolean;
+    hasLaporan?: boolean;
   }
 
   const handleView = (row: Kegiatan) => {
@@ -232,114 +232,68 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       return;
     }
 
-    let newDetails: RowDetail[] = [];
-
-    const riwayatRampungan =
-      await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(
-        rowId,
-        JENIS_PENGAJUAN.GENERATE_RAMPUNGAN
-      );
-
-    if (riwayatRampungan) {
-      const newRiwayatRampungan: RowDetail = {
-        id: riwayatRampungan.id,
-        nama: "Rampungan",
-        pengajuanId: riwayatRampungan.id,
-        jenisPengajuan: riwayatRampungan.jenis,
-        statusPengajuan: riwayatRampungan.status,
-        diajukanOlehId: riwayatRampungan.diajukanOlehId,
-        diajukanOleh: riwayatRampungan.diajukanOleh.name,
-        diajukanTanggal: riwayatRampungan.diajukanTanggal,
-        diverifikasiTanggal: riwayatRampungan.diverifikasiTanggal,
-        disetujuiTanggal: riwayatRampungan.disetujuiTanggal,
-        dibayarTanggal: riwayatRampungan.dibayarTanggal,
-      };
-      newDetails.push(newRiwayatRampungan);
-    }
-
-    const riwayatPengajuanUhLuarNegeri =
-      await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(
-        rowId,
-        JENIS_PENGAJUAN.UH_LUAR_NEGERI
-      );
-
-    if (riwayatPengajuanUhLuarNegeri) {
-      const newRiwayatPengajuanUhLuarNegeri: RowDetail = {
-        id: riwayatPengajuanUhLuarNegeri.id,
-        nama: "Uang Harian Luar Negeri",
-        pengajuanId: riwayatPengajuanUhLuarNegeri.id,
-        jenisPengajuan: riwayatPengajuanUhLuarNegeri.jenis,
-        statusPengajuan: riwayatPengajuanUhLuarNegeri.status,
-        diajukanOlehId: riwayatPengajuanUhLuarNegeri.diajukanOlehId,
-        diajukanOleh: riwayatPengajuanUhLuarNegeri.diajukanOleh.name,
-        diajukanTanggal: riwayatPengajuanUhLuarNegeri.diajukanTanggal,
-        diverifikasiTanggal: riwayatPengajuanUhLuarNegeri.diverifikasiTanggal,
-        disetujuiTanggal: riwayatPengajuanUhLuarNegeri.disetujuiTanggal,
-        dibayarTanggal: riwayatPengajuanUhLuarNegeri.dibayarTanggal,
-      };
-      newDetails.push(newRiwayatPengajuanUhLuarNegeri);
-    }
-
-    const riwayatPengajuanUhDalamNegeri =
-      await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(
-        rowId,
-        JENIS_PENGAJUAN.UH_DALAM_NEGERI
-      );
-
-    if (riwayatPengajuanUhDalamNegeri) {
-      const newRiwayatPengajuanUhDalamNegeri: RowDetail = {
-        id: riwayatPengajuanUhDalamNegeri.id,
-        nama: "Uang Harian Dalam Negeri",
-        pengajuanId: riwayatPengajuanUhDalamNegeri.id,
-        jenisPengajuan: riwayatPengajuanUhDalamNegeri.jenis,
-        statusPengajuan: riwayatPengajuanUhDalamNegeri.status,
-        diajukanOlehId: riwayatPengajuanUhDalamNegeri.diajukanOlehId,
-        diajukanOleh: riwayatPengajuanUhDalamNegeri.diajukanOleh.name,
-        diajukanTanggal: riwayatPengajuanUhDalamNegeri.diajukanTanggal,
-        diverifikasiTanggal: riwayatPengajuanUhDalamNegeri.diverifikasiTanggal,
-        disetujuiTanggal: riwayatPengajuanUhDalamNegeri.disetujuiTanggal,
-        dibayarTanggal: riwayatPengajuanUhDalamNegeri.dibayarTanggal,
-      };
-      newDetails.push(newRiwayatPengajuanUhDalamNegeri);
-    }
-
-    const jadwals = await getObPlainJadwalByKegiatanId(rowId);
-    //console.log("Detail:", detail);
-
-    const newDetailsJadwal: RowDetail[] = jadwals.map((jadwal) => {
-      return {
-        id: jadwal.id,
-        nama: jadwal.kelas.nama,
-        tanggalKegiatan: jadwal.tanggal,
-        jenisPengajuan: jadwal.riwayatPengajuan?.jenis,
-        // statusPengajuan: mapStatusLangkahToDesc(
-        //   jadwal.statusPengajuanHonorarium
-        // ),
-        pengajuanId: jadwal.riwayatPengajuan?.id,
-        statusPengajuan: jadwal.riwayatPengajuan?.status || null,
-        diajukanOlehId: jadwal.riwayatPengajuan?.diajukanOlehId,
-        diajukanOleh: jadwal.riwayatPengajuan?.diajukanOleh?.name,
-        diajukanTanggal: jadwal.riwayatPengajuan?.diajukanTanggal,
-        diverifikasiTanggal: jadwal.riwayatPengajuan?.diajukanTanggal,
-        disetujuiTanggal: jadwal.riwayatPengajuan?.disetujuiTanggal,
-        dibayarTanggal: jadwal.riwayatPengajuan?.dibayarTanggal,
-      };
-    });
-
-    newDetails.push(...newDetailsJadwal);
-
-    const newRowDetails = {
-      ...rowDetails,
-      [rowId]: newDetails,
-    };
-
-    setRowDetails(newRowDetails);
-
     setExpanded((prev) => ({
       ...prev,
       [index]: !prev[index], // Allow multiple rows to be expanded
     }));
     setIsExpanded(!isExpanded);
+  };
+
+  const handleDokumenAkhirSubmitted = (
+    kegiatanId: string,
+    riwayatPengajuanId: string
+  ) => {
+    // find data that have have the same kegiatanId
+    const details = rowDetails[kegiatanId];
+    // find the detail that have the same riwayatPengajuanId
+    const detail = details?.find((d) => d.id === riwayatPengajuanId);
+    if (!detail) {
+      console.error("Detail not found");
+      return;
+    } else {
+      //update details
+      detail.hasDokumentasi = true;
+      detail.hasLaporan = true;
+      // update rowDetails
+      setRowDetails((prev) => {
+        return {
+          ...prev,
+          [kegiatanId]: details,
+        };
+      });
+    }
+  };
+
+  interface LinkToDokumenAkhirProps {
+    hasDokumenAkhir: boolean;
+    jenisDokumenAkhir: string;
+    riwayatPengajuanId: string;
+  }
+  const LinkToDokumenAkhir = ({
+    hasDokumenAkhir,
+    jenisDokumenAkhir,
+    riwayatPengajuanId,
+  }: LinkToDokumenAkhirProps) => {
+    if (!hasDokumenAkhir) {
+      return null;
+    }
+    switch (jenisDokumenAkhir) {
+      case "dokumentasi":
+      case "laporan":
+        return (
+          <Link
+            href={`/download/dokumen-akhir/${jenisDokumenAkhir}/${riwayatPengajuanId}`}
+            target="_blank"
+          >
+            <Button variant="outline" size="sm">
+              <Eye size={18} />
+            </Button>
+          </Link>
+        );
+
+      default:
+        return null;
+    }
   };
 
   const renderExpandedRowDetails = (
@@ -354,24 +308,21 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         <tr>
           <td colSpan={8} className=" pb-4">
             <table className="table-auto w-full text-left border border-collapse">
-              <thead>
-                <tr className="bg-gray-400 text-white h-12">
-                  <th className="border px-1">Keterangan/Kelas</th>
-                  <th className="border px-1">Tanggal Kegiatan</th>
+              <thead className="w-full">
+                <tr className="bg-gray-400 text-white h-12 w-full">
+                  <th className="border px-1 w-1/5">Keterangan/Kelas</th>
                   <th className="border px-1">Tanggal Pengajuan</th>
-                  <th className="border px-1">Jenis Pengajuan</th>
+                  <th className="border px-1 w-1/6">Jenis Pengajuan</th>
                   <th className="border px-1">Status Pengajuan</th>
-                  <th className="border px-1">Operator</th>
-                  <th></th>
+                  <th className="border px-1">Dokumentasi</th>
+                  <th className="border px-1">Laporan Kegiatan</th>
+                  <th> Aksi </th>
                 </tr>
               </thead>
               <tbody>
                 {details.map((detail: RowDetail) => (
                   <tr key={detail.id} className="even:bg-slate-100 h-10">
-                    <td className="border px-2">{detail.nama}</td>
-                    <td className="border px-2">
-                      {formatTanggal(detail.tanggalKegiatan, "dd-M-yyyy")}
-                    </td>
+                    <td className="border px-2">{detail.keterangan}</td>
                     <td className="border px-2">
                       {formatTanggal(detail.diajukanTanggal, "dd-M-yyyy")}
                     </td>
@@ -379,16 +330,35 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                     <td className="border px-2">
                       {<StatusBadge status={detail.statusPengajuan ?? null} />}
                     </td>
-                    <td className="border px-2">{detail.diajukanOleh}</td>
+                    <td className="border px-2">
+                      <LinkToDokumenAkhir
+                        hasDokumenAkhir={detail.hasDokumentasi ?? false}
+                        jenisDokumenAkhir="dokumentasi"
+                        riwayatPengajuanId={detail.id}
+                      />
+                    </td>
+                    <td className="border px-2">
+                      <LinkToDokumenAkhir
+                        hasDokumenAkhir={detail.hasDokumentasi ?? false}
+                        jenisDokumenAkhir="dokumentasi"
+                        riwayatPengajuanId={detail.id}
+                      />
+                    </td>
                     <td>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-blue-800"
-                        onClick={handleViewRiwayatPengajuan(row.id, detail)}
-                      >
-                        <Eye size={18} />
-                      </Button>
+                      <div className="flex flex-auto gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleViewRiwayatPengajuan(row.id, detail)}
+                        >
+                          <Eye size={18} />
+                        </Button>
+                        <DialogUnggahDokumen
+                          kegiatanId={row.id}
+                          riwayatPengajuanId={detail.id}
+                          onSubmitted={handleDokumenAkhirSubmitted}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -425,12 +395,38 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     );
   };
 
+  const mapsDataToRowDetails = (data: RiwayatPengajuanIncludePengguna[]) => {
+    let rowDetails: RowDetails<RowDetail> = {};
+    data.forEach((item) => {
+      const rowDetail: RowDetail = {
+        id: item.id,
+        keterangan: item.keterangan,
+        tanggalKegiatan: item.jadwal?.tanggal,
+        pengajuanId: item.id,
+        jenisPengajuan: item.jenis,
+        statusPengajuan: item.status,
+        diajukanOlehId: item.diajukanOleh.id,
+        diajukanOleh: item.diajukanOleh.name,
+        diajukanTanggal: item.diajukanTanggal,
+        diverifikasiTanggal: item.diverifikasiTanggal,
+        disetujuiTanggal: item.disetujuiTanggal,
+        dibayarTanggal: item.dibayarTanggal,
+        hasDokumentasi: !!item.dokumentasi,
+        hasLaporan: !!item.dokumenLaporanKegiatan,
+      };
+      rowDetails[item.kegiatanId] = [rowDetail];
+    });
+    return rowDetails;
+  };
+
   useEffect(() => {
     setData(initialData);
     // reset expanded state
     setExpanded({});
-    setRowDetails({});
-  }, [initialData]);
+    const rowDetails = mapsDataToRowDetails(riwayatPengajuan);
+    setRowDetails(rowDetails);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData, riwayatPengajuan]);
 
   if (!data) {
     return <div>Loading...</div>;
