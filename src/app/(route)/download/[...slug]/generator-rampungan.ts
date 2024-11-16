@@ -1,4 +1,6 @@
+import { BASE_PATH_UPLOAD } from "@/app/api/upload/config";
 import { getKegiatanIncludeSpd, KegiatanIncludeSpd } from "@/data/kegiatan";
+import { getRiwayatPengajuanRampunganByKegiatanId } from "@/data/kegiatan/riwayat-pengajuan";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { formatTanggal } from "@/utils/date-format";
 import { LOKASI } from "@prisma-honorarium/client";
@@ -377,6 +379,28 @@ export async function downloadDokumenRampungan(req: Request, slug: string[]) {
       return new NextResponse("PPK belum dipilih", { status: 404 });
     }
 
+    // check if dokumen is already generated or already exist
+    const dokumenRampungan = await getDokumenRampungan(kegiatan);
+    if (
+      dokumenRampungan.isFileExist &&
+      dokumenRampungan.file &&
+      dokumenRampungan.isFinal
+    ) {
+      return new NextResponse(dokumenRampungan.file, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/pdf",
+          "Content-Disposition": `inline; filename=${spd.id}.pdf`, // inline or attachment
+        },
+      });
+    }
+
+    if (!dokumenRampungan.filePath) {
+      // it should not happen
+      console.error("Rampungan file path not found");
+      throw new Error("Rampungan file path not found");
+    }
+
     const spdHalaman1 = await generateSpdHalaman1(kegiatan);
     const spdHalaman2 = await generateSpdHalaman2(kegiatan);
 
@@ -384,6 +408,10 @@ export async function downloadDokumenRampungan(req: Request, slug: string[]) {
 
     const satuplusdua = await mergePdfs(spdHalaman1, spdHalaman2);
     const completePdfBytes = await mergePdfs(satuplusdua, spdDaftarPeserta);
+
+    // Save the complete PDF to the file system
+    console.log("[write file]", dokumenRampungan.filePath);
+    await fs.writeFile(dokumenRampungan.filePath, completePdfBytes);
 
     return new NextResponse(completePdfBytes, {
       status: 200,
@@ -400,6 +428,68 @@ export async function downloadDokumenRampungan(req: Request, slug: string[]) {
     });
   }
 }
+
+interface RampunganDokumen {
+  isFinal: boolean;
+  filePath: string | null;
+  isFileExist: boolean;
+  file?: Buffer;
+}
+const getDokumenRampungan = async (kegiatan: KegiatanIncludeSpd) => {
+  const tahunKegiatan = kegiatan.tanggalMulai.getFullYear().toString();
+  let dokumenRampungan: RampunganDokumen = {
+    isFinal: false,
+    filePath: null,
+    isFileExist: false,
+  };
+  const spd = kegiatan.spd;
+  if (!spd) {
+    return dokumenRampungan;
+  }
+
+  const riwayatPengajuan = await getRiwayatPengajuanRampunganByKegiatanId(
+    kegiatan.id
+  );
+
+  if (!riwayatPengajuan) {
+    console.error("Riwayat pengajuan rampungan not found");
+    throw new Error("Riwayat pengajuan rampungan not found");
+  }
+
+  dokumenRampungan.isFinal = riwayatPengajuan.status === "END";
+
+  // TODO: Jika nanti ada fitur untuk upload file rampungan yang telah ditanda tangani,
+  // maka gunakan file yang diupload kolom yang disediakan di spd.dokumen
+
+  let filePath = "";
+  if (spd.dokumen) {
+    filePath = spd.dokumen;
+  } else {
+    const filename = `draft-rampungan-${spd.id}.pdf`;
+
+    filePath = path.posix.join(
+      BASE_PATH_UPLOAD,
+      tahunKegiatan,
+      kegiatan.id,
+      filename
+    );
+  }
+
+  const fileFullPath = path.posix.join(BASE_PATH_UPLOAD, filePath);
+  try {
+    await fs.access(fileFullPath, fs.constants.R_OK);
+    dokumenRampungan.isFileExist = true;
+    const file = await fs.readFile(fileFullPath);
+    dokumenRampungan.file = file;
+  } catch (error) {
+    console.error(error);
+    dokumenRampungan.isFileExist = false;
+  }
+
+  dokumenRampungan.filePath = path.posix.resolve(fileFullPath);
+  console.log("[dokumenRampungan.filePath]", dokumenRampungan.filePath);
+  return dokumenRampungan;
+};
 
 const mergePdfs = async (
   filledPdfBytes: Uint8Array,
@@ -432,5 +522,3 @@ const mergePdfs = async (
   const mergedPdfBytes = await mergedPdfDoc.save();
   return mergedPdfBytes;
 };
-
-export default GeneratorRampungan;

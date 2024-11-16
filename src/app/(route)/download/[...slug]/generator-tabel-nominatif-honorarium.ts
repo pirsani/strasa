@@ -1,3 +1,4 @@
+import { BASE_PATH_UPLOAD } from "@/app/api/upload/config";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import generateTabelDinamis, {
   DataGroup,
@@ -8,8 +9,16 @@ import generateTabelDinamis, {
   TableRow,
 } from "@/lib/pdf/tabel-nominatif-dinamis";
 import { formatTanggal } from "@/utils/date-format";
+import {
+  Jadwal,
+  Kegiatan,
+  RiwayatPengajuan,
+  STATUS_PENGAJUAN,
+} from "@prisma-honorarium/client";
 import Decimal from "decimal.js";
+import { promises as fs } from "fs";
 import { NextResponse } from "next/server";
+import path from "path";
 import { Logger } from "tslog";
 import { sumPageSumsArray } from "./utils";
 
@@ -17,12 +26,12 @@ const logger = new Logger({
   hideLogPositionForProduction: true,
 });
 
-interface Jadwal {
-  nama: string; // nama kelas
-  tanggal: string;
-  jam: string;
-  jadwalNarasumber: TableRow[]; // TableRow[] ini dari JadwalNarasumber
-}
+// interface Jadwal {
+//   nama: string; // nama kelas
+//   tanggal: string;
+//   jam: string;
+//   jadwalNarasumber: TableRow[]; // TableRow[] ini dari JadwalNarasumber
+// }
 
 const columns: TableColumnHeader[] = [
   {
@@ -211,6 +220,34 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     throw new Error("Riwayat pengajuan not found");
   }
 
+  // check if dokumen is already generated or already exist
+  const dokumenNominatif = await getDokumenNominatif(
+    kegiatan,
+    jadwal0,
+    riwayatPengajuan
+  );
+
+  if (
+    dokumenNominatif.isFileExist &&
+    dokumenNominatif.file &&
+    dokumenNominatif.isFinal
+  ) {
+    console.log("[file exist]", dokumenNominatif.filePath);
+    return new NextResponse(dokumenNominatif.file, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/pdf",
+        // "Content-Disposition": 'attachment; filename="payroll.pdf"',
+      },
+    });
+  }
+  // it must have file path
+  if (!dokumenNominatif.filePath) {
+    // it should not happen
+    console.error("Dokumen nominatif not found");
+    throw new Error("Dokumen nominatif not found");
+  }
+
   const bendahara = riwayatPengajuan?.bendahara;
   const ppk = riwayatPengajuan?.ppk;
 
@@ -348,6 +385,10 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       },
     });
 
+    // Save the complete PDF to the file system
+    console.log("[write file]", dokumenNominatif.filePath);
+    await fs.writeFile(dokumenNominatif.filePath, pdfBuffer);
+
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
@@ -360,6 +401,62 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     throw new Error("Failed to generate PDF");
   }
 }
+
+interface DokumenNominatif {
+  isFinal: boolean;
+  filePath: string | null;
+  isFileExist: boolean;
+  file?: Buffer;
+}
+
+const getDokumenNominatif = async (
+  kegiatan: Kegiatan,
+  jadwal: Jadwal,
+  riwayatPengajuan: RiwayatPengajuan
+) => {
+  const tahunKegiatan = kegiatan.tanggalMulai.getFullYear().toString();
+  const inStatus: STATUS_PENGAJUAN[] = [
+    STATUS_PENGAJUAN.REQUEST_TO_PAY,
+    STATUS_PENGAJUAN.PAID,
+    STATUS_PENGAJUAN.END,
+  ];
+
+  let dokumenNominatif: DokumenNominatif = {
+    isFinal: false,
+    filePath: null,
+    isFileExist: false,
+  };
+
+  dokumenNominatif.isFinal = inStatus.includes(riwayatPengajuan.status);
+  let filePath = "";
+  if (riwayatPengajuan.dokumenNominatif) {
+    filePath = riwayatPengajuan.dokumenNominatif;
+  } else {
+    const filename = `draft-nominatif-${jadwal.id}.pdf`;
+    filePath = path.posix.join(
+      tahunKegiatan,
+      kegiatan.id,
+      "jadwal-kelas-narasumber",
+      jadwal.id,
+      filename
+    );
+  }
+
+  const fileFullPath = path.posix.join(BASE_PATH_UPLOAD, filePath);
+  try {
+    await fs.access(fileFullPath);
+    dokumenNominatif.isFileExist = true;
+    const file = await fs.readFile(fileFullPath);
+    dokumenNominatif.file = file;
+  } catch (error) {
+    console.error(error);
+    dokumenNominatif.isFileExist = false;
+  }
+
+  dokumenNominatif.filePath = path.posix.resolve(fileFullPath);
+  console.log("[dokumenNominatif]", dokumenNominatif.filePath);
+  return dokumenNominatif;
+};
 
 export async function downloadNominatifHonorarium(
   req: Request,

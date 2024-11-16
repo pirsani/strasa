@@ -30,9 +30,15 @@ const getKursBankIndonesia = async (
       !diffgram[0]["NewDataSet"] ||
       !diffgram[0]["NewDataSet"][0]["Table"]
     ) {
-      console.log("No data available");
-      return null;
+      console.log("No kurs data found for: ", isoDate);
+      // repeat the request with the previous date
+      const previousDate = new Date(tanggal);
+      previousDate.setDate(tanggal.getDate() - 1);
+      return getKursBankIndonesia(previousDate);
+      //return null;
     }
+
+    console.log("Kurs data found for: ", isoDate);
 
     // Navigate to extract required fields
     const table = diffgram[0]["NewDataSet"][0]["Table"][0];

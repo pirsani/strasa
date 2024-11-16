@@ -90,6 +90,14 @@ export interface PesertaKegiatanIncludeUh extends PesertaKegiatan {
   uhLuarNegeri?: ObjPlainUhLuarNegeri[] | null;
 }
 
+export interface PesertaKegiatanWithUhDalamNegeri extends PesertaKegiatan {
+  uhDalamNegeri: UhDalamNegeri | null;
+}
+
+export interface PesertaKegiatanWithUhLuarNegeri extends PesertaKegiatan {
+  uhLuarNegeri: ObjPlainUhLuarNegeri | null;
+}
+
 export interface KegiatanIncludeAllDetail extends Kegiatan {
   itinerary: Itinerary[] | null;
   provinsi: Provinsi | null;

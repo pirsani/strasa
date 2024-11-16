@@ -684,6 +684,7 @@ model Spd {
   nomorSPD   String    @unique @map("nomor_spd")
   tanggalSPD DateTime  @map("tanggal_spd")
   asWas      Json?     @map("as_was")
+  dokumen    String?   @map("dokumen") // dokumen SPD yang telah di ttd
   createdBy  String    @map("created_by")
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedBy  String?   @map("updated_by")

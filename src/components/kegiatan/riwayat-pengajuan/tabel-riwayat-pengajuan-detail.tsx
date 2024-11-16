@@ -5,12 +5,12 @@ import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuanIn } from "@/data/kegia
 import { formatTanggal } from "@/utils/date-format";
 import { JENIS_PENGAJUAN, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StatusBadge from "../status-badge";
 
 interface RowDetail {
   id: string;
-  nama: string;
+  keterangan?: string;
   tanggalKegiatan?: Date | string | null;
   jenisPengajuan?: JENIS_PENGAJUAN | null;
   statusPengajuan?: STATUS_PENGAJUAN | null;
@@ -31,7 +31,7 @@ const TabelRiwayatPengajuanDetail = ({
   const [details, setDetails] = useState<RowDetail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useState(() => {
+  useEffect(() => {
     if (!kegiatanId) return;
     const fetchData = async () => {
       setIsLoading(true);
@@ -40,7 +40,7 @@ const TabelRiwayatPengajuanDetail = ({
       setIsLoading(false);
     };
     fetchData();
-  });
+  }, [kegiatanId]);
 
   const columns: ColumnDef<RowDetail>[] = [
     {
@@ -51,7 +51,7 @@ const TabelRiwayatPengajuanDetail = ({
       meta: { className: "w-[50px]" },
     },
     {
-      accessorKey: "nama",
+      accessorKey: "keterangan",
       header: "Keterangan/Kelas",
       footer: "Keterangan/Kelas",
       meta: { className: "w-[150px]" },
@@ -61,6 +61,9 @@ const TabelRiwayatPengajuanDetail = ({
       header: "Tanggal Kegiatan",
       footer: "Tanggal Kegiatan",
       meta: { className: "w-[100px]" },
+      cell: (info) => {
+        return formatTanggal(info.getValue() as Date, "dd-M-yyyy");
+      },
     },
     {
       accessorKey: "diajukanTanggal",
@@ -68,7 +71,7 @@ const TabelRiwayatPengajuanDetail = ({
       footer: "Tanggal Pengajuan",
       meta: { className: "w-[100px]" },
       cell: (info) => {
-        return formatTanggal(info.getValue() as Date);
+        return formatTanggal(info.getValue() as Date, "dd-M-yyyy");
       },
     },
     {
@@ -142,7 +145,7 @@ const fetchDataRiwayatPengajuan = async (
       riwayatRampungan.forEach((riwayat) => {
         newDetails.push({
           id: riwayat.id,
-          nama: jenisPengajuanToDesc(riwayat.jenis),
+          keterangan: jenisPengajuanToDesc(riwayat.jenis),
           jenisPengajuan: riwayat.jenis,
           statusPengajuan: riwayat.status,
           diajukanOlehId: riwayat.diajukanOlehId,
@@ -159,7 +162,7 @@ const fetchDataRiwayatPengajuan = async (
     const newDetailsJadwal: RowDetail[] = jadwals.map((jadwal) => {
       return {
         id: jadwal.id,
-        nama: jadwal.kelas.nama,
+        keterangan: jadwal.kelas.nama + " " + jadwal.materi.nama,
         tanggalKegiatan: jadwal.tanggal,
         jenisPengajuan: jadwal.riwayatPengajuan?.jenis,
         // statusPengajuan: mapStatusLangkahToDesc(

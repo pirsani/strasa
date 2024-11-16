@@ -146,6 +146,21 @@ export const getRiwayatPengajuanByKegiatanId = async (
   return riwayat;
 };
 
+export const getRiwayatPengajuanRampunganByKegiatanId = async (
+  kegiatanId: string
+) => {
+  const riwayat = await dbHonorarium.riwayatPengajuan.findFirst({
+    where: {
+      kegiatanId,
+      jenis: "GENERATE_RAMPUNGAN",
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return riwayat;
+};
+
 // it should be only return 1 data
 export const getRiwayatPengajuanByKegiatanIdAndJenisPengajuan = async (
   kegiatanId: string,
