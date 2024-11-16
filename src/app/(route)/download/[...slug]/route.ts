@@ -63,7 +63,8 @@ export async function GET(
     }
   } catch (error) {
     console.error(error);
-    return new NextResponse("Error", { status: 200 });
+    const customError = error as Error;
+    return new NextResponse(`Download error: ${customError.message}`);
   }
 }
 

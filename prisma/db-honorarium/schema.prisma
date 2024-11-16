@@ -727,6 +727,7 @@ model RiwayatPengajuan {
   bendaharaId String?                @map("bendahara_id")
   bendahara   PejabatPerbendaharaan? @relation(fields: [bendaharaId], references: [id], name: "pengajuan_bendahara")
 
+  dokumenNominatif       String? @map("dokumen_nominatif")
   dokumenBuktiPajak      String? @map("dokumen_bukti_pajak")
   dokumenBuktiPembayaran String? @map("dokumen_bukti_pembayaran")
   dokumentasi            String? @map("dokumentasi")

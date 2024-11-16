@@ -22,9 +22,20 @@ const getKursBankIndonesia = async (
     // Parse the XML to JSON
     const result = await parseStringPromise(xml);
 
+    // Check if the required elements exist
+    const diffgram = result["DataSet"]["diffgr:diffgram"];
+    if (
+      !diffgram ||
+      !diffgram[0] ||
+      !diffgram[0]["NewDataSet"] ||
+      !diffgram[0]["NewDataSet"][0]["Table"]
+    ) {
+      console.log("No data available");
+      return null;
+    }
+
     // Navigate to extract required fields
-    const table =
-      result["DataSet"]["diffgr:diffgram"][0]["NewDataSet"][0]["Table"][0];
+    const table = diffgram[0]["NewDataSet"][0]["Table"][0];
     const beliSubkurslokal = parseFloat(table["beli_subkurslokal"][0]);
     const jualSubkurslokal = parseFloat(table["jual_subkurslokal"][0]);
     const tglSubkurslokal = table["tgl_subkurslokal"][0];

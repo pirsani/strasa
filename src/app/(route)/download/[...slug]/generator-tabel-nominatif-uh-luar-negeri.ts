@@ -452,7 +452,12 @@ export async function downloadNominatifUhLuarNegeri(
   req: Request,
   slug: string[]
 ) {
-  return await generateDaftarNominatif(req, slug);
+  try {
+    return await generateDaftarNominatif(req, slug);
+  } catch (error) {
+    const customError = error as Error;
+    return new NextResponse(customError.message, { status: 200 });
+  }
 }
 
 export default downloadNominatifUhLuarNegeri;

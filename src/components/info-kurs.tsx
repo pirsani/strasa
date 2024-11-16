@@ -3,16 +3,23 @@ import { useEffect, useState } from "react";
 
 const InfoKurs = () => {
   const [kurs, setKurs] = useState<KursResponse | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
   useEffect(() => {
     const fetchKurs = async () => {
+      setIsFetching(true);
       const k = await getKursBankIndonesia(new Date());
       if (k) {
         k.tengah = (k.beli + k.jual) / 2;
         setKurs(k);
       }
+      setIsFetching(false);
     };
     fetchKurs();
   }, []);
+
+  if (isFetching) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div>
@@ -27,7 +34,9 @@ const InfoKurs = () => {
           </div>
         </>
       ) : (
-        <p>Loading...</p>
+        <p className="bg-red-200 text-red-500 p-2">
+          Kurs tanggal {new Date().toISOString().split("T")[0]} tidak tersedia
+        </p>
       )}
     </div>
   );

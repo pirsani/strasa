@@ -379,7 +379,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     });
   } catch (error) {
     console.error(error);
-    throw new Error("Failed to generate PDF");
+    return new NextResponse("Error", { status: 200 });
   }
 }
 
