@@ -466,13 +466,7 @@ const getDokumenRampungan = async (kegiatan: KegiatanIncludeSpd) => {
     filePath = spd.dokumen;
   } else {
     const filename = `draft-rampungan-${spd.id}.pdf`;
-
-    filePath = path.posix.join(
-      BASE_PATH_UPLOAD,
-      tahunKegiatan,
-      kegiatan.id,
-      filename
-    );
+    filePath = path.posix.join(tahunKegiatan, kegiatan.id, filename);
   }
 
   const fileFullPath = path.posix.join(BASE_PATH_UPLOAD, filePath);

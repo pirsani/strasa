@@ -472,7 +472,7 @@ model Kegiatan {
   dokumenNodinMemoSk String                 @map("dokumen_nodin_memo_sk")
   dokumenJadwal      String                 @map("dokumen_jadwal")
   lokasi             LOKASI // enum 0, 1, 2
-  provinsiId         String?
+  provinsiId         String?                @map("provinsi_id")
   provinsi           Provinsi?              @relation(fields: [provinsiId], references: [id])
   kota               String?
   keterangan         String?
