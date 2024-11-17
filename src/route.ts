@@ -10,6 +10,31 @@ export interface RouteItem {
   cascadePermissions?: boolean; // cascade permissions to sub routes
 }
 
+export const DEFAULT_ROUTE_AFTER_LOGIN = "/dashboard";
+
+export const loginRoutes: RouteItem[] = [
+  {
+    name: "login",
+    title: "Login",
+    href: "/login",
+    icon: "key",
+    order: 2,
+    displayAsMenu: false,
+  },
+  {
+    name: "login",
+    title: "Login",
+    href: "/",
+    icon: "key",
+    order: 2,
+    displayAsMenu: false,
+  },
+];
+
+export const isLoginRoute = (url: string) => {
+  return loginRoutes.some((route) => route.href === url);
+};
+
 export const publicRoutes: RouteItem[] = [
   {
     name: "doc",
@@ -36,6 +61,10 @@ export const publicRoutes: RouteItem[] = [
     displayAsMenu: false,
   },
 ];
+
+export const isPublicRoute = (url: string) => {
+  return publicRoutes.some((route) => route.href === url);
+};
 
 export const dashboardRoutes: RouteItem[] = [
   {

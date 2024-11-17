@@ -35,9 +35,12 @@ const LoginForm = () => {
       });
 
       if (!response?.error) {
-        router.push(callbackUrl);
+        console.log(response);
+        //router.push(callbackUrl);
       } else {
-        throw new Error(response.error);
+        console.log("error nih");
+        console.log(response.error);
+        //throw new Error(response.error);
       }
     } catch (error) {
       console.log(error);
