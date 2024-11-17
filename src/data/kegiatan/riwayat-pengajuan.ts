@@ -246,6 +246,35 @@ export const getDistinctStatusPengajuan = async (
   }
 };
 
+export const getDistinctInStatusPengajuan = async (
+  tahunAnggaran: number,
+  inStatus: STATUS_PENGAJUAN[]
+): Promise<StatusCount[] | null> => {
+  // Convert inStatus array to a format that can be used in the raw query
+  const formattedInStatus = inStatus.map((status) => `'${status}'`).join(",");
+  console.log(formattedInStatus);
+
+  // https://www.prisma.io/docs/orm/prisma-client/using-raw-sql/raw-queries
+  // https://www.prisma.io/docs/orm/prisma-client/using-raw-sql/raw-queries#dynamic-table-names-in-postgresql
+  // https://www.prisma.io/docs/orm/prisma-client/queries/aggregation-grouping-summarizing
+
+  https: try {
+    const query = `
+    SELECT status, COUNT(*) as count
+      FROM riwayat_pengajuan
+      WHERE EXTRACT(YEAR FROM diajukan_tanggal) = ${tahunAnggaran}
+      and status in (${formattedInStatus})
+      GROUP BY status`;
+
+    console.log(query);
+    const result = await dbHonorarium.$queryRawUnsafe<StatusCount[]>(query); // hanya gunakan queryRawUnsafe jika terpaksa
+    return result.length ? result : null;
+  } catch (error) {
+    console.error("Error fetching distinct status pengajuan:", error);
+    return null;
+  }
+};
+
 export const getRiwayatPengajuanInStatus = async (
   satkerId: string,
   statusPengajuan: STATUS_PENGAJUAN[],
