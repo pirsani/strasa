@@ -1,6 +1,7 @@
 import { isValid, parseISO } from "date-fns";
 import { z } from "zod";
 import { fileSchema } from "./file-schema";
+import { fnTanggalSchema } from "./tanggal";
 
 // Define the enum values as a Zod enum
 const LokasiEnum = z.enum(["DALAM_KOTA", "LUAR_KOTA", "LUAR_NEGERI"]);
@@ -15,24 +16,24 @@ interface TanggalSchemaOptions {
   message?: string;
   field?: string;
 }
-const tanggalSchema = ({
-  message = "",
-  field = "Tanggal",
-}: TanggalSchemaOptions) => {
-  const tanggalSchema = z
-    .string({ message: `${field} harus diisi` })
-    .min(10, {
-      message: `format ${field} harus yyyy-mm-dd`,
-    })
-    .max(10, {
-      message: `format ${field} harus yyyy-mm-dd`,
-    })
-    .refine(isValidDateString, {
-      message: `format  ${field} harus yyyy-mm-dd`,
-    })
-    .transform((value) => new Date(value));
-  return tanggalSchema;
-};
+// const tanggalSchema = ({
+//   message = "",
+//   field = "Tanggal",
+// }: TanggalSchemaOptions) => {
+//   const tanggalSchema = z
+//     .string({ message: `${field} harus diisi` })
+//     .min(10, {
+//       message: `format ${field} harus yyyy-mm-dd`,
+//     })
+//     .max(10, {
+//       message: `format ${field} harus yyyy-mm-dd`,
+//     })
+//     .refine(isValidDateString, {
+//       message: `format  ${field} harus yyyy-mm-dd`,
+//     })
+//     .transform((value) => new Date(value));
+//   return tanggalSchema;
+// };
 
 export const baseKegiatanSchema = z.object({
   cuid: z.string({ required_error: "CUID harus diisi" }),
@@ -44,11 +45,11 @@ export const baseKegiatanSchema = z.object({
     .max(500, {
       message: "Nama kegiatan maksimal 500 karakter",
     }),
-  tanggalMulai: tanggalSchema({ field: "Tanggal Mulai" }),
-  tanggalSelesai: tanggalSchema({ field: "Tanggal Selesai" }),
+  tanggalMulai: fnTanggalSchema({ field: "Tanggal Mulai" }),
+  tanggalSelesai: fnTanggalSchema({ field: "Tanggal Selesai" }),
   lokasi: LokasiEnum, // Use the Zod enum schema for lokasi
-  provinsi: z.string(),
-  kota: z.string().optional(),
+  provinsi: z.string().optional().nullable(),
+  kota: z.string().optional().nullable(),
   dokumenNodinMemoSk: fileSchema({
     required: true,
     message: "Dokumen Nodin/Memo/SK harus diupload",
@@ -104,15 +105,54 @@ export const kegiatanSchema = baseKegiatanSchema
   })
   .refine(
     (data) => {
+      console.log(data);
+      if (data.lokasi === "LUAR_KOTA") {
+        return !!data.provinsi;
+      }
+      return true;
+    },
+    {
+      message: "Provinsi jika lokasi kegiatan luar kota",
+      path: ["provinsi"],
+    }
+  )
+  .refine(
+    (data) => {
+      console.log(data);
+      if (data.lokasi === "LUAR_KOTA") {
+        return !!data.kota;
+      }
+      return true;
+    },
+    {
+      message: "kota harus diisi jika lokasi kegiatan luar kota",
+      path: ["kota"],
+    }
+  )
+  .refine(
+    (data) => {
       if (data.lokasi === "LUAR_NEGERI") {
-        return data.dokumenSuratSetnegSptjmCuid && data.dokumenSuratSetnegSptjm;
+        return !!data.dokumenSuratSetnegSptjm;
       }
       return true;
     },
     {
       message:
-        "Dokumen Surat Setneg/SPTJM harus diisi jika lokasi kegiatan luar negeri",
-      path: ["dokumenSuratSetnegSptjm", "dokumenSuratSetnegSptjmCuid"],
+        "Dokumen Surat Setneg/SPTJM harus diupload jika lokasi kegiatan luar negeri",
+      path: ["dokumenSuratSetnegSptjm"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.lokasi === "LUAR_NEGERI") {
+        return !!data.dokumenSuratSetnegSptjmCuid;
+      }
+      return true;
+    },
+    {
+      message:
+        "Dokumen Surat Setneg/SPTJM harus diupload jika lokasi kegiatan luar negeri",
+      path: ["dokumenSuratSetnegSptjmCuid"],
     }
   )
   .refine(
@@ -144,11 +184,100 @@ export const kegiatanSchemaEditMode = baseKegiatanSchema
   .extend({
     dokumenNodinMemoSk: fileSchema({ required: false }),
     dokumenJadwal: fileSchema({ required: false }),
+    dokumenSuratTugas: z
+      .union([
+        fileSchema({
+          required: true,
+          message: "Dokumen Surat Tugas harus diupload",
+        }),
+        z.array(
+          fileSchema({
+            required: true,
+            message: "Dokumen Surat Tugas harus diupload",
+          })
+        ),
+      ])
+      .optional()
+      .nullable(),
+    dokumenSuratTugasCuid: z
+      .union([z.string(), z.array(z.string())])
+      .optional()
+      .nullable(),
+    pesertaXlsx: fileSchema({
+      required: false,
+      allowedTypes: [
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      ],
+    }),
   })
   .refine((data) => data.tanggalMulai <= data.tanggalSelesai, {
     message: "Tanggal Mulai harus kurang dari atau sama dengan Tanggal Selesai",
     path: ["tanggalMulai"], // This will point the error to the tanggalMulai field
-  });
+  })
+  .refine(
+    (data) => {
+      console.log(data);
+      if (data.lokasi === "LUAR_KOTA") {
+        return !!data.provinsi;
+      }
+      return true;
+    },
+    {
+      message: "Provinsi jika lokasi kegiatan luar kota",
+      path: ["provinsi"],
+    }
+  )
+  .refine(
+    (data) => {
+      console.log(data);
+      if (data.lokasi === "LUAR_KOTA") {
+        return !!data.kota;
+      }
+      return true;
+    },
+    {
+      message: "kota harus diisi jika lokasi kegiatan luar kota",
+      path: ["kota"],
+    }
+  )
+  .refine(
+    (data) => {
+      console.log(data);
+      if (data.lokasi === "LUAR_KOTA") {
+        return !!data.kota;
+      }
+      return true;
+    },
+    {
+      message: "kota harus diisi jika lokasi kegiatan luar kota",
+      path: ["kota"],
+    }
+  );
+// .refine(
+//   (data) => {
+//     if (data.lokasi === "LUAR_NEGERI") {
+//       return !!data.dokumenSuratSetnegSptjm;
+//     }
+//     return true;
+//   },
+//   {
+//     message:
+//       "Dokumen Surat Setneg/SPTJM harus diupload jika lokasi kegiatan luar negeri",
+//     path: ["dokumenSuratSetnegSptjm"],
+//   }
+// )
+// .refine(
+//   (data) => {
+//     if (data.lokasi === "LUAR_NEGERI") {
+//       return data.isValidItinerary === true;
+//     }
+//     return true;
+//   },
+//   {
+//     message: "Invalid itinerary. Periksa kembali itinerary kegiatan",
+//     path: ["isValidItinerary"],
+//   }
+// );
 
 export type Kegiatan = z.infer<typeof kegiatanSchema>;
 export type KegiatanEditMode = z.infer<typeof kegiatanSchemaEditMode>;

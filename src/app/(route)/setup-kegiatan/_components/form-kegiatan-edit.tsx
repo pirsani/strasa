@@ -23,11 +23,11 @@ import { useEffect, useRef } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import PesertaContainer from "./peserta-container";
 //import SelectProvinsi from "./select-sbm-provinsi";
-import setupKegiatan from "@/actions/kegiatan/setup-kegiatan";
 import CummulativeErrors from "@/components/form/cummulative-error";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
 import { default as RequiredLabel } from "@/components/form/required";
 
+import setupKegiatanEdit from "@/actions/kegiatan/setup-kegiatan-edit";
 import SelectKota from "@/components/form/select-kota";
 import ToastErrorContainer from "@/components/form/toast-error-children";
 import { cn } from "@/lib/utils";
@@ -52,11 +52,15 @@ const SelectLokasi = dynamic(() => import("@/components/form/select-lokasi"), {
 
 type FormValues<T> = T extends true ? KegiatanEditMode : Kegiatan;
 
-interface FormKegiatanProps {
+interface FormKegiatanEditProps {
   editId?: string | null;
+  kegiatan?: KegiatanEditMode;
 }
 
-export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
+export const FormKegiatanEdit = ({
+  editId,
+  kegiatan,
+}: FormKegiatanEditProps) => {
   const isEditMode = editId != null;
   type FormMode = typeof isEditMode;
   const form = useForm<FormValues<FormMode>>({
@@ -72,6 +76,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
       dokumenNodinMemoSk: undefined,
       dokumenNodinMemoSkCuid: "nodin" + createId() + ".pdf",
       dokumenSuratSetnegSptjmCuid: undefined,
+      ...kegiatan,
     },
     //reValidateMode: "onChange",
   });
@@ -97,7 +102,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
   const provinsi = form.watch("provinsi");
 
   // Use a ref to store the folderCuid
-  const folderCuidRef = useRef(createId());
+  const folderCuidRef = useRef(editId ?? createId());
   const folderCuid = folderCuidRef.current;
   setValue("cuid", folderCuid);
 
@@ -113,7 +118,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
       ...dataWithoutFile
     } = data;
 
-    const kegiatanBaru = await setupKegiatan(dataWithoutFile as Kegiatan);
+    const kegiatanBaru = await setupKegiatanEdit(dataWithoutFile);
     if (kegiatanBaru.success) {
       toast.success("Kegiatan berhasil disimpan");
       //reset(); // reset the form
@@ -170,8 +175,12 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
       setValue("provinsi", "31");
     }
     if (lokasi === LOKASI.LUAR_KOTA) {
-      setValue("provinsi", undefined);
+      setValue("provinsi", null);
+      setValue("kota", null);
     }
+    trigger("dokumenSuratSetnegSptjm");
+    trigger("provinsi");
+    trigger("kota");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lokasi]);
 
@@ -410,7 +419,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
                     <SelectProvinsi
                       fullKey={field.name}
                       onChange={field.onChange}
-                      value={field.value || null}
+                      value={field.value ?? null}
                     />
                   </FormControl>
                   <FormMessage />
@@ -489,4 +498,4 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
   );
 };
 
-export default FormKegiatan;
+export default FormKegiatanEdit;

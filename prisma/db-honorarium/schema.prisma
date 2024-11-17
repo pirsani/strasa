@@ -565,7 +565,7 @@ model PesertaKegiatan {
 model UhDalamNegeri {
   id                     Int             @id @default(autoincrement())
   pesertaKegiatanId      String          @unique @map("peserta_kegiatan_id")
-  pesertaKegiatan        PesertaKegiatan @relation(fields: [pesertaKegiatanId], references: [id])
+  pesertaKegiatan        PesertaKegiatan @relation(fields: [pesertaKegiatanId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   jumlahHari             Int             @default(0) @map("jumlah_hari")
   hFullboard             Int             @default(0) @map("h_fullboard")
   hFulldayHalfday        Int             @default(0) @map("h_fullday_halfday")
@@ -593,7 +593,7 @@ model UhDalamNegeri {
 model UhLuarNegeri {
   id                     Int              @id @default(autoincrement())
   pesertaKegiatanId      String           @map("peserta_kegiatan_id")
-  pesertaKegiatan        PesertaKegiatan  @relation(fields: [pesertaKegiatanId], references: [id])
+  pesertaKegiatan        PesertaKegiatan  @relation(fields: [pesertaKegiatanId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   dariLokasiId           String           @map("dari_lokasi_id")
   dariLokasi             Negara           @relation(fields: [dariLokasiId], references: [id], name: "dari_lokasi_uh_luar_negeri")
   keLokasiId             String           @map("ke_lokasi_id")

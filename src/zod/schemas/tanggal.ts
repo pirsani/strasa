@@ -20,6 +20,25 @@ export const tanggalSchema = z.union([
     .transform(transformToDate),
   z.date(),
 ]);
+interface TanggalSchemaOptions {
+  message?: string;
+  field?: string;
+}
+export const fnTanggalSchema = ({
+  message,
+  field = "Tanggal",
+}: TanggalSchemaOptions) => {
+  const tanggalSchema = z.union([
+    z
+      .string()
+      .refine(isValidDateString, {
+        message: message ?? `Invalid ${field}, use format as yyyy-mm-dd.`,
+      })
+      .transform(transformToDate),
+    z.date(),
+  ]);
+  return tanggalSchema;
+};
 
 // Optional schema: allows undefined or an empty string, but validates if provided
 export const tanggalSchemaOptional = z.union([

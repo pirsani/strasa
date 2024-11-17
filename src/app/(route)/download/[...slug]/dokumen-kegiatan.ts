@@ -19,8 +19,9 @@ export async function downloadDokumenKegiatan(req: Request, slug: string[]) {
 
   try {
     const dokumenId = slug[1];
+    const kegiatanId = slug[2];
     //const kegiatan = await getKegiatanById(kegiatanId);
-    const dokumenKegiatan = await getDokumenKegiatan(dokumenId);
+    const dokumenKegiatan = await getDokumenKegiatan(dokumenId, kegiatanId);
     logger.info(dokumenKegiatan);
 
     const filePath = dokumenKegiatan?.filePath;
@@ -53,10 +54,14 @@ export async function getUploadedFile(id: string) {
   return dokumen;
 }
 
-export async function getDokumenKegiatan(dokumen: string) {
+export async function getDokumenKegiatan(dokumen: string, kegiatanId?: string) {
   const dokumenKegiatan = await dbHonorarium.dokumenKegiatan.findFirst({
     where: {
       dokumen: dokumen,
+      ...(kegiatanId && { kegiatanId }),
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
   return dokumenKegiatan;

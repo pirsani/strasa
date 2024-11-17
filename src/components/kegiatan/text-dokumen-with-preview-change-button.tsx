@@ -25,7 +25,7 @@ const TextDokumenWithPreviewChangeButton = ({
   );
 
   const url = dokumen?.dokumen
-    ? `/download/dokumen-kegiatan/${dokumen?.dokumen}`
+    ? `/download/dokumen-kegiatan/${dokumen?.dokumen}/${dokumen.kegiatanId}`
     : null;
 
   const setUrl = () => {

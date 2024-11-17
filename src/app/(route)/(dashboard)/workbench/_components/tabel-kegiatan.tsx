@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { getObPlainJadwalByKegiatanId } from "@/data/jadwal";
 import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
+import { useSearchTerm } from "@/hooks/use-search-term";
 import { cn } from "@/lib/utils";
 import { formatTanggal } from "@/utils/date-format";
 import {
@@ -34,6 +35,27 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowDetails, setRowDetails] = useState<RowDetails<RowDetail>>({});
+
+  const { searchTerm } = useSearchTerm();
+  const filteredData = data.filter((row) => {
+    if (!searchTerm || searchTerm === "") return true;
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    //const searchWords = lowercasedSearchTerm.split(" ").filter(Boolean);
+    const searchWords =
+      lowercasedSearchTerm
+        .match(/"[^"]+"|\S+/g)
+        ?.map((word) => word.replace(/"/g, "")) || [];
+
+    return searchWords.every(
+      (word) =>
+        row.nama?.toLowerCase().includes(word) ||
+        row.unitKerja.nama?.toLowerCase().includes(word) ||
+        row.unitKerja.singkatan?.toLowerCase().includes(word) ||
+        row.satker.nama?.toLowerCase().includes(word) ||
+        row.satker.singkatan?.toLowerCase().includes(word) ||
+        row.lokasi?.toLowerCase().includes(word)
+    );
+  });
 
   const columns: ColumnDef<KegiatanIncludeSatker>[] = [
     {
@@ -439,7 +461,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
   return (
     <div>
       <TabelExpandable
-        data={data}
+        data={filteredData}
         columns={columns}
         renderExpandedRowDetails={renderExpandedRowDetails}
         expanded={expanded}

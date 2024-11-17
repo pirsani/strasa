@@ -17,6 +17,7 @@ import {
   STATUS_PENGAJUAN,
 } from "@prisma-honorarium/client";
 
+import { useSearchTerm } from "@/hooks/use-search-term";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { ChevronRight, Eye } from "lucide-react";
 import Link from "next/link";
@@ -38,6 +39,28 @@ export const TabelKegiatan = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowDetails, setRowDetails] = useState<RowDetails<RowDetail>>({});
+
+  const { searchTerm } = useSearchTerm();
+  const filteredData = data.filter((row) => {
+    if (!searchTerm || searchTerm === "") return true;
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    //const searchWords = lowercasedSearchTerm.split(" ").filter(Boolean);
+    const searchWords =
+      lowercasedSearchTerm
+        .match(/"[^"]+"|\S+/g)
+        ?.map((word) => word.replace(/"/g, "")) || [];
+
+    return searchWords.every(
+      (word) =>
+        row.nama?.toLowerCase().includes(word) ||
+        row.unitKerja.nama?.toLowerCase().includes(word) ||
+        row.unitKerja.singkatan?.toLowerCase().includes(word) ||
+        row.satker.nama?.toLowerCase().includes(word) ||
+        row.satker.singkatan?.toLowerCase().includes(word) ||
+        row.lokasi?.toLowerCase().includes(word) ||
+        row.keterangan?.toLowerCase().includes(word)
+    );
+  });
 
   const columns: ColumnDef<KegiatanIncludeSatker>[] = [
     {
@@ -435,7 +458,7 @@ export const TabelKegiatan = ({
   return (
     <div>
       <TabelExpandable
-        data={data}
+        data={filteredData}
         columns={columns}
         renderExpandedRowDetails={renderExpandedRowDetails}
         expanded={expanded}

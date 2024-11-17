@@ -163,7 +163,7 @@ export function validateItineraryChain(data: Itinerary[]): ValidationResult {
   if (data.length === 0)
     return {
       isValid: false,
-      message: ["Invalid itinerary: No data provided"],
+      message: ["Warning: No data itinerary provided"],
     }; // No data, it's valid by default
 
   // Sort by tanggalMulai to process itineraries in chronological order

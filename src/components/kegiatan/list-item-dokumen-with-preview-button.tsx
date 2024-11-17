@@ -14,7 +14,7 @@ const ListItemDokumenWithPreviewButton = ({
   if (!dokumen) {
     return <div className="text-gray-700">document not found</div>;
   }
-  const url = `/download/dokumen-kegiatan/${dokumen.dokumen}`;
+  const url = `/download/dokumen-kegiatan/${dokumen.dokumen}/${dokumen.kegiatanId}`;
 
   const setUrl = () => {
     useFileStore.setState({ fileUrl: url });

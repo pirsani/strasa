@@ -17,7 +17,7 @@ const TextDokumenWithPreviewButton = ({
   //   return <div className="text-gray-700">{label}</div>;
   // }
   const url = dokumen?.dokumen
-    ? `/download/dokumen-kegiatan/${dokumen?.dokumen}`
+    ? `/download/dokumen-kegiatan/${dokumen?.dokumen}/${dokumen.kegiatanId}`
     : null;
 
   const originalFilename =
