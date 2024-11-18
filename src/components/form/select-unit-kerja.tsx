@@ -8,6 +8,7 @@ interface SelectUnitKerjaProps {
   fieldName: string;
   onChange: (value: string | null) => void;
   value: string | null;
+  indukOrganisasiId?: string;
 }
 
 interface Option {
@@ -19,13 +20,14 @@ const SelectUnitKerja = ({
   fieldName,
   onChange,
   value,
+  indukOrganisasiId,
 }: SelectUnitKerjaProps) => {
   const [options, setOptions] = useState<Option[]>([]);
   const genId = randomStrimg(5);
 
   useEffect(() => {
     const fetchOptions = async () => {
-      const optionUnitKerja = await getOptionsUnitKerja();
+      const optionUnitKerja = await getOptionsUnitKerja(indukOrganisasiId);
       if (optionUnitKerja) {
         const mappedOptions = optionUnitKerja.map((unitKerja) => ({
           value: unitKerja.value,

@@ -139,8 +139,11 @@ export const deleteDataUnitKerja = async (
   }
 };
 
-export const getOptionsUnitKerja = async () => {
+export const getOptionsUnitKerja = async (indukOrganisasiId?: string) => {
   const dataUnitKerja = await dbHonorarium.organisasi.findMany({
+    where: {
+      ...(indukOrganisasiId && { indukOrganisasiId }),
+    },
     include: {
       indukOrganisasi: true,
     },

@@ -1046,6 +1046,7 @@ model Organisasi {
   kegiatanSatker         Kegiatan[]              @relation("satker_kegiatan")
   kegiatanUnitKerja      Kegiatan[]              @relation("unit_kerja_kegiatan")
   satkerPembayaran       Pembayaran[]            @relation("satker_pembayaran")
+  pagu                   Pagu[]                  @relation("pagu_unit_kerja")
 
   @@map("organisasi")
 }
@@ -1108,4 +1109,18 @@ model UploadedFile {
   createdAt        DateTime @default(now()) @map("created_at")
 
   @@map("uploaded_file")
+}
+
+model Pagu {
+  id          String     @id @default(cuid())
+  tahun       Int
+  unitKerjaId String     @map("unit_kerja_id")
+  unitKerja   Organisasi @relation(fields: [unitKerjaId], references: [id], name: "pagu_unit_kerja")
+  pagu        BigInt
+  createdBy   String     @map("created_by")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedBy   String?    @map("updated_by")
+  updatedAt   DateTime?  @updatedAt @map("updated_at")
+
+  @@map("pagu")
 }
