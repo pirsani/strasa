@@ -443,6 +443,14 @@ const getDokumenNominatif = async (
   }
 
   const fileFullPath = path.posix.join(BASE_PATH_UPLOAD, filePath);
+  // create directory if not exist
+  const dirPath = path.posix.dirname(fileFullPath);
+  try {
+    await fs.mkdir(dirPath, { recursive: true });
+    //console.log(`Directory ${dirPath} created or already exists.`);
+  } catch (error) {
+    console.error(`Error creating directory ${dirPath}:`, error);
+  }
   try {
     await fs.access(fileFullPath);
     dokumenNominatif.isFileExist = true;
