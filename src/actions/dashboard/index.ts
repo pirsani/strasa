@@ -1,9 +1,26 @@
 "use server";
 import { getDataRealisasi } from "@/data/dasboard/realisasi";
 import { getDistinctInStatusPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
-import { getPaguUnitKerja } from "@/data/pagu";
+import {
+  getPaguRealisasiUnitKerjaBySatker,
+  getPaguUnitKerja,
+} from "@/data/pagu";
 import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import { getSessionPenggunaForAction } from "../pengguna";
+
+export const getPaguRealisasi = async (year: number) => {
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) {
+    // redirect to login page
+    return [];
+  }
+
+  const paguRealisasi = await getPaguRealisasiUnitKerjaBySatker(
+    year,
+    pengguna.data.satkerId
+  );
+  return paguRealisasi;
+};
 
 export const getRealisasi = async (year: number) => {
   const pengguna = await getSessionPenggunaForAction();

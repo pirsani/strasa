@@ -36,4 +36,34 @@ export const formatCurrency = (
   }).format(Number(roundedAmount)); // Convert back to number for formatting
 };
 
+export const formatNumberWithSuffix = (tickItem: number): string => {
+  const formatter = new Intl.NumberFormat("id-ID", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+
+  const absValue = Math.abs(tickItem);
+  let suffix = "";
+  let value = absValue;
+
+  if (absValue >= 1_000_000_000_000) {
+    value = absValue / 1_000_000_000_000;
+    suffix = "T";
+  } else if (absValue >= 1_000_000_000) {
+    value = absValue / 1_000_000_000;
+    suffix = "M";
+  } else if (absValue >= 1_000_000) {
+    value = absValue / 1_000_000;
+    suffix = "Jt";
+  } else if (absValue >= 1_000) {
+    value = absValue / 1_000;
+    suffix = "Rb";
+  }
+
+  const formattedValue = formatter.format(value);
+  return tickItem < 0
+    ? `-${formattedValue}${suffix}`
+    : `${formattedValue}${suffix}`;
+};
+
 export default formatCurrency;

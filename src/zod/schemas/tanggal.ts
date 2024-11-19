@@ -22,17 +22,17 @@ export const tanggalSchema = z.union([
 ]);
 interface TanggalSchemaOptions {
   message?: string;
-  field?: string;
+  fieldDesc?: string;
 }
 export const fnTanggalSchema = ({
   message,
-  field = "Tanggal",
+  fieldDesc = "Tanggal",
 }: TanggalSchemaOptions) => {
   const tanggalSchema = z.union([
     z
       .string()
       .refine(isValidDateString, {
-        message: message ?? `Invalid ${field}, use format as yyyy-mm-dd.`,
+        message: message ?? `Invalid ${fieldDesc}, use format as yyyy-mm-dd.`,
       })
       .transform(transformToDate),
     z.date(),

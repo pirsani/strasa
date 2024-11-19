@@ -10,7 +10,7 @@
     "prune": "ts-prune",
     "prisma:db-push": "cross-env DATABASE_URL=${DATABASE_URL_ADMIN} pnpm prisma db push --accept-data-loss --schema=./prisma/db-honorarium/schema.prisma",
     "prisma:generate": "cross-env DATABASE_URL=${DATABASE_URL_ADMIN} pnpm prisma generate --schema=./prisma/db-honorarium/schema.prisma",
-    "prisma:baseline": "cross-env DATABASE_URL=${DATABASE_URL_ADMIN} pnpm pnpm prisma migrate resolve --applied 0_init --schema=./prisma/db-honorarium/schema.prisma",
+    "prisma:baseline": "cross-env DATABASE_URL=${DATABASE_URL_ADMIN} pnpm prisma migrate resolve --applied 0_init --schema=./prisma/db-honorarium/schema.prisma",
     "prisma:deploy": "cross-env DATABASE_URL=${DATABASE_URL_ADMIN} pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma",
     "analyze": "cross-env ANALYZE=true pnpm build"
   },

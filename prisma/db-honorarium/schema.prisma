@@ -1047,6 +1047,7 @@ model Organisasi {
   kegiatanUnitKerja      Kegiatan[]              @relation("unit_kerja_kegiatan")
   satkerPembayaran       Pembayaran[]            @relation("satker_pembayaran")
   pagu                   Pagu[]                  @relation("pagu_unit_kerja")
+  sp2d                   Sp2d[]                  @relation("sp2d_unit_kerja")
 
   @@map("organisasi")
 }
@@ -1123,4 +1124,22 @@ model Pagu {
   updatedAt   DateTime?  @updatedAt @map("updated_at")
 
   @@map("pagu")
+}
+
+model Sp2d {
+  id             String     @id @default(cuid())
+  nomor          String     @unique @map("nomor_sp2d")
+  tanggal        DateTime   @map("tanggal_sp2d")
+  jumlahDiminta  BigInt     @default(0) @map("jumlah_diminta")
+  jumlahPotongan BigInt     @default(0) @map("jumlah_potongan")
+  jumlahDibayar  BigInt     @default(0) @map("jumlah_dibayar")
+  dokumen        String?    @map("dokumen") // dokumen Sp2d yang telah di ttd
+  createdBy      String     @map("created_by")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedBy      String?    @map("updated_by")
+  updatedAt      DateTime?  @updatedAt @map("updated_at")
+  unitKerjaId    String     @map("unit_kerja_id")
+  unitKerja      Organisasi @relation(fields: [unitKerjaId], references: [id], name: "sp2d_unit_kerja")
+
+  @@map("sp2d")
 }

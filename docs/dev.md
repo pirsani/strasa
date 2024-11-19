@@ -93,6 +93,12 @@ updated:
 ```sh
 pnpm run prisma:db-push
 pnpm run prisma:generate
+
+```
+
+```sh
+pnpm run prisma:baseline
+pnpm run prisma:deploy
 ```
 
 ## UI
@@ -125,7 +131,15 @@ pnpm prisma migrate dev --create-only --name init --schema=./prisma/db-honorariu
 
 pnpm prisma migrate dev --create-only --name get_aggregated_payment_status --schema=./prisma/db-honorarium/schema.prisma
 
+pnpm prisma migrate dev --create-only --name sp2d --schema=./prisma/db-honorarium/schema.prisma
+
+
+pnpm prisma migrate dev --create-only --name get_pagu_realisasi --schema=./prisma/db-honorarium/schema.prisma
+
+
 pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
+
+pnpm run prisma:generate
 
 pnpm prisma migrate dev --schema=./prisma/db-honorarium/schema.prisma
 ```

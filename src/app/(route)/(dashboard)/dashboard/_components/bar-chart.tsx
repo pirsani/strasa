@@ -1,5 +1,7 @@
 "use client";
-import formatCurrency from "@/utils/format-currency";
+import formatCurrency, {
+  formatNumberWithSuffix,
+} from "@/utils/format-currency";
 import {
   Bar,
   BarChart,
@@ -20,12 +22,12 @@ const data = [
 ];
 const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#8dd1e1"];
 
-export interface DataChart {
+export interface SingleDimensionDataChart {
   name: string;
-  total: number;
+  total: BigInt | number;
 }
 interface BarChartProps {
-  data: DataChart[];
+  data: SingleDimensionDataChart[];
 }
 export const BarChartRealisasi = ({ data = [] }: BarChartProps) => {
   const legendPayload = data.map((entry, index) => ({
@@ -34,31 +36,6 @@ export const BarChartRealisasi = ({ data = [] }: BarChartProps) => {
     id: entry.name,
     color: colors[index % colors.length],
   }));
-  const formatYAxis = (tickItem: number) => {
-    if (tickItem >= 1_000_000_000_000) {
-      return `${(tickItem / 1_000_000_000_000).toLocaleString(undefined, {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      })}T`;
-    } else if (tickItem >= 1_000_000_000) {
-      return `${(tickItem / 1_000_000_000).toLocaleString(undefined, {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      })}M`;
-    } else if (tickItem >= 1_000_000) {
-      return `${(tickItem / 1_000_000).toLocaleString(undefined, {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      })}Jt`;
-    } else if (tickItem >= 1_000) {
-      return `${(tickItem / 1_000).toLocaleString(undefined, {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      })}Rb`;
-    } else {
-      return tickItem.toLocaleString();
-    }
-  };
 
   const formatTooltip = (value: string | number, name: string) => {
     return formatCurrency(Number(value));
@@ -78,7 +55,7 @@ export const BarChartRealisasi = ({ data = [] }: BarChartProps) => {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis tickFormatter={formatYAxis} />
+        <YAxis tickFormatter={formatNumberWithSuffix} />
         <Tooltip formatter={formatTooltip} />
         <Legend payload={legendPayload} />
         <Bar dataKey="total" fill="#8884d8">

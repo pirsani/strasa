@@ -70,3 +70,22 @@ export const getPaguUnitKerja = async (
   });
   return pagu;
 };
+
+interface ResultPaguRealisasi {
+  year: number;
+  unit_kerja_id: string;
+  nama: string;
+  singkatan: string;
+  realisasi: number;
+  pagu: number;
+  sisa: number;
+}
+export const getPaguRealisasiUnitKerjaBySatker = async (
+  tahun: number,
+  satkerId: string
+) => {
+  const result = await dbHonorarium.$queryRaw<ResultPaguRealisasi[]>`
+    select * from get_pagu_realisasi(${tahun},${satkerId})
+  `;
+  return result;
+};
