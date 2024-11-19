@@ -23,6 +23,7 @@ import { ChevronRight, Eye } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { DialogUnggahDokumen } from "./dialog-unggah-dokumen";
+import DialogVerifikasiDokumenAkhir from "./dialog-verifikasi-dokumen-akhir";
 
 interface TabelKegiatanProps {
   data: KegiatanIncludeSatker[];
@@ -165,6 +166,7 @@ export const TabelKegiatan = ({
   interface RowDetail {
     id: string;
     keterangan?: string;
+    jadwalId?: string | null;
     tanggalKegiatan?: Date | string | null;
     pengajuanId?: string | null;
     jenisPengajuan?: JENIS_PENGAJUAN | null;
@@ -211,7 +213,7 @@ export const TabelKegiatan = ({
             return;
           }
           window.open(
-            `/download/nominatif-honorarium/${kegiatanId}/${detail.id}`,
+            `/download/nominatif-honorarium/${kegiatanId}/${detail.jadwalId}`,
             "_blank"
           );
           return;
@@ -277,6 +279,30 @@ export const TabelKegiatan = ({
       //update details
       detail.hasDokumentasi = true;
       detail.hasLaporan = true;
+      // update rowDetails
+      setRowDetails((prev) => {
+        return {
+          ...prev,
+          [kegiatanId]: details,
+        };
+      });
+    }
+  };
+
+  const handleVerifikasiDokumenAkhirSubmitted = (
+    kegiatanId: string,
+    riwayatPengajuanId: string
+  ) => {
+    // find data that have have the same kegiatanId
+    const details = rowDetails[kegiatanId];
+    // find the detail that have the same riwayatPengajuanId
+    const detail = details?.find((d) => d.id === riwayatPengajuanId);
+    if (!detail) {
+      console.error("Detail not found");
+      return;
+    } else {
+      //update details
+      detail.statusPengajuan = "END";
       // update rowDetails
       setRowDetails((prev) => {
         return {
@@ -376,11 +402,24 @@ export const TabelKegiatan = ({
                         >
                           <Eye size={18} />
                         </Button>
-                        <DialogUnggahDokumen
-                          kegiatanId={row.id}
-                          riwayatPengajuanId={detail.id}
-                          onSubmitted={handleDokumenAkhirSubmitted}
-                        />
+                        {(!detail.hasDokumentasi || !detail.hasLaporan) && (
+                          <DialogUnggahDokumen
+                            kegiatanId={row.id}
+                            riwayatPengajuanId={detail.id}
+                            onSubmitted={handleDokumenAkhirSubmitted}
+                          />
+                        )}
+                        {detail.hasDokumentasi &&
+                          detail.hasLaporan &&
+                          detail.statusPengajuan === "PAID" && (
+                            <DialogVerifikasiDokumenAkhir
+                              kegiatanId={row.id}
+                              riwayatPengajuanId={detail.id}
+                              onSubmitted={
+                                handleVerifikasiDokumenAkhirSubmitted
+                              }
+                            />
+                          )}
                       </div>
                     </td>
                   </tr>
@@ -424,6 +463,7 @@ export const TabelKegiatan = ({
       const rowDetail: RowDetail = {
         id: item.id,
         keterangan: item.keterangan,
+        jadwalId: item.jadwal?.id,
         tanggalKegiatan: item.jadwal?.tanggal,
         pengajuanId: item.id,
         jenisPengajuan: item.jenis,

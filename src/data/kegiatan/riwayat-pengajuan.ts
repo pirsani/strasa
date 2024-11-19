@@ -395,6 +395,7 @@ export const getRiwayatKegiatanUntukDokumenAkhir = async (
         return null;
       const rwy = {
         ...jadwal.riwayatPengajuan,
+        jadwal,
         keterangan: `${jadwal.kelas.nama} - ${jadwal.materi.nama}`,
       };
       return rwy;
