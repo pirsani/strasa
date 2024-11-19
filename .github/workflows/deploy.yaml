@@ -47,7 +47,10 @@ jobs:
           DATABASE_URL_ADMIN: ${{ secrets.DATABASE_URL_ADMIN }} # Existing secret
           DATABASE_URL_HONORARIUM: ${{ secrets.DATABASE_URL_HONORARIUM }} # New secret added
         # run: pnpm run prisma:db-push
-        run: pnpm run prisma:deploy
+        run: |
+          pnpm run prisma:db-push
+          pnpm run prisma:baseline
+          pnpm run prisma:deploy
 
       - name: Build the application
         env:

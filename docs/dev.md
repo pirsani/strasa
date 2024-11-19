@@ -108,6 +108,15 @@ pnpm add -D @types/lodash
 ### WARNING DO NOT DO IT IF YOU NOT AWARE OF WHAT YOU ARE DOIN
 
 ```sh
+pnpm prisma migrate diff \
+--from-empty \
+--to-schema-datamodel prisma/db-honorarium/schema.prisma \
+--script > prisma/db-honorarium/migrations/0_init/migration.sql
+
+pnpm prisma migrate resolve --applied 0_init --schema=./prisma/db-honorarium/schema.prisma
+```
+
+```sh
 pnpm prisma migrate reset --schema=./prisma/db-honorarium/schema.prisma
 ```
 
