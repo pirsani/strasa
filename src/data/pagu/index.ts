@@ -71,21 +71,23 @@ export const getPaguUnitKerja = async (
   return pagu;
 };
 
-interface ResultPaguRealisasi {
+export interface ResultPaguRealisasi {
   year: number;
   unit_kerja_id: string;
   nama: string;
   singkatan: string;
-  realisasi: number;
-  pagu: number;
-  sisa: number;
+  realisasi: bigint;
+  pagu: bigint;
+  sisa: bigint;
 }
 export const getPaguRealisasiUnitKerjaBySatker = async (
   tahun: number,
   satkerId: string
 ) => {
+  // cast tahun to integer
+  console.log("[getPaguRealisasiUnitKerjaBySatker]", tahun, satkerId);
   const result = await dbHonorarium.$queryRaw<ResultPaguRealisasi[]>`
-    select * from get_pagu_realisasi(${tahun},${satkerId})
+    select * from get_pagu_realisasi(${tahun}::integer,${satkerId})
   `;
   return result;
 };

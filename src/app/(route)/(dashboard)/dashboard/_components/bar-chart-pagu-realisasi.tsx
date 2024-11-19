@@ -13,54 +13,21 @@ import {
   YAxis,
 } from "recharts";
 
-const data = [
-  {
-    name: "Page A",
-    pagu: 4000,
-    realisasi: 2400,
-    sisa: 2400,
-  },
-  {
-    name: "Page B",
-    pagu: 3000,
-    realisasi: 1398,
-    sisa: 2210,
-  },
-  {
-    name: "Page C",
-    pagu: 2000,
-    realisasi: 9800,
-    sisa: 2290,
-  },
-  {
-    name: "Page D",
-    pagu: 2780,
-    realisasi: 3908,
-    sisa: 2000,
-  },
-  {
-    name: "Page E",
-    pagu: 1890,
-    realisasi: 4800,
-    sisa: 2181,
-  },
-  {
-    name: "Page F",
-    pagu: 2390,
-    realisasi: 3800,
-    sisa: 2500,
-  },
-  {
-    name: "Page G",
-    pagu: 3490,
-    realisasi: 4300,
-    sisa: 2100,
-  },
-];
+export interface PaguRealisasiSisa {
+  name: string;
+  pagu: number;
+  realisasi: number;
+  sisa: number;
+}
+
 const formatTooltip = (value: string | number, name: string) => {
   return formatCurrency(Number(value));
 };
-const BarChartPaguRealisasi = () => {
+
+interface BarChartPaguRealisasiProps {
+  data: PaguRealisasiSisa[];
+}
+const BarChartPaguRealisasi = ({ data = [] }: BarChartPaguRealisasiProps) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
@@ -91,7 +58,7 @@ const BarChartPaguRealisasi = () => {
         />
         <Bar
           dataKey="sisa"
-          fill="#8dd1e1"
+          fill="#ffc658"
           activeBar={<Rectangle fill="red" stroke="purple" />}
         />
       </BarChart>

@@ -11,6 +11,7 @@ const DashboardPage = async () => {
   const year = await getTahunAnggranPilihan();
   const dataRealisasi = await getRealisasi(year);
   const dataPaguRealisasi = await getPaguRealisasi(year);
+  console.log("[dashboard] dataRealisasi", dataPaguRealisasi);
   const statusPengajuan = await countStatusPengajuan(year);
   console.log(statusPengajuan);
   return (

@@ -4,11 +4,15 @@ import { getDistinctInStatusPengajuan } from "@/data/kegiatan/riwayat-pengajuan"
 import {
   getPaguRealisasiUnitKerjaBySatker,
   getPaguUnitKerja,
+  ResultPaguRealisasi,
 } from "@/data/pagu";
 import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import { getSessionPenggunaForAction } from "../pengguna";
+export type { ResultPaguRealisasi };
 
-export const getPaguRealisasi = async (year: number) => {
+export const getPaguRealisasi = async (
+  year: number
+): Promise<ResultPaguRealisasi[]> => {
   const pengguna = await getSessionPenggunaForAction();
   if (!pengguna.success) {
     // redirect to login page

@@ -7,6 +7,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   Legend,
   LegendType,
   ResponsiveContainer,
@@ -24,7 +25,7 @@ const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#8dd1e1"];
 
 export interface SingleDimensionDataChart {
   name: string;
-  total: BigInt | number;
+  total: number;
 }
 interface BarChartProps {
   data: SingleDimensionDataChart[];
@@ -37,7 +38,16 @@ export const BarChartRealisasi = ({ data = [] }: BarChartProps) => {
     color: colors[index % colors.length],
   }));
 
-  const formatTooltip = (value: string | number, name: string) => {
+  const renderCustomLabel = (props: any) => {
+    const { x, y, width, value } = props;
+    return (
+      <text x={x + width / 2} y={y} fill="#404040" textAnchor="middle" dy={-6}>
+        {formatCurrency(Number(value))}
+      </text>
+    );
+  };
+
+  const formatTooltip = (value: string | number) => {
     return formatCurrency(Number(value));
   };
   return (
@@ -62,6 +72,7 @@ export const BarChartRealisasi = ({ data = [] }: BarChartProps) => {
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
+          <LabelList dataKey="total" content={renderCustomLabel} />
         </Bar>
       </BarChart>
     </ResponsiveContainer>

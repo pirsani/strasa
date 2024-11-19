@@ -60,7 +60,10 @@ export const getSp2dUnitKerja = async (
 ): Promise<Sp2dUnitKerja | null> => {
   const sp2d = await dbHonorarium.sp2d.findFirst({
     where: {
-      tahun,
+      tanggal: {
+        gte: new Date(tahun, 0, 1),
+        lte: new Date(tahun, 11, 31),
+      },
       unitKerjaId,
     },
     include: {

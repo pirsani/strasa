@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "ES2020",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -20,7 +21,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/approute/*": ["./src/app/(route)/*"],
+      "@/approute/*": ["./src/app/(route)/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

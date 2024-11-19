@@ -1,26 +1,51 @@
 "use client";
+import { ResultPaguRealisasi } from "@/actions/dashboard";
 import { BarChartRealisasi } from "./bar-chart";
-import BarChartPaguRealisasi from "./bar-chart-pagu-realisasi";
-
-interface DataChart {
-  nama: string;
-  pagu: BigInt | number;
-  realisasi: BigInt | number;
-  sisa: BigInt | number;
-}
+import BarChartPaguRealisasi, {
+  PaguRealisasiSisa,
+} from "./bar-chart-pagu-realisasi";
 
 interface ChartContainerProps {
   title?: string;
-  data: DataChart[];
+  data: ResultPaguRealisasi[];
 }
 export const ChartContainer = ({
   title = "Realisasi",
   data = [],
 }: ChartContainerProps) => {
   // format into single dimension data
-  const formattedData = data.map((d) => ({
-    name: d.nama,
-    total: d.pagu,
+
+  // Calculate the sums of pagu, realisasi, and sisa
+  const totals = data.reduce(
+    (acc, curr) => {
+      acc.pagu += curr.pagu;
+      acc.realisasi += curr.realisasi;
+      acc.sisa += curr.sisa;
+      return acc;
+    },
+    { pagu: 0n, realisasi: 0n, sisa: 0n } // Use BigInt constructor
+  );
+
+  const formattedData = [
+    {
+      name: "Pagu",
+      total: Number(totals.pagu),
+    },
+    {
+      name: "Realisasi",
+      total: Number(totals.realisasi),
+    },
+    {
+      name: "Sisa",
+      total: Number(totals.sisa),
+    },
+  ];
+
+  const paguRealisasiSisa: PaguRealisasiSisa[] = data.map((item) => ({
+    name: item.singkatan,
+    pagu: Number(item.pagu),
+    realisasi: Number(item.realisasi),
+    sisa: Number(item.sisa),
   }));
 
   return (
@@ -36,7 +61,7 @@ export const ChartContainer = ({
         Realisasi SP2D
       </h1>
       <div className="h-[350px] py-10">
-        <BarChartPaguRealisasi />
+        <BarChartPaguRealisasi data={paguRealisasiSisa} />
       </div>
     </div>
   );
