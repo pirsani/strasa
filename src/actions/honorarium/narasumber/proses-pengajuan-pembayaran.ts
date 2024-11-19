@@ -209,7 +209,7 @@ export const updateJumlahJpJadwalNarasumber = async (
     },
   });
 
-  if (!jadwalNarasumber || !jadwalNarasumber.jumlahJamPelajaran) {
+  if (!jadwalNarasumber) {
     return {
       success: false,
       message: "Jadwal Narasumber tidak ditemukan",
@@ -217,9 +217,7 @@ export const updateJumlahJpJadwalNarasumber = async (
     };
   }
 
-  const jumlahBruto = jadwalNarasumber.jumlahJamPelajaran.times(
-    sbmHonorarium.besaran
-  );
+  const jumlahBruto = sbmHonorarium.besaran.times(jumlahJp);
 
   const pangkatGolonganId = jadwalNarasumber.narasumber.pangkatGolonganId;
   const npwp = jadwalNarasumber.narasumber.NPWP;
