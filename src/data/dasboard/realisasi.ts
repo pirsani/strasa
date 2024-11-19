@@ -5,7 +5,7 @@ interface DataRealisasi {
   payment_status: string;
   total: number;
 }
-export const getDataRealisasi = async (year: number) => {
+export const getDataRealisasi = async (satkerId: string, year: number) => {
   const result = await dbHonorarium.$queryRaw<DataRealisasi[]>`
     SELECT 
     CASE 
@@ -22,6 +22,7 @@ export const getDataRealisasi = async (year: number) => {
   INNER JOIN kegiatan k ON rp.kegiatan_id = k.id 
   WHERE rp.jenis IN ('UH_DALAM_NEGERI', 'UH_LUAR_NEGERI', 'HONORARIUM')
     AND EXTRACT(YEAR FROM k.tanggal_mulai) = ${year}
+    AND k.satker_id = ${satkerId}
   GROUP BY 
     CASE 
       WHEN rp.status IN ('PAID', 'END') THEN 'SUDAH'

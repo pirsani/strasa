@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import formatCurrency from "@/utils/format-currency";
 import { Pagu as ZPagu, paguSchema } from "@/zod/schemas/pagu";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -36,11 +37,12 @@ const FormPagu = ({
   const form = useForm<ZPagu>({
     resolver: zodResolver(paguSchema),
     defaultValues: pagu || {
-      pagu: 0,
+      pagu: BigInt(0), // Set default value as BigInt,
     },
   });
 
-  const { handleSubmit } = form;
+  const { handleSubmit, watch } = form;
+  const paguValue = watch("pagu");
 
   const onSubmit = async (data: ZPagu) => {
     try {
@@ -90,9 +92,12 @@ const FormPagu = ({
                     <Input
                       placeholder="[1000000000]"
                       {...field}
-                      value={field.value ?? 0}
+                      value={field.value?.toString() ?? 0}
                     />
                   </FormControl>
+                  <span className="text-xs text-gray-500">
+                    {formatCurrency(Number(paguValue))}
+                  </span>
                   <FormMessage />
                 </FormItem>
               )}

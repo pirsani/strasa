@@ -1,4 +1,5 @@
 "use client";
+import formatCurrency from "@/utils/format-currency";
 import {
   Bar,
   BarChart,
@@ -34,7 +35,33 @@ export const BarChartRealisasi = ({ data = [] }: BarChartProps) => {
     color: colors[index % colors.length],
   }));
   const formatYAxis = (tickItem: number) => {
-    return tickItem.toLocaleString();
+    if (tickItem >= 1_000_000_000_000) {
+      return `${(tickItem / 1_000_000_000_000).toLocaleString(undefined, {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      })}T`;
+    } else if (tickItem >= 1_000_000_000) {
+      return `${(tickItem / 1_000_000_000).toLocaleString(undefined, {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      })}M`;
+    } else if (tickItem >= 1_000_000) {
+      return `${(tickItem / 1_000_000).toLocaleString(undefined, {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      })}Jt`;
+    } else if (tickItem >= 1_000) {
+      return `${(tickItem / 1_000).toLocaleString(undefined, {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      })}Rb`;
+    } else {
+      return tickItem.toLocaleString();
+    }
+  };
+
+  const formatTooltip = (value: string | number, name: string) => {
+    return formatCurrency(Number(value));
   };
   return (
     <ResponsiveContainer className={"w-full h-full"}>
@@ -52,7 +79,7 @@ export const BarChartRealisasi = ({ data = [] }: BarChartProps) => {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis tickFormatter={formatYAxis} />
-        <Tooltip />
+        <Tooltip formatter={formatTooltip} />
         <Legend payload={legendPayload} />
         <Bar dataKey="total" fill="#8884d8">
           {data.map((entry, index) => (

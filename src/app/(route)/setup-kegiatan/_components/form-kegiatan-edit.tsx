@@ -25,10 +25,13 @@ import PesertaContainer from "./peserta-container";
 //import SelectProvinsi from "./select-sbm-provinsi";
 import CummulativeErrors from "@/components/form/cummulative-error";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
-import { default as RequiredLabel } from "@/components/form/required";
+import {
+  default as RequiredLabel,
+  RequiredLabelWithCatatan,
+} from "@/components/form/required";
 
 import setupKegiatanEdit from "@/actions/kegiatan/setup-kegiatan-edit";
-import SelectKota from "@/components/form/select-kota";
+//import SelectKota from "@/components/form/select-kota";
 import ToastErrorContainer from "@/components/form/toast-error-children";
 import { cn } from "@/lib/utils";
 import isDateLte from "@/utils/date";
@@ -42,6 +45,10 @@ import ItineraryContainer from "./itinerary-container";
 // fix Warning: Extra attributes from the server: aria-activedescendant
 // Dynamically import Select to avoid SSR
 const SelectProvinsi = dynamic(() => import("./select-provinsi"), {
+  ssr: false,
+  loading: () => <p>Loading provinsi...</p>,
+});
+const SelectKota = dynamic(() => import("@/components/form/select-kota"), {
   ssr: false,
   loading: () => <p>Loading provinsi...</p>,
 });
@@ -175,8 +182,8 @@ export const FormKegiatanEdit = ({
       setValue("provinsi", "31");
     }
     if (lokasi === LOKASI.LUAR_KOTA) {
-      setValue("provinsi", null);
-      setValue("kota", null);
+      //setValue("provinsi", null);
+      //setValue("kota", null);
     }
     trigger("dokumenSuratSetnegSptjm");
     trigger("provinsi");
@@ -363,10 +370,7 @@ export const FormKegiatanEdit = ({
             name="lokasi"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Lokasi
-                  <RequiredLabel />
-                </FormLabel>
+                <RequiredLabelWithCatatan label="Lokasi" catatan="" />
                 <FormControl>
                   <SelectLokasi
                     value={field.value}
@@ -411,15 +415,12 @@ export const FormKegiatanEdit = ({
               name="provinsi"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor={field.name}>
-                    Provinsi
-                    <RequiredLabel />
-                  </FormLabel>
+                  <RequiredLabelWithCatatan label="Provinsi" catatan={""} />
                   <FormControl>
                     <SelectProvinsi
                       fullKey={field.name}
                       onChange={field.onChange}
-                      value={field.value ?? null}
+                      value={field.value}
                     />
                   </FormControl>
                   <FormMessage />
@@ -434,7 +435,10 @@ export const FormKegiatanEdit = ({
               name="kota"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Kota/Kabupaten</FormLabel>
+                  <RequiredLabelWithCatatan
+                    label="Kota/Kabupaten"
+                    catatan={""}
+                  />
                   <FormControl>
                     <SelectKota
                       isDisabled={lokasi !== LOKASI.LUAR_KOTA}

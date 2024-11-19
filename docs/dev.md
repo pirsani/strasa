@@ -104,3 +104,19 @@ pnpm add zustand
 pnpm add lodash
 pnpm add -D @types/lodash
 ```
+
+### WARNING DO NOT DO IT IF YOU NOT AWARE OF WHAT YOU ARE DOIN
+
+```sh
+pnpm prisma migrate reset --schema=./prisma/db-honorarium/schema.prisma
+```
+
+```sh
+pnpm prisma migrate dev --create-only --name init --schema=./prisma/db-honorarium/schema.prisma
+
+pnpm prisma migrate dev --create-only --name get_aggregated_payment_status --schema=./prisma/db-honorarium/schema.prisma
+
+pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
+
+pnpm prisma migrate dev --schema=./prisma/db-honorarium/schema.prisma
+```

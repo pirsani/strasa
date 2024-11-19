@@ -46,7 +46,8 @@ jobs:
         env:
           DATABASE_URL_ADMIN: ${{ secrets.DATABASE_URL_ADMIN }} # Existing secret
           DATABASE_URL_HONORARIUM: ${{ secrets.DATABASE_URL_HONORARIUM }} # New secret added
-        run: pnpm run prisma:db-push
+        # run: pnpm run prisma:db-push
+        run: pnpm run prisma:deploy
 
       - name: Build the application
         env:
@@ -77,6 +78,5 @@ jobs:
           git pull origin main
           pm2 stop d01 || true
           pnpm install
-          pnpm run prisma:db-push
           pm2 restart d01 || pm2 start pnpm --name d01 -- start -p 3030
           EOF

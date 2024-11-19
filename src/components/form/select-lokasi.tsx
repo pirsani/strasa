@@ -28,7 +28,7 @@ const SelectLokasi = ({
   return (
     <Select
       instanceId={fieldName}
-      id={`${fieldName}}`}
+      id={`${fieldName}`}
       options={LOKASI_OPTIONS}
       onChange={(option: SingleValue<Option>) => {
         const newValue = option ? option.value : null;

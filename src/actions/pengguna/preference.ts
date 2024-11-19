@@ -16,6 +16,7 @@ export const setTahunAnggaran = async (tahunAnggaran: number) => {
 
   try {
     const userId = session.user.id;
+    logger.debug("tahunAnggaran", tahunAnggaran);
 
     const data = await dbHonorarium.userPreference.upsert({
       where: {
@@ -32,7 +33,9 @@ export const setTahunAnggaran = async (tahunAnggaran: number) => {
     return tahunAnggaran;
   } catch (error) {
     logger.error("error", error);
-    throw new Error("Failed to set tahun anggaran");
+    return 0;
+
+    //throw new Error("Failed to set tahun anggaran");
   }
 };
 

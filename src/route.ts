@@ -226,22 +226,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     order: 6,
     displayAsMenu: true,
   },
-  {
-    name: "referensi-role",
-    title: "Role",
-    href: "/data-referensi/role",
-    icon: "user-cog",
-    order: 7,
-    displayAsMenu: true,
-  },
-  {
-    name: "referensi-pengguna",
-    title: "Pengguna",
-    href: "/data-referensi/pengguna",
-    icon: "users",
-    order: 8,
-    displayAsMenu: true,
-  },
+
   {
     name: "referensi-satker",
     title: "Satker Anggaran",
@@ -254,6 +239,13 @@ export const dataReferensiRoutes: RouteItem[] = [
     title: "Unit Kerja",
     href: "/data-referensi/unit-kerja",
     icon: "brick-wall",
+    order: 9,
+  },
+  {
+    name: "referensi-pagu",
+    title: "Pagu",
+    href: "/data-referensi/pagu",
+    icon: "wallet",
     order: 9,
   },
   {
@@ -278,6 +270,22 @@ export const dataReferensiRoutes: RouteItem[] = [
     href: "/data-referensi/provinsi",
     icon: "map-pinned",
     order: 12,
+    displayAsMenu: true,
+  },
+  {
+    name: "referensi-role",
+    title: "Role",
+    href: "/data-referensi/role",
+    icon: "user-cog",
+    order: 140,
+    displayAsMenu: true,
+  },
+  {
+    name: "referensi-pengguna",
+    title: "Pengguna",
+    href: "/data-referensi/pengguna",
+    icon: "users",
+    order: 150,
     displayAsMenu: true,
   },
 ];

@@ -34,6 +34,7 @@ import {
   User,
   UserCog,
   Users,
+  Wallet,
 } from "lucide-react";
 import SidebarGroupHeader from "./sidebar-group-header";
 import SidebarItem from "./sidebar-item";
@@ -69,6 +70,7 @@ const iconMap: { [key: string]: LucideIcon } = {
   "monitor-pause": MonitorPause,
   "monitor-play": MonitorPlay,
   "square-activity": SquareActivity,
+  wallet: Wallet,
 };
 
 interface SidebarItemProps {

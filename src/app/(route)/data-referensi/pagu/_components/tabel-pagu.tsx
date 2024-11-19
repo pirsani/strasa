@@ -26,7 +26,7 @@ export const TabelPagu = ({
   optionsPagu,
   onEdit = () => {},
 }: TabelPaguProps) => {
-  const [data, setData] = useState<PaguUnitKerja[]>(initialData ?? []);
+  const [data, setData] = useState<PaguUnitKerja[] | null>(initialData);
   const [isEditing, setIsEditing] = useState(false);
   const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
   const [originalData, setOriginalData] = useState<PaguUnitKerja | null>(null);
@@ -34,7 +34,7 @@ export const TabelPagu = ({
 
   const { searchTerm } = useSearchTerm();
 
-  const filteredData = data.filter((row) => {
+  const filteredData = (data ?? []).filter((row) => {
     if (!searchTerm || searchTerm === "") return true;
     const lowercasedSearchTerm = searchTerm.toLowerCase();
     //const searchWords = lowercasedSearchTerm.split(" ").filter(Boolean);
@@ -174,7 +174,9 @@ export const TabelPagu = ({
     // Implement your undo edit logic here
     if (originalData) {
       setData((prevData) =>
-        prevData.map((item) => (item.id === row.id ? originalData : item))
+        (prevData ?? []).map((item) =>
+          item.id === row.id ? originalData : item
+        )
       );
     }
     setIsEditing(false);

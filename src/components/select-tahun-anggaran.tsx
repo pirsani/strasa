@@ -30,6 +30,7 @@ const SelectTahunAnggaran = () => {
 
   // Check if tahunAnggaran is defined
   if (tahunAnggaran === undefined || tahunAnggaran === null) {
+    //signOut();
     return (
       <div className="bg-primary py-2 px-3 rounded-md text-white">tahun...</div>
     ); // Render a loading state or nothing

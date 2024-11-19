@@ -20,7 +20,7 @@ export const getPaguUnitKerjaBySatker = async (
   const pagu = await dbHonorarium.pagu.findMany({
     where: {
       unitKerja: {
-        indukOrganisasiId: satkerId,
+        OR: [{ indukOrganisasiId: satkerId }, { id: satkerId }],
       },
       tahun,
     },
@@ -57,9 +57,6 @@ export const getPaguUnitKerja = async (
 ): Promise<PaguUnitKerja | null> => {
   const pagu = await dbHonorarium.pagu.findFirst({
     where: {
-      unitKerja: {
-        indukOrganisasiId: "1",
-      },
       tahun,
       unitKerjaId,
     },

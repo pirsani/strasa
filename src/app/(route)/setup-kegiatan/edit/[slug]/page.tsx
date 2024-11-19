@@ -51,6 +51,8 @@ const SetupKegiatanPage = async ({ params }: { params: { slug: string } }) => {
     pesertaXlsxCuid: createId() + ".xlsx",
   };
 
+  console.log("zkegiatan", zkegiatan);
+
   return (
     <div className="p-4 pb-24 h-auto min-h-full flex flex-col bg-gray-300">
       <h1 className="mb-2">Alur Proses &gt; 0 Setup Kegiatan </h1>

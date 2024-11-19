@@ -1,11 +1,27 @@
 "use server";
 import { getDataRealisasi } from "@/data/dasboard/realisasi";
 import { getDistinctInStatusPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
-import { faker } from "@faker-js/faker";
+import { getPaguUnitKerja } from "@/data/pagu";
 import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
+import { getSessionPenggunaForAction } from "../pengguna";
 
 export const getRealisasi = async (year: number) => {
-  const dataRealisai = await getDataRealisasi(year);
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) {
+    // redirect to login page
+    return [];
+  }
+
+  let pagu = 0;
+  const dataRealisai = await getDataRealisasi(pengguna.data.satkerId, year);
+  const PaguSatker = await getPaguUnitKerja(pengguna.data.satkerId, year);
+
+  if (!PaguSatker) {
+    pagu = 0;
+  } else {
+    pagu = Number(PaguSatker.pagu);
+  }
+
   console.log(dataRealisai);
 
   let sudahDibayar = 0;
@@ -23,12 +39,6 @@ export const getRealisasi = async (year: number) => {
     belumDibayar = unpaidItem ? Number(unpaidItem.total) : 0;
   }
 
-  const fakeMinPagu = sudahDibayar + belumDibayar;
-
-  const pagu = faker.number.int({
-    min: fakeMinPagu,
-    max: fakeMinPagu + 100000000,
-  });
   const sisa = pagu - sudahDibayar - belumDibayar;
 
   const data = [

@@ -5,6 +5,8 @@ import { LOKASI } from "@prisma-honorarium/client";
 import { mapStatusLangkahToDesc } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import Link from "next/link";
+import { Button } from "../ui/button";
 import TextDokumenMultiFile from "./text-dokumen-multi-file";
 import TextDokumenWithPreviewButton from "./text-dokumen-with-preview-button";
 import TextWithPreviewButton from "./text-with-preview-button";
@@ -12,8 +14,13 @@ import TextWithPreviewButton from "./text-with-preview-button";
 interface PreviewKegiatanProps {
   kegiatan?: KegiatanWithDetail | null;
   className?: string;
+  isAllowEdit?: boolean;
 }
-const PreviewKegiatan = ({ kegiatan, className }: PreviewKegiatanProps) => {
+const PreviewKegiatan = ({
+  kegiatan,
+  className,
+  isAllowEdit = false,
+}: PreviewKegiatanProps) => {
   if (!kegiatan) {
     return (
       <div className="flex flex-row gap-2 w-full mt-2 p-4 border border-gray-300 rounded-sm animate-pulse">
@@ -166,6 +173,15 @@ const PreviewKegiatan = ({ kegiatan, className }: PreviewKegiatanProps) => {
                 />
               )}
             </>
+          )}
+          {isAllowEdit && (
+            <div className="flex flex-col bg-red-200">
+              <Button variant={"destructive"}>
+                <Link href={`/setup-kegiatan/edit/${kegiatan.id}`}>
+                  Edit Kegiatan
+                </Link>
+              </Button>
+            </div>
           )}
         </div>
       )}

@@ -1,7 +1,6 @@
 "use client";
 
 import { PaguUnitKerja } from "@/actions/pagu";
-import { Pagu as ZPagu } from "@/zod/schemas/pagu";
 import { Pagu } from "@prisma-honorarium/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -20,12 +19,12 @@ const PaguContainer = ({
   satkerId,
 }: PaguContainerProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [editableRow, setEditableRow] = useState<ZPagu | null>(null);
+  const [editableRow, setEditableRow] = useState<Pagu | null>(null);
   const router = useRouter();
   const onEdit = (row: Pagu) => {
     //const { createdAt, updatedAt, ...omittedData } = row;
     setIsOpen(true);
-    setEditableRow(row as ZPagu);
+    setEditableRow(row);
     console.log("onEdit form-narasumber-container", row);
   };
 
@@ -50,7 +49,6 @@ const PaguContainer = ({
           satkerId={satkerId}
         />
       </DialogPagu>
-
       <TabelPagu data={data} optionsPagu={optionsUnitKerja} onEdit={onEdit} />
     </>
   );
