@@ -196,6 +196,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     kegiatan,
     riwayatPengajuan
   );
+  console.log("[dokumenNominatif]", dokumenNominatif);
 
   if (
     dokumenNominatif.isFileExist &&
@@ -459,6 +460,13 @@ const getDokumenNominatif = async (
   }
 
   const fileFullPath = path.posix.join(BASE_PATH_UPLOAD, filePath);
+  const dirPath = path.dirname(fileFullPath);
+  try {
+    await fs.mkdir(dirPath, { recursive: true });
+    //console.log(`Directory ${dirPath} created or already exists.`);
+  } catch (error) {
+    console.error(`Error creating directory ${dirPath}:`, error);
+  }
   try {
     await fs.access(fileFullPath);
     dokumenNominatif.isFileExist = true;
@@ -469,8 +477,8 @@ const getDokumenNominatif = async (
     dokumenNominatif.isFileExist = false;
   }
 
-  dokumenNominatif.filePath = path.posix.resolve(fileFullPath);
-  console.log("[dokumenNominatif]", dokumenNominatif.filePath);
+  dokumenNominatif.filePath = path.resolve(fileFullPath);
+  console.log("[fileFullPath_resolved]", dokumenNominatif.filePath);
   return dokumenNominatif;
 };
 

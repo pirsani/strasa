@@ -470,6 +470,13 @@ const getDokumenRampungan = async (kegiatan: KegiatanIncludeSpd) => {
   }
 
   const fileFullPath = path.posix.join(BASE_PATH_UPLOAD, filePath);
+  const dirPath = path.dirname(fileFullPath);
+  try {
+    await fs.mkdir(dirPath, { recursive: true });
+    //console.log(`Directory ${dirPath} created or already exists.`);
+  } catch (error) {
+    console.error(`Error creating directory ${dirPath}:`, error);
+  }
   try {
     await fs.access(fileFullPath, fs.constants.R_OK);
     dokumenRampungan.isFileExist = true;
@@ -480,7 +487,7 @@ const getDokumenRampungan = async (kegiatan: KegiatanIncludeSpd) => {
     dokumenRampungan.isFileExist = false;
   }
 
-  dokumenRampungan.filePath = path.posix.resolve(fileFullPath);
+  dokumenRampungan.filePath = path.resolve(fileFullPath);
   console.log("[dokumenRampungan.filePath]", dokumenRampungan.filePath);
   return dokumenRampungan;
 };

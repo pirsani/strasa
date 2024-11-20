@@ -444,7 +444,7 @@ const getDokumenNominatif = async (
 
   const fileFullPath = path.posix.join(BASE_PATH_UPLOAD, filePath);
   // create directory if not exist
-  const dirPath = path.posix.dirname(fileFullPath);
+  const dirPath = path.dirname(fileFullPath);
   try {
     await fs.mkdir(dirPath, { recursive: true });
     //console.log(`Directory ${dirPath} created or already exists.`);
@@ -461,7 +461,7 @@ const getDokumenNominatif = async (
     dokumenNominatif.isFileExist = false;
   }
 
-  dokumenNominatif.filePath = path.posix.resolve(fileFullPath);
+  dokumenNominatif.filePath = path.resolve(fileFullPath);
   console.log("[dokumenNominatif]", dokumenNominatif.filePath);
   return dokumenNominatif;
 };
