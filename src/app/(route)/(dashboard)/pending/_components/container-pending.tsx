@@ -2,22 +2,30 @@ import {
   KegiatanIncludeSatker,
   RiwayatPengajuanIncludePengguna,
 } from "@/data/kegiatan/riwayat-pengajuan";
-import TabelKegiatan from "./tabel-kegiatan";
+import TabelRiwayatPengajuan from "./tabel-riwayat-pengajuan";
 
 interface ContainerProps {
   riwayatPengajuan: RiwayatPengajuanIncludePengguna[];
 }
 const Container = ({ riwayatPengajuan }: ContainerProps) => {
-  const kegiatan: KegiatanIncludeSatker[] = riwayatPengajuan
-    .map((riwayat) => riwayat.kegiatan)
-    .filter(
-      (kegiatan): kegiatan is KegiatanIncludeSatker => kegiatan !== undefined
-    );
+  // get distinct kegiatan from riwayatPengajuan
+  const kegiatan: KegiatanIncludeSatker[] = Array.from(
+    riwayatPengajuan
+      .map((riwayat) => riwayat.kegiatan)
+      .filter(
+        (kegiatan): kegiatan is KegiatanIncludeSatker => kegiatan !== undefined
+      )
+      .reduce((map, kegiatan) => {
+        map.set(kegiatan.id, kegiatan); // Assuming 'id' is a unique property of KegiatanIncludeSatker and is a string
+        return map;
+      }, new Map<string, KegiatanIncludeSatker>())
+      .values()
+  );
 
   return (
     <div>
-      <div></div>
-      <TabelKegiatan data={kegiatan} riwayatPengajuan={riwayatPengajuan} />
+      <TabelRiwayatPengajuan riwayatPengajuan={riwayatPengajuan} />
+      {/* <TabelKegiatan data={kegiatan} riwayatPengajuan={riwayatPengajuan} /> */}
     </div>
   );
 };

@@ -25,15 +25,15 @@ import { useEffect, useState } from "react";
 import { DialogUnggahDokumen } from "./dialog-unggah-dokumen";
 import DialogVerifikasiDokumenAkhir from "./dialog-verifikasi-dokumen-akhir";
 
-interface TabelKegiatanProps {
-  data: KegiatanIncludeSatker[];
+interface TabelRiwayatPengajuanProps {
   riwayatPengajuan: RiwayatPengajuanIncludePengguna[];
 }
-export const TabelKegiatan = ({
-  data: initialData,
-  riwayatPengajuan,
-}: TabelKegiatanProps) => {
-  const [data, setData] = useState<KegiatanIncludeSatker[]>(initialData);
+export const TabelRiwayatPengajuan = ({
+  riwayatPengajuan: initialRiwayatPengajuan,
+}: TabelRiwayatPengajuanProps) => {
+  const [riwayatPengajuanData, setRiwayatPengajuanData] = useState<
+    RiwayatPengajuanIncludePengguna[]
+  >(initialRiwayatPengajuan);
   const [isEditing, setIsEditing] = useState(false);
   const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
@@ -42,7 +42,7 @@ export const TabelKegiatan = ({
   const [rowDetails, setRowDetails] = useState<RowDetails<RowDetail>>({});
 
   const { searchTerm } = useSearchTerm();
-  const filteredData = data.filter((row) => {
+  const filteredData = riwayatPengajuanData.filter((row) => {
     if (!searchTerm || searchTerm === "") return true;
     const lowercasedSearchTerm = searchTerm.toLowerCase();
     //const searchWords = lowercasedSearchTerm.split(" ").filter(Boolean);
@@ -53,17 +53,17 @@ export const TabelKegiatan = ({
 
     return searchWords.every(
       (word) =>
-        row.nama?.toLowerCase().includes(word) ||
-        row.unitKerja.nama?.toLowerCase().includes(word) ||
-        row.unitKerja.singkatan?.toLowerCase().includes(word) ||
-        row.satker.nama?.toLowerCase().includes(word) ||
-        row.satker.singkatan?.toLowerCase().includes(word) ||
-        row.lokasi?.toLowerCase().includes(word) ||
+        row.kegiatan?.nama?.toLowerCase().includes(word) ||
+        row.kegiatan?.unitKerja.nama?.toLowerCase().includes(word) ||
+        row.kegiatan?.unitKerja.singkatan?.toLowerCase().includes(word) ||
+        row.kegiatan?.satker.nama?.toLowerCase().includes(word) ||
+        row.kegiatan?.satker.singkatan?.toLowerCase().includes(word) ||
+        row.kegiatan?.lokasi?.toLowerCase().includes(word) ||
         row.keterangan?.toLowerCase().includes(word)
     );
   });
 
-  const columns: ColumnDef<KegiatanIncludeSatker>[] = [
+  const columns: ColumnDef<RiwayatPengajuanIncludePengguna>[] = [
     {
       id: "rowNumber",
       header: "#",
@@ -97,52 +97,65 @@ export const TabelKegiatan = ({
         className: "w-[50px]",
       },
     },
-    // {
-    //   accessorKey: "unitKerja.singkatan",
-    //   header: "Unit Kerja",
-    //   cell: (info) => info.getValue(),
-    //   footer: "Kode",
-    // },
-    // {
-    //   //accessorKey: "kode",
-    //   header: "Tanggal Pengajuan",
-    //   //cell: (info) => info.getValue(),
-    //   footer: "Kode",
-    //   meta: {
-    //     showOnExpand: true,
-    //   },
-    // },
-    // {
-    //   //accessorKey: "kode",
-    //   header: "Jenis Pengajuan",
-    //   //cell: (info) => info.getValue(),
-    //   footer: "Kode",
-    //   meta: {
-    //     showOnExpand: true,
-    //   },
-    // },
-
     {
-      accessorKey: "nama",
+      accessorKey: "kegiatan.nama",
       header: "Nama Kegiatan",
       cell: (info) => info.getValue(),
       footer: "Nama",
     },
     {
-      accessorKey: "tanggalMulai",
-      header: "Mulai",
-      cell: (info) => {
-        return formatTanggal(info.getValue() as Date, "dd-M-yyyy");
-      },
-      footer: "Mulai",
+      accessorKey: "keterangan",
+      header: "Keterangan",
+      cell: (info) => info.getValue(),
+      footer: "Keterangan",
     },
     {
-      accessorKey: "tanggalSelesai",
-      header: "Selesai",
+      accessorKey: "dokumentasi",
+      header: "Dokumen Akhir",
       cell: (info) => {
-        return formatTanggal(info.getValue() as Date, "dd-M-yyyy");
+        const hasDokumentasi = !!info.row.original.dokumentasi;
+        const hasLaporan = !!info.row.original.dokumenLaporanKegiatan;
+        const readyToUpload = info.row.original.status === "PAID";
+        const riwayatPengajuanId = info.row.original.id;
+        const readyToVerify = hasDokumentasi && hasLaporan && readyToUpload;
+
+        return (
+          <>
+            <LinkToDokumenAkhir
+              hasDokumenAkhir={hasDokumentasi ?? false}
+              jenisDokumenAkhir="dokumentasi"
+              riwayatPengajuanId={riwayatPengajuanId}
+            />
+            <LinkToDokumenAkhir
+              hasDokumenAkhir={hasLaporan ?? false}
+              jenisDokumenAkhir="laporan"
+              riwayatPengajuanId={riwayatPengajuanId}
+            />
+            {readyToUpload && (
+              <DialogUnggahDokumen
+                kegiatanId={info.row.original.id}
+                riwayatPengajuanId={info.row.original.id}
+                onSubmitted={handleDokumenAkhirSubmitted}
+              />
+            )}
+          </>
+        );
       },
-      footer: "Selesai",
+      footer: "Dokumentasi",
+    },
+    // {
+    //   accessorKey: "kegiatan.unitKerja.singkatan",
+    //   header: "Unit Kerja",
+    //   cell: (info) => info.getValue(),
+    //   footer: "Unit Kerja",
+    // },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: (info) => {
+        return <StatusBadge status={info.getValue() as STATUS_PENGAJUAN} />;
+      },
+      footer: "Status",
     },
 
     {
@@ -150,12 +163,25 @@ export const TabelKegiatan = ({
       id: "aksi",
       header: "",
       cell: (info) => {
+        const hasDokumentasi = !!info.row.original.dokumentasi;
+        const hasLaporan = !!info.row.original.dokumenLaporanKegiatan;
+        const readyToUpload = info.row.original.status === "PAID";
+        const readyToVerify = hasDokumentasi && hasLaporan && readyToUpload;
         return (
-          <Link href={`/kegiatan/${info.row.original.id}`}>
-            <Button variant="outline" size="sm">
-              <Eye size={18} />
-            </Button>
-          </Link>
+          <div className="flex flex-row gap-2">
+            <Link href={`/kegiatan/${info.row.original.kegiatanId}`}>
+              <Button variant="outline" size="sm">
+                <Eye size={18} />
+              </Button>
+            </Link>
+            {readyToVerify && (
+              <DialogVerifikasiDokumenAkhir
+                kegiatanId={info.row.original.id}
+                riwayatPengajuanId={info.row.original.id}
+                onSubmitted={handleVerifikasiDokumenAkhirSubmitted}
+              />
+            )}
+          </div>
         );
       },
       //cell: (info) => info.getValue(),
@@ -334,7 +360,8 @@ export const TabelKegiatan = ({
             href={`/download/dokumen-akhir/${jenisDokumenAkhir}/${riwayatPengajuanId}`}
             target="_blank"
           >
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="gap-2">
+              <span>{jenisDokumenAkhir}</span>
               <Eye size={18} />
             </Button>
           </Link>
@@ -346,7 +373,7 @@ export const TabelKegiatan = ({
   };
 
   const renderExpandedRowDetails = (
-    row: KegiatanIncludeSatker
+    row: RiwayatPengajuanIncludePengguna
     //details: RowDetail[]
   ) => {
     const details = rowDetails[row.id];
@@ -359,40 +386,22 @@ export const TabelKegiatan = ({
             <table className="table-auto w-full text-left border border-collapse">
               <thead className="w-full">
                 <tr className="bg-gray-400 text-white h-12 w-full">
-                  <th className="border px-1 w-1/5">Keterangan/Kelas</th>
                   <th className="border px-1">Tanggal Pengajuan</th>
+                  <th className="border px-1">Tanggal Dibayar</th>
                   <th className="border px-1 w-1/6">Jenis Pengajuan</th>
-                  <th className="border px-1">Status Pengajuan</th>
-                  <th className="border px-1">Dokumentasi</th>
-                  <th className="border px-1">Laporan Kegiatan</th>
                   <th> Aksi </th>
                 </tr>
               </thead>
               <tbody>
                 {details.map((detail: RowDetail) => (
                   <tr key={detail.id} className="even:bg-slate-100 h-10">
-                    <td className="border px-2">{detail.keterangan}</td>
                     <td className="border px-2">
                       {formatTanggal(detail.diajukanTanggal, "dd-M-yyyy")}
                     </td>
+                    <td className="border px-2">
+                      {formatTanggal(detail.dibayarTanggal, "dd-M-yyyy")}
+                    </td>
                     <td className="border px-2">{detail.jenisPengajuan}</td>
-                    <td className="border px-2">
-                      {<StatusBadge status={detail.statusPengajuan ?? null} />}
-                    </td>
-                    <td className="border px-2">
-                      <LinkToDokumenAkhir
-                        hasDokumenAkhir={detail.hasDokumentasi ?? false}
-                        jenisDokumenAkhir="dokumentasi"
-                        riwayatPengajuanId={detail.id}
-                      />
-                    </td>
-                    <td className="border px-2">
-                      <LinkToDokumenAkhir
-                        hasDokumenAkhir={detail.hasDokumentasi ?? false}
-                        jenisDokumenAkhir="dokumentasi"
-                        riwayatPengajuanId={detail.id}
-                      />
-                    </td>
                     <td>
                       <div className="flex flex-auto gap-2">
                         <Button
@@ -477,25 +486,21 @@ export const TabelKegiatan = ({
         hasDokumentasi: !!item.dokumentasi,
         hasLaporan: !!item.dokumenLaporanKegiatan,
       };
-      // Append to the array for the given kegiatanId
-      if (!rowDetails[item.kegiatanId]) {
-        rowDetails[item.kegiatanId] = [];
-      }
-      rowDetails[item.kegiatanId].push(rowDetail);
+      rowDetails[item.id] = [rowDetail];
     });
     return rowDetails;
   };
 
   useEffect(() => {
-    setData(initialData);
+    //setData(initialData);
     // reset expanded state
     setExpanded({});
-    const rowDetails = mapsDataToRowDetails(riwayatPengajuan);
+    const rowDetails = mapsDataToRowDetails(riwayatPengajuanData);
     setRowDetails(rowDetails);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialData, riwayatPengajuan]);
+  }, [riwayatPengajuanData]);
 
-  if (!data) {
+  if (!riwayatPengajuanData) {
     return <div>Loading...</div>;
   }
 
@@ -513,4 +518,4 @@ export const TabelKegiatan = ({
   );
 };
 
-export default TabelKegiatan;
+export default TabelRiwayatPengajuan;
