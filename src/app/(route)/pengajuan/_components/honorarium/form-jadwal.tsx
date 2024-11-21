@@ -235,6 +235,7 @@ const FormJadwal = ({
                     className="md:w-full"
                     type="number"
                     step={0.1}
+                    min={0}
                     value={field.value || ""}
                     onChange={field.onChange}
                   />

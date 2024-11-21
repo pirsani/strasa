@@ -1123,6 +1123,7 @@ model Pagu {
   updatedBy   String?    @map("updated_by")
   updatedAt   DateTime?  @updatedAt @map("updated_at")
 
+  @@unique([tahun, unitKerjaId])
   @@map("pagu")
 }
 

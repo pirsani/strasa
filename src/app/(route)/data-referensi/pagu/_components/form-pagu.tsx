@@ -52,8 +52,13 @@ const FormPagu = ({
           `Berhasil menyimpan data pagu ${pagu.data?.unitKerja.nama}`
         );
         form.reset();
+        handleFormSubmitComplete?.(pagu.success);
+      } else {
+        toast.error("Gagal menyimpan data pagu" + pagu.message, {
+          className: "bg-red-500 text-white",
+          position: "top-center",
+        });
       }
-      handleFormSubmitComplete?.(pagu.success);
     } catch (error) {
       toast.error("Gagal menyimpan data pagu");
     }

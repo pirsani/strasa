@@ -137,6 +137,9 @@ pnpm prisma migrate dev --create-only --name sp2d --schema=./prisma/db-honorariu
 pnpm prisma migrate dev --create-only --name get_pagu_realisasi --schema=./prisma/db-honorarium/schema.prisma
 
 
+pnpm prisma migrate dev --create-only --name update_tbl_pagu --schema=./prisma/db-honorarium/schema.prisma
+
+
 pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
 
 pnpm run prisma:generate

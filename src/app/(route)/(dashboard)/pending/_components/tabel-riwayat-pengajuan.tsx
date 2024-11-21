@@ -124,7 +124,7 @@ export const TabelRiwayatPengajuan = ({
         const readyToVerify = hasDokumentasi && hasLaporan && readyToUpload;
 
         return (
-          <>
+          <div className="flex flex-auto gap-2">
             <LinkToDokumenAkhir
               hasDokumenAkhir={hasDokumentasi ?? false}
               jenisDokumenAkhir="dokumentasi"
@@ -142,7 +142,7 @@ export const TabelRiwayatPengajuan = ({
                 onSubmitted={handleDokumenAkhirSubmitted}
               />
             )}
-          </>
+          </div>
         );
       },
       footer: "Dokumentasi",
@@ -299,22 +299,30 @@ export const TabelRiwayatPengajuan = ({
     riwayatPengajuanId: string
   ) => {
     // find data that have have the same kegiatanId
-    const details = rowDetails[kegiatanId];
+    //const details = rowDetails[kegiatanId];
     // find the detail that have the same riwayatPengajuanId
-    const detail = details?.find((d) => d.id === riwayatPengajuanId);
-    if (!detail) {
+    const riwayat = riwayatPengajuanData?.find(
+      (d) => d.id === riwayatPengajuanId
+    );
+    if (!riwayat) {
       console.error("Detail not found");
       return;
     } else {
       //update details
-      detail.hasDokumentasi = true;
-      detail.hasLaporan = true;
-      // update rowDetails
-      setRowDetails((prev) => {
-        return {
-          ...prev,
-          [kegiatanId]: details,
-        };
+      riwayat.dokumentasi = "dokumentasi";
+      riwayat.dokumenLaporanKegiatan = "laporan";
+      // update riwayatPengajuanData
+      setRiwayatPengajuanData((prev) => {
+        return prev.map((riwayat) => {
+          if (riwayat.id === riwayatPengajuanId) {
+            return {
+              ...riwayat,
+              dokumentasi: "dokumentasi",
+              dokumenLaporanKegiatan: "laporan",
+            };
+          }
+          return riwayat;
+        });
       });
     }
   };

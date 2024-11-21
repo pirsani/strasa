@@ -91,3 +91,19 @@ export const getPaguRealisasiUnitKerjaBySatker = async (
   `;
   return result;
 };
+
+export const getSumPaguUnitKerjaBySatker = async (
+  tahun: number,
+  satkerId: string,
+  exludeId?: string
+): Promise<bigint> => {
+  const result = await dbHonorarium.$queryRaw<[{ sum: bigint | null }]>`
+    select sum(p.pagu) from pagu p 
+    inner join organisasi o ON p.unit_kerja_id = o.id 
+    where o.induk_organisasi_id = ${satkerId} 
+    and p.tahun = ${tahun}
+    and o.id != ${exludeId}
+  `;
+  //console.log("[getSumPaguUnitKerjaBySatker]", result);
+  return BigInt(result[0].sum ?? 0);
+};
