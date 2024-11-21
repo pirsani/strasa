@@ -10,6 +10,27 @@ HONORARIUM
 
 ## Getting Started
 
+clone project
+
+```sh
+git clone git@github.com:pirsani/panda.git
+```
+
+install
+
+```sh
+cd panda
+pnpm install
+```
+
+update .env
+
+```sh
+cp .env.dist .env
+```
+
+customize as your database setting
+
 First, run the development server:
 
 ```bash

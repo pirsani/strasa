@@ -106,7 +106,11 @@ export const TabelRiwayatPengajuan = ({
     {
       accessorKey: "keterangan",
       header: "Keterangan",
-      cell: (info) => info.getValue(),
+      cell: (info) => {
+        const ori = info.row.original;
+        if (ori.jenis !== "HONORARIUM") return ori.jenis;
+        return info.getValue();
+      },
       footer: "Keterangan",
     },
     {
@@ -161,7 +165,7 @@ export const TabelRiwayatPengajuan = ({
     {
       //accessorKey: "kode",
       id: "aksi",
-      header: "",
+      header: "Aksi",
       cell: (info) => {
         const hasDokumentasi = !!info.row.original.dokumentasi;
         const hasLaporan = !!info.row.original.dokumenLaporanKegiatan;

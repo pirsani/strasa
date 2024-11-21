@@ -12,6 +12,7 @@
     "prisma:generate": "cross-env DATABASE_URL=${DATABASE_URL_ADMIN} pnpm prisma generate --schema=./prisma/db-honorarium/schema.prisma",
     "prisma:baseline": "cross-env DATABASE_URL=${DATABASE_URL_ADMIN} pnpm prisma migrate resolve --applied 0_init --schema=./prisma/db-honorarium/schema.prisma",
     "prisma:deploy": "cross-env DATABASE_URL=${DATABASE_URL_ADMIN} pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma",
+    "prisma:reset": "pnpm prisma migrate reset --schema=./prisma/db-honorarium/schema.prisma",
     "analyze": "cross-env ANALYZE=true pnpm build"
   },
   "prisma": {
@@ -53,7 +54,6 @@
     "date-fns": "^3.6.0",
     "decimal.js": "^10.4.3",
     "docxtemplater": "^3.50.0",
-    "dotenv": "^16.4.5",
     "file-type": "^19.5.0",
     "fs-extra": "^11.2.0",
     "iconv-lite": "^0.6.3",
@@ -98,6 +98,7 @@
     "@types/react-dom": "^18.3.0",
     "@types/xml2js": "^0.4.14",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.14",

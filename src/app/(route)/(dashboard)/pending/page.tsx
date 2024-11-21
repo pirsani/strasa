@@ -1,7 +1,11 @@
 import { getSessionPenggunaForAction } from "@/actions/pengguna";
 import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
-import { getRiwayatKegiatanUntukDokumenAkhir } from "@/data/kegiatan/riwayat-pengajuan";
+import {
+  getRiwayatPengajuanUntukDokumenAkhir,
+  RiwayatPengajuanIncludePengguna,
+} from "@/data/kegiatan/riwayat-pengajuan";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
+import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import Container from "./_components/container-pending";
 
 const PendingPage = async () => {
@@ -18,7 +22,7 @@ const PendingPage = async () => {
 
   const status: STATUS_PENGAJUAN[] = ["PAID", "END"];
 
-  const riwayatPengajuan = await getRiwayatKegiatanUntukDokumenAkhir(
+  const riwayatPengajuan = await getRiwayatPengajuanUntukDokumenAkhir(
     satkerId,
     tahunAnggaran
   );
@@ -27,11 +31,15 @@ const PendingPage = async () => {
     return "Belum ada data";
   }
 
+  const convertedData = riwayatPengajuan.map((item) => ({
+    ...convertSpecialTypesToPlain<RiwayatPengajuanIncludePengguna>(item),
+  }));
+
   return (
     <div className="p-4 pb-24 h-auto min-h-full flex flex-col bg-gray-200/90">
       <h1 className="mb-2">Upload Dokumen Akhir</h1>
       <div className="flex-grow w-full border p-2 bg-gray-100 rounded-lg pb-24">
-        <Container riwayatPengajuan={riwayatPengajuan} />
+        <Container riwayatPengajuan={convertedData} />
       </div>
     </div>
   );

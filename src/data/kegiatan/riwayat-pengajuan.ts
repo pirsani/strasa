@@ -54,7 +54,15 @@ export interface JadwalIncludeKelasMateri extends Jadwal {
   materi: Materi;
 }
 
-export interface RiwayatPengajuanIncludePengguna extends RiwayatPengajuan {
+export type RiwayatPengajuanPlain = Omit<
+  RiwayatPengajuan,
+  "createdAt|updatedAt"
+> & {
+  createdAt: Date | string;
+  updatedAt: Date | string | null;
+};
+
+export interface RiwayatPengajuanIncludePengguna extends RiwayatPengajuanPlain {
   keterangan?: string;
   kegiatan?: KegiatanIncludeSatker;
   jadwal?: JadwalIncludeKelasMateri;
@@ -373,7 +381,7 @@ const getRiwayatPengajuanHonorarium = async (
   }
 };
 
-export const getRiwayatKegiatanUntukDokumenAkhir = async (
+export const getRiwayatPengajuanUntukDokumenAkhir = async (
   satkerId: string,
   tahunAnggaran: number = new Date().getFullYear()
 ): Promise<RiwayatPengajuanIncludePengguna[] | null> => {
