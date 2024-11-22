@@ -26,9 +26,14 @@ export interface KegiatanIncludeSatker extends Kegiatan {
   unitKerja: Organisasi;
 }
 
-export const getKegiatan = async (
-  kegiatan?: string
-): Promise<KegiatanIncludeSatker[]> => {
+export interface ParamsGetKegiatan {
+  satkerId?: string;
+  unitKerjaId?: string;
+}
+export const getKegiatan = async ({
+  satkerId,
+  unitKerjaId,
+}: ParamsGetKegiatan = {}): Promise<KegiatanIncludeSatker[]> => {
   const tahunAnggaran = await getTahunAnggranPilihan();
 
   const dataKegiatan = await dbHonorarium.kegiatan.findMany({
@@ -37,6 +42,8 @@ export const getKegiatan = async (
         gte: new Date(`${tahunAnggaran}-01-01`),
         lte: new Date(`${tahunAnggaran}-12-31`),
       },
+      ...(satkerId && { satkerId }),
+      ...(unitKerjaId && { unitKerjaId }),
     },
     include: {
       satker: true,

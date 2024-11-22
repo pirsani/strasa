@@ -238,7 +238,8 @@ export interface StatusCount {
 }
 
 export const getDistinctStatusPengajuan = async (
-  tahunAnggaran: number
+  tahunAnggaran: number,
+  satkerId?: string
 ): Promise<StatusCount[] | null> => {
   try {
     const result = await dbHonorarium.$queryRaw<StatusCount[]>`
@@ -252,6 +253,35 @@ export const getDistinctStatusPengajuan = async (
     console.error("Error fetching distinct status pengajuan:", error);
     return null;
   }
+};
+
+export const getCountStatusPengajuan = async (
+  tahunAnggaran: number,
+  satkerId?: string,
+  unitKerjaId?: string
+): Promise<StatusCount[] | null> => {
+  const result = await dbHonorarium.riwayatPengajuan.groupBy({
+    by: ["status"],
+    where: {
+      kegiatan: {
+        tanggalMulai: {
+          gte: new Date(`${tahunAnggaran}-01-01`),
+          lte: new Date(`${tahunAnggaran}-12-31`),
+        },
+        ...(satkerId && { satkerId }),
+        ...(unitKerjaId && { unitKerjaId }),
+      },
+    },
+    _count: {
+      status: true,
+    },
+  });
+
+  const formattedResult = result.map((item) => ({
+    status: item.status,
+    count: item._count.status,
+  }));
+  return formattedResult.length ? formattedResult : null;
 };
 
 export const getDistinctInStatusPengajuan = async (

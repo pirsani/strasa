@@ -64,17 +64,19 @@ export const getSessionPenggunaForAction = async (): Promise<
 };
 
 interface Acl {
-  action: string;
+  actions: string | string[];
   resource: string;
   attributes?: string[];
+  redirectOnUnauthorized?: boolean;
 }
 export const checkSessionPermission = async ({
-  action,
+  actions,
   resource,
   attributes = [],
+  redirectOnUnauthorized = true,
 }: Acl) => {
   const pengguna = await getSessionPengguna();
-  console.log("Pengguna", pengguna);
+  console.log("[checkSessionPermission]", actions);
   if (!pengguna.success || !pengguna.data?.roles) {
     // redirect to login
     console.error("Pengguna not found or has no roles");
@@ -82,16 +84,37 @@ export const checkSessionPermission = async ({
   }
 
   const roles = pengguna.data.roles;
-  const hasPermission = await checkPermission(roles, action, resource);
-  if (!hasPermission) {
+  console.log("Roles", roles);
+
+  // string to array
+  let actionsArray: string[] = [];
+  if (typeof actions === "string") {
+    actionsArray = [actions];
+  } else {
+    actionsArray = actions;
+  }
+  let hasPermission = false;
+  // iterate over actions
+  console.log("[actionsArray]", actionsArray);
+  for (const action of actionsArray) {
+    hasPermission = await checkPermission(roles, action, resource);
+    console.log("Has permission", action, resource, hasPermission);
+    if (hasPermission) {
+      return hasPermission;
+    }
+  }
+
+  //const hasPermission = await checkPermission(roles, action, resource);
+  if (!hasPermission && redirectOnUnauthorized) {
     // redirect to unauthorized
     console.error("Unauthorized");
     redirect("/");
   }
+  return hasPermission;
 };
 
 export const checkClientPermission = async ({
-  action,
+  actions,
   resource,
   attributes = [],
 }: Acl): Promise<ActionResponse<boolean>> => {
@@ -105,7 +128,25 @@ export const checkClientPermission = async ({
     };
   }
   const roles = pengguna.data.roles;
-  const hasPermission = await checkPermission(roles, action, resource);
+
+  // string to array
+  let actionsArray: string[] = [];
+  if (typeof actions === "string") {
+    actionsArray = [actions];
+  } else {
+    actionsArray = actions;
+  }
+  let hasPermission = false;
+  // iterate over actions
+  for (const action of actionsArray) {
+    hasPermission = await checkPermission(roles, action, resource);
+    if (hasPermission) {
+      return {
+        success: true,
+        data: hasPermission,
+      };
+    }
+  }
   if (!hasPermission) {
     // redirect to unauthorized
     console.error("Unauthorized");
@@ -119,4 +160,10 @@ export const checkClientPermission = async ({
     success: true,
     data: hasPermission,
   };
+};
+
+export const getLoggedInPengguna = async () => {
+  const pengguna = await getSessionPenggunaForAction();
+  if (!pengguna.success) return null;
+  return pengguna.data;
 };

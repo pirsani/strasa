@@ -117,9 +117,13 @@ export async function checkPermission(
   await initAcl();
   const ac = await loadAccessControl();
 
+  console.log("Checking permission for", role, action, resource);
+
   if (!ac) {
     throw new Error("AccessControl is not initialized.");
   }
+
+  console.log("AccessControl", ac.getGrants());
 
   try {
     const permission = ac.permission({
@@ -182,6 +186,7 @@ export async function initAcl() {
   try {
     const isAclLoaded = await isAccessControlLoaded();
     if (!isAclLoaded) {
+      console.log("AccessControl is not loaded. Initializing...");
       await initializeAccessControl();
     }
     return true;

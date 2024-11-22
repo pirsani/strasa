@@ -1,6 +1,7 @@
 "use server";
 import { ActionResponse } from "@/actions/response";
 import { dbHonorarium } from "@/lib/db-honorarium";
+import { initializeAccessControl } from "@/lib/redis/access-control";
 import { Role as ZRole } from "@/zod/schemas/role";
 import { createId } from "@paralleldrive/cuid2";
 import { Role } from "@prisma-honorarium/client";
@@ -131,6 +132,10 @@ export const simpanDataRole = async (
         },
       },
     });
+
+    // apply roles to redis access control and reinitialize
+    await initializeAccessControl();
+
     revalidatePath("/data-referensi/role");
     return {
       success: true,
