@@ -1,4 +1,5 @@
 "use server";
+import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { getDataRealisasi } from "@/data/dasboard/realisasi";
 import { getDistinctInStatusPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
 import {
@@ -7,7 +8,6 @@ import {
   ResultPaguRealisasi,
 } from "@/data/pagu";
 import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
-import { getSessionPenggunaForAction } from "../pengguna";
 export type { ResultPaguRealisasi };
 
 export const getPaguRealisasi = async (

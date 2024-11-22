@@ -1,6 +1,6 @@
 "use server";
 
-import { getSessionPenggunaForAction } from "@/actions/pengguna";
+import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuan } from "@/data/kegiatan/riwayat-pengajuan";
 import {
   getObjPlainPembayaran,

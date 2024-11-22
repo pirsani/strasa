@@ -17,37 +17,50 @@ datasource db {
 
 // Model for Users, Accounts, Sessions, and Verification Tokens
 model Permission {
-  id             String           @id @default(cuid())
-  name           String           @unique
-  description    String?
-  createdBy      String           @map("created_by")
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedBy      String?          @map("updated_by")
-  updatedAt      DateTime?        @updatedAt @map("updated_at")
-  rolePermission RolePermission[]
+  id          String           @id @default(cuid())
+  name        String //@unique
+  resource    String // e.g., "post", "dashboard"
+  action      String // e.g., "create", "read", "update", "delete"
+  description String?
+  createdBy   String           @map("created_by")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedBy   String?          @map("updated_by")
+  updatedAt   DateTime?        @updatedAt @map("updated_at")
+  roles       RolePermission[]
 
+  @@unique([resource, action])
   @@map("permissions")
 }
 
 model Role {
-  id             String           @id @default(cuid())
-  name           String           @unique
-  description    String?
-  createdBy      String           @map("created_by")
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedBy      String?          @map("updated_by")
-  updatedAt      DateTime?        @updatedAt @map("updated_at")
-  userRole       UserRole[]
-  rolePermission RolePermission[]
+  id          String           @id @default(cuid())
+  name        String           @unique
+  description String?
+  createdBy   String           @map("created_by")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedBy   String?          @map("updated_by")
+  updatedAt   DateTime?        @updatedAt @map("updated_at")
+  extendedBy  RoleExtension[]  @relation("RoleExtender") // Roles that extend this role
+  extends     RoleExtension[]  @relation("RoleExtendee") // Roles this role extends
+  users       UserRole[]
+  permissions RolePermission[]
 
   @@map("roles")
+}
+
+model RoleExtension {
+  id             String @id @default(cuid())
+  baseRoleId     String @map("base_role_id") // The role being extended 
+  extendedRoleId String @map("extended_role_id") // The role that extends it
+  baseRole       Role   @relation("RoleExtendee", fields: [baseRoleId], references: [id], onDelete: Cascade)
+  extendedRole   Role   @relation("RoleExtender", fields: [extendedRoleId], references: [id], onDelete: Cascade)
 }
 
 model RolePermission {
   roleId       String     @map("role_id")
   permissionId String     @map("permission_id")
-  Role         Role       @relation(fields: [roleId], references: [id])
-  Permission   Permission @relation(fields: [permissionId], references: [id])
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
 
   @@id([roleId, permissionId])
   @@map("role_permissions")

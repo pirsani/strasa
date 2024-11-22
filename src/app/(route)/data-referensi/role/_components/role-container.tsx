@@ -18,7 +18,7 @@ const RoleContainer = ({ data }: RoleContainerProps) => {
     //console.log("onEdit form-role-container", row);
 
     // transform permissions to array of string
-    const permissions = row.rolePermission.map((p) => p.permissionId);
+    const permissions = row.permissions.map((p) => p.permissionId);
     const role: ZRole = {
       ...row,
       permissions: permissions,

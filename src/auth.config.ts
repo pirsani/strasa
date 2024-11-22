@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs"; // Import bcrypt for password hashing and compari
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getNearestSatkerAnggaran } from "./data/organisasi";
-import { getUser } from "./data/user";
+import { getUser, getUserRoles } from "./data/user";
 import { UncomplexLoginSchema } from "./zod/schemas/login";
 
 export default {
@@ -61,6 +61,8 @@ export default {
             satkerAnggaran = await getNearestSatkerAnggaran(user.organisasiId);
           }
 
+          const roles = await getUserRoles(user.id);
+
           return {
             ...user,
             unitKerjaId: user.organisasiId,
@@ -69,6 +71,7 @@ export default {
             satkerId: satkerAnggaran?.id,
             satkerNama: satkerAnggaran?.nama,
             satkerNamaSingkat: satkerAnggaran?.singkatan,
+            roles: roles,
           };
         }
         return null;
@@ -119,7 +122,7 @@ export default {
         token.satkerId = user.satkerId;
         token.satkerNama = user.satkerNama;
         token.satkerNamaSingkat = user.satkerNamaSingkat;
-        token.roles = user.roles;
+        token.roles = user.roles as string[];
         token.permissions = user.permissions;
       }
       return token;

@@ -102,10 +102,10 @@ export const TabelRole = ({
   };
 
   const handleEdit = (row: Row<RoleWithPermissions>) => {
+    console.log("Edit row:", row);
     //console.log("Edit row:", row);
     // Implement your edit logic here
     setOriginalData(row.original); // Store the original data
-
     onEdit(row.original);
     // setIsEditing(true);
     // setEditableRowIndex(row.id);

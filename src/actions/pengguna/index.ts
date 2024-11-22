@@ -1,6 +1,5 @@
 "use server";
 import { ActionResponse } from "@/actions/response";
-import { auth } from "@/auth";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { CustomPrismaClientError } from "@/types/custom-prisma-client-error";
 import { penggunaSchema, Pengguna as ZPengguna } from "@/zod/schemas/pengguna";
@@ -11,12 +10,13 @@ import { ZodError } from "zod";
 
 import { createId } from "@paralleldrive/cuid2";
 import { Logger } from "tslog";
+
+// pada prinsipnya, Satker anggaran adalah unit kerja dalam organisasi yang memiliki anggaran
+
 // Create a Logger instance with custom settings
 const logger = new Logger({
   hideLogPositionForProduction: true,
 });
-
-// pada prinsipnya, Satker anggaran adalah unit kerja dalam organisasi yang memiliki anggaran
 
 export interface PenggunaWithRoles extends Omit<Pengguna, "password"> {
   userRole: UserRole[];
@@ -192,63 +192,4 @@ export const simpanDataPengguna = async (
       message: "Error parsing form data",
     };
   }
-};
-
-export const getSessionPengguna = async () => {
-  const session = await auth();
-  // logger.info("session", session);
-  if (!session || !session.user || !session.user.id) {
-    return {
-      success: false,
-      message: "Not authenticated",
-      error: "Not authenticated",
-    };
-  }
-
-  return {
-    success: true,
-    data: session.user,
-  };
-};
-
-interface SessionPenggunaForActionResponse {
-  satkerId: string;
-  unitKerjaId: string;
-  penggunaId: string;
-  penggunaName: string;
-}
-export const getSessionPenggunaForAction = async (): Promise<
-  ActionResponse<SessionPenggunaForActionResponse>
-> => {
-  const pengguna = await getSessionPengguna();
-  // logger.info("Pengguna", pengguna);
-  if (!pengguna.success || !pengguna.data || !pengguna.data.id) {
-    return {
-      success: false,
-      error: "E-UAuth-01",
-      message: "User not found",
-    };
-  }
-
-  if (!pengguna.data?.satkerId || !pengguna.data?.unitKerjaId) {
-    return {
-      success: false,
-      error: "E-UORG-01",
-      message: "User tidak mempunyai satkerId atau unitKerjaId",
-    };
-  }
-
-  const satkerId = pengguna.data.satkerId;
-  const unitKerjaId = pengguna.data.unitKerjaId;
-  const penggunaId = pengguna.data.id;
-  const penggunaName = pengguna.data.name!;
-  return {
-    success: true,
-    data: {
-      satkerId,
-      unitKerjaId,
-      penggunaId,
-      penggunaName,
-    },
-  };
 };

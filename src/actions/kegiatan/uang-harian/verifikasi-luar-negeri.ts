@@ -1,6 +1,6 @@
 "use server";
 import { PesertaKegiatanLuarNegeri } from "@/actions/kegiatan/peserta/luar-negeri";
-import { getSessionPenggunaForAction } from "@/actions/pengguna";
+import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
 import { dbHonorarium } from "@/lib/db-honorarium";
@@ -11,7 +11,6 @@ import {
 } from "@prisma-honorarium/client";
 import { Logger } from "tslog";
 import { updateStatusUhLuarNegeri } from "../proses";
-
 const logger = new Logger({
   hideLogPositionForProduction: true,
 });

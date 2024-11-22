@@ -9,6 +9,8 @@ import path from "path";
 interface permission {
   name: string;
   description: string;
+  action: string;
+  resource: string;
 }
 
 const seedPermission = async (): Promise<void> => {
@@ -28,6 +30,8 @@ const seedPermission = async (): Promise<void> => {
               data: {
                 name: row.name,
                 description: row.description,
+                action: row.action,
+                resource: row.resource,
                 createdBy: "init",
                 createdAt: new Date(),
               },

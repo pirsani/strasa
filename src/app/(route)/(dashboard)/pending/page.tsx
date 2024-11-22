@@ -1,5 +1,5 @@
-import { getSessionPenggunaForAction } from "@/actions/pengguna";
 import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import {
   getRiwayatPengajuanUntukDokumenAkhir,
   RiwayatPengajuanIncludePengguna,
@@ -7,7 +7,6 @@ import {
 import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import Container from "./_components/container-pending";
-
 const PendingPage = async () => {
   const tahunAnggaran = await getTahunAnggranPilihan();
   const pengguna = await getSessionPenggunaForAction();

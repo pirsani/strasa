@@ -10,6 +10,8 @@ export const permissionSchema = z.object({
     .max(128, {
       message: "Nama Permission maksimal 255 karakter",
     }),
+  action: z.string(),
+  resource: z.string(),
 });
 
 export type Permission = z.infer<typeof permissionSchema>;

@@ -14,12 +14,12 @@ const logger = new Logger({
 // pada prinsipnya, Satker anggaran adalah unit kerja dalam organisasi yang memiliki anggaran
 
 export interface RoleWithPermissions extends Role {
-  rolePermission: RolePermission[];
+  permissions: RolePermission[];
 }
 export const getRoles = async (role?: string) => {
   const dataRole = await dbHonorarium.role.findMany({
     include: {
-      rolePermission: true,
+      permissions: true,
     },
   });
   //logger.info("dataRole", dataRole);
@@ -110,7 +110,7 @@ export const simpanDataRole = async (
       create: {
         ...roleWithoutPermission,
         createdBy: "admin",
-        rolePermission: {
+        permissions: {
           createMany: {
             data: objPermissions,
           },
@@ -119,7 +119,7 @@ export const simpanDataRole = async (
       update: {
         ...roleWithoutPermission,
         updatedBy: "admin",
-        rolePermission: {
+        permissions: {
           deleteMany: {
             permissionId: {
               in: permissionsToRemove.map((p) => p.permissionId),

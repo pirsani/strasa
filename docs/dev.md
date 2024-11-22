@@ -139,6 +139,8 @@ pnpm prisma migrate dev --create-only --name get_pagu_realisasi --schema=./prism
 
 pnpm prisma migrate dev --create-only --name update_tbl_pagu --schema=./prisma/db-honorarium/schema.prisma
 
+pnpm prisma migrate dev --create-only --name redis_prep --schema=./prisma/db-honorarium/schema.prisma
+
 
 pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
 
@@ -146,3 +148,19 @@ pnpm run prisma:generate
 
 pnpm prisma migrate dev --schema=./prisma/db-honorarium/schema.prisma
 ```
+
+```sh
+pnpm prisma migrate resolve --rolled-back "20241122102707_redis_prep" --schema=./prisma/db-honorarium/schema.prisma
+```
+
+## NOTES
+
+During development if the failed migration(s) have not been deployed to a production database you can then fix the migration(s) and run prisma migrate dev.
+
+The failed migration(s) can be marked as rolled back or applied:
+
+- If you rolled back the migration(s) manually:
+  prisma migrate resolve --rolled-back "20241122102707_redis_prep"
+
+- If you fixed the database manually (hotfix):
+  prisma migrate resolve --applied "20241122102707_redis_prep"

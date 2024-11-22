@@ -1,6 +1,6 @@
 "use server";
+import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { dbHonorarium } from "@/lib/db-honorarium";
-import { getSessionPenggunaForAction } from "../pengguna";
 
 const getBendaharaSatker = (id: string) => {
   const bendahara = dbHonorarium.pejabatPerbendaharaan.findMany({

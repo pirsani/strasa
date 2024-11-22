@@ -1,5 +1,6 @@
 "use server";
 import { ErrorResponseSwitcher } from "@/actions/lib";
+import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { ActionResponse } from "@/actions/response";
 import { BASE_PATH_UPLOAD } from "@/app/api/upload/config";
 import {
@@ -21,7 +22,6 @@ import {
   copyLogUploadedFileToDokumenKegiatan,
   saveDokumenKegiatanToFinalFolder,
 } from "../file";
-import { getSessionPenggunaForAction } from "../pengguna";
 // Create a Logger instance with custom settings
 const logger = new Logger({
   hideLogPositionForProduction: true,

@@ -1,10 +1,9 @@
 "use server";
-import { getSessionPenggunaForAction } from "@/actions/pengguna";
+import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { ActionResponse } from "@/actions/response";
 import { ObjRiwayatPengajuanUpdate } from "@/data/kegiatan/riwayat-pengajuan";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { dbHonorarium } from "@/lib/db-honorarium";
-
 export const verifikasiDokumenAkhir = async (
   riwayatPengajuanId: string
 ): Promise<ActionResponse<STATUS_PENGAJUAN>> => {

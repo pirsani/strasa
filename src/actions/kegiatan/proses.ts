@@ -1,6 +1,7 @@
 "use server";
 import { dbHonorarium } from "@/lib/db-honorarium";
 
+import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { generateNomorSpd } from "@/lib/spd";
 import { Spd as ZSpd } from "@/zod/schemas/spd";
 import { createId } from "@paralleldrive/cuid2";
@@ -13,7 +14,6 @@ import {
 import { revalidatePath } from "next/cache";
 import { Logger } from "tslog";
 import { KegiatanWithDetail } from ".";
-import { getSessionPenggunaForAction } from "../pengguna";
 import { getPrismaErrorResponse } from "../prisma-error-response";
 import { ActionResponse } from "../response";
 
