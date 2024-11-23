@@ -26,8 +26,16 @@ export interface PenggunaWithRoles extends Omit<Pengguna, "password"> {
     indukOrganisasi: { id: string; nama: string };
   };
 }
-export const getPengguna = async (pengguna?: string) => {
+export const getPengguna = async (satkerId?: string) => {
   const dataPengguna = await dbHonorarium.user.findMany({
+    where: {
+      ...(satkerId && {
+        OR: [
+          { organisasiId: satkerId },
+          { organisasi: { indukOrganisasi: { id: satkerId } } },
+        ],
+      }),
+    },
     include: {
       userRole: {
         include: {

@@ -1,10 +1,24 @@
-import { getOptionsForEligibleSatkerAnggaran } from "@/actions/satker-anggaran";
+import { checkSessionPermission } from "@/actions/pengguna/session";
 import { getOptionsUnitKerja, getUnitKerja } from "@/actions/unit-kerja";
-import { DialogUnitKerja } from "./_components/dialog-tambah-unit-kerja";
-import TabelUnitKerja from "./_components/tabel-unit-kerja";
+import { redirect } from "next/navigation";
 import UnitKerjaContainer from "./_components/unit-kerja-container";
 
 const ReferensiUnitKerjaPage = async () => {
+  const createAny = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "ref-unit-kerja",
+    redirectOnUnauthorized: false,
+  });
+
+  const createOwn = await checkSessionPermission({
+    actions: ["create:own"],
+    resource: "ref-unit-kerja",
+    redirectOnUnauthorized: false,
+  });
+
+  if (!createAny && !createOwn) {
+    redirect("/");
+  }
   const data = await getUnitKerja();
   const optionsUnitKerja = await getOptionsUnitKerja();
   return (

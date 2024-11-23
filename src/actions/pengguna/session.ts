@@ -1,7 +1,11 @@
 "use server";
 import { ActionResponse } from "@/actions/response";
 import { auth } from "@/auth";
-import { checkPermission } from "@/lib/redis/access-control";
+import {
+  Permissions,
+  checkPermission,
+  getPermissionsForRoles,
+} from "@/lib/redis/access-control";
 import { redirect } from "next/navigation";
 
 export const getSessionPengguna = async () => {
@@ -163,7 +167,30 @@ export const checkClientPermission = async ({
 };
 
 export const getLoggedInPengguna = async () => {
-  const pengguna = await getSessionPenggunaForAction();
-  if (!pengguna.success) return null;
-  return pengguna.data;
+  const session = await auth();
+  // logger.info("session", session);
+  if (
+    !session ||
+    !session.user ||
+    !session.user.id ||
+    !session.user.unitKerjaId ||
+    !session.user.satkerId
+  ) {
+    return null;
+  }
+  return session.user;
+};
+
+export const getSessionPermissionsForRole = async (): Promise<Permissions> => {
+  const pengguna = await getSessionPengguna();
+  if (!pengguna.success || !pengguna.data?.roles) {
+    // redirect to login
+    console.error("Pengguna not found or has no roles");
+    redirect("/login");
+  }
+  const roles = pengguna.data.roles;
+
+  const permissionsForRoles = await getPermissionsForRoles(roles);
+
+  return permissionsForRoles;
 };

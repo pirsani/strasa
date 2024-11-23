@@ -1,5 +1,6 @@
 import { getOptionsKota, getOptionsKotaSekitarJakarta } from "@/actions/kota";
 import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { checkSessionPermission } from "@/actions/pengguna/session";
 import {
   getSbmTransporDalamKotaPulangPergi,
   getSbmTransporJakartaKeKotaKabSekitar,
@@ -13,6 +14,10 @@ import TabelSbmTransporDalamKotaPulangPergi from "./_components/tabel-sbm-transp
 import TabelSbmTransporJakartaKeKotaSekitar from "./_components/tabel-sbm-transpor-jakarta-ke-kota-kab-sekitar";
 
 const TransporPage = async () => {
+  const createAny = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "referensi",
+  });
   const tahunAnggaran = await getTahunAnggranPilihan();
   const dataSbmDalamKota = await getSbmTransporDalamKotaPulangPergi(
     tahunAnggaran

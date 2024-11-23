@@ -9,6 +9,16 @@ interface Permission {
   action: string;
 }
 
+export interface Permissions {
+  [resource: string]: {
+    [action: string]: string[];
+  };
+}
+
+interface Grants {
+  [role: string]: RolePermissions;
+}
+
 interface RolePermissions {
   permissions: Permission[];
   extendedRoles: string[];
@@ -194,4 +204,44 @@ export async function initAcl() {
     console.error("Failed to initialize AccessControl:", error);
     return false;
   }
+}
+
+// Function to get combined permissions for multiple roles
+// Function to get combined permissions for multiple roles
+export async function getPermissionsForRoles(
+  roles: string[]
+): Promise<Permissions> {
+  await initAcl();
+  const ac = await loadAccessControl();
+
+  if (!ac) {
+    throw new Error("AccessControl is not initialized.");
+  }
+
+  const grants = ac.getGrants();
+  const combinedPermissions: Permissions = {};
+
+  roles.forEach((role) => {
+    const rolePermissions = grants[role];
+    if (rolePermissions) {
+      for (const [resource, actions] of Object.entries(rolePermissions)) {
+        if (!combinedPermissions[resource]) {
+          combinedPermissions[resource] = {};
+        }
+        // Merge actions for the resource
+        for (const [action, attributes] of Object.entries(
+          actions as { [key: string]: string[] }
+        )) {
+          combinedPermissions[resource][action] = Array.from(
+            new Set([
+              ...(combinedPermissions[resource][action] || []),
+              ...attributes,
+            ])
+          ); // Ensure unique attributes
+        }
+      }
+    }
+  });
+
+  return combinedPermissions;
 }

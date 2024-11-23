@@ -1,10 +1,16 @@
 import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { checkSessionPermission } from "@/actions/pengguna/session";
 import getReferensiSbmHonorarium from "@/data/sbm-honorarium";
 import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import FormUploadExcelSbmHonorarium from "./_components/form-upload-excel-sbm-honorarium";
 import { TabelSbmHonorarium } from "./_components/tabel-sbm-honorarium";
 
 const ReferensiSbmHonorariumPage = async () => {
+  const createAny = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "referensi",
+  });
+
   const tahunAnggaran = await getTahunAnggranPilihan();
   const data = await getReferensiSbmHonorarium(tahunAnggaran);
   const convertedData = data.map((item) => ({

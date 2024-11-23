@@ -1,11 +1,28 @@
+import { checkSessionPermission } from "@/actions/pengguna/session";
 import {
   getOptionsForEligibleSatkerAnggaran,
   getSatkerAnggaran,
 } from "@/actions/satker-anggaran";
+import { redirect } from "next/navigation";
 import { DialogTambahSatkerAnggaran } from "./_components/dialog-tambah-satker-anggaran";
 import TabelSatkerAnggaran from "./_components/tabel-satker-anggaran";
 
 const SatkerAnggaranPage = async () => {
+  const createAny = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "ref-satker-anggaran",
+    redirectOnUnauthorized: false,
+  });
+
+  const createOwn = await checkSessionPermission({
+    actions: ["create:own"],
+    resource: "ref-satker-anggaran",
+    redirectOnUnauthorized: false,
+  });
+
+  if (!createAny && !createOwn) {
+    redirect("/");
+  }
   const eligibleSatkerAnggaran = await getOptionsForEligibleSatkerAnggaran();
   const data = await getSatkerAnggaran();
   return (

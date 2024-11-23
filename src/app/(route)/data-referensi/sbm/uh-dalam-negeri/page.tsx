@@ -1,4 +1,5 @@
 import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { checkSessionPermission } from "@/actions/pengguna/session";
 import { getOptionsProvinsi } from "@/actions/sbm";
 import getReferensiSbmUhDalamNegeri, {
   SbmUhDalamNegeriPlainObject,
@@ -8,6 +9,10 @@ import FormUploadExcelSbmUhDalamNegeri from "./_components/form-upload-excel-sbm
 import { TabelSbmUhDalamNegeri } from "./_components/tabel-sbm-uh-dalam-negeri";
 
 const ReferensiSbmUhDalamNegeriPage = async () => {
+  const createAny = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "referensi",
+  });
   const tahunAnggaran = await getTahunAnggranPilihan();
   const data = await getReferensiSbmUhDalamNegeri(tahunAnggaran);
   const convertedData = data.map((item) => ({

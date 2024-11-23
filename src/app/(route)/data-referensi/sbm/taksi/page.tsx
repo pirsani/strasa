@@ -1,3 +1,4 @@
+import { checkSessionPermission } from "@/actions/pengguna/session";
 import { getOptionsProvinsi } from "@/actions/sbm";
 import getReferensiSbmTaksi, { SbmTaksiPlainObject } from "@/data/sbm-taksi";
 import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
@@ -5,6 +6,10 @@ import FormUploadExcelSbmTaksi from "./_components/form-upload-excel-sbm-taksi";
 import { TabelSbmTaksi } from "./_components/tabel-sbm-taksi";
 
 const ReferensiSbmTaksiPage = async () => {
+  const createAny = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "referensi",
+  });
   const data = await getReferensiSbmTaksi();
   const convertedData = data.map((item) => ({
     ...convertSpecialTypesToPlain<SbmTaksiPlainObject>(item),

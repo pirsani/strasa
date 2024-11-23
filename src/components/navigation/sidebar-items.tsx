@@ -82,6 +82,10 @@ interface SidebarItemProps {
 const SidebarItems = ({ routes, groupTitle }: SidebarItemProps) => {
   const { toggle, collapsed } = useToggleSidebar();
 
+  if (routes.length === 0) {
+    return null;
+  }
+
   return (
     <div
       className={cn(

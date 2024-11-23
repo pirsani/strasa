@@ -1,8 +1,13 @@
+import { checkSessionPermission } from "@/actions/pengguna/session";
 import { getProvinsi } from "@/actions/provinsi";
 import { DialogTambahProvinsi } from "./_components/dialog-tambah-provinsi";
 import { TabelProvinsi } from "./_components/tabel-provinsi";
 
 const ProvinsiPage = async () => {
+  const createAny = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "referensi",
+  });
   const data = await getProvinsi();
   return (
     <div className="p-4 pb-24 h-auto min-h-full flex flex-col gap-2">

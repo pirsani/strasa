@@ -47,3 +47,5 @@ pnpm run dev
 - [Postgresql Documentation](https://www.postgresql.org/docs/current/index.html) - PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.
 - [zustand documentation](https://zustand.docs.pmnd.rs/getting-started/introduction) - A small, fast, and scalable bearbones state management solution.
 - [rechart dokumentation](https://recharts.org/en-US/guide) - A composable charting library built on React components
+- [Redis](https://redis.io/docs/latest/develop/) - Redis can be used as a database, cache, streaming engine, message broker, and more. The following quick start guides will show you how to use Redis for the following specific purposes:
+- [accesscontrol](https://onury.io/accesscontrol/) - Role and Attribute based Access Control for Node.js

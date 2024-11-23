@@ -6,7 +6,7 @@ const ReferensiUnitKerjaPage = async () => {
   const data = await getRoles();
 
   const hasPermission = await checkSessionPermission({
-    action: "create:any",
+    actions: "create:any",
     resource: "ref-role",
   });
 

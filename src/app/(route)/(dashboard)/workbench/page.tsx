@@ -28,6 +28,7 @@ const WorkbenchPage = async () => {
   }
 
   const pengguna = await getLoggedInPengguna();
+  console.log("[Pengguna]", pengguna);
 
   if (!pengguna) {
     return <div>Anda tidak memiliki akses ke halaman ini</div>;
@@ -38,9 +39,9 @@ const WorkbenchPage = async () => {
 
   let params: ParamsGetKegiatan = {};
   if (readAny) {
-    params.satkerId = satkerId;
+    params.satkerId = satkerId!;
   } else if (readOwn) {
-    params.unitKerjaId = unitKerjaId;
+    params.unitKerjaId = unitKerjaId!;
   }
 
   const kegiatan = await getKegiatan(params);

@@ -1,3 +1,4 @@
+// "use server";
 export interface RouteItem {
   name: string;
   title: string;
@@ -8,6 +9,7 @@ export interface RouteItem {
   permissions?: string[];
   displayAsMenu?: boolean;
   cascadePermissions?: boolean; // cascade permissions to sub routes
+  resources?: string[];
 }
 
 export const DEFAULT_ROUTE_AFTER_LOGIN = "/dashboard";
@@ -101,6 +103,7 @@ export const alurProsesRoutes: RouteItem[] = [
     icon: "settings-2",
     order: 0,
     displayAsMenu: true,
+    resources: ["proses-setup-kegiatan"],
   },
   {
     name: "pengajuan-kegiatan",
@@ -109,6 +112,7 @@ export const alurProsesRoutes: RouteItem[] = [
     icon: "milestone",
     order: 1,
     displayAsMenu: true,
+    resources: ["proses-pengajuan"],
   },
   {
     name: "verifikasi-kegiatan",
@@ -117,6 +121,7 @@ export const alurProsesRoutes: RouteItem[] = [
     icon: "list-checks",
     order: 2,
     displayAsMenu: true,
+    resources: ["proses-verifikasi"],
   },
   {
     name: "daftar-nominatif",
@@ -125,6 +130,7 @@ export const alurProsesRoutes: RouteItem[] = [
     icon: "table",
     order: 3,
     displayAsMenu: true,
+    resources: ["proses-daftar-nominatif"],
   },
   {
     name: "pembayaran-kegiatan",
@@ -133,6 +139,7 @@ export const alurProsesRoutes: RouteItem[] = [
     icon: "credit-card",
     order: 4,
     displayAsMenu: true,
+    resources: ["proses-pembayaran"],
   },
 ];
 
@@ -144,6 +151,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "graduation-cap",
     order: 0,
     displayAsMenu: true,
+    resources: ["ref-narasumber", "referensi"],
   },
   {
     name: "referensi-materi",
@@ -152,6 +160,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "book-open",
     order: 0,
     displayAsMenu: true,
+    resources: ["ref-materi", "referensi"],
   },
   {
     name: "referensi-kelas",
@@ -160,6 +169,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "grid",
     order: 0,
     displayAsMenu: true,
+    resources: ["ref-kelas", "referensi"],
   },
   {
     name: "referensi-sbm-honorarium",
@@ -168,6 +178,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "banknote",
     order: 1,
     displayAsMenu: true,
+    resources: ["ref-sbm-honorarium", "referensi"],
   },
   {
     name: "referensi-sbm-uh-dalam-negeri",
@@ -176,6 +187,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "banknote",
     order: 2,
     displayAsMenu: true,
+    resources: ["ref-sbm-uh-dalam-negeri", "referensi"],
   },
   {
     name: "referensi-sbm-uh-luar-negeri",
@@ -184,6 +196,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "banknote",
     order: 3,
     displayAsMenu: true,
+    resources: ["ref-sbm-uh-luar-negeri", "referensi"],
   },
   {
     name: "referensi-sbm-uang-representasi",
@@ -192,6 +205,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "banknote",
     order: 4,
     displayAsMenu: true,
+    resources: ["ref-sbm-uang-representasi", "referensi"],
   },
   {
     name: "referensi-sbm-transpor",
@@ -200,6 +214,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "banknote",
     order: 4,
     displayAsMenu: true,
+    resources: ["ref-sbm-transpor", "referensi"],
   },
   // atas permintaan user, referensi sbm taksi dihapus
   // {
@@ -217,6 +232,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "coins",
     order: 5,
     displayAsMenu: true,
+    resources: ["ref-pph", "referensi"],
   },
   {
     name: "referensi-pejabat-perbendaharaan",
@@ -225,6 +241,11 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "signature",
     order: 6,
     displayAsMenu: true,
+    resources: [
+      "ref-pejabat-perbendaharaan",
+      "referensi",
+      "ref-pengelola-keuangan",
+    ],
   },
 
   {
@@ -233,6 +254,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     href: "/data-referensi/satker-anggaran",
     icon: "brick-wall",
     order: 9,
+    resources: ["ref-satker-anggaran", "referensi"],
   },
   {
     name: "referensi-unit-kerja",
@@ -240,6 +262,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     href: "/data-referensi/unit-kerja",
     icon: "brick-wall",
     order: 9,
+    resources: ["ref-unit-kerja", "referensi"],
   },
   {
     name: "referensi-pagu",
@@ -247,6 +270,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     href: "/data-referensi/pagu",
     icon: "wallet",
     order: 9,
+    resources: ["ref-pagu", "referensi"],
   },
   {
     name: "referensi-sp2d",
@@ -255,6 +279,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "file-badge",
     order: 10,
     displayAsMenu: true,
+    resources: ["ref-sp2d", "referensi"],
   },
   {
     name: "referensi-negara",
@@ -263,6 +288,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "flag",
     order: 11,
     displayAsMenu: true,
+    resources: ["ref-negara", "referensi"],
   },
   {
     name: "referensi-provinsi",
@@ -271,6 +297,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "map-pinned",
     order: 12,
     displayAsMenu: true,
+    resources: ["ref-provinsi", "referensi"],
   },
   {
     name: "referensi-role",
@@ -279,6 +306,7 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "user-cog",
     order: 140,
     displayAsMenu: true,
+    resources: ["ref-role"],
   },
   {
     name: "referensi-pengguna",
@@ -287,5 +315,6 @@ export const dataReferensiRoutes: RouteItem[] = [
     icon: "users",
     order: 150,
     displayAsMenu: true,
+    resources: ["ref-pengguna"],
   },
 ];
