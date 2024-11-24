@@ -36,7 +36,12 @@ export const getSessionPenggunaForAction = async (): Promise<
 > => {
   const pengguna = await getSessionPengguna();
   // logger.info("Pengguna", pengguna);
-  if (!pengguna.success || !pengguna.data || !pengguna.data.id) {
+  if (
+    !pengguna.success ||
+    !pengguna.data ||
+    !pengguna.data.id ||
+    !pengguna.data.unitKerjaId
+  ) {
     return {
       success: false,
       error: "E-UAuth-01",
@@ -44,15 +49,15 @@ export const getSessionPenggunaForAction = async (): Promise<
     };
   }
 
-  if (!pengguna.data?.satkerId || !pengguna.data?.unitKerjaId) {
-    return {
-      success: false,
-      error: "E-UORG-01",
-      message: "User tidak mempunyai satkerId atau unitKerjaId",
-    };
-  }
+  // if (!pengguna.data?.satkerId && !pengguna.data?.unitKerjaId) {
+  //   return {
+  //     success: false,
+  //     error: "E-UORG-01",
+  //     message: "User tidak mempunyai satkerId atau unitKerjaId",
+  //   };
+  // }
 
-  const satkerId = pengguna.data.satkerId;
+  const satkerId = pengguna.data.satkerId ?? pengguna.data.unitKerjaId;
   const unitKerjaId = pengguna.data.unitKerjaId;
   const penggunaId = pengguna.data.id;
   const penggunaName = pengguna.data.name!;
@@ -166,31 +171,38 @@ export const checkClientPermission = async ({
   };
 };
 
+/**
+ * Get logged in user from session
+ * jika tidak ada session atau user tidak memiliki id atau unitKerjaId, return null
+ * user bisa saja tidak punya satkerId misalnya jika di assign di level Kementerian
+ * @returns User object
+ */
 export const getLoggedInPengguna = async () => {
   const session = await auth();
-  // logger.info("session", session);
+  console.info("getLoggedInPengguna", session);
   if (
     !session ||
     !session.user ||
     !session.user.id ||
-    !session.user.unitKerjaId ||
-    !session.user.satkerId
+    !session.user.unitKerjaId
+    // !session.user.satkerId
   ) {
     return null;
   }
   return session.user;
 };
 
-export const getSessionPermissionsForRole = async (): Promise<Permissions> => {
-  const pengguna = await getSessionPengguna();
-  if (!pengguna.success || !pengguna.data?.roles) {
-    // redirect to login
-    console.error("Pengguna not found or has no roles");
-    redirect("/login");
-  }
-  const roles = pengguna.data.roles;
+export const getSessionPermissionsForRole =
+  async (): Promise<Permissions | null> => {
+    const pengguna = await getSessionPengguna();
+    if (!pengguna.success || !pengguna.data?.roles) {
+      // redirect to login
+      console.error("Pengguna not found or has no roles");
+      return null;
+    }
+    const roles = pengguna.data.roles;
 
-  const permissionsForRoles = await getPermissionsForRoles(roles);
+    const permissionsForRoles = await getPermissionsForRoles(roles);
 
-  return permissionsForRoles;
-};
+    return permissionsForRoles;
+  };

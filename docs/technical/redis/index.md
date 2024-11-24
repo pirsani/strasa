@@ -119,3 +119,12 @@ enabled
 ---
 
 You now have Redis installed and configured on Ubuntu! If you need to install a specific version or build Redis from source, let me know.
+
+# reset redis
+
+```sh
+redis-cli
+KEYS \*
+FLUSHDB
+FLUSHALL
+```

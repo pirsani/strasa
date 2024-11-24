@@ -54,6 +54,8 @@ model RoleExtension {
   extendedRoleId String @map("extended_role_id") // The role that extends it
   baseRole       Role   @relation("RoleExtendee", fields: [baseRoleId], references: [id], onDelete: Cascade)
   extendedRole   Role   @relation("RoleExtender", fields: [extendedRoleId], references: [id], onDelete: Cascade)
+
+  @@map("role_extensions")
 }
 
 model RolePermission {
@@ -849,7 +851,7 @@ model Jadwal {
   createdAt                          DateTime               @default(now()) @map("created_at")
   updatedBy                          String?                @map("updated_by")
   updatedAt                          DateTime?              @updatedAt @map("updated_at")
-  nominatifHonorarium                NominatifHonorarium[]
+  //nominatifHonorarium                NominatifHonorarium[]
   jadwalNarasumber                   JadwalNarasumber[]
   PejabatPerbendaharaan              PejabatPerbendaharaan? @relation(fields: [pejabatPerbendaharaanId], references: [id])
   pejabatPerbendaharaanId            String?
@@ -924,22 +926,22 @@ model DokumenKegiatan {
   @@map("dokumen_kegiatan")
 }
 
-model NominatifHonorarium {
-  id                     String  @id @default(cuid())
-  jadwalId               String  @unique @map("jadwal_id")
-  jadwal                 Jadwal  @relation(fields: [jadwalId], references: [id])
-  besaran                Decimal @db.Decimal(10, 0)
-  jumlah                 Int
-  pajakDPP               Decimal @map("pajak_dpp") @db.Decimal(10, 0)
-  pajakTarif             Decimal @map("pajak_tarif") @db.Decimal(5, 2)
-  pph21                  Decimal @map("pph_21") @db.Decimal(5, 2)
-  jumlahDiterima         Decimal @map("jumlah_diterima") @db.Decimal(10, 2)
-  namaRekening           String? @map("nama_rekening")
-  nomorRekening          String? @map("nomor_rekening")
-  dokumenBuktiPembayaran String? @map("dokumen_bukti_pembayaran")
+// model NominatifHonorarium {
+//   id                     String  @id @default(cuid())
+//   jadwalId               String  @unique @map("jadwal_id")
+//   jadwal                 Jadwal  @relation(fields: [jadwalId], references: [id])
+//   besaran                Decimal @db.Decimal(10, 0)
+//   jumlah                 Int
+//   pajakDPP               Decimal @map("pajak_dpp") @db.Decimal(10, 0)
+//   pajakTarif             Decimal @map("pajak_tarif") @db.Decimal(5, 2)
+//   pph21                  Decimal @map("pph_21") @db.Decimal(5, 2)
+//   jumlahDiterima         Decimal @map("jumlah_diterima") @db.Decimal(10, 2)
+//   namaRekening           String? @map("nama_rekening")
+//   nomorRekening          String? @map("nomor_rekening")
+//   dokumenBuktiPembayaran String? @map("dokumen_bukti_pembayaran")
 
-  @@map("daftar_nominatif_honorarium")
-}
+//   @@map("daftar_nominatif_honorarium")
+// }
 
 model Pembayaran {
   id                      String                @id @default(cuid())

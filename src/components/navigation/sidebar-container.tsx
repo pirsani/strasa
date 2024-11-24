@@ -13,12 +13,20 @@ import SidebarItems from "./sidebar-items";
 // TODO
 // Implement route from some settings
 const getRoutesReferensiForRoles = async (): Promise<{
-  routeReferensiPage: RouteItem[];
-  routesAlurProses: RouteItem[];
+  filteredRouteDashboard: RouteItem[];
+  filteredRouteReferensi: RouteItem[];
+  filteredRoutesAlurProses: RouteItem[];
 }> => {
-  const permissions: Permissions = await getSessionPermissionsForRole();
+  const permissions: Permissions | null = await getSessionPermissionsForRole();
+  if (!permissions) {
+    return {
+      filteredRouteReferensi: [],
+      filteredRoutesAlurProses: [],
+      filteredRouteDashboard: [],
+    };
+  }
 
-  const routeReferensiPage = dataReferensiRoutes.filter((route) => {
+  const filteredRouteDashboard = dashboardRoutes.filter((route) => {
     if (route.resources) {
       // Check if any of the route's resources are present in the permissions
       return route.resources.some((resource) => {
@@ -32,7 +40,7 @@ const getRoutesReferensiForRoles = async (): Promise<{
     return true; // Include routes without resources by default
   });
 
-  const routesAlurProses = alurProsesRoutes.filter((route) => {
+  const filteredRouteReferensi = dataReferensiRoutes.filter((route) => {
     if (route.resources) {
       // Check if any of the route's resources are present in the permissions
       return route.resources.some((resource) => {
@@ -46,21 +54,45 @@ const getRoutesReferensiForRoles = async (): Promise<{
     return true; // Include routes without resources by default
   });
 
-  return { routesAlurProses, routeReferensiPage };
+  const filteredRoutesAlurProses = alurProsesRoutes.filter((route) => {
+    if (route.resources) {
+      // Check if any of the route's resources are present in the permissions
+      return route.resources.some((resource) => {
+        const resourcePermissions = permissions[resource];
+        if (!resourcePermissions) return false;
+
+        // Optionally, check specific actions if needed
+        return Object.keys(resourcePermissions).length > 0;
+      });
+    }
+    return true; // Include routes without resources by default
+  });
+
+  return {
+    filteredRoutesAlurProses,
+    filteredRouteReferensi,
+    filteredRouteDashboard,
+  };
 };
 
 const SidebarContariner = async () => {
-  const { routeReferensiPage, routesAlurProses } =
-    await getRoutesReferensiForRoles();
-  console.log("route referensi", routeReferensiPage);
+  const {
+    filteredRouteReferensi,
+    filteredRoutesAlurProses,
+    filteredRouteDashboard,
+  } = await getRoutesReferensiForRoles();
+  console.log("route referensi", filteredRouteReferensi);
   return (
     <div className="h-full bg-gray-100">
       <div className="h-full overflow-y-auto pb-6">
         <SidebarItems routes={publicRoutes} />
-        <SidebarItems routes={dashboardRoutes} />
-        <SidebarItems routes={routesAlurProses} groupTitle="Alur Proses" />
+        <SidebarItems routes={filteredRouteDashboard} />
         <SidebarItems
-          routes={routeReferensiPage}
+          routes={filteredRoutesAlurProses}
+          groupTitle="Alur Proses"
+        />
+        <SidebarItems
+          routes={filteredRouteReferensi}
           groupTitle="Tabel Referensi"
         />
       </div>

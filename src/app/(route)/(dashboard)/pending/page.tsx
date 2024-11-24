@@ -1,23 +1,44 @@
 import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
-import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
+import {
+  checkSessionPermission,
+  getLoggedInPengguna,
+} from "@/actions/pengguna/session";
 import {
   getRiwayatPengajuanUntukDokumenAkhir,
   RiwayatPengajuanIncludePengguna,
 } from "@/data/kegiatan/riwayat-pengajuan";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
+import { redirect } from "next/navigation";
 import Container from "./_components/container-pending";
 const PendingPage = async () => {
-  const tahunAnggaran = await getTahunAnggranPilihan();
-  const pengguna = await getSessionPenggunaForAction();
-  if (!pengguna.success) {
-    return pengguna;
+  const createAny = await checkSessionPermission({
+    actions: ["read:any"],
+    resource: "pending",
+  });
+
+  const createOwn = await checkSessionPermission({
+    actions: ["read:own"],
+    resource: "pending",
+  });
+
+  if (!createAny && !createOwn) {
+    return "Anda tidak memiliki akses ke halaman ini";
   }
+
+  const pengguna = await getLoggedInPengguna();
+
+  if (!pengguna) {
+    redirect("/");
+  }
+
+  const tahunAnggaran = await getTahunAnggranPilihan();
+
   // TODO memastikan bahwa pengguna yang mengajukan adalah satker pengguna yang terkait dengan kegiatan
-  const satkerId = pengguna.data.satkerId;
-  const unitKerjaId = pengguna.data.unitKerjaId;
-  const penggunaId = pengguna.data.penggunaId;
-  const penggunaName = pengguna.data.penggunaName;
+  const satkerId = pengguna.satkerId!;
+  const unitKerjaId = pengguna.unitKerjaId!;
+  const penggunaId = pengguna.id;
+  const penggunaName = pengguna.name;
 
   const status: STATUS_PENGAJUAN[] = ["PAID", "END"];
 

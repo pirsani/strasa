@@ -144,6 +144,12 @@ pnpm prisma migrate dev --create-only --name redis_prep --schema=./prisma/db-hon
 
 pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
 
+pnpm prisma migrate dev --create-only --name rename_tbl_role_extension --schema=./prisma/db-honorarium/schema.prisma
+
+pnpm prisma migrate dev --create-only --name delete_NominatifHonorarium --schema=./prisma/db-honorarium/schema.prisma
+
+pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
+
 pnpm run prisma:generate
 
 pnpm prisma migrate dev --schema=./prisma/db-honorarium/schema.prisma
