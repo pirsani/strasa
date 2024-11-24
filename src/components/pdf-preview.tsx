@@ -1,6 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const isObjectUrl = (url: string): boolean => {
   const objectUrlPattern = /^blob:.+/;
@@ -37,14 +38,17 @@ interface PdfPreviewProps {
 }
 
 export const PdfPreview = ({ fileUrl, className }: PdfPreviewProps) => {
+  const [isPdf, setIsPdf] = useState(false);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [iframeSrc, setIframeSrc] = useState<string | null>(null);
+
   const handleError = () => {
     setIsLoading(false);
     // Optionally, add error handling logic here
-    //console.error("Failed to load PDF file");
-    return;
+    console.error("Failed to load file");
   };
+
   // Reset isLoading state when fileUrl changes
   useEffect(() => {
     if (!fileUrl) {
@@ -57,7 +61,7 @@ export const PdfPreview = ({ fileUrl, className }: PdfPreviewProps) => {
       return;
     }
 
-    const loadPdf = async () => {
+    const loadFile = async () => {
       setIsLoading(true); // Set loading state to true when a new fileUrl is set
       try {
         const response = await fetch(fileUrl);
@@ -66,46 +70,57 @@ export const PdfPreview = ({ fileUrl, className }: PdfPreviewProps) => {
         }
         const blob = await response.blob();
         const blobUrl = URL.createObjectURL(blob);
-        setIframeSrc(blobUrl);
+        setBlobUrl(blobUrl);
+
+        //toast.success("File loaded successfully!");
+        if (blob.type !== "application/pdf") {
+          setIsPdf(false);
+
+          toast.success("non-pdf file , please download it");
+
+          // Trigger download for non-PDF files
+          const downloadLink = document.createElement("a");
+          downloadLink.href = blobUrl;
+          downloadLink.download = "downloaded-file"; // Default filename; customize as needed
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+
+          // Cleanup
+          document.body.removeChild(downloadLink);
+          URL.revokeObjectURL(blobUrl);
+        } else {
+          setIsPdf(true);
+          setIframeSrc(blobUrl);
+        }
       } catch (error) {
         handleError();
       } finally {
         setIsLoading(false);
       }
     };
-    setIframeSrc(null);
-    loadPdf();
-  }, [fileUrl]);
 
-  if (!fileUrl) {
-    return (
-      <div className="w-full h-full  border-t-0">
-        <PdfViewerSkeleton
-          className={className + " animate-none "}
-          placeholder="pdf preview"
-        />
-      </div>
-    );
-  }
+    setIframeSrc(null);
+    loadFile();
+  }, [fileUrl]);
 
   if (!fileUrl) {
     return (
       <div className="w-full  border-t-0">
         <PdfViewerSkeleton
           className={className + " animate-none "}
-          placeholder="pdf preview"
+          placeholder="PDF preview"
         />
       </div>
     );
   }
 
   return (
-    <div className="w-full  border-t-0 h-full">
+    <div className="w-full border-t-0 h-full">
       {isLoading && <PdfViewerSkeleton className={className} />}
       {!iframeSrc && !isLoading && (
         <PdfViewerSkeleton
           className={className}
-          placeholder="file not found"
+          placeholder="Pdf not found"
           isLoading={isLoading}
         />
       )}

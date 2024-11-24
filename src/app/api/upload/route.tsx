@@ -50,6 +50,9 @@ export async function POST(req: NextRequest) {
     const allowedMimeTypes = [
       "application/pdf",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/zip",
+      "application/x-rar-compressed",
+      "application/octet-stream",
     ];
     const { filePath, relativePath, fileHash, fileType } = await saveFile({
       file,

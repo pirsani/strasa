@@ -426,7 +426,8 @@ export const pengajuanPembayaranHonorarium = async (
 
 export const updateBuktiPembayaranHonorarium = async (
   riwayatPengajuanId: string,
-  buktiPembayaranCuid: string
+  buktiPembayaranCuid: string,
+  filenameBuktiPembayaran: string
 ): Promise<ActionResponse<STATUS_PENGAJUAN>> => {
   const pengguna = await getSessionPenggunaForAction();
   if (!pengguna.success) {
@@ -464,7 +465,19 @@ export const updateBuktiPembayaranHonorarium = async (
     jadwal.id
   );
 
-  const fileBuktiPembayaran = buktiPembayaranCuid + ".pdf";
+  // get extension from filename
+  const extension = path.extname(filenameBuktiPembayaran);
+  console.log("extensione", extension);
+  console.log("filenameBuktiPembayaran", filenameBuktiPembayaran);
+  if (!extension) {
+    return {
+      success: false,
+      error: "E-UPPH-003",
+      message: `file bukti pembayaran tidak valid`,
+    };
+  }
+
+  const fileBuktiPembayaran = buktiPembayaranCuid + extension;
   const finalNamafile = "bukti_bayar_" + fileBuktiPembayaran;
 
   const finalPathFile = path.posix.join(finalPath, finalNamafile);

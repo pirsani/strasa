@@ -1,6 +1,5 @@
 import { BASE_PATH_UPLOAD } from "@/app/api/upload/config";
 import { dbHonorarium } from "@/lib/db-honorarium";
-import { createId } from "@paralleldrive/cuid2";
 import { promises as fs } from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
@@ -42,11 +41,38 @@ export const downloadDokumenBuktiPembayaran = async (
     // resolve the path to avoid path traversal attack
     const fullPathResolvedPath = path.resolve(fullPath);
     const file = await fs.readFile(fullPathResolvedPath);
+
+    // set content type based on the file type
+    const ext = path.extname(filePath);
+
+    // select content type based on the file extension
+    let contentType = "application/pdf";
+    switch (ext) {
+      case ".pdf":
+        contentType = "application/pdf";
+        break;
+      case ".zip":
+        contentType = "application/zip";
+      case ".rar":
+        contentType = "application/x-rar-compressed";
+        break;
+      default:
+        contentType = "application/octet-stream";
+    }
+
+    const filename = path.basename(filePath);
+    //console.log("filename", filename);
+
+    const inlineOrAttachment = ext === ".pdf" ? "inline" : "attachment";
+    const contentDisposition = `${inlineOrAttachment}; filename=${filename}`;
+
+    //console.log("contentDisposition", contentDisposition);
+
     return new NextResponse(file, {
       status: 200,
       headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `inline; filename=${createId()}.pdf`, // inline or attachment
+        "Content-Type": contentType,
+        "Content-Disposition": contentDisposition, // inline or attachment
       },
     });
     //const id = slug[2];

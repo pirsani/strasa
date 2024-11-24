@@ -16,7 +16,7 @@ interface InputFileImmediateUploadProps {
   className?: string;
   allowedTypes?: string[];
   placeholder?: string;
-  onFileUploadComplete?: (name: string) => void;
+  onFileUploadComplete?: (name: string, file?: File | null) => void;
 }
 
 export const InputFileImmediateUpload = ({
@@ -24,7 +24,7 @@ export const InputFileImmediateUpload = ({
   cuid = createId(),
   folder = "",
   onFileChange,
-  onFileUploadComplete = (name) => {},
+  onFileUploadComplete = () => {},
   className,
   allowedTypes = ["application/pdf"],
   placeholder = "No file selected, please choose a file",
@@ -81,7 +81,7 @@ export const InputFileImmediateUpload = ({
 
       if (response.status === 200) {
         toast.info(`File ${file.name} uploaded successfully:`);
-        onFileUploadComplete(name);
+        onFileUploadComplete(name, file);
       } else {
         toast.error(`File upload failed with status: ${response.status}`);
       }

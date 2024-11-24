@@ -10,17 +10,34 @@ interface FormPembayaranProps {
 }
 const FormPembayaran = ({ riwayatPengajuanId }: FormPembayaranProps) => {
   const [cuid, setCuid] = useState<string>(createId());
+  const [filenameBuktiPembayaran, setFilenameBuktiPembayaran] = useState<
+    string | null
+  >(null);
   const [isUpladed, setIsUploaded] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const handleSimpanPembayaran = async () => {
+    if (!filenameBuktiPembayaran) {
+      toast.error("Bukti pembayaran belum diupload");
+      return;
+    }
     setIsSubmitting(true);
-    const res = await updateBuktiPembayaranHonorarium(riwayatPengajuanId, cuid);
+    const res = await updateBuktiPembayaranHonorarium(
+      riwayatPengajuanId,
+      cuid,
+      filenameBuktiPembayaran
+    );
     if (res.success) {
       toast.success("Bukti pembayaran berhasil diupload");
     } else {
-      toast.error("Gagal mengupload bukti pembayaran");
+      toast.error(`Gagal mengupload bukti pembayaran ${res.message}`);
     }
     setIsSubmitting(false);
+  };
+
+  const handleUploadComplete = (name: string, file?: File | null) => {
+    setIsUploaded(true);
+    setFilenameBuktiPembayaran(file?.name ?? null);
+    toast.success(`File ${name} berhasil diupload`);
   };
   return (
     <form>
@@ -30,8 +47,14 @@ const FormPembayaran = ({ riwayatPengajuanId }: FormPembayaranProps) => {
           name="file"
           folder={riwayatPengajuanId}
           cuid={cuid}
-          onFileUploadComplete={() => setIsUploaded(true)}
+          onFileUploadComplete={handleUploadComplete}
           onFileChange={() => setIsUploaded(false)}
+          allowedTypes={[
+            "application/pdf",
+            "application/zip",
+            "application/x-rar-compressed",
+            "application/octet-stream", // Some browsers may use this for .rar files
+          ]}
         />
         <div>
           <Button
