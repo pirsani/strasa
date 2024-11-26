@@ -14,7 +14,7 @@ sudo systemctl restart nginx
 ```
 proxy_cache_path /var/cache/nginx/d01_pirsani levels=1:2 keys_zone=STATIC:10m inactive=7d use_temp_path=off;
 
-upstream db01.pirsani_upstream {
+upstream d01.pirsani_upstream {
     server 127.0.0.1:3030;
 }
 
@@ -29,13 +29,13 @@ server {
 
     location /_next/static/ {
                 proxy_cache STATIC;
-                proxy_pass http://db01.pirsani_upstream;
+                proxy_pass http://d01.pirsani_upstream;
                 expires 60m;
                 access_log off;
         }
 
     location / {
-                proxy_pass http://db01.pirsani_upstream; # !!! - change to your app port
+                proxy_pass http://d01.pirsani_upstream; # !!! - change to your app port
                 proxy_http_version 1.1;
                 proxy_set_header Upgrade $http_upgrade;
                 proxy_set_header Connection 'upgrade';
@@ -68,6 +68,55 @@ server {
     server_name d01.pirsani.id d01.pirsani.id;
     return 404; # managed by Certbot
 
+}
+```
+
+self signed
+
+```conf
+
+proxy_cache_path /var/cache/nginx/d01_pirsani levels=1:2 keys_zone=STATIC:10m inactive=7d use_temp_path=off;
+
+upstream d01.pirsani_upstream {
+    server 127.0.0.1:3030;
+}
+
+server {
+    listen 80;
+    # listen [::]:80;
+    server_name panda.kemlu.go.id;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    # listen [::]:443 ssl;
+    server_name panda.kemlu.go.id;# !!! - change to your domain name
+    gzip on;
+    gzip_proxied any;
+    gzip_types application/javascript application/x-javascript text/css text/javascript;
+    gzip_comp_level 5;
+    gzip_buffers 16 8k;
+    gzip_min_length 256;
+
+    include /etc/nginx/snippets/self-signed.conf;
+    include /etc/nginx/snippets/ssl-params.conf;
+
+    location /_next/static/ {
+        proxy_cache STATIC;
+        proxy_pass http://d01.pirsani_upstream;
+        expires 60m;
+        access_log off;
+        }
+
+    location / {
+        proxy_pass http://d01.pirsani_upstream; # !!! - change to your app port
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        }
 }
 ```
 

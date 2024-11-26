@@ -5,9 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider        = "prisma-client-js"
-  output          = "../../node_modules/@prisma-honorarium/client"
-  previewFeatures = ["typedSql"]
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma-honorarium/client"
+  // previewFeatures = ["typedSql"]
 }
 
 datasource db {
@@ -139,24 +139,6 @@ model Session {
 
   @@map("sessions")
 }
-
-// model PejabatPenandatangan {
-//   id                Int        @id @default(autoincrement())
-//   nama              String
-//   NIP               String     @map("nip")
-//   jabatan           String // enum bendahara, ppk
-//   tmtAwal           DateTime   @map("tmt_awal")
-//   tmtAkhir          DateTime   @map("tmt_akhir")
-//   aktif             Boolean
-//   createdBy         String     @map("created_by")
-//   createdAt         DateTime   @default(now()) @map("created_at")
-//   updatedBy         String?    @map("updated_by")
-//   updatedAt         DateTime?  @updatedAt @map("updated_at")
-//   kegiatanBendahara Kegiatan[] @relation("bendahara_kegiatan")
-//   kegiatanPPK       Kegiatan[] @relation("ppk_kegiatan")
-
-//   @@map("pejabat_penandatangan")
-// }
 
 model PangkatGolongan {
   id                    String                  @id
