@@ -13,7 +13,13 @@ HONORARIUM
 clone project
 
 ```sh
-git clone git@github.com:pirsani/panda.git
+git clone git@git.kemlu.go.id:bangtik/aplikasi-keuangan-pusdiklat.git
+```
+
+or
+
+```
+git clone http://git.kemlu.go.id/bangtik/aplikasi-keuangan-pusdiklat.git
 ```
 
 install
