@@ -1,6 +1,6 @@
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { faker } from "@faker-js/faker";
-import { LOKASI, Organisasi } from "@prisma-honorarium/client";
+import { Organisasi } from "@prisma-honorarium/client";
 import bcrypt from "bcryptjs"; // Import bcrypt for password hashing and comparison
 import csv from "csv-parser";
 import fs from "fs";
@@ -557,6 +557,25 @@ async function main() {
     ],
   });
 
+  // karena default page setelah login adalah dashboard maka harus dipastikan punya permission ke dashboard
+  const initialPermission = await dbHonorarium.permission.findMany({
+    where: {
+      OR: [{ action: "create:any" }, { name: "read-any-dashbboard" }],
+    },
+  }); // get all permissions with action create:any
+
+  // iterate over the initial permissions and assign them to the superadmin role
+  const promises = initialPermission.map((permission) => {
+    return dbHonorarium.rolePermission.create({
+      data: {
+        roleId: "superadmin",
+        permissionId: permission.id,
+      },
+    });
+  });
+
+  await Promise.all(promises);
+
   const password = await bcrypt.hash(
     process.env.INIT_ADMIN_PASSWORD || "123456",
     10
@@ -590,72 +609,72 @@ async function main() {
     ],
   });
 
-  const kegiatanLuarKota = await dbHonorarium.kegiatan.create({
-    data: {
-      nama: "Kegiatan LuarKota",
-      createdBy: "admin",
-      keterangan: "Kegiatan LuarKota",
-      tanggalMulai: new Date(),
-      tanggalSelesai: new Date(),
-      lokasi: LOKASI.LUAR_KOTA,
-      dokumenNodinMemoSk: "123456789.pdf",
-      dokumenJadwal: "123456789.pdf",
-      satkerId: initialUnitKerja[10].id,
-      unitKerjaId: initialUnitKerja[10].id,
-      provinsiId: "18",
-      status: "setup-kegiatan",
-    },
-  });
+  // const kegiatanLuarKota = await dbHonorarium.kegiatan.create({
+  //   data: {
+  //     nama: "Kegiatan LuarKota",
+  //     createdBy: "admin",
+  //     keterangan: "Kegiatan LuarKota",
+  //     tanggalMulai: new Date(),
+  //     tanggalSelesai: new Date(),
+  //     lokasi: LOKASI.LUAR_KOTA,
+  //     dokumenNodinMemoSk: "123456789.pdf",
+  //     dokumenJadwal: "123456789.pdf",
+  //     satkerId: initialUnitKerja[10].id,
+  //     unitKerjaId: initialUnitKerja[10].id,
+  //     provinsiId: "18",
+  //     status: "setup-kegiatan",
+  //   },
+  // });
 
-  const kegiatanLuarNegeri = await dbHonorarium.kegiatan.create({
-    data: {
-      nama: "Kegiatan Luar Negeri",
-      createdBy: "admin",
-      keterangan: "Kegiatan Luar Negeri",
-      tanggalMulai: new Date(),
-      tanggalSelesai: new Date(),
-      lokasi: LOKASI.LUAR_NEGERI,
-      dokumenNodinMemoSk: "123456789.pdf",
-      dokumenJadwal: "123456789.pdf",
-      satkerId: initialUnitKerja[10].id,
-      unitKerjaId: initialUnitKerja[10].id,
-      status: "setup-kegiatan",
-    },
-  });
+  // const kegiatanLuarNegeri = await dbHonorarium.kegiatan.create({
+  //   data: {
+  //     nama: "Kegiatan Luar Negeri",
+  //     createdBy: "admin",
+  //     keterangan: "Kegiatan Luar Negeri",
+  //     tanggalMulai: new Date(),
+  //     tanggalSelesai: new Date(),
+  //     lokasi: LOKASI.LUAR_NEGERI,
+  //     dokumenNodinMemoSk: "123456789.pdf",
+  //     dokumenJadwal: "123456789.pdf",
+  //     satkerId: initialUnitKerja[10].id,
+  //     unitKerjaId: initialUnitKerja[10].id,
+  //     status: "setup-kegiatan",
+  //   },
+  // });
 
-  const kegiatan = await dbHonorarium.kegiatan.create({
-    data: {
-      nama: "Kegiatan DalamKota",
-      createdBy: "admin",
-      keterangan: "Kegiatan DalamKota",
-      tanggalMulai: new Date(),
-      tanggalSelesai: new Date(),
-      lokasi: LOKASI.DALAM_KOTA,
-      provinsiId: "31",
-      dokumenNodinMemoSk: "123456789.pdf",
-      dokumenJadwal: "123456789.pdf",
-      satkerId: initialUnitKerja[10].id,
-      unitKerjaId: initialUnitKerja[10].id,
-      status: "setup-kegiatan",
-    },
-  });
+  // const kegiatan = await dbHonorarium.kegiatan.create({
+  //   data: {
+  //     nama: "Kegiatan DalamKota",
+  //     createdBy: "admin",
+  //     keterangan: "Kegiatan DalamKota",
+  //     tanggalMulai: new Date(),
+  //     tanggalSelesai: new Date(),
+  //     lokasi: LOKASI.DALAM_KOTA,
+  //     provinsiId: "31",
+  //     dokumenNodinMemoSk: "123456789.pdf",
+  //     dokumenJadwal: "123456789.pdf",
+  //     satkerId: initialUnitKerja[10].id,
+  //     unitKerjaId: initialUnitKerja[10].id,
+  //     status: "setup-kegiatan",
+  //   },
+  // });
 
-  const kelas = await dbHonorarium.kelas.createMany({
-    data: [
-      {
-        nama: "Kelas A",
-        createdBy: "init",
-        kode: "PDK-75-A",
-        kegiatanId: kegiatan.id,
-      },
-      {
-        nama: "Kelas B",
-        createdBy: "init",
-        kode: "PDK-75-B",
-        kegiatanId: kegiatan.id,
-      },
-    ],
-  });
+  // const kelas = await dbHonorarium.kelas.createMany({
+  //   data: [
+  //     {
+  //       nama: "Kelas A",
+  //       createdBy: "init",
+  //       kode: "PDK-75-A",
+  //       kegiatanId: kegiatan.id,
+  //     },
+  //     {
+  //       nama: "Kelas B",
+  //       createdBy: "init",
+  //       kode: "PDK-75-B",
+  //       kegiatanId: kegiatan.id,
+  //     },
+  //   ],
+  // });
 
   const materi = await dbHonorarium.materi.createMany({
     data: [
@@ -929,74 +948,74 @@ async function main() {
     },
   });
 
-  const jadwal = await dbHonorarium.jadwal.createMany({
-    data: [
-      {
-        kegiatanId: kegiatan.id,
-        kelasId: kelasku[0].id,
-        materiId: materiku[0].id,
-        tanggal: new Date(),
-        createdBy: "init",
-      },
-      {
-        kegiatanId: kegiatan.id,
-        kelasId: kelasku[0].id,
-        materiId: materiku[1].id,
-        tanggal: new Date(),
-        createdBy: "init",
-      },
-      {
-        kegiatanId: kegiatan.id,
-        kelasId: kelasku[1].id,
-        materiId: materiku[2].id,
-        tanggal: new Date(),
-        createdBy: "init",
-      },
-      {
-        kegiatanId: kegiatan.id,
-        kelasId: kelasku[1].id,
-        materiId: materiku[3].id,
-        tanggal: new Date(),
-        createdBy: "init",
-      },
-    ],
-  });
+  // const jadwal = await dbHonorarium.jadwal.createMany({
+  //   data: [
+  //     {
+  //       kegiatanId: kegiatan.id,
+  //       kelasId: kelasku[0].id,
+  //       materiId: materiku[0].id,
+  //       tanggal: new Date(),
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kegiatanId: kegiatan.id,
+  //       kelasId: kelasku[0].id,
+  //       materiId: materiku[1].id,
+  //       tanggal: new Date(),
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kegiatanId: kegiatan.id,
+  //       kelasId: kelasku[1].id,
+  //       materiId: materiku[2].id,
+  //       tanggal: new Date(),
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kegiatanId: kegiatan.id,
+  //       kelasId: kelasku[1].id,
+  //       materiId: materiku[3].id,
+  //       tanggal: new Date(),
+  //       createdBy: "init",
+  //     },
+  //   ],
+  // });
 
-  const jadwalku = await dbHonorarium.jadwal.findMany({
-    where: {
-      createdBy: "init",
-    },
-  });
+  // const jadwalku = await dbHonorarium.jadwal.findMany({
+  //   where: {
+  //     createdBy: "init",
+  //   },
+  // });
 
-  const jadwalNarasumber = await dbHonorarium.jadwalNarasumber.createMany({
-    data: [
-      {
-        jadwalId: jadwalku[0].id,
-        narasumberId: narasumberku[0].id,
-        createdBy: "init",
-      },
-      {
-        jadwalId: jadwalku[0].id,
-        narasumberId: narasumberku[1].id,
-        createdBy: "init",
-      },
-      {
-        jadwalId: jadwalku[1].id,
-        narasumberId: narasumberku[2].id,
-        createdBy: "init",
-      },
-      {
-        jadwalId: jadwalku[2].id,
-        narasumberId: narasumberku[2].id,
-        createdBy: "init",
-      },
-      {
-        jadwalId: jadwalku[2].id,
-        narasumberId: narasumberku[3].id,
-        createdBy: "init",
-      },
-    ],
-  });
+  // const jadwalNarasumber = await dbHonorarium.jadwalNarasumber.createMany({
+  //   data: [
+  //     {
+  //       jadwalId: jadwalku[0].id,
+  //       narasumberId: narasumberku[0].id,
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       jadwalId: jadwalku[0].id,
+  //       narasumberId: narasumberku[1].id,
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       jadwalId: jadwalku[1].id,
+  //       narasumberId: narasumberku[2].id,
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       jadwalId: jadwalku[2].id,
+  //       narasumberId: narasumberku[2].id,
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       jadwalId: jadwalku[2].id,
+  //       narasumberId: narasumberku[3].id,
+  //       createdBy: "init",
+  //     },
+  //   ],
+  // });
 
   const pmkAcuan = await dbHonorarium.pmkAcuan.createMany({
     data: [

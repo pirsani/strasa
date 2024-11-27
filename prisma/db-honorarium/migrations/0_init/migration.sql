@@ -20,6 +20,8 @@ CREATE TYPE "StatusAktif" AS ENUM ('AKTIF', 'NON_AKTIF', 'DIBUBARKAN');
 CREATE TABLE "permissions" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "resource" TEXT NOT NULL,
+    "action" TEXT NOT NULL,
     "description" TEXT,
     "created_by" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -40,6 +42,15 @@ CREATE TABLE "roles" (
     "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "role_extensions" (
+    "id" TEXT NOT NULL,
+    "base_role_id" TEXT NOT NULL,
+    "extended_role_id" TEXT NOT NULL,
+
+    CONSTRAINT "role_extensions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -709,23 +720,6 @@ CREATE TABLE "dokumen_kegiatan" (
 );
 
 -- CreateTable
-CREATE TABLE "daftar_nominatif_honorarium" (
-    "id" TEXT NOT NULL,
-    "jadwal_id" TEXT NOT NULL,
-    "besaran" DECIMAL(10,0) NOT NULL,
-    "jumlah" INTEGER NOT NULL,
-    "pajak_dpp" DECIMAL(10,0) NOT NULL,
-    "pajak_tarif" DECIMAL(5,2) NOT NULL,
-    "pph_21" DECIMAL(5,2) NOT NULL,
-    "jumlah_diterima" DECIMAL(10,2) NOT NULL,
-    "nama_rekening" TEXT,
-    "nomor_rekening" TEXT,
-    "dokumen_bukti_pembayaran" TEXT,
-
-    CONSTRAINT "daftar_nominatif_honorarium_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "pembayaran" (
     "id" TEXT NOT NULL,
     "kegiatan_id" TEXT NOT NULL,
@@ -867,8 +861,26 @@ CREATE TABLE "pagu" (
     CONSTRAINT "pagu_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "sp2d" (
+    "id" TEXT NOT NULL,
+    "nomor_sp2d" TEXT NOT NULL,
+    "tanggal_sp2d" TIMESTAMP(3) NOT NULL,
+    "jumlah_diminta" BIGINT NOT NULL DEFAULT 0,
+    "jumlah_potongan" BIGINT NOT NULL DEFAULT 0,
+    "jumlah_dibayar" BIGINT NOT NULL DEFAULT 0,
+    "dokumen" TEXT,
+    "created_by" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by" TEXT,
+    "updated_at" TIMESTAMP(3),
+    "unit_kerja_id" TEXT NOT NULL,
+
+    CONSTRAINT "sp2d_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
-CREATE UNIQUE INDEX "permissions_name_key" ON "permissions"("name");
+CREATE UNIQUE INDEX "permissions_resource_action_key" ON "permissions"("resource", "action");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "roles_name_key" ON "roles"("name");
@@ -940,9 +952,6 @@ CREATE UNIQUE INDEX "kelas_kode_key" ON "kelas"("kode");
 CREATE UNIQUE INDEX "jadwal_narasumber_jadwal_id_narasumber_id_key" ON "jadwal_narasumber"("jadwal_id", "narasumber_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "daftar_nominatif_honorarium_jadwal_id_key" ON "daftar_nominatif_honorarium"("jadwal_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "negara_kode_alpha_2_key" ON "negara"("kode_alpha_2");
 
 -- CreateIndex
@@ -950,6 +959,18 @@ CREATE UNIQUE INDEX "negara_kode_alpha_3_key" ON "negara"("kode_alpha_3");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "negara_kode_numeric_key" ON "negara"("kode_numeric");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "pagu_tahun_unit_kerja_id_key" ON "pagu"("tahun", "unit_kerja_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "sp2d_nomor_sp2d_key" ON "sp2d"("nomor_sp2d");
+
+-- AddForeignKey
+ALTER TABLE "role_extensions" ADD CONSTRAINT "role_extensions_base_role_id_fkey" FOREIGN KEY ("base_role_id") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "role_extensions" ADD CONSTRAINT "role_extensions_extended_role_id_fkey" FOREIGN KEY ("extended_role_id") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -1150,9 +1171,6 @@ ALTER TABLE "dokumen_kegiatan" ADD CONSTRAINT "dokumen_kegiatan_kegiatan_id_fkey
 ALTER TABLE "dokumen_kegiatan" ADD CONSTRAINT "dokumen_kegiatan_jenis_dokumen_id_fkey" FOREIGN KEY ("jenis_dokumen_id") REFERENCES "jenis_dokumen_kegiatan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "daftar_nominatif_honorarium" ADD CONSTRAINT "daftar_nominatif_honorarium_jadwal_id_fkey" FOREIGN KEY ("jadwal_id") REFERENCES "jadwal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "pembayaran" ADD CONSTRAINT "pembayaran_kegiatan_id_fkey" FOREIGN KEY ("kegiatan_id") REFERENCES "kegiatan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -1182,3 +1200,5 @@ ALTER TABLE "pejabat_perbendaharaan" ADD CONSTRAINT "pejabat_perbendaharaan_satk
 -- AddForeignKey
 ALTER TABLE "pagu" ADD CONSTRAINT "pagu_unit_kerja_id_fkey" FOREIGN KEY ("unit_kerja_id") REFERENCES "organisasi"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
+-- AddForeignKey
+ALTER TABLE "sp2d" ADD CONSTRAINT "sp2d_unit_kerja_id_fkey" FOREIGN KEY ("unit_kerja_id") REFERENCES "organisasi"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
