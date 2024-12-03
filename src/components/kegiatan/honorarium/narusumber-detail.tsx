@@ -1,3 +1,4 @@
+"use client";
 import { updateJumlahJpJadwalNarasumber } from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
 import { OptionSbm } from "@/actions/sbm";
 import ButtonEye from "@/components/button-eye-open-document";
@@ -53,17 +54,20 @@ const NarasumberDetail = ({
   // ignore react-hooks/exhaustive-deps
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
+    console.debug("useEffect jadwalNarasumber", jadwalNarasumber);
     if (jadwalNarasumber.jenisHonorariumId !== null) {
+      console.debug("jenisHonorariumId", jadwalNarasumber.jenisHonorariumId);
+      console.debug("DND01_a optionsSbmHonorarium", optionsSbmHonorarium);
       const defaultOption =
         optionsSbmHonorarium.find(
           (option) => option.value === jadwalNarasumber.jenisHonorariumId
         ) || null;
-      //console.log("defaultOption", defaultOption);
+      //console.debug("defaultOption", defaultOption);
       setSelectedSbmHonorarium(defaultOption);
     }
-    //console.log("selectedSbmHonorarium", jadwalNarasumber.jenisHonorariumId);
+    //console.debug("selectedSbmHonorarium", jadwalNarasumber.jenisHonorariumId);
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jadwalNarasumber]);
+  }, [jadwalNarasumber, optionsSbmHonorarium]);
 
   //const sbm: Decimal = new Decimal(1700000); // dari tabel referensi sbm_honorarium
   // pajak ASN
@@ -98,7 +102,7 @@ const NarasumberDetail = ({
   };
 
   const handleSbmHonorariumChange = (selected: OptionSbm | null) => {
-    console.log("Selected sbm honorarium:", selected);
+    console.debug("Selected sbm honorarium:", selected);
     setSelectedSbmHonorarium(selected);
     setIsChanged(true);
   };
@@ -171,7 +175,12 @@ const NarasumberDetail = ({
       (statusPengajuanHonorarium === "SUBMITTED" ||
         statusPengajuanHonorarium === "REVISED");
     setIsAllowEditJp(isOnPengajuan || isOnVerifikasi);
-    console.log("[check proses]", isOnPengajuan, isOnVerifikasi, isAllowEditJp);
+    console.debug(
+      "[check proses]",
+      isOnPengajuan,
+      isOnVerifikasi,
+      isAllowEditJp
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proses, statusPengajuanHonorarium]);
 
@@ -318,15 +327,18 @@ const SelectSbmHonorarium = ({
     initialOption
   );
 
+  console.debug("initialOption", initialOption);
+  console.debug("selectedOption", selectedOption);
+
   const handleChange = (
     newValue: SingleValue<OptionSbm>,
     actionMeta: ActionMeta<OptionSbm>
   ) => {
-    console.log("Selected option:", newValue);
+    console.debug("Selected option:", newValue);
     // You can access extra attributes here
     if (newValue) {
-      console.log("Selected besaran:", newValue.besaran);
-      console.log("Selected id:", newValue.value);
+      console.debug("Selected besaran:", newValue.besaran);
+      console.debug("Selected id:", newValue.value);
     }
     setSelectedOption(newValue);
     onChange(newValue);

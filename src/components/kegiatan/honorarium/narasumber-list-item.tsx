@@ -1,7 +1,7 @@
 "use client";
 import { OptionSbm } from "@/actions/sbm";
 import { Button } from "@/components/ui/button";
-import { JadwalNarsum, Narsum } from "@/data/jadwal";
+import { JadwalNarsum } from "@/data/jadwal";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ALUR_PROSES } from "@prisma-honorarium/client";
@@ -26,7 +26,6 @@ export const NarasumberListItem = ({
   statusPengajuanHonorarium = null,
 }: NarasumberListItemProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [detail, setDetail] = useState<Narsum | null>(null);
   const toggleDetail = () => {
     setIsDetailOpen((prevState) => !prevState);
   };
