@@ -60,17 +60,20 @@ export const NarasumberListItem = ({
             <Column>{jadwalNarasumber.narasumber.jabatan}</Column>
           </>
         )}
-        {isDetailOpen && (
-          <div className="p-0 bg-blue-50 h-auto w-full bg-white rounded-sm border border-blue-300">
-            <NarasumberDetail
-              optionsSbmHonorarium={optionsSbmHonorarium}
-              narasumber={jadwalNarasumber.narasumber}
-              jadwalNarasumber={jadwalNarasumber}
-              proses={proses}
-              statusPengajuanHonorarium={statusPengajuanHonorarium}
-            />
-          </div>
-        )}
+        <div
+          className={cn(
+            "p-0 bg-blue-50 h-auto w-full bg-white rounded-sm border border-blue-300",
+            isDetailOpen ? "" : "hidden"
+          )}
+        >
+          <NarasumberDetail
+            optionsSbmHonorarium={optionsSbmHonorarium}
+            narasumber={jadwalNarasumber.narasumber}
+            jadwalNarasumber={jadwalNarasumber}
+            proses={proses}
+            statusPengajuanHonorarium={statusPengajuanHonorarium}
+          />
+        </div>
       </div>
     </div>
   );

@@ -560,7 +560,13 @@ async function main() {
   // karena default page setelah login adalah dashboard maka harus dipastikan punya permission ke dashboard
   const initialPermission = await dbHonorarium.permission.findMany({
     where: {
-      OR: [{ action: "create:any" }, { name: "read-any-dashbboard" }],
+      OR: [
+        { action: "create:any" },
+        { name: "read-any-dashbboard" },
+        { name: "read-any-wokrbench" },
+        { name: "read-any-pagu" },
+        { name: "read-any-sp2d" },
+      ],
     },
   }); // get all permissions with action create:any
 
