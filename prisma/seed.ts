@@ -563,7 +563,7 @@ async function main() {
       OR: [
         { action: "create:any" },
         { name: "read-any-dashbboard" },
-        { name: "read-any-wokrbench" },
+        { name: "read-any-workbench" },
         { name: "read-any-pagu" },
         { name: "read-any-sp2d" },
       ],
