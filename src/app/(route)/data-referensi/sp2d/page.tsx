@@ -10,13 +10,13 @@ import Sp2dContainer from "./_components/sp2d-container";
 const ReferensiSp2dPage = async () => {
   const createAny = await checkSessionPermission({
     actions: ["create:any"],
-    resource: "ref-pagu",
+    resource: "ref-sp2d",
     redirectOnUnauthorized: false,
   });
 
   const createOwn = await checkSessionPermission({
     actions: ["create:own"],
-    resource: "ref-pagu",
+    resource: "ref-sp2d",
     redirectOnUnauthorized: false,
   });
 

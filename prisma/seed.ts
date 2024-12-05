@@ -564,6 +564,7 @@ async function main() {
         { action: "create:any" },
         { name: "read-any-dashbboard" },
         { name: "read-any-workbench" },
+        { name: "read-any-pending" },
         { name: "read-any-pagu" },
         { name: "read-any-sp2d" },
       ],
