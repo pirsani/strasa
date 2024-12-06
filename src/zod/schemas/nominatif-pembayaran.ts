@@ -8,9 +8,13 @@ export const nominatifPembayaranWithoutFileSchema = z.object({
     .string()
     .min(2, { message: "Jenis Pengajuan harus dipilih" }),
   jadwalId: z.string().optional(), // Make jadwalId optional initially
-  bendaharaId: z.string().min(21, { message: "Bendahara harus dipilih" }),
-  ppkId: z.string().min(21, { message: "PPK harus dipilih" }),
-  buktiPajakCuid: z.string().min(21, { message: "Bukti Pajak harus dipilih" }),
+  bendaharaId: z
+    .string({ message: "Bendahara harus dipilih" })
+    .min(21, { message: "Bendahara harus dipilih" }),
+  ppkId: z
+    .string({ message: "Ppk harus dipilih" })
+    .min(21, { message: "PPK harus dipilih" }),
+  buktiPajakCuid: z.string().optional(),
   catatan: z.string().optional(),
 });
 
@@ -33,6 +37,18 @@ export const nominatifPembayaranSchema = nominatifPembayaranWithoutFileSchema
     {
       message: "Jadwal harus dipilih",
       path: ["jadwalId"], // Specify the path to the field that should show the error
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.jenisPengajuan === "HONORARIUM") {
+        return data.buktiPajakCuid && data.buktiPajakCuid.length >= 21;
+      }
+      return true;
+    },
+    {
+      message: "Silakan upload dokumen bukti pajak",
+      path: ["buktiPajakCuid"], // Specify the path to the field that should show the error
     }
   );
 

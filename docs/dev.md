@@ -148,6 +148,8 @@ pnpm prisma migrate dev --create-only --name rename_tbl_role_extension --schema=
 
 pnpm prisma migrate dev --create-only --name delete_NominatifHonorarium --schema=./prisma/db-honorarium/schema.prisma
 
+pnpm prisma migrate dev --create-only --name opsionalBuktiPajak --schema=./prisma/db-honorarium/schema.prisma
+
 pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
 
 pnpm run prisma:generate

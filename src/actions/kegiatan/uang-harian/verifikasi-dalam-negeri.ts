@@ -156,4 +156,40 @@ const setujuiPengajuanUhDalamNegeri = async (
   }
 };
 
+export const revisiPengajuanUhDalamNegeri = async (
+  kegiatanId: string,
+  catatan?: string | null
+): Promise<ActionResponse<boolean>> => {
+  //update status riwayat pengajuan
+  try {
+    const pengguna = await getSessionPenggunaForAction();
+    if (!pengguna.success) {
+      return pengguna;
+    }
+
+    const satkerId = pengguna.data.satkerId;
+    const unitKerjaId = pengguna.data.unitKerjaId;
+    const penggunaId = pengguna.data.penggunaId;
+
+    const updated = await updateStatusUhDalamNegeri(
+      kegiatanId,
+      STATUS_PENGAJUAN.REVISE,
+      catatan
+    );
+
+    return {
+      success: true,
+      data: true,
+    };
+  } catch (error) {
+    console.error("[ERROR revisiPengajuanUhDalamNegeri]", error);
+    return {
+      success: false,
+      error: "E-RPUHDN-01",
+      message:
+        "Terjadi kesalahan saat revisi pengajuan uang harian luar negeri",
+    };
+  }
+};
+
 export default setujuiPengajuanUhDalamNegeri;

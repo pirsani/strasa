@@ -933,7 +933,7 @@ model Pembayaran {
   satker                  Organisasi            @relation(fields: [satkerId], references: [id], name: "satker_pembayaran")
   mapTo                   String                @map("map_to")
   mappedId                String                @map("mapped_id")
-  dokumenBuktiPajak       String                @map("dokumen_bukti_pajak")
+  dokumenBuktiPajak       String?               @map("dokumen_bukti_pajak")
   bendaharaId             String                @map("bendahara_id")
   bendahara               PejabatPerbendaharaan @relation(fields: [bendaharaId], references: [id], name: "bendahara_pembayaran")
   jenisPengajuan          JENIS_PENGAJUAN

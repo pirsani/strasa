@@ -3,7 +3,6 @@ import { pengajuanPembayaranUangHarian } from "@/actions/kegiatan/uang-harian/no
 import updateBendaharaPpkNominatifUhDalamNegeri from "@/actions/kegiatan/uang-harian/nominatif-dalam-negeri";
 import updateBendaharaPpkNominatifUhLuarNegeri from "@/actions/kegiatan/uang-harian/nominatif-luar-negeri";
 import CummulativeErrors from "@/components/form/cummulative-error";
-import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
 import RequiredLabel from "@/components/form/required";
 import SelectBendahara from "@/components/form/select-bendahara";
 import InfoKurs from "@/components/info-kurs";
@@ -20,8 +19,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { JENIS_PENGAJUAN } from "@/lib/constants";
 import { KursResponse } from "@/utils/kurs-bi";
 import {
-  NominatifPembayaran,
-  nominatifPembayaranSchema,
+  NominatifPembayaranWithoutFile,
+  nominatifPembayaranWithoutFileSchema,
 } from "@/zod/schemas/nominatif-pembayaran";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
@@ -33,7 +32,7 @@ import { toast } from "sonner";
 interface FormNominatifPembayaranUhProps {
   kegiatan: KegiatanWithDetail;
   onCanceled?: () => void;
-  onSuccess?: (data: NominatifPembayaran) => void;
+  onSuccess?: (data: NominatifPembayaranWithoutFile) => void;
   jenisPengajuan: JENIS_PENGAJUAN;
 }
 const FormNominatifPembayaranUh = ({
@@ -43,8 +42,8 @@ const FormNominatifPembayaranUh = ({
   jenisPengajuan: initJenisPengajuan,
 }: FormNominatifPembayaranUhProps) => {
   const kegiatanId = kegiatan.id;
-  const form = useForm<NominatifPembayaran>({
-    resolver: zodResolver(nominatifPembayaranSchema),
+  const form = useForm<NominatifPembayaranWithoutFile>({
+    resolver: zodResolver(nominatifPembayaranWithoutFileSchema),
     defaultValues: {
       id: createId(),
       buktiPajakCuid: "buktiPajak" + createId() + ".pdf",
@@ -77,13 +76,9 @@ const FormNominatifPembayaranUh = ({
     // Do nothing if the file is null
   };
 
-  const onSubmit = async (data: NominatifPembayaran) => {
-    console.log(data);
-    const { dokumenBuktiPajak, ...nominatifPembayaranWithoutFile } = data;
-
-    const pembayaran = await pengajuanPembayaranUangHarian(
-      nominatifPembayaranWithoutFile
-    );
+  const onSubmit = async (data: NominatifPembayaranWithoutFile) => {
+    console.debug(data);
+    const pembayaran = await pengajuanPembayaranUangHarian(data);
 
     if (pembayaran.success) {
       toast.success("Pengajuan pembayaran berhasil diajukan");
@@ -213,30 +208,6 @@ const FormNominatifPembayaranUh = ({
               <WandSparkles size={20} />
               <span>Generate</span>
             </Button>
-          </div>
-          <div className="flex flex-row gap-2">
-            <FormField
-              control={form.control}
-              name="dokumenBuktiPajak"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>
-                    Upload Dokumen Bukti Pajak
-                    <RequiredLabel />
-                  </FormLabel>
-                  <FormControl>
-                    <FormFileImmediateUpload
-                      cuid={buktiPajakCuid}
-                      folder={kegiatanId}
-                      name={field.name}
-                      onFileChange={handleFileChange}
-                      className="bg-white"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
           <div className="flex flex-row gap-2">
             <FormField

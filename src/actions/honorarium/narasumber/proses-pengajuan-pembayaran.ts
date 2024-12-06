@@ -340,7 +340,12 @@ export const pengajuanPembayaranHonorarium = async (
   objRiwayatPengajuanUpdate.catatanPermintaaPembayaran = data.catatan;
 
   try {
-    if (!data.jadwalId || !data.bendaharaId || !data.ppkId) {
+    if (
+      !data.jadwalId ||
+      !data.bendaharaId ||
+      !data.ppkId ||
+      !data.buktiPajakCuid
+    ) {
       return {
         success: false,
         error: "E-RTP-001",

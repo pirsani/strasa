@@ -4,7 +4,11 @@ import {
   simpanDataSbmTransporJakartaKeKotaKabSekitar,
 } from "@/actions/sbm/transpor";
 import ConfirmDialog from "@/components/confirm-dialog";
-import { KolomAksi, TabelGeneric } from "@/components/tabel-generic";
+import {
+  formatCurrency,
+  KolomAksi,
+  TabelGeneric,
+} from "@/components/tabel-generic";
 import { SbmTransporJakartaKeKotaKabSekitarPlainObject } from "@/data/sbm-transpor/dalam-kota";
 import { sbmTransporJakartaKeKotaKabSekitarSchema } from "@/zod/schemas/transpor";
 
@@ -49,7 +53,7 @@ export const TabelSbmTransporJakartaKeKotaSekitar = ({
     {
       accessorKey: "besaran",
       header: "Besaran",
-      cell: (info) => info.getValue(),
+      cell: formatCurrency<SbmTransporJakartaKeKotaKabSekitarPlainObject>,
       footer: "Besaran",
     },
     {

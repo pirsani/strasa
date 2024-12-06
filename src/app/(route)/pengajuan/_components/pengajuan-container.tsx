@@ -122,7 +122,11 @@ const PengajuanContainer = () => {
         tidak bisa update dokumen sampai pengajuan di minta untuk revisi dengan status revisi di kolom statusUhDalamNegeri
          */}
           {jenisPengajuan == "UH_DALAM_NEGERI" && kegiatan && (
-            <UhDalamNegeriContainer kegiatanId={kegiatan.id} />
+            <UhDalamNegeriContainer
+              kegiatanId={kegiatan.id}
+              riwayatPengajuan={pengajuanUhDalamNegeri}
+              dokumenKegiatan={kegiatan.dokumenKegiatan}
+            />
           )}
 
           {/*

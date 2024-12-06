@@ -2,7 +2,9 @@ import { KegiatanWithDetail } from "@/actions/kegiatan";
 import getPesertaKegiatanDalamNegeri, {
   PesertaKegiatanDalamNegeri,
 } from "@/actions/kegiatan/peserta/dalam-negeri";
-import setujuiPengajuanUhDalamNegeri from "@/actions/kegiatan/uang-harian/verifikasi-dalam-negeri";
+import setujuiPengajuanUhDalamNegeri, {
+  revisiPengajuanUhDalamNegeri,
+} from "@/actions/kegiatan/uang-harian/verifikasi-dalam-negeri";
 import FloatingComponent from "@/components/floating-component";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,6 +26,8 @@ const UangHarianDalamNegeriContainer = ({
     PesertaKegiatanDalamNegeri[] | null
   >(null);
   const [isPreviewHidden, setIsPreviewHidden] = useState(false);
+  const [catatanRevisi, setCatatanRevisi] = useState<string | null>(null);
+
   const handleOnHide = () => {
     setIsPreviewHidden(true);
   };
@@ -47,9 +51,21 @@ const UangHarianDalamNegeriContainer = ({
     setPesertaUpdated(data);
   };
 
-  const handleSimpanUpdatedData = () => {
-    if (pesertaUpdated) {
-      console.log("pesertaUpdated", pesertaUpdated);
+  // const handleSimpanUpdatedData = () => {
+  //   if (pesertaUpdated) {
+  //     console.log("pesertaUpdated", pesertaUpdated);
+  //   }
+  // };
+
+  const handleRevisiVerifikasi = async () => {
+    const updated = await revisiPengajuanUhDalamNegeri(
+      kegiatan?.id,
+      catatanRevisi
+    );
+    if (updated.success) {
+      toast.success("Status pengajuan dikembalikan ke revisi untuk diperbaiki");
+    } else {
+      toast.error(`Terjadi kesalahan ${updated.error} ${updated.message}`);
     }
   };
 
@@ -112,6 +128,7 @@ const UangHarianDalamNegeriContainer = ({
           <textarea
             className="w-full h-24 border border-gray-300 rounded p-2 ring-blue-500 outline-red-500"
             placeholder="Tulis catatan disini"
+            onChange={(e) => setCatatanRevisi(e.target.value)}
           ></textarea>
         </div>
         <div className="flex flex-row gap-2">
@@ -119,7 +136,7 @@ const UangHarianDalamNegeriContainer = ({
             type="button"
             className="w-1/3"
             variant={"destructive"}
-            onClick={handleSimpanUpdatedData}
+            onClick={handleRevisiVerifikasi}
           >
             Revisi
           </Button>
