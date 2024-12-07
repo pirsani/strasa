@@ -38,6 +38,10 @@ export const BarChartRealisasi = ({ data = [] }: BarChartProps) => {
     color: colors[index % colors.length],
   }));
 
+  // Calculate the maximum value in the data
+  const maxValue = Math.max(...data.map((entry) => entry.total));
+  const yAxisMax = maxValue * 1.2; // 20% higher than the max value
+
   const renderCustomLabel = (props: any) => {
     const { x, y, width, value } = props;
     return (
@@ -65,7 +69,7 @@ export const BarChartRealisasi = ({ data = [] }: BarChartProps) => {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis tickFormatter={formatNumberWithSuffix} />
+        <YAxis tickFormatter={formatNumberWithSuffix} domain={[0, yAxisMax]} />
         <Tooltip formatter={formatTooltip} />
         <Legend payload={legendPayload} />
         <Bar dataKey="total" fill="#8884d8">

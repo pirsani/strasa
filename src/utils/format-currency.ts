@@ -39,7 +39,7 @@ export const formatCurrency = (
 export const formatNumberWithSuffix = (tickItem: number): string => {
   const formatter = new Intl.NumberFormat("id-ID", {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
   });
 
   const absValue = Math.abs(tickItem);

@@ -28,6 +28,13 @@ interface BarChartPaguRealisasiProps {
   data: PaguRealisasiSisa[];
 }
 const BarChartPaguRealisasi = ({ data = [] }: BarChartPaguRealisasiProps) => {
+  // Calculate the maximum value in the data
+  const maxValue = Math.max(
+    ...data.flatMap((entry) => [entry.pagu, entry.realisasi, entry.sisa])
+  );
+
+  const yAxisMax = maxValue * 1.2; // 20% higher than the max value
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
@@ -43,23 +50,23 @@ const BarChartPaguRealisasi = ({ data = [] }: BarChartPaguRealisasiProps) => {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis tickFormatter={formatNumberWithSuffix} />
+        <YAxis tickFormatter={formatNumberWithSuffix} domain={[0, yAxisMax]} />
         <Tooltip formatter={formatTooltip} />
         <Legend />
         <Bar
           dataKey="pagu"
           fill="#8884d8"
-          activeBar={<Rectangle fill="pink" stroke="blue" />}
+          activeBar={<Rectangle fill="#8884d8" stroke="green" />}
         />
         <Bar
           dataKey="realisasi"
           fill="#82ca9d"
-          activeBar={<Rectangle fill="gold" stroke="purple" />}
+          activeBar={<Rectangle fill="#82ca9d" stroke="blue" />}
         />
         <Bar
           dataKey="sisa"
           fill="#ffc658"
-          activeBar={<Rectangle fill="red" stroke="purple" />}
+          activeBar={<Rectangle fill="#ffc658" stroke="red" />}
         />
       </BarChart>
     </ResponsiveContainer>
