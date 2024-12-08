@@ -400,8 +400,6 @@ export const TabelRiwayatPengajuan = ({
                 <tr className="bg-gray-400 text-white h-12 w-full">
                   <th className="border px-1">Tanggal Pengajuan</th>
                   <th className="border px-1">Tanggal Dibayar</th>
-                  <th className="border px-1 w-1/6">Jenis Pengajuan</th>
-                  <th> Aksi </th>
                 </tr>
               </thead>
               <tbody>
@@ -412,39 +410,6 @@ export const TabelRiwayatPengajuan = ({
                     </td>
                     <td className="border px-2">
                       {formatTanggal(detail.dibayarTanggal, "dd-M-yyyy")}
-                    </td>
-                    <td className="border px-2">{detail.jenisPengajuan}</td>
-                    <td>
-                      <div className="flex flex-auto gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleViewRiwayatPengajuan(
-                            row.kegiatanId,
-                            detail
-                          )}
-                        >
-                          <Eye size={18} />
-                        </Button>
-                        {(!detail.hasDokumentasi || !detail.hasLaporan) && (
-                          <DialogUnggahDokumen
-                            kegiatanId={row.kegiatanId}
-                            riwayatPengajuanId={detail.id}
-                            onSubmitted={handleDokumenAkhirSubmitted}
-                          />
-                        )}
-                        {detail.hasDokumentasi &&
-                          detail.hasLaporan &&
-                          detail.statusPengajuan === "PAID" && (
-                            <DialogVerifikasiDokumenAkhir
-                              kegiatanId={row.kegiatanId}
-                              riwayatPengajuanId={detail.id}
-                              onSubmitted={
-                                handleVerifikasiDokumenAkhirSubmitted
-                              }
-                            />
-                          )}
-                      </div>
                     </td>
                   </tr>
                 ))}

@@ -24,6 +24,21 @@ import { ChevronRight, Eye } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+interface RowDetail {
+  id: string;
+  nama: string;
+  tanggalKegiatan?: Date | string | null;
+  pengajuanId?: string | null;
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
+  statusPengajuan?: STATUS_PENGAJUAN | null;
+  diajukanOlehId?: string | null;
+  diajukanOleh?: string | null;
+  diajukanTanggal?: Date | string | null;
+  diverifikasiTanggal?: Date | string | null;
+  disetujuiTanggal?: Date | string | null;
+  dibayarTanggal?: Date | string | null;
+}
+
 interface TabelKegiatanProps {
   data: KegiatanIncludeSatker[];
 }
@@ -163,21 +178,6 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     },
   ];
 
-  interface RowDetail {
-    id: string;
-    nama: string;
-    tanggalKegiatan?: Date | string | null;
-    pengajuanId?: string | null;
-    jenisPengajuan?: JENIS_PENGAJUAN | null;
-    statusPengajuan?: STATUS_PENGAJUAN | null;
-    diajukanOlehId?: string | null;
-    diajukanOleh?: string | null;
-    diajukanTanggal?: Date | string | null;
-    diverifikasiTanggal?: Date | string | null;
-    disetujuiTanggal?: Date | string | null;
-    dibayarTanggal?: Date | string | null;
-  }
-
   const handleView = (row: Kegiatan) => {
     console.log("View row:", row);
     // Implement your view logic here
@@ -192,55 +192,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
   const handleViewRiwayatPengajuan =
     (kegiatanId: string, detail: RowDetail) => () => {
       console.log("View detail:", detail);
-      // Implement your view logic here
-      // view pdf
-
-      //
-      if (!detail.jenisPengajuan || !detail.statusPengajuan) return;
-      switch (detail.jenisPengajuan) {
-        case JENIS_PENGAJUAN.GENERATE_RAMPUNGAN:
-          window.open(`/download/dokumen-rampungan/${kegiatanId}`, "_blank");
-          return;
-        case JENIS_PENGAJUAN.HONORARIUM:
-          if (detail.statusPengajuan === STATUS_PENGAJUAN.PAID) {
-            window.open(
-              `/download/bukti-pembayaran/${detail.pengajuanId}`,
-              "_blank"
-            );
-            return;
-          }
-          window.open(
-            `/download/nominatif-honorarium/${kegiatanId}/${detail.id}`,
-            "_blank"
-          );
-          return;
-        case JENIS_PENGAJUAN.UH_DALAM_NEGERI:
-          if (detail.statusPengajuan === STATUS_PENGAJUAN.PAID) {
-            window.open(
-              `/download/bukti-pembayaran/${detail.pengajuanId}`,
-              "_blank"
-            );
-            return;
-          }
-          window.open(
-            `/download/nominatif-uh-dalam-negeri/${kegiatanId}/${detail.id}`,
-            "_blank"
-          );
-          return;
-        case JENIS_PENGAJUAN.UH_LUAR_NEGERI:
-          if (detail.statusPengajuan === STATUS_PENGAJUAN.PAID) {
-            window.open(
-              `/download/bukti-pembayaran/${detail.pengajuanId}`,
-              "_blank"
-            );
-            return;
-          }
-          window.open(
-            `/download/nominatif-uh-luar-negeri/${kegiatanId}/${detail.id}`,
-            "_blank"
-          );
-          return;
-      }
+      // diganti dengan link to dokumen
     };
   const handleExpand = async (rowId: string, index: number) => {
     // console.log("Expand row:", rowId);
@@ -331,7 +283,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     const newDetailsJadwal: RowDetail[] = jadwals.map((jadwal) => {
       return {
         id: jadwal.id,
-        nama: jadwal.kelas.nama,
+        nama: jadwal.kelas.nama + "-" + jadwal.materi.nama,
         tanggalKegiatan: jadwal.tanggal,
         jenisPengajuan: jadwal.riwayatPengajuan?.jenis,
         // statusPengajuan: mapStatusLangkahToDesc(
@@ -383,13 +335,16 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                   <th className="border px-1">Tanggal Pengajuan</th>
                   <th className="border px-1">Jenis Pengajuan</th>
                   <th className="border px-1">Status Pengajuan</th>
+                  <th className="border px-1">Dokumen</th>
                   <th className="border px-1">Operator</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {details.map((detail: RowDetail) => (
-                  <tr key={detail.id} className="even:bg-slate-100 h-10">
+                  <tr
+                    key={detail.id}
+                    className="even:bg-slate-100 h-10 hover:bg-slate-200"
+                  >
                     <td className="border px-2">{detail.nama}</td>
                     <td className="border px-2">
                       {formatTanggal(detail.tanggalKegiatan, "dd-M-yyyy")}
@@ -399,19 +354,17 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                     </td>
                     <td className="border px-2">{detail.jenisPengajuan}</td>
                     <td className="border px-2">
-                      {<StatusBadge status={detail.statusPengajuan ?? null} />}
+                      {<StatusPengajuan status={detail.statusPengajuan} />}
+                    </td>
+                    <td className="border px-2">
+                      {
+                        <DokumenPengajuan
+                          kegiatanId={row.id}
+                          rowDetail={detail}
+                        />
+                      }
                     </td>
                     <td className="border px-2">{detail.diajukanOleh}</td>
-                    <td>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-blue-800"
-                        onClick={handleViewRiwayatPengajuan(row.id, detail)}
-                      >
-                        <Eye size={18} />
-                      </Button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -468,6 +421,153 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         setExpanded={setExpanded}
         rowDetails={rowDetails}
       />
+    </div>
+  );
+};
+
+interface LinkToDokumenProps {
+  kegiatanId: string;
+  jenisDokumen: string;
+  rowDetail: RowDetail;
+}
+
+interface LinkToDokumenAkhirProps {
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
+  jenisDokumenAkhir: string;
+  riwayatPengajuanId: string;
+}
+
+interface LinkToDokumensProps {
+  kegiatanId: string;
+  rowDetail: RowDetail;
+}
+
+// Shared button component for rendering links
+const RenderLink = ({ href, label }: { href: string; label: string }) => (
+  <Link href={href} target="_blank">
+    <Button variant="outline" size="sm" className="gap-2">
+      <span>{label}</span>
+      <Eye size={18} />
+    </Button>
+  </Link>
+);
+
+// LinkToDokumen component
+const LinkToDokumen = ({
+  kegiatanId,
+  jenisDokumen,
+  rowDetail,
+}: LinkToDokumenProps) => {
+  const statusWithNominatif: STATUS_PENGAJUAN[] = [
+    "REQUEST_TO_PAY",
+    "PAID",
+    "END",
+  ];
+  const statusWithBuktiPembayaran: STATUS_PENGAJUAN[] = ["PAID", "END"];
+
+  const validationRules: Record<string, (detail: RowDetail) => boolean> = {
+    "dokumen-rampungan": (detail) =>
+      detail.jenisPengajuan === "GENERATE_RAMPUNGAN",
+    "nominatif-honorarium": (detail) =>
+      detail.jenisPengajuan === "HONORARIUM" &&
+      statusWithNominatif.includes(detail.statusPengajuan ?? "DRAFT"),
+    "nominatif-uh-dalam-negeri": (detail) =>
+      detail.jenisPengajuan === "UH_DALAM_NEGERI" &&
+      statusWithNominatif.includes(detail.statusPengajuan ?? "DRAFT"),
+    "nominatif-uh-luar-negeri": (detail) =>
+      detail.jenisPengajuan === "UH_LUAR_NEGERI" &&
+      statusWithNominatif.includes(detail.statusPengajuan ?? "DRAFT"),
+    "bukti-pembayaran": (detail) =>
+      statusWithBuktiPembayaran.includes(detail.statusPengajuan ?? "DRAFT") &&
+      detail.jenisPengajuan !== "GENERATE_RAMPUNGAN",
+  };
+
+  const linkPaths: Record<string, string> = {
+    "dokumen-rampungan": `/download/dokumen-rampungan/${kegiatanId}`,
+    "nominatif-honorarium": `/download/${jenisDokumen}/${kegiatanId}/${rowDetail.id}`, // id disini adalah jadwal id
+    "nominatif-uh-dalam-negeri": `/download/${jenisDokumen}/${kegiatanId}/${rowDetail.pengajuanId}`,
+    "nominatif-uh-luar-negeri": `/download/${jenisDokumen}/${kegiatanId}/${rowDetail.pengajuanId}`,
+    "bukti-pembayaran": `/download/bukti-pembayaran/${rowDetail.pengajuanId}`,
+  };
+
+  const isValid = validationRules[jenisDokumen]?.(rowDetail);
+  const href = linkPaths[jenisDokumen];
+
+  if (!isValid || !href) return null;
+
+  return <RenderLink href={href} label={jenisDokumen} />;
+};
+
+// LinkToDokumenAkhir component
+const LinkToDokumenAkhir = ({
+  jenisPengajuan,
+  jenisDokumenAkhir,
+  riwayatPengajuanId,
+}: LinkToDokumenAkhirProps) => {
+  if (!jenisPengajuan) return null;
+  if (!["dokumentasi", "laporan"].includes(jenisDokumenAkhir)) return null;
+  if (["GENERATE_RAMPUNGAN"].includes(jenisPengajuan)) return null; // Skip for rampungan
+
+  const href = `/download/dokumen-akhir/${jenisDokumenAkhir}/${riwayatPengajuanId}`;
+  return <RenderLink href={href} label={jenisDokumenAkhir} />;
+};
+
+// LinkToDokumens component
+const jenisDokumens = [
+  "dokumen-rampungan",
+  "nominatif-honorarium",
+  "nominatif-uh-dalam-negeri",
+  "nominatif-uh-luar-negeri",
+  "bukti-pembayaran",
+];
+
+const LinkToDokumens = ({ kegiatanId, rowDetail }: LinkToDokumensProps) => (
+  <div className="flex flex-col gap-2">
+    {jenisDokumens.map((jenisDokumen) => (
+      <LinkToDokumen
+        key={jenisDokumen}
+        kegiatanId={kegiatanId}
+        jenisDokumen={jenisDokumen}
+        rowDetail={rowDetail}
+      />
+    ))}
+  </div>
+);
+
+interface StatusBadgeProps {
+  status?: STATUS_PENGAJUAN | null;
+}
+const StatusPengajuan = ({ status }: StatusBadgeProps) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <StatusBadge status={status ?? null} />
+    </div>
+  );
+};
+
+interface DokumenPengajuanProps {
+  kegiatanId: string;
+  //status?: STATUS_PENGAJUAN | null;
+  rowDetail: RowDetail;
+}
+const DokumenPengajuan = ({ kegiatanId, rowDetail }: DokumenPengajuanProps) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <LinkToDokumens kegiatanId={kegiatanId} rowDetail={rowDetail} />
+      {rowDetail.statusPengajuan === "END" && rowDetail.pengajuanId && (
+        <div>
+          <LinkToDokumenAkhir
+            jenisPengajuan={rowDetail.jenisPengajuan}
+            jenisDokumenAkhir="dokumentasi"
+            riwayatPengajuanId={rowDetail.pengajuanId}
+          />
+          <LinkToDokumenAkhir
+            jenisPengajuan={rowDetail.jenisPengajuan}
+            jenisDokumenAkhir="laporan"
+            riwayatPengajuanId={rowDetail.pengajuanId}
+          />
+        </div>
+      )}
     </div>
   );
 };

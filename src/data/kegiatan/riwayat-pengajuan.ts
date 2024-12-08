@@ -420,7 +420,7 @@ export const getRiwayatPengajuanUntukDokumenAkhir = async (
 
     const inStatus: STATUS_PENGAJUAN[] = [
       STATUS_PENGAJUAN.PAID,
-      STATUS_PENGAJUAN.END,
+      // STATUS_PENGAJUAN.END,
     ];
     const jadwals = await getRiwayatPengajuanHonorarium(
       satkerId,
