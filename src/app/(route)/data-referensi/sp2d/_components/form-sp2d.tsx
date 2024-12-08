@@ -7,6 +7,7 @@ import CummulativeErrors from "@/components/form/cummulative-error";
 import BasicDatePicker from "@/components/form/date-picker/basic-date-picker";
 import { RequiredLabelWithCatatan } from "@/components/form/required";
 import SelectUnitKerja from "@/components/form/select-unit-kerja";
+import ToastErrorContainer from "@/components/form/toast-error-children";
 import {
   Form,
   FormControl,
@@ -59,8 +60,19 @@ const FormSp2d = ({
           `Berhasil menyimpan data sp2d ${sp2d.data?.unitKerja.nama}`
         );
         form.reset();
+        handleFormSubmitComplete?.(sp2d.success);
+      } else {
+        toast.error(
+          <ToastErrorContainer>
+            {sp2d.message + " - " + sp2d.error}
+          </ToastErrorContainer>,
+          {
+            position: "top-center",
+            unstyled: true,
+          }
+        );
+        //toast.error("Gagal menyimpan data sp2d");
       }
-      handleFormSubmitComplete?.(sp2d.success);
     } catch (error) {
       toast.error("Gagal menyimpan data sp2d");
     }

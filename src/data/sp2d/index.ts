@@ -76,3 +76,25 @@ export const getSp2dUnitKerja = async (
   });
   return sp2d;
 };
+
+// get sum of sp2d by satker and tahun
+export const getSumSp2dByUnitKerja = async (
+  unitKerjaId: string,
+  tahun: number
+) => {
+  const sumSp2d = await dbHonorarium.sp2d.aggregate({
+    _sum: {
+      jumlahDibayar: true,
+    },
+    where: {
+      unitKerja: {
+        OR: [{ indukOrganisasiId: unitKerjaId }, { id: unitKerjaId }],
+      },
+      tanggal: {
+        gte: new Date(tahun, 0, 1),
+        lte: new Date(tahun, 11, 31),
+      },
+    },
+  });
+  return sumSp2d;
+};
