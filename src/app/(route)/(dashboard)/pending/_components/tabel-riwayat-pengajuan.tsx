@@ -419,13 +419,16 @@ export const TabelRiwayatPengajuan = ({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={handleViewRiwayatPengajuan(row.id, detail)}
+                          onClick={handleViewRiwayatPengajuan(
+                            row.kegiatanId,
+                            detail
+                          )}
                         >
                           <Eye size={18} />
                         </Button>
                         {(!detail.hasDokumentasi || !detail.hasLaporan) && (
                           <DialogUnggahDokumen
-                            kegiatanId={row.id}
+                            kegiatanId={row.kegiatanId}
                             riwayatPengajuanId={detail.id}
                             onSubmitted={handleDokumenAkhirSubmitted}
                           />
@@ -434,7 +437,7 @@ export const TabelRiwayatPengajuan = ({
                           detail.hasLaporan &&
                           detail.statusPengajuan === "PAID" && (
                             <DialogVerifikasiDokumenAkhir
-                              kegiatanId={row.id}
+                              kegiatanId={row.kegiatanId}
                               riwayatPengajuanId={detail.id}
                               onSubmitted={
                                 handleVerifikasiDokumenAkhirSubmitted
