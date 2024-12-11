@@ -60,7 +60,7 @@
     "iconv-lite": "^0.6.3",
     "lodash": "^4.17.21",
     "lucide-react": "^0.451.0",
-    "nanoid": "^5.0.7",
+    "nanoid": "^5.0.9",
     "next": "14.2.14",
     "next-auth": "5.0.0-beta.21",
     "next-themes": "^0.3.0",
