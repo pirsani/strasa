@@ -85,7 +85,8 @@ export default {
     },
     async signIn({ user, account, profile, email, credentials }) {
       if (!user || !account) {
-        throw new Error("Invalid sign in");
+        //throw new Error("Invalid sign in");
+        return false;
       }
 
       //console.log("[signIn] user", user);

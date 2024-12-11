@@ -6,8 +6,10 @@ import { Loader, Phone } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import CummulativeErrors from "../cummulative-error";
 import Input from "./input";
 
 export type UncomplexLogin = z.infer<typeof UncomplexLoginSchema>;
@@ -15,6 +17,7 @@ export type UncomplexLogin = z.infer<typeof UncomplexLoginSchema>;
 const LoginForm = () => {
   const callbackUrl = useSearchParams().get("callbackUrl") ?? "/dashboard";
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -28,22 +31,23 @@ const LoginForm = () => {
     console.log(data);
     try {
       const response = await signIn("credentials", {
-        //redirect: false,
+        redirect: false,
         email: data.email,
         password: data.password,
         callbackUrl,
       });
 
+      console.log(response);
+
       if (!response?.error) {
         console.log(response);
-        //router.push(callbackUrl);
+        router.push(callbackUrl);
       } else {
-        console.log("error nih");
-        console.log(response.error);
+        setError("Invalid email or password");
         //throw new Error(response.error);
       }
     } catch (error) {
-      console.log(error);
+      setError("An unexpected error occurred");
     }
   };
 
@@ -77,6 +81,8 @@ const LoginForm = () => {
           register={register}
           error={errors.password}
         />
+        <CummulativeErrors errors={errors} />
+        {error && <p className="text-red-500">{error}</p>}
         <Button className=" w-full py-6" disabled={isLoading} type="submit">
           Sign in
           {isLoading && (
