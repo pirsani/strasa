@@ -1,4 +1,5 @@
 import { fileTypeFromBuffer } from "file-type";
+import { read, utils } from "xlsx";
 
 export interface ParseExcelOptions {
   extractFromColumns: string[];
@@ -38,9 +39,13 @@ const parseExcelOnServer = async (
 
   if (file instanceof Buffer) {
     buffer = file;
-  } else {
+  } else if (file instanceof File) {
     const arrayBuffer = await file.arrayBuffer();
     buffer = Buffer.from(arrayBuffer);
+  } else {
+    throw new Error(
+      "Invalid file type. Only File or Buffer instances are supported."
+    );
   }
 
   try {
@@ -55,9 +60,8 @@ const parseExcelOnServer = async (
       throw new Error("Invalid file type. Only .xlsx files are supported.");
     }
 
-    
     // Dynamically import the xlsx library
-    const { read, utils } = await import('xlsx');
+    // const { read, utils } = await import("xlsx");
     // Parse the file using XLSX
     const workbook = read(buffer, { type: "buffer" });
     const sheetName = options.sheetName || workbook.SheetNames[0];
