@@ -69,10 +69,11 @@ export const deletePengguna = async (
       data: deleted,
     };
   } catch (error) {
+    logger.error("Error deleting pengguna", error);
     return {
       success: false,
-      error: "Not implemented",
-      message: "Not implemented",
+      error: "E-DPT01",
+      message: "failed to delete pengguna",
     };
   }
 };
