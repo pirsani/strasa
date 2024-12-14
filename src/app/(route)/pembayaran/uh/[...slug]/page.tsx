@@ -2,7 +2,7 @@ import FloatingPdfPreviewContainer from "@/components/floating-pdf-preview-conta
 import PreviewKegiatan from "@/components/kegiatan";
 import { getKegiatanWithAllDetailById } from "@/data/kegiatan";
 import { getRiwayatPengajuanById } from "@/data/kegiatan/riwayat-pengajuan";
-import ContainerPembayaran from "../_components/container-pembayaran";
+import ContainerPembayaran from "../../_components/container-pembayaran";
 
 const PembayaranUhPage = async ({ params }: { params: { slug: string[] } }) => {
   const kegiatanId = params.slug[0];
@@ -27,6 +27,7 @@ const PembayaranUhPage = async ({ params }: { params: { slug: string[] } }) => {
         <ContainerPembayaran
           riwayatPengajuanId={riwayatPengajuanId}
           statusPengajuan={riwayatPengajuan.status}
+          jenisPengajuan={riwayatPengajuan.jenis}
         />
       </div>
       <FloatingPdfPreviewContainer />

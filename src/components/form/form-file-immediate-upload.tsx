@@ -25,7 +25,7 @@ interface FormFileImmediateUploadProps {
   className?: string;
   allowedTypes?: string[];
   placeholder?: string;
-  onFileUploadComplete?: (name: string) => void;
+  onFileUploadComplete?: (name: string, file?: File | null) => void;
 
   //ref?: React.RefObject<HTMLInputElement>;
 }
@@ -35,7 +35,7 @@ export const FormFileImmediateUpload = ({
   cuid = createId(),
   folder = "",
   onFileChange,
-  onFileUploadComplete = (name) => {},
+  onFileUploadComplete = () => {},
   className,
   allowedTypes = ["application/pdf"],
   placeholder = "No file selected, please choose a file",
@@ -103,7 +103,7 @@ FormFileImmediateUploadProps) => {
 
       if (response.status === 200) {
         toast.info(`File ${file.name} uploaded successfully:`);
-        onFileUploadComplete(name);
+        onFileUploadComplete(name, file);
         // Update the UI to reflect the successful upload
       } else {
         toast.error(`File upload failed with status:, ${response.status}`);

@@ -1,4 +1,6 @@
 "use client";
+import { updateBuktiPembayaranHonorarium } from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
+import { updateBuktiPembayaranUh } from "@/actions/kegiatan/uang-harian/bukti-pembayaran";
 import BasicDatePicker from "@/components/form/date-picker/basic-date-picker";
 import FormFileImmediateUpload from "@/components/form/form-file-immediate-upload";
 import RequiredLabel from "@/components/form/required";
@@ -12,16 +14,23 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import useFileStore from "@/hooks/use-file-store";
+import { JENIS_PENGAJUAN } from "@/lib/constants";
 import { Pembayaran, pembayaranSchema } from "@/zod/schemas/pembayaran";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 interface FormPembayaranProps {
   riwayatPengajuanId: string;
+  jenisPengajuan?: JENIS_PENGAJUAN;
 }
-const FormPembayaran = ({ riwayatPengajuanId }: FormPembayaranProps) => {
+
+const FormPembayaran = ({
+  riwayatPengajuanId,
+  jenisPengajuan,
+}: FormPembayaranProps) => {
   const form = useForm<Pembayaran>({
     defaultValues: {
       riwayatPengajuanId,
@@ -43,27 +52,36 @@ const FormPembayaran = ({ riwayatPengajuanId }: FormPembayaranProps) => {
   const buktiPembayaranCuid = form.watch("buktiPembayaranCuid");
   const [isUpladed, setIsUploaded] = useState<boolean>(false);
   // const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const handleSimpanPembayaran = async (data: Pembayaran) => {
-    console.log(data);
-    // if (!filenameBuktiPembayaran) {
-    //   toast.error("Bukti pembayaran belum diupload");
-    //   return;
-    // }
-    // //setIsSubmitting(true);
-    // const res = await updateBuktiPembayaranHonorarium(
-    //   riwayatPengajuanId,
-    //   cuid,
-    //   filenameBuktiPembayaran
-    // );
-    // if (res.success) {
-    //   toast.success("Bukti pembayaran berhasil diupload");
-    // } else {
-    //   toast.error(`Gagal mengupload bukti pembayaran ${res.message}`);
-    // }
-    // //setIsSubmitting(false);
-  };
+  const router = useRouter();
 
-  // const onSubmit;
+  const onSubmit = async (data: Pembayaran) => {
+    console.log(data);
+    const { buktiPembayaran, ...pembayaranWithoutFile } = data;
+    switch (jenisPengajuan) {
+      case "HONORARIUM":
+        const res = await updateBuktiPembayaranHonorarium(
+          pembayaranWithoutFile
+        );
+        if (res.success) {
+          toast.success("Bukti pembayaran berhasil diupload");
+          router.refresh();
+        } else {
+          toast.error(`Gagal mengupload bukti pembayaran ${res.message}`);
+        }
+        break;
+      case "UH_DALAM_NEGERI":
+      case "UH_LUAR_NEGERI":
+      case "UH":
+        const res2 = await updateBuktiPembayaranUh(pembayaranWithoutFile);
+        if (res2.success) {
+          toast.success("Bukti pembayaran berhasil diupload");
+          router.refresh();
+        } else {
+          toast.error(`Gagal mengupload bukti pembayaran ${res2.message}`);
+        }
+        break;
+    }
+  };
 
   const handleUploadComplete = (name: string, file?: File | null) => {
     if (!file) return;
@@ -85,6 +103,7 @@ const FormPembayaran = ({ riwayatPengajuanId }: FormPembayaranProps) => {
       }
       setValue("filenameBuktiPembayaran", file?.name ?? "");
     } else {
+      setIsUploaded(false);
       setFileUrl(null);
       setValue("filenameBuktiPembayaran", "");
     }
@@ -105,7 +124,7 @@ const FormPembayaran = ({ riwayatPengajuanId }: FormPembayaranProps) => {
       <Form {...form}>
         <form
           className="flex flex-col gap-2 w-full"
-          onSubmit={handleSubmit(handleSimpanPembayaran)}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <FormField
             control={form.control}

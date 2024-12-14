@@ -6,7 +6,7 @@ import {
 } from "@/data/jadwal";
 import { getKegiatanWithAllDetailById } from "@/data/kegiatan";
 import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
-import ContainerPembayaran from "../_components/container-pembayaran";
+import ContainerPembayaran from "../../_components/container-pembayaran";
 import Jadwal from "../_components/jadwal";
 
 const PembayaranHonorariumPage = async ({
@@ -21,7 +21,12 @@ const PembayaranHonorariumPage = async ({
   const plainObjectJadwal =
     convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber>(jadwal);
 
-  if (!kegiatan || !jadwal || !jadwal.riwayatPengajuanId) {
+  if (
+    !kegiatan ||
+    !jadwal ||
+    !jadwal.riwayatPengajuanId ||
+    !jadwal.riwayatPengajuan
+  ) {
     return <div>Not found</div>;
   }
 
@@ -39,7 +44,8 @@ const PembayaranHonorariumPage = async ({
       <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-4 bg-gray-100 rounded-lg py-4 lg:px-4 p-2">
         <ContainerPembayaran
           riwayatPengajuanId={riwayatPengajuanId}
-          statusPengajuanHonorarium={jadwal.riwayatPengajuan?.status}
+          statusPengajuan={jadwal.riwayatPengajuan.status}
+          jenisPengajuan={jadwal.riwayatPengajuan.jenis}
         />
       </div>
       <FloatingPdfPreviewContainer />

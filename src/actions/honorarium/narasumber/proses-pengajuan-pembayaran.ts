@@ -6,12 +6,17 @@ import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
 import { BASE_PATH_UPLOAD } from "@/app/api/upload/config";
 import { getJadwalByRiwayatPengajuanId } from "@/data/jadwal";
+import {
+  ObjCreateRiwayatPengajuan,
+  ObjRiwayatPengajuanUpdate,
+} from "@/data/kegiatan/riwayat-pengajuan";
 import { getJadwalIncludeKegiatan } from "@/data/narasumber/jadwal";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { getBesaranPajakHonorarium, getDpp } from "@/lib/pajak";
 import { NominatifPembayaranWithoutFile } from "@/zod/schemas/nominatif-pembayaran";
+import { PembayaranWithoutFile } from "@/zod/schemas/pembayaran";
 import { createId } from "@paralleldrive/cuid2";
-import { JENIS_PENGAJUAN, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
+import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import fse from "fs-extra";
 import path from "path";
 import { Logger } from "tslog";
@@ -19,35 +24,35 @@ const logger = new Logger({
   hideLogPositionForProduction: true,
 });
 
-interface ObjRiwayatPengajuanUpdate {
-  status: STATUS_PENGAJUAN;
-  diverifikasiOlehId?: string;
-  disetujuiOlehId?: string;
-  dimintaPembayaranOlehId?: string;
-  dibayarOlehId?: string;
-  diselesaikanOlehId?: string;
-  catatanRevisi?: string;
-  catatanPermintaaPembayaran?: string;
+// interface ObjRiwayatPengajuanUpdate {
+//   status: STATUS_PENGAJUAN;
+//   diverifikasiOlehId?: string;
+//   disetujuiOlehId?: string;
+//   dimintaPembayaranOlehId?: string;
+//   dibayarOlehId?: string;
+//   diselesaikanOlehId?: string;
+//   catatanRevisi?: string;
+//   catatanPermintaaPembayaran?: string;
 
-  diverifikasiTanggal?: Date;
-  disetujuiTanggal?: Date;
-  dimintaPembayaranTanggal?: Date;
-  dibayarTanggal?: Date;
-  diselesaikanTanggal?: Date;
+//   diverifikasiTanggal?: Date;
+//   disetujuiTanggal?: Date;
+//   dimintaPembayaranTanggal?: Date;
+//   dibayarTanggal?: Date;
+//   diselesaikanTanggal?: Date;
 
-  ppkId?: string;
-  bendaharaId?: string;
+//   ppkId?: string;
+//   bendaharaId?: string;
 
-  dokumenBuktiPajak?: string;
-  dokumenBuktiPembayaran?: string;
-}
+//   dokumenBuktiPajak?: string;
+//   dokumenBuktiPembayaran?: string;
+// }
 
-interface ObjCreateRiwayatPengajuan {
-  jenis: JENIS_PENGAJUAN;
-  status: STATUS_PENGAJUAN;
-  diajukanOlehId: string;
-  diajukanTanggal: Date;
-}
+// interface ObjCreateRiwayatPengajuan {
+//   jenis: JENIS_PENGAJUAN;
+//   status: STATUS_PENGAJUAN;
+//   diajukanOlehId: string;
+//   diajukanTanggal: Date;
+// }
 
 const updateStatusPengajuanPembayaran = async (
   jadwalId: string,
@@ -430,14 +435,15 @@ export const pengajuanPembayaranHonorarium = async (
 };
 
 export const updateBuktiPembayaranHonorarium = async (
-  riwayatPengajuanId: string,
-  buktiPembayaranCuid: string,
-  filenameBuktiPembayaran: string
+  pembayaran: PembayaranWithoutFile
 ): Promise<ActionResponse<STATUS_PENGAJUAN>> => {
   const pengguna = await getSessionPenggunaForAction();
   if (!pengguna.success) {
     return pengguna;
   }
+
+  const { riwayatPengajuanId, buktiPembayaranCuid, filenameBuktiPembayaran } =
+    pembayaran;
   const jadwal = await getJadwalByRiwayatPengajuanId(riwayatPengajuanId);
   if (!jadwal || !jadwal.riwayatPengajuan || !jadwal.kegiatan) {
     return {
