@@ -26,8 +26,13 @@ export const updateBuktiPembayaranUh = async (
     return pengguna;
   }
 
-  const { riwayatPengajuanId, buktiPembayaranCuid, filenameBuktiPembayaran } =
-    pembayaran;
+  const {
+    riwayatPengajuanId,
+    buktiPembayaranCuid,
+    filenameBuktiPembayaran,
+    dibayarTanggal,
+    mak,
+  } = pembayaran;
   const riwayatPengajuan = await getRiwayatPengajuanById(riwayatPengajuanId);
 
   if (!riwayatPengajuan || !riwayatPengajuan.kegiatan) {
@@ -91,8 +96,10 @@ export const updateBuktiPembayaranUh = async (
 
   const objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
     status: "PAID",
+    mak: mak,
     dibayarOlehId: pengguna.data.penggunaId,
-    dibayarTanggal: new Date(),
+    dibayarTanggal: dibayarTanggal || new Date(),
+    inputBuktiBayarTanggal: new Date(),
     dokumenBuktiPembayaran: relativePath,
   };
 

@@ -135,7 +135,7 @@ const FormPembayaran = ({
               <FormItem>
                 <FormLabel>MAK</FormLabel>
                 <FormControl>
-                  <Input placeholder="522151" {...field} tabIndex={0} />
+                  <Input placeholder="52xxxx" {...field} tabIndex={0} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

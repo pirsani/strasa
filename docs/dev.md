@@ -152,6 +152,8 @@ pnpm prisma migrate dev --create-only --name opsionalBuktiPajak --schema=./prism
 
 pnpm prisma migrate dev --create-only --name tambah_kolom_mak_kro --schema=./prisma/db-honorarium/schema.prisma
 
+pnpm prisma migrate dev --create-only --name inputBuktiBayarTanggal --schema=./prisma/db-honorarium/schema.prisma
+
 pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
 
 pnpm run prisma:generate

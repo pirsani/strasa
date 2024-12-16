@@ -13,6 +13,7 @@ import {
 } from "@prisma-honorarium/client";
 
 export interface ObjRiwayatPengajuanUpdate {
+  mak?: string;
   status: STATUS_PENGAJUAN;
   diverifikasiOlehId?: string;
   disetujuiOlehId?: string;
@@ -26,6 +27,7 @@ export interface ObjRiwayatPengajuanUpdate {
   disetujuiTanggal?: Date;
   dimintaPembayaranTanggal?: Date;
   dibayarTanggal?: Date;
+  inputBuktiBayarTanggal?: Date;
   diselesaikanTanggal?: Date;
 
   ppkId?: string;

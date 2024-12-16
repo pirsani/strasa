@@ -705,6 +705,7 @@ model RiwayatPengajuan {
   disetujuiTanggal         DateTime?        @map("disetujui_tanggal")
   dimintaPembayaranTanggal DateTime?        @map("diminta_pembayaran_tanggal")
   dibayarTanggal           DateTime?        @map("dibayar_tanggal")
+  inputBuktiBayarTanggal   DateTime?        @map("input_bukti_bayar_tanggal")
   diselesaikanTanggal      DateTime?        @map("diselesaikan_tanggal")
 
   diajukanOlehId             String  @map("diajukan_oleh_id")
