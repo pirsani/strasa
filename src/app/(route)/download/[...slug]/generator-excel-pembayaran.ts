@@ -1,3 +1,5 @@
+import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { SimplifiedSessionPengguna } from "@/actions/pengguna/session";
 import {
   getRiwayatPengajuanPaymentStatus,
   RiwayatPengajuanPaymentStatus,
@@ -93,7 +95,11 @@ const generateExcel = (data: RiwayatPengajuanPaymentStatus[]) => {
 };
 
 // API route to handle Excel file generation
-export async function downloadExcelPembayaran(req: Request, slug: string[]) {
+export async function downloadExcelPembayaran(
+  req: Request,
+  slug: string[],
+  dataPengguna: SimplifiedSessionPengguna
+) {
   try {
     // Example data, can be fetched dynamically based on `slug`
 
@@ -105,10 +111,10 @@ export async function downloadExcelPembayaran(req: Request, slug: string[]) {
       );
     }
 
-    const data = await getRiwayatPengajuanPaymentStatus(
-      2024,
-      "cm4ea2pwc0067w5l7ujlxjwel"
-    );
+    const { satkerId, unitKerjaId, penggunaId, penggunaName } = dataPengguna;
+    const year = await getTahunAnggranPilihan();
+
+    const data = await getRiwayatPengajuanPaymentStatus(year, satkerId);
 
     // Generate Excel buffer
     const excelBuffer = generateExcel(data);

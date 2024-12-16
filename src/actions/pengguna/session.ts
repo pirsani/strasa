@@ -31,6 +31,14 @@ interface SessionPenggunaForActionResponse {
   penggunaId: string;
   penggunaName: string;
 }
+
+export interface SimplifiedSessionPengguna {
+  satkerId: string;
+  unitKerjaId: string;
+  penggunaId: string;
+  penggunaName: string;
+}
+
 export const getSessionPenggunaForAction = async (): Promise<
   ActionResponse<SessionPenggunaForActionResponse>
 > => {

@@ -1,3 +1,4 @@
+import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { NextResponse } from "next/server";
 import { downloadDokumenAkhir } from "./dokumen-akhir";
 import { downloadDokumenBuktiPembayaran } from "./dokumen-bukti-pembayaran";
@@ -21,13 +22,24 @@ export async function GET(
   req: Request,
   { params }: { params: { slug: string[] } }
 ) {
-  const { slug } = params;
-  console.log(slug);
-
-  const jenisDokumen = slug[0];
-  console.log(jenisDokumen);
-
   try {
+    const { slug } = params;
+    // console.log(slug);
+
+    const jenisDokumen = slug[0];
+    // console.log(jenisDokumen);
+
+    const pengguna = await getSessionPenggunaForAction();
+    if (!pengguna.success) {
+      // it should never happen because it already checked in middleware
+      throw new Error("User not found");
+    }
+    // TODO memastikan bahwa pengguna yang mengajukan adalah satker pengguna yang terkait dengan kegiatan
+
+    const dataPengguna = pengguna.data;
+
+    const { satkerId, unitKerjaId, penggunaId, penggunaName } = dataPengguna;
+
     switch (jenisDokumen) {
       case "dokumen-pengadaan":
         return downloadDokumenPengadaan(req, slug);
@@ -60,7 +72,7 @@ export async function GET(
       case "dokumen-akhir":
         return downloadDokumenAkhir(req, slug);
       case "excel-pembayaran":
-        return downloadExcelPembayaran(req, slug);
+        return downloadExcelPembayaran(req, slug, dataPengguna);
       default:
         return new NextResponse(`Download ${params.slug.join("/")}`);
     }
