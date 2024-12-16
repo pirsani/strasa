@@ -18,6 +18,7 @@ const stringToBigIntOrNull = z
 export const pembayaranBaseSchema = z.object({
   riwayatPengajuanId: z.string().min(21),
   dibayarTanggal: fnTanggalSchema({ fieldDesc: "Tanggal dibayar" }),
+  mak: z.string().optional(),
   buktiPembayaranCuid: z.string().min(5),
   filenameBuktiPembayaran: z.string().min(5),
   // jumlahDibayar: stringToBigIntOrNull,

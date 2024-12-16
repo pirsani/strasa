@@ -13,6 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import useFileStore from "@/hooks/use-file-store";
 import { JENIS_PENGAJUAN } from "@/lib/constants";
 import { Pembayaran, pembayaranSchema } from "@/zod/schemas/pembayaran";
@@ -38,6 +39,7 @@ const FormPembayaran = ({
       buktiPembayaranCuid: createId(),
       buktiPembayaran: null,
       filenameBuktiPembayaran: "",
+      mak: "",
     },
     resolver: zodResolver(pembayaranSchema),
   });
@@ -126,6 +128,19 @@ const FormPembayaran = ({
           className="flex flex-col gap-2 w-full"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <FormField
+            control={form.control}
+            name="mak"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>MAK</FormLabel>
+                <FormControl>
+                  <Input placeholder="522151" {...field} tabIndex={0} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="dibayarTanggal"
