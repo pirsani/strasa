@@ -259,6 +259,12 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     | { [key: string]: InputJsonValue }
     | InputJsonValue[];
 
+  const arrayParaNarasumber = jadwal0.jadwalNarasumber.map(
+    (jadwalNarasumber) => jadwalNarasumber.narasumber?.nama
+  );
+
+  const paraNarasumber = arrayParaNarasumber.join(", ");
+
   const jadwals: DataGroup[] = jadwal.map((jadwal) => {
     const jadwalNarasumber = jadwal.jadwalNarasumber;
     let n = 0;
@@ -369,7 +375,9 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     const summedFields = sumPageSumsArray(pageSumsArray, summableFields);
     // update riwayat pengajuan
     // Explicitly create the extraInfo object with properties in the desired order
+    const uraian = `Honorarium ${paraNarasumber} - ${jadwal0.kelas?.nama} - ${jadwal0.materi?.nama}`;
     const extraInfo: { [key: string]: InputJsonValue } = {
+      uraian: uraian as unknown as InputJsonValue,
       summedFields: summedFields as unknown as InputJsonValue,
       summableFields: summableFields as unknown as InputJsonValue,
       pageSumsArray: pageSumsArray as unknown as InputJsonValue,

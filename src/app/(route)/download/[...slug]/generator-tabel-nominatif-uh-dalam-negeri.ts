@@ -395,6 +395,8 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     // Calculate the sums and map to summableFields
     const summedFields = sumPageSumsArray(pageSumsArray, summableFields);
 
+    const uraian = `UH DN kegiatan ${kegiatan.nama} di ${kegiatan.provinsi?.nama}`;
+
     // update riwayat pengajuan
     const updateRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({
       where: {
@@ -402,6 +404,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
       },
       data: {
         extraInfo: {
+          uraian: uraian as unknown as InputJsonValue,
           summedFields: summedFields as unknown as InputJsonValue,
           summableFields: summableFields as unknown as InputJsonValue,
           pageSumsArray: pageSumsArray as unknown as InputJsonValue,

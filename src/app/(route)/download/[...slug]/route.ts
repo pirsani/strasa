@@ -7,6 +7,7 @@ import downloadDokumenNarasumber, {
   downloadDokumenKonfirmasiKesediaanMengajar,
 } from "./dokumen-narasumber";
 import { downloadDokumenPengadaan } from "./generator-dokumen-pengadaan";
+import { downloadExcelPembayaran } from "./generator-excel-pembayaran";
 import { downloadDokumenRampungan } from "./generator-rampungan";
 import { downloadDokumenSpd } from "./generator-spd";
 import downloadSpdDaftarPeserta from "./generator-spd-daftar-peserta";
@@ -58,6 +59,8 @@ export async function GET(
         return downloadDokumenBuktiPembayaranNarasumber(req, slug);
       case "dokumen-akhir":
         return downloadDokumenAkhir(req, slug);
+      case "excel-pembayaran":
+        return downloadExcelPembayaran(req, slug);
       default:
         return new NextResponse(`Download ${params.slug.join("/")}`);
     }

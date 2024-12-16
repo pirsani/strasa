@@ -464,6 +464,7 @@ enum LOKASI {
 model Kegiatan {
   id                 String                 @id @default(cuid())
   nama               String
+  kro                String?
   tanggalMulai       DateTime               @map("tanggal_mulai")
   tanggalSelesai     DateTime               @map("tanggal_selesai")
   dokumenNodinMemoSk String                 @map("dokumen_nodin_memo_sk")
@@ -697,12 +698,14 @@ model RiwayatPengajuan {
   jenis                    JENIS_PENGAJUAN // enum GenerateRampungan, Honorarium, UhDalamNegeri, UhLuarNegeri, Reimbursement, PihakKetiga
   kegiatanId               String           @map("kegiatan_id")
   kegiatan                 Kegiatan         @relation(fields: [kegiatanId], references: [id], name: "riwayat_pengajuan_kegiatan")
+  mak                      String?          @map("mak")
   status                   STATUS_PENGAJUAN
   diajukanTanggal          DateTime         @map("diajukan_tanggal")
   diverifikasiTanggal      DateTime?        @map("diverifikasi_tanggal")
   disetujuiTanggal         DateTime?        @map("disetujui_tanggal")
   dimintaPembayaranTanggal DateTime?        @map("diminta_pembayaran_tanggal")
   dibayarTanggal           DateTime?        @map("dibayar_tanggal")
+  inputBuktiBayarTanggal   DateTime?        @map("input_bukti_bayar_tanggal")
   diselesaikanTanggal      DateTime?        @map("diselesaikan_tanggal")
 
   diajukanOlehId             String  @map("diajukan_oleh_id")

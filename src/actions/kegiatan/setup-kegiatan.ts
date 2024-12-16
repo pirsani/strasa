@@ -32,6 +32,8 @@ export const setupKegiatan = async (
 ): Promise<ActionResponse<Kegiatan>> => {
   // get satkerId and unitKerjaId from the user
 
+  logger.debug("Setup Kegiatan", kegiatan);
+
   const pengguna = await getSessionPenggunaForAction();
   if (!pengguna.success) {
     return pengguna;
@@ -62,7 +64,7 @@ export const setupKegiatan = async (
     );
 
     // check if the file exists
-    logger.info("excelFilePath", filePesertaXlsx);
+    // logger.info("excelFilePath", filePesertaXlsx);
 
     const filePesertaXlsxPathResolvedPath = path.resolve(excelFilePath);
 
@@ -239,6 +241,7 @@ async function createKegiatan(
       id: dataparsed.cuid,
       status: "setup-kegiatan",
       nama: dataparsed.nama,
+      kro: dataparsed.kro,
       tanggalMulai: dataparsed.tanggalMulai,
       tanggalSelesai: dataparsed.tanggalSelesai,
       lokasi: dataparsed.lokasi,
@@ -362,8 +365,8 @@ async function insertPesertaDariExcel(
           },
         });
 
-        logger.info("pesertaBaru", pesertaBaru);
-        logger.info("Extract from excel", peserta);
+        // logger.info("pesertaBaru", pesertaBaru);
+        // logger.info("Extract from excel", peserta);
 
         if (kegiatanLokasi !== "LUAR_NEGERI") {
           const uangHarian = await prisma.uhDalamNegeri.create({

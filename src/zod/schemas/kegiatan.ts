@@ -45,6 +45,7 @@ export const baseKegiatanSchema = z.object({
     .max(500, {
       message: "Nama kegiatan maksimal 500 karakter",
     }),
+  kro: z.string().optional().nullable(),
   tanggalMulai: fnTanggalSchema({ fieldDesc: "Tanggal Mulai" }),
   tanggalSelesai: fnTanggalSchema({ fieldDesc: "Tanggal Selesai" }),
   lokasi: LokasiEnum, // Use the Zod enum schema for lokasi

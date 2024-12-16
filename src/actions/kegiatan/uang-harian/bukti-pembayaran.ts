@@ -8,6 +8,7 @@ import {
   ObjRiwayatPengajuanUpdate,
 } from "@/data/kegiatan/riwayat-pengajuan";
 import { dbHonorarium } from "@/lib/db-honorarium";
+import { PembayaranWithoutFile } from "@/zod/schemas/pembayaran";
 import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import fse from "fs-extra";
 import path from "path";
@@ -17,15 +18,21 @@ const logger = new Logger({
   hideLogPositionForProduction: true,
 });
 
-export const updateBuktiPembayaran = async (
-  riwayatPengajuanId: string,
-  buktiPembayaranCuid: string
+export const updateBuktiPembayaranUh = async (
+  pembayaran: PembayaranWithoutFile
 ): Promise<ActionResponse<STATUS_PENGAJUAN>> => {
   const pengguna = await getSessionPenggunaForAction();
   if (!pengguna.success) {
     return pengguna;
   }
 
+  const {
+    riwayatPengajuanId,
+    buktiPembayaranCuid,
+    filenameBuktiPembayaran,
+    dibayarTanggal,
+    mak,
+  } = pembayaran;
   const riwayatPengajuan = await getRiwayatPengajuanById(riwayatPengajuanId);
 
   if (!riwayatPengajuan || !riwayatPengajuan.kegiatan) {
@@ -50,7 +57,19 @@ export const updateBuktiPembayaran = async (
     riwayatPengajuan.kegiatanId
   );
 
-  const fileBuktiPembayaran = buktiPembayaranCuid + ".pdf";
+  // get extension from filename
+  const extension = path.extname(filenameBuktiPembayaran);
+  console.log("extensione", extension);
+  console.log("filenameBuktiPembayaran", filenameBuktiPembayaran);
+  if (!extension) {
+    return {
+      success: false,
+      error: "E-UPPH-003",
+      message: `file bukti pembayaran tidak valid`,
+    };
+  }
+
+  const fileBuktiPembayaran = buktiPembayaranCuid + extension;
   const finalNamafile = "bukti_bayar_" + fileBuktiPembayaran;
 
   const finalPathFile = path.posix.join(finalPath, finalNamafile);
@@ -77,8 +96,10 @@ export const updateBuktiPembayaran = async (
 
   const objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
     status: "PAID",
+    mak: mak,
     dibayarOlehId: pengguna.data.penggunaId,
-    dibayarTanggal: new Date(),
+    dibayarTanggal: dibayarTanggal || new Date(),
+    inputBuktiBayarTanggal: new Date(),
     dokumenBuktiPembayaran: relativePath,
   };
 

@@ -1,8 +1,11 @@
 "use client";
 import { KegiatanIncludeSatker } from "@/actions/kegiatan";
 import { getKegiatanHasStatusPengajuan } from "@/actions/kegiatan/riwayat-kegiatan";
+import { Button } from "@/components/ui/button";
 import { StatusCount } from "@/data/kegiatan/riwayat-pengajuan";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
+import { FileSpreadsheet } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import FilterStatus from "./filter-status";
 import TabelKegiatan from "./tabel-kegiatan";
@@ -19,6 +22,8 @@ const ContainerTabelWithFilterStatus = ({
   const [filterStatus, setFilterStatus] = useState<STATUS_PENGAJUAN | null>(
     null
   );
+
+  const timestamp = new Date().getTime();
 
   const handleOnStatusChange = async (status: STATUS_PENGAJUAN | null) => {
     setFilterStatus(status);
@@ -37,12 +42,21 @@ const ContainerTabelWithFilterStatus = ({
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <div className="flex flex-row w-full items-end justify-end px-2">
+      <div className="flex flex-row w-full items-end justify-end px-2 gap-2">
         <FilterStatus
           status={status}
           onChange={handleOnStatusChange}
           filterSelected={filterStatus}
         />
+        <Button variant={"outline"}>
+          <Link
+            href={`/download/excel-pembayaran/${timestamp}`}
+            target="_blank"
+            className="flex flex-row gap-2 items-center"
+          >
+            <FileSpreadsheet size={24} /> Download Excel
+          </Link>
+        </Button>
       </div>
 
       <TabelKegiatan data={data} />
