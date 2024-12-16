@@ -52,7 +52,7 @@ const generateExcel = (data: RiwayatPengajuanPaymentStatus[]) => {
     // Map each item to a row matching the column order
     return [
       item.id,
-      item.status,
+      item.status_pembayaran,
       item.diajukan_tanggal,
       item.diverifikasi_tanggal,
       item.dibayar_tanggal,

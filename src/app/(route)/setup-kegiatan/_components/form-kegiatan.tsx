@@ -224,6 +224,24 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="kro"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>KRO</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="kro"
+                    {...field}
+                    value={field.value ?? ""} // Ensure value is not null
+                    tabIndex={0}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="flex flex-row w-full gap-2">
             <FormField
               control={form.control}
