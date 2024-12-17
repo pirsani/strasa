@@ -13,7 +13,7 @@ const TopBar = () => {
             className="text-xl font-bold font-sans h-full flex items-center justify-start text-primary"
             type="button"
           >
-            Panda
+            STRASA
           </Link>
         </div>
       </div>

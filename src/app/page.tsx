@@ -7,15 +7,13 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-2 sm:p-24 w-full">
       <div className="z-10 w-full max-w-5xl items-center justify-between text-sm lg:flex">
         <div className="flex flex-col w-full">
-          <h1 className="text-4xl font-bold">Panda</h1>
-          <p className="text-lg font-light">
-            Pengelolaan Administrasi Perbendaharaan
-          </p>
+          <h1 className="text-4xl font-bold">STRASA</h1>
+          <p className="text-lg font-light">SiTus perbendahaRAan SAtker</p>
           <div className="py-10 flex flex-col sm:flex-row gap-6 h-auto">
             <div className="w-full sm:w-1/2 h-52 sm:h-96 relative">
               <Image
                 src="/images/hero-1.png"
-                alt="Panda"
+                alt="STRASA"
                 fill
                 className="rounded-lg object-cover"
                 priority
