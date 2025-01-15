@@ -118,7 +118,7 @@ FormFileImmediateUploadProps) => {
         // Axios-specific error handling
         if (error.response) {
           // Server responded with a status other than 200 range
-          console.error(
+          console.log(
             "Server error:",
             error.response.status,
             error.response.data
@@ -128,16 +128,16 @@ FormFileImmediateUploadProps) => {
           );
         } else if (error.request) {
           // Request was made but no response was received
-          console.error("Network error:", error.request);
+          console.log("Network error:", error.request);
           toast.error("Network error: No response received from server");
         } else {
           // Something happened in setting up the request
-          console.error("Error setting up request:", error.message);
+          console.log("Error setting up request:", error.message);
           toast.error(`Error setting up request: ${error.message}`);
         }
       } else {
         // Non-Axios error
-        console.error("Unexpected error:", error);
+        console.log("Unexpected error:", error);
         toast.error("Unexpected error occurred");
       }
     }

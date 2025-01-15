@@ -46,7 +46,7 @@ export const PdfPreview = ({ fileUrl, className }: PdfPreviewProps) => {
   const handleError = () => {
     setIsLoading(false);
     // Optionally, add error handling logic here
-    console.error("Failed to load file");
+    // console.log("Failed to load file");
   };
 
   // Reset isLoading state when fileUrl changes

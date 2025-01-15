@@ -3,8 +3,9 @@
 import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { ActionResponse } from "@/actions/response";
 import { BASE_PATH_UPLOAD } from "@/app/api/upload/config";
-import { getJadwalById, JadwalKelasNarasumber } from "@/data/jadwal";
+import { getJadwalById, ObjPlainJadwalKelasNarasumber } from "@/data/jadwal";
 import { dbHonorarium } from "@/lib/db-honorarium";
+import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
 import { Jadwal } from "@/zod/schemas/jadwal";
 import { createId } from "@paralleldrive/cuid2";
 import fse from "fs-extra";
@@ -21,7 +22,7 @@ const logger = new Logger({
 
 export const SimpanJadwalKelasNarasumber = async (
   jadwal: Jadwal
-): Promise<ActionResponse<JadwalKelasNarasumber>> => {
+): Promise<ActionResponse<ObjPlainJadwalKelasNarasumber>> => {
   logger.info("[JADWAL]", jadwal);
 
   const pengguna = await getSessionPenggunaForAction();
@@ -130,9 +131,14 @@ export const SimpanJadwalKelasNarasumber = async (
     }
     logger.info("revalidatePath");
     revalidatePath("/pengajuan");
+
+    const plainObj = convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber>(
+      jadwalKelasNarasumber
+    );
+
     return {
       success: true,
-      data: jadwalKelasNarasumber,
+      data: plainObj,
     };
   } catch (error) {
     return {

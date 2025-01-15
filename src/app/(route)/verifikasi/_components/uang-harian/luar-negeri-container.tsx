@@ -47,7 +47,7 @@ const UangHarianLuarNegeriContainer = ({
         console.log(peserta.data);
       } else {
         setPeserta(null);
-        console.error(peserta.message);
+        console.log(peserta.message);
       }
     };
     getPesertaKegiatan();

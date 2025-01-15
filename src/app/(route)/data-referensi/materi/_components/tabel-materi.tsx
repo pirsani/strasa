@@ -124,7 +124,7 @@ export const TabelMateri = ({ data: initialData }: TabelMateriProps) => {
         console.log("Data berhasil disimpan");
         toast.success("Data berhasil disimpan");
       } else {
-        console.error("Data gagal disimpan");
+        console.log("Data gagal disimpan");
         toast.error("Data gagal disimpan");
       }
       setEditableRowIndex(null);
@@ -133,9 +133,9 @@ export const TabelMateri = ({ data: initialData }: TabelMateriProps) => {
       if (error instanceof ZodError) {
         //setErrors(error);
       } else {
-        console.error("Error saving row:", error);
+        console.log("Error saving row:", error);
       }
-      console.error("Error saving row:", error);
+      console.log("Error saving row:", error);
     }
   };
 

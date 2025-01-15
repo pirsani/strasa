@@ -12,10 +12,11 @@ import Jadwal from "../_components/jadwal";
 const PembayaranHonorariumPage = async ({
   params,
 }: {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 }) => {
-  const kegiatanId = params.slug[0];
-  const riwayatPengajuanId = params.slug[1];
+  const slug = (await params).slug;
+  const kegiatanId = slug[0];
+  const riwayatPengajuanId = slug[1];
   const kegiatan = await getKegiatanWithAllDetailById(kegiatanId);
   const jadwal = await getJadwalByRiwayatPengajuanId(riwayatPengajuanId);
   const plainObjectJadwal =

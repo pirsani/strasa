@@ -46,7 +46,7 @@ const SelectNarasumber = ({
           setOptions(mappedOptions);
         }
       } catch (error) {
-        console.error("Failed to fetch options:", error);
+        console.log("Failed to fetch options:", error);
       }
     };
 

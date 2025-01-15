@@ -58,7 +58,7 @@ export const FormUploadExcelSbmUhDalamNegeri = () => {
       setIsReadyToSubmit(false);
       reset();
     } else {
-      console.error("Data gagal diimport ", importedData.error);
+      console.log("Data gagal diimport ", importedData.error);
       toast.error("Data gagal diimport " + importedData.message);
     }
     console.log(data);

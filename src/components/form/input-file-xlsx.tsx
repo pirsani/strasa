@@ -31,7 +31,7 @@ const InputFileXlsx = ({
         //   parsedData.missingColumns || []
         // );
       } catch (error) {
-        console.error(error);
+        console.log(error);
         alert("Terjadi kesalahan saat membaca file excel");
       }
     } else {

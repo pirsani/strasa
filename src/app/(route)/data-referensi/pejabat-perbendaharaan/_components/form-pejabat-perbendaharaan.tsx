@@ -68,7 +68,7 @@ const FormPejabatPerbendaharaan = ({
     // tidak ada file makan tidak perlu diubah menjadi form data
     const simpan = await simpanPejabatPerbendaharaan(data);
     if (!simpan.success) {
-      console.error("Gagal menyimpan pejabatPerbendaharaan:", simpan.error);
+      console.log("Gagal menyimpan pejabatPerbendaharaan:", simpan.error);
       alert(`Gagal menyimpan pejabatPerbendaharaan ${simpan.message}`);
       return;
     } else {

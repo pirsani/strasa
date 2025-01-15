@@ -120,8 +120,8 @@ export const FormMultiFileUpload = ({
               },
             }));
           } catch (error) {
-            console.error("[ERROR UPLOAD]", error);
-            console.error("File upload failed:", error);
+            console.log("[ERROR UPLOAD]", error);
+            console.log("File upload failed:", error);
             setFiles((prevFiles) => {
               const newFiles = { ...prevFiles };
               delete newFiles[fileIdentifier];
@@ -171,7 +171,7 @@ export const FormMultiFileUpload = ({
         })
         .catch((error) => {
           toast.error("File deletion failed");
-          //console.error("File deletion failed:", error);
+          //console.log("File deletion failed:", error);
         });
     }
     console.log("trigger", index);

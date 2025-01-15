@@ -20,10 +20,10 @@ import { downloadTemplateExcel } from "./template-excel";
 
 export async function GET(
   req: Request,
-  { params }: { params: { slug: string[] } }
+  { params }: { params: Promise<{ slug: string[] }> }
 ) {
   try {
-    const { slug } = params;
+    const slug = (await params).slug;
     // console.log(slug);
 
     const jenisDokumen = slug[0];
@@ -74,7 +74,7 @@ export async function GET(
       case "excel-pembayaran":
         return downloadExcelPembayaran(req, slug, dataPengguna);
       default:
-        return new NextResponse(`Download ${params.slug.join("/")}`);
+        return new NextResponse(`Download ${slug.join("/")}`);
     }
   } catch (error) {
     console.error(error);

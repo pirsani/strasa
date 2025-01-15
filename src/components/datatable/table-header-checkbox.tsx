@@ -1,7 +1,6 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Column, Table } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
 
 interface ITableHeaderCheckboxProps {
   column: Column<any>;
@@ -20,7 +19,7 @@ export const TableHeaderCheckbox = ({
     !table.options.meta?.getIsSomeTrue ||
     !table.options.meta?.changeAllOptions
   ) {
-    console.error("meta is not available");
+    console.log("meta is not available");
     return null;
   }
 

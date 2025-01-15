@@ -28,7 +28,7 @@ const InputFileXlsx = ({
         //   parsedData.missingColumns || []
         // );
       } catch (error) {
-        console.error(error);
+        console.log(error);
         //alert("excelDataReferensi");
       }
     } else {

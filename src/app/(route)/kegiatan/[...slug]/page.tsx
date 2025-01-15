@@ -2,8 +2,13 @@ import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import PreviewKegiatan from "@/components/kegiatan";
 import { getKegiatanWithAllDetailById } from "@/data/kegiatan";
 import KegiatanDetailContainer from "./_components/kegiatan-detail-container";
-const Kegiatan = async ({ params }: { params: { slug: string[] } }) => {
-  const kegiatanId = params.slug[0];
+const Kegiatan = async ({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) => {
+  const slug = (await params).slug;
+  const kegiatanId = slug[0];
   const kegiatan = await getKegiatanWithAllDetailById(kegiatanId);
   let isAllowEdit = false;
 

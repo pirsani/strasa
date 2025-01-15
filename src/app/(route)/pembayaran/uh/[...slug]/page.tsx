@@ -4,9 +4,14 @@ import { getKegiatanWithAllDetailById } from "@/data/kegiatan";
 import { getRiwayatPengajuanById } from "@/data/kegiatan/riwayat-pengajuan";
 import ContainerPembayaran from "../../_components/container-pembayaran";
 
-const PembayaranUhPage = async ({ params }: { params: { slug: string[] } }) => {
-  const kegiatanId = params.slug[0];
-  const riwayatPengajuanId = params.slug[1];
+const PembayaranUhPage = async ({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) => {
+  const slug = (await params).slug;
+  const kegiatanId = slug[0];
+  const riwayatPengajuanId = slug[1];
   const kegiatan = await getKegiatanWithAllDetailById(kegiatanId);
   const riwayatPengajuan = await getRiwayatPengajuanById(riwayatPengajuanId);
 

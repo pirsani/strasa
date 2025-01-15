@@ -125,7 +125,7 @@ const FormItinerary = ({
       saveSuccess && setNextItineraryFrom(data);
       console.log(data);
     } catch (error) {
-      console.error("Gagal menyimpan data itinerary", error);
+      console.log("Gagal menyimpan data itinerary", error);
       //toast.error("Gagal menyimpan data itinerary");
     }
     console.log(data);

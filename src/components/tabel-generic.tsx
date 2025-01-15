@@ -154,14 +154,14 @@ export const TabelGeneric = <T,>({
       const colWidths = colRefs.current.map((col) => {
         const width = col.getBoundingClientRect().width;
         if (isNaN(width)) {
-          console.error("Invalid width detected:", col);
+          console.log("Invalid width detected:", col);
         }
         return width;
       });
       const cumulativeWidths = colWidths.reduce(
         (acc, width) => {
           if (isNaN(width)) {
-            console.error("Invalid width in cumulative calculation:", width);
+            console.log("Invalid width in cumulative calculation:", width);
             return acc;
           }
           return [...acc, acc[acc.length - 1] + width];
@@ -390,7 +390,7 @@ export const TabelGeneric = <T,>({
                                 //       isNaN(nextWidth) ||
                                 //       isNaN(currentWidth)
                                 //     ) {
-                                //       console.error(
+                                //       console.log(
                                 //         `Invalid width calculation on select: nextWidth=${nextWidth}, currentWidth=${currentWidth}`
                                 //       );
                                 //       return 0; // Provide a default value to avoid NaN

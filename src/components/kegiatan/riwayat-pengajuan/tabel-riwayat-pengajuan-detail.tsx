@@ -179,7 +179,7 @@ const fetchDataRiwayatPengajuan = async (
     });
     newDetails.push(...newDetailsJadwal);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 
   return newDetails;

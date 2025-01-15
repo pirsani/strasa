@@ -76,7 +76,7 @@ const InputDatePicker = ({
     // validate the field
     const result = await trigger(name);
     if (!result) {
-      console.error("Validation failed");
+      console.log("Validation failed");
       return;
     }
     setIsPopoverOpen(false);

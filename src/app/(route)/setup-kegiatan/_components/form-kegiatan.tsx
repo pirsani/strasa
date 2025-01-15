@@ -487,8 +487,8 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
               disabled={isSubmitting}
               type="submit"
             >
-              Submit
-              {isSubmitting && <span className="ml-2">submitting...</span>}
+              {isSubmitting && <span className="ml-2">Submitting...</span>}
+              {!isSubmitting && <span>Submit</span>}
             </Button>
             <Button
               type="button"

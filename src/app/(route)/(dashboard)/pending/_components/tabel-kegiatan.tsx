@@ -273,7 +273,7 @@ export const TabelKegiatan = ({
     // find the detail that have the same riwayatPengajuanId
     const detail = details?.find((d) => d.id === riwayatPengajuanId);
     if (!detail) {
-      console.error("Detail not found");
+      console.log("Detail not found");
       return;
     } else {
       //update details
@@ -298,7 +298,7 @@ export const TabelKegiatan = ({
     // find the detail that have the same riwayatPengajuanId
     const detail = details?.find((d) => d.id === riwayatPengajuanId);
     if (!detail) {
-      console.error("Detail not found");
+      console.log("Detail not found");
       return;
     } else {
       //update details

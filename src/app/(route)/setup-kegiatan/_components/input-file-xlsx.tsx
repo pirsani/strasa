@@ -32,7 +32,7 @@ const InputFileXlsx = ({
           parsedData.missingColumns || []
         );
       } catch (error) {
-        console.error("Error:", error);
+        console.log("Error:", error);
       }
     } else {
       console.log("File is empty");

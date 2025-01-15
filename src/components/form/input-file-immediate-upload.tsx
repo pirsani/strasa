@@ -92,7 +92,7 @@ export const InputFileImmediateUpload = ({
 
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          console.error(
+          console.log(
             "Server error:",
             error.response.status,
             error.response.data
@@ -101,14 +101,14 @@ export const InputFileImmediateUpload = ({
             `Failed to upload ${file.name}: Server error ${error.response.status}`
           );
         } else if (error.request) {
-          console.error("Network error:", error.request);
+          console.log("Network error:", error.request);
           toast.error("Network error: No response received from server");
         } else {
-          console.error("Error setting up request:", error.message);
+          console.log("Error setting up request:", error.message);
           toast.error(`Error setting up request: ${error.message}`);
         }
       } else {
-        console.error("Unexpected error:", error);
+        console.log("Unexpected error:", error);
         toast.error("Unexpected error occurred");
       }
     }

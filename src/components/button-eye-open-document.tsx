@@ -8,10 +8,8 @@ interface ButtonEyeProps {
 }
 const ButtonEye = ({ url }: ButtonEyeProps) => {
   // Access state and actions from the store
-  const { isPreviewHidden, showPreview } = useFileStore((state) => ({
-    isPreviewHidden: state.isPreviewHidden,
-    showPreview: state.showPreview,
-  }));
+  const isPreviewHidden = useFileStore((state) => state.isPreviewHidden);
+  const showPreview = useFileStore((state) => state.showPreview);
 
   const setUrl = () => {
     console.log("setUrl", url);

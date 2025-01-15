@@ -22,8 +22,12 @@ const conformTo = <
   return result;
 };
 
-const SetupKegiatanPage = async ({ params }: { params: { slug: string } }) => {
-  const { slug } = params;
+const SetupKegiatanPage = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
+  const slug = (await params).slug;
   const kegiatan = await getKegiatanWithAllDetailById(slug);
 
   if (!kegiatan) {

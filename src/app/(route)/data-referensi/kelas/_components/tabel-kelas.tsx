@@ -2,27 +2,15 @@
 import {
   deleteDataKelas,
   kelasWithKegiatan,
-  simpanDataKelas,
   updateDataKelas,
 } from "@/actions/kelas";
 import ConfirmDialog from "@/components/confirm-dialog";
 import { KolomAksi, TabelGeneric } from "@/components/tabel-generic";
 import { useSearchTerm } from "@/hooks/use-search-term";
-import { kelasSchema, Kelas as Zkelas } from "@/zod/schemas/kelas";
+import { kelasSchema } from "@/zod/schemas/kelas";
 import { Kelas } from "@prisma-honorarium/client";
 
-import {
-  ColumnDef,
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  Row,
-  SortingState,
-  Table,
-  useReactTable,
-} from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ZodError } from "zod";
@@ -159,7 +147,7 @@ export const TabelKelas = ({
         console.log("Data berhasil disimpan");
         toast.success("Data berhasil disimpan");
       } else {
-        console.error("Data gagal disimpan");
+        console.log("Data gagal disimpan");
         toast.error("Data gagal disimpan");
       }
       setEditableRowIndex(null);
@@ -168,9 +156,9 @@ export const TabelKelas = ({
       if (error instanceof ZodError) {
         //setErrors(error);
       } else {
-        console.error("Error saving row:", error);
+        console.log("Error saving row:", error);
       }
-      console.error("Error saving row:", error);
+      console.log("Error saving row:", error);
     }
   };
 

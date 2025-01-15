@@ -170,7 +170,7 @@ export const TabelSp2d = ({
         console.log(update.data);
         toast.success("Data berhasil disimpan");
       } else {
-        console.error("Data gagal disimpan");
+        console.log("Data gagal disimpan");
         toast.error("Data gagal disimpan");
       }
       setEditableRowIndex(null);
@@ -180,9 +180,9 @@ export const TabelSp2d = ({
         //setErrors(error);
         toast.error("Data gagal disimpan");
       } else {
-        console.error("Error saving row:", error);
+        console.log("Error saving row:", error);
       }
-      console.error("Error saving row:", error);
+      console.log("Error saving row:", error);
     }
   };
 

@@ -151,7 +151,7 @@ export const TabelSbmHonorarium = ({
         toast.success("Data berhasil disimpan");
         console.log("[updated]", update.data);
       } else {
-        console.error("Data gagal disimpan");
+        console.log("Data gagal disimpan");
         toast.error("Data gagal disimpan");
       }
       setEditableRowIndex(null);
@@ -161,7 +161,7 @@ export const TabelSbmHonorarium = ({
       if (error instanceof ZodError) {
         setErrors(error);
       } else {
-        console.error("Error saving row:", error);
+        console.log("Error saving row:", error);
         toast.error("Error saving row");
       }
     }

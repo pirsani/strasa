@@ -42,7 +42,7 @@ export const TableCellInput = <T,>({
       handleOnBlur(value);
       console.log("column.id", column.id);
     } else {
-      console.error("updateData method is not available");
+      console.log("updateData method is not available");
     }
   };
 

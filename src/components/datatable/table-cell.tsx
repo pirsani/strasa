@@ -30,7 +30,7 @@ export const TableCell = ({
     ) {
       (table.options.meta.updateData as Function)(row.index, column.id, value);
     } else {
-      console.error("updateData method is not available");
+      console.log("updateData method is not available");
     }
   };
 
