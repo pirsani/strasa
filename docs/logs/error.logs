@@ -1,0 +1,9 @@
+# ERRRO LOGS
+
+pada saat add SBM TRANSPORTASI
+
+```plaintext
+[ Server ] Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., besaran: Decimal, tahun: 2025, createdBy: ..., createdAt: ..., updatedBy: ..., updatedAt: ...}
+                     ^^^^^^^
+```
