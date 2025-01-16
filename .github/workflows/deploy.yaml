@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - main # Change this to your default branch
+      - hotfix # Add this line to include the hotfix branch
 
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
