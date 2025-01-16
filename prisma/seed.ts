@@ -276,6 +276,8 @@ const deleteExisting = async (): Promise<void> => {
     await dbHonorarium.pejabatPerbendaharaan.deleteMany({});
     await dbHonorarium.jenisJabatanPerbendaharaan.deleteMany({});
     await dbHonorarium.sbmHonorarium.deleteMany({});
+    await dbHonorarium.pagu.deleteMany({});
+    await dbHonorarium.sp2d.deleteMany({});
     await dbHonorarium.organisasi.deleteMany({});
     await dbHonorarium.jenisDokumenKegiatan.deleteMany({});
     await dbHonorarium.materi.deleteMany({});
