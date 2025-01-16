@@ -1,5 +1,4 @@
 import { dbHonorarium } from "@/lib/db-honorarium";
-import { faker } from "@faker-js/faker";
 import { Organisasi } from "@prisma-honorarium/client";
 import bcrypt from "bcryptjs"; // Import bcrypt for password hashing and comparison
 import csv from "csv-parser";
@@ -495,40 +494,40 @@ async function main() {
       ],
     });
 
-  const pelaksanaKeuangan = await dbHonorarium.pejabatPerbendaharaan.createMany(
-    {
-      data: [
-        {
-          jabatanId: "PPK",
-          nama: "Pepeka satu",
-          satkerId: initialUnitKerja[10].id,
-          createdBy: "init",
-          tmtMulai: new Date("2020-01-01"),
-        },
-        {
-          jabatanId: "PPK",
-          nama: "Pepeka dua",
-          satkerId: initialUnitKerja[10].id,
-          createdBy: "init",
-          tmtMulai: new Date("2020-01-01"),
-        },
-        {
-          jabatanId: "bendahara-pengeluaran",
-          nama: "BENDI1 bendahara-pengeluaran",
-          satkerId: initialUnitKerja[10].id,
-          createdBy: "init",
-          tmtMulai: new Date("2020-01-01"),
-        },
-        {
-          jabatanId: "bendahara-pengeluaran",
-          nama: "BENDU2 bendahara-pengeluaran",
-          satkerId: initialUnitKerja[10].id,
-          createdBy: "init",
-          tmtMulai: new Date("2020-01-01"),
-        },
-      ],
-    }
-  );
+  // const pelaksanaKeuangan = await dbHonorarium.pejabatPerbendaharaan.createMany(
+  //   {
+  //     data: [
+  //       {
+  //         jabatanId: "PPK",
+  //         nama: "Pepeka satu",
+  //         satkerId: initialUnitKerja[10].id,
+  //         createdBy: "init",
+  //         tmtMulai: new Date("2020-01-01"),
+  //       },
+  //       {
+  //         jabatanId: "PPK",
+  //         nama: "Pepeka dua",
+  //         satkerId: initialUnitKerja[10].id,
+  //         createdBy: "init",
+  //         tmtMulai: new Date("2020-01-01"),
+  //       },
+  //       {
+  //         jabatanId: "bendahara-pengeluaran",
+  //         nama: "BENDI1 bendahara-pengeluaran",
+  //         satkerId: initialUnitKerja[10].id,
+  //         createdBy: "init",
+  //         tmtMulai: new Date("2020-01-01"),
+  //       },
+  //       {
+  //         jabatanId: "bendahara-pengeluaran",
+  //         nama: "BENDU2 bendahara-pengeluaran",
+  //         satkerId: initialUnitKerja[10].id,
+  //         createdBy: "init",
+  //         tmtMulai: new Date("2020-01-01"),
+  //       },
+  //     ],
+  //   }
+  // );
 
   // Truncate the table
   const role = await dbHonorarium.role.createMany({
@@ -687,71 +686,71 @@ async function main() {
   //   ],
   // });
 
-  const materi = await dbHonorarium.materi.createMany({
-    data: [
-      {
-        kode: "PDK-A001",
-        nama: "Entrepreurship in Digital Age",
-        createdBy: "init",
-      },
-      {
-        kode: "PDK-A002",
-        nama: "Digital Marketing",
-        createdBy: "init",
-      },
-      {
-        kode: "PDK-A003",
-        nama: "Digital Transformation",
-        createdBy: "init",
-      },
-      {
-        kode: "PDK-A004",
-        nama: "Digital Diplomacy",
-        createdBy: "init",
-      },
+  // const materi = await dbHonorarium.materi.createMany({
+  //   data: [
+  //     {
+  //       kode: "PDK-A001",
+  //       nama: "Entrepreurship in Digital Age",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PDK-A002",
+  //       nama: "Digital Marketing",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PDK-A003",
+  //       nama: "Digital Transformation",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PDK-A004",
+  //       nama: "Digital Diplomacy",
+  //       createdBy: "init",
+  //     },
 
-      {
-        kode: "PDK-A005",
-        nama: "ASEAN: overview and challenges",
-        createdBy: "init",
-      },
-      {
-        kode: "PDK-A006",
-        nama: "OECD: cooperation and opportunities",
-        createdBy: "init",
-      },
-      {
-        kode: "PDK-A007",
-        nama: "ASEAN: regional security",
-        createdBy: "init",
-      },
-      {
-        kode: "PDK-A008",
-        nama: "ASEAN: economic integration",
-        createdBy: "init",
-      },
-      {
-        kode: "PID-A001",
-        nama: "Digital Economy",
-        createdBy: "init",
-      },
-      {
-        kode: "PID-A002",
-        nama: "Digital Governance",
-        createdBy: "init",
-      },
-      {
-        kode: "PID-A003",
-        nama: "Digital Society",
-        createdBy: "init",
-      },
-      {
-        kode: "PID-A004",
-        nama: "Digital Security",
-        createdBy: "init",
-      },
-    ],
-  });
+  //     {
+  //       kode: "PDK-A005",
+  //       nama: "ASEAN: overview and challenges",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PDK-A006",
+  //       nama: "OECD: cooperation and opportunities",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PDK-A007",
+  //       nama: "ASEAN: regional security",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PDK-A008",
+  //       nama: "ASEAN: economic integration",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PID-A001",
+  //       nama: "Digital Economy",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PID-A002",
+  //       nama: "Digital Governance",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PID-A003",
+  //       nama: "Digital Society",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       kode: "PID-A004",
+  //       nama: "Digital Security",
+  //       createdBy: "init",
+  //     },
+  //   ],
+  // });
 
   const pangkatGolongan = await dbHonorarium.pangkatGolongan.createMany({
     data: [
@@ -914,50 +913,50 @@ async function main() {
   //   ],
   // });
 
-  const narasumberData = Array.from({ length: 8 }).map(() => ({
-    id: faker.string.numeric(16), // Generate a unique ID
-    nama: faker.person.fullName(), // Generate a random full name
-    NIP: faker.string.numeric(18), // Generate a random 18-digit string
-    jabatan: faker.person.jobTitle(), // Generate a random job title
-    //eselon: faker.helpers.arrayElement(["", "I", "II", "III"]), // Generate a random eselon
-    eselon: faker.helpers.arrayElement([null, 1, 2, 3, 4]), // Generate a random eselon
-    pangkatGolonganId: faker.helpers.arrayElement([
-      "IV/A",
-      "IV/B",
-      "IV/C",
-      "IV/D",
-      "IV/E",
-    ]),
-    email: faker.internet.email(),
-    nomorTelepon: faker.phone.number(),
-    bank: faker.helpers.arrayElement(["BNI", "BCA", "Mandiri", "BRI"]),
-    namaRekening: faker.person.fullName(),
-    nomorRekening: faker.string.numeric(10),
-    createdBy: "init",
-  }));
+  // const narasumberData = Array.from({ length: 8 }).map(() => ({
+  //   id: faker.string.numeric(16), // Generate a unique ID
+  //   nama: faker.person.fullName(), // Generate a random full name
+  //   NIP: faker.string.numeric(18), // Generate a random 18-digit string
+  //   jabatan: faker.person.jobTitle(), // Generate a random job title
+  //   //eselon: faker.helpers.arrayElement(["", "I", "II", "III"]), // Generate a random eselon
+  //   eselon: faker.helpers.arrayElement([null, 1, 2, 3, 4]), // Generate a random eselon
+  //   pangkatGolonganId: faker.helpers.arrayElement([
+  //     "IV/A",
+  //     "IV/B",
+  //     "IV/C",
+  //     "IV/D",
+  //     "IV/E",
+  //   ]),
+  //   email: faker.internet.email(),
+  //   nomorTelepon: faker.phone.number(),
+  //   bank: faker.helpers.arrayElement(["BNI", "BCA", "Mandiri", "BRI"]),
+  //   namaRekening: faker.person.fullName(),
+  //   nomorRekening: faker.string.numeric(10),
+  //   createdBy: "init",
+  // }));
 
-  // Insert the generated data into the database
-  const narasumberFaker = await dbHonorarium.narasumber.createMany({
-    data: narasumberData,
-  });
+  // // Insert the generated data into the database
+  // const narasumberFaker = await dbHonorarium.narasumber.createMany({
+  //   data: narasumberData,
+  // });
 
-  const materiku = await dbHonorarium.materi.findMany({
-    where: {
-      createdBy: "init",
-    },
-  });
+  // const materiku = await dbHonorarium.materi.findMany({
+  //   where: {
+  //     createdBy: "init",
+  //   },
+  // });
 
-  const kelasku = await dbHonorarium.kelas.findMany({
-    where: {
-      createdBy: "init",
-    },
-  });
+  // const kelasku = await dbHonorarium.kelas.findMany({
+  //   where: {
+  //     createdBy: "init",
+  //   },
+  // });
 
-  const narasumberku = await dbHonorarium.narasumber.findMany({
-    where: {
-      createdBy: "init",
-    },
-  });
+  // const narasumberku = await dbHonorarium.narasumber.findMany({
+  //   where: {
+  //     createdBy: "init",
+  //   },
+  // });
 
   // const jadwal = await dbHonorarium.jadwal.createMany({
   //   data: [
