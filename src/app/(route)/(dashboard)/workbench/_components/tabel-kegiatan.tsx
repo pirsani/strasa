@@ -340,33 +340,58 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                 </tr>
               </thead>
               <tbody>
-                {details.map((detail: RowDetail) => (
-                  <tr
-                    key={detail.id}
-                    className="even:bg-slate-100 h-10 hover:bg-slate-200"
-                  >
-                    <td className="border px-2">{detail.nama}</td>
-                    <td className="border px-2">
-                      {formatTanggal(detail.tanggalKegiatan, "dd-M-yyyy")}
-                    </td>
-                    <td className="border px-2">
-                      {formatTanggal(detail.diajukanTanggal, "dd-M-yyyy")}
-                    </td>
-                    <td className="border px-2">{detail.jenisPengajuan}</td>
-                    <td className="border px-2">
-                      {<StatusPengajuan status={detail.statusPengajuan} />}
-                    </td>
-                    <td className="border px-2">
-                      {
-                        <DokumenPengajuan
-                          kegiatanId={row.id}
-                          rowDetail={detail}
-                        />
-                      }
-                    </td>
-                    <td className="border px-2">{detail.diajukanOleh}</td>
-                  </tr>
-                ))}
+                {details.map((detail: RowDetail) => {
+                  let linkto = `/pengajuan/honorarium/${detail.id}`;
+
+                  switch (detail.jenisPengajuan) {
+                    case "GENERATE_RAMPUNGAN":
+                      linkto = `/pengajuan/rampungan/${detail.id}`;
+                      break;
+                    case "HONORARIUM":
+                      linkto = `/pengajuan/honorarium/${detail.id}`;
+                      break;
+                    case "UH_LUAR_NEGERI":
+                      linkto = `/pengajuan/uh-luar-negeri/${detail.id}`;
+                      break;
+                    case "UH_DALAM_NEGERI":
+                      linkto = `/pengajuan/uh-dalam-negeri/${detail.id}`;
+                      break;
+                    default:
+                      linkto = `/pengajuan/${detail.id}`;
+                  }
+
+                  return (
+                    <tr
+                      key={detail.id}
+                      className="even:bg-slate-100 h-10 hover:bg-slate-200"
+                    >
+                      <td className="border px-2">
+                        <Link href={linkto} className="text-blue-500 underline">
+                          {detail.nama}
+                        </Link>
+                      </td>
+                      <td className="border px-2">
+                        {formatTanggal(detail.tanggalKegiatan, "dd-M-yyyy")}
+                      </td>
+                      <td className="border px-2">
+                        {formatTanggal(detail.diajukanTanggal, "dd-M-yyyy")}
+                      </td>
+                      <td className="border px-2">{detail.jenisPengajuan}</td>
+                      <td className="border px-2">
+                        {<StatusPengajuan status={detail.statusPengajuan} />}
+                      </td>
+                      <td className="border px-2">
+                        {
+                          <DokumenPengajuan
+                            kegiatanId={row.id}
+                            rowDetail={detail}
+                          />
+                        }
+                      </td>
+                      <td className="border px-2">{detail.diajukanOleh}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </td>
