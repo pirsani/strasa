@@ -1,203 +1,203 @@
-name;description;resource;action
-create-any-referensi;mengelola data referensi;referensi;create:any
-create-any-referensi-pengguna;mengelola data pengguna;ref-pengguna;create:any
-create-any-referensi-role;mengelola data referensi role;ref-role;create:any
-create-any-referensi-permission;mengelola data referensi permission;ref-permission;create:any
-create-any-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;create:any
-create-any-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;create:any
-create-any-referensi-materi;mengelola data referensi materi;ref-materi;create:any
-create-any-referensi-kelas;mengelola data referensi kelas;ref-kelas;create:any
-create-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;create:any
-create-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;create:any
-create-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;create:any
-create-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;create:any
-create-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;create:any
-create-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;create:any
-create-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;create:any
-create-any-referensi-negara;mengelola data referensi negara;ref-negara;create:any
-create-any-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;create:any
-create-any-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;create:any
-create-any-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;create:any
-create-any-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;create:any
-create-any-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;create:any
-create-any-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;create:any
-create-own-referensi;mengelola data referensi;referensi;create:own
-create-own-referensi-pengguna;mengelola data pengguna;ref-pengguna;create:own
-create-own-referensi-role;mengelola data referensi role;ref-role;create:own
-create-own-referensi-permission;mengelola data referensi permission;ref-permission;create:own
-create-own-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;create:own
-create-own-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;create:own
-create-own-referensi-materi;mengelola data referensi materi;ref-materi;create:own
-create-own-referensi-kelas;mengelola data referensi kelas;ref-kelas;create:own
-create-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;create:own
-create-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;create:own
-create-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;create:own
-create-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;create:own
-create-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;create:own
-create-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;create:own
-create-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;create:own
-create-own-referensi-negara;mengelola data referensi negara;ref-negara;create:own
-create-own-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;create:own
-create-own-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;create:own
-create-own-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;create:own
-create-own-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;create:own
-create-own-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;create:own
-create-own-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;create:own
-update-any-referensi;mengelola data referensi;referensi;update:any
-update-any-referensi-pengguna;mengelola data pengguna;ref-pengguna;update:any
-update-any-referensi-role;mengelola data referensi role;ref-role;update:any
-update-any-referensi-permission;mengelola data referensi permission;ref-permission;update:any
-update-any-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;update:any
-update-any-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;update:any
-update-any-referensi-materi;mengelola data referensi materi;ref-materi;update:any
-update-any-referensi-kelas;mengelola data referensi kelas;ref-kelas;update:any
-update-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;update:any
-update-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;update:any
-update-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;update:any
-update-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;update:any
-update-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;update:any
-update-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;update:any
-update-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;update:any
-update-any-referensi-negara;mengelola data referensi negara;ref-negara;update:any
-update-any-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;update:any
-update-any-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;update:any
-update-any-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;update:any
-update-any-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;update:any
-update-any-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;update:any
-update-any-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;update:any
-update-own-referensi;mengelola data referensi;referensi;update:own
-update-own-referensi-pengguna;mengelola data pengguna;ref-pengguna;update:own
-update-own-referensi-role;mengelola data referensi role;ref-role;update:own
-update-own-referensi-permission;mengelola data referensi permission;ref-permission;update:own
-update-own-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;update:own
-update-own-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;update:own
-update-own-referensi-materi;mengelola data referensi materi;ref-materi;update:own
-update-own-referensi-kelas;mengelola data referensi kelas;ref-kelas;update:own
-update-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;update:own
-update-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;update:own
-update-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;update:own
-update-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;update:own
-update-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;update:own
-update-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;update:own
-update-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;update:own
-update-own-referensi-negara;mengelola data referensi negara;ref-negara;update:own
-update-own-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;update:own
-update-own-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;update:own
-update-own-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;update:own
-update-own-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;update:own
-update-own-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;update:own
-update-own-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;update:own
-read-any-referensi;mengelola data referensi;referensi;read:any
-read-any-referensi-pengguna;mengelola data pengguna;ref-pengguna;read:any
-read-any-referensi-role;mengelola data referensi role;ref-role;read:any
-read-any-referensi-permission;mengelola data referensi permission;ref-permission;read:any
-read-any-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;read:any
-read-any-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;read:any
-read-any-referensi-materi;mengelola data referensi materi;ref-materi;read:any
-read-any-referensi-kelas;mengelola data referensi kelas;ref-kelas;read:any
-read-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;read:any
-read-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;read:any
-read-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;read:any
-read-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;read:any
-read-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;read:any
-read-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;read:any
-read-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;read:any
-read-any-referensi-negara;mengelola data referensi negara;ref-negara;read:any
-read-any-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;read:any
-read-any-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;read:any
-read-any-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;read:any
-read-any-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;read:any
-read-any-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;read:any
-read-any-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;read:any
-read-own-referensi;mengelola data referensi;referensi;read:own
-read-own-referensi-pengguna;mengelola data pengguna;ref-pengguna;read:own
-read-own-referensi-role;mengelola data referensi role;ref-role;read:own
-read-own-referensi-permission;mengelola data referensi permission;ref-permission;read:own
-read-own-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;read:own
-read-own-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;read:own
-read-own-referensi-materi;mengelola data referensi materi;ref-materi;read:own
-read-own-referensi-kelas;mengelola data referensi kelas;ref-kelas;read:own
-read-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;read:own
-read-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;read:own
-read-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;read:own
-read-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;read:own
-read-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;read:own
-read-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;read:own
-read-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;read:own
-read-own-referensi-negara;mengelola data referensi negara;ref-negara;read:own
-read-own-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;read:own
-read-own-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;read:own
-read-own-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;read:own
-read-own-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;read:own
-read-own-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;read:own
-read-own-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;read:own
-delete-any-referensi;mengelola data referensi;referensi;delete:any
-delete-any-referensi-pengguna;mengelola data pengguna;ref-pengguna;delete:any
-delete-any-referensi-role;mengelola data referensi role;ref-role;delete:any
-delete-any-referensi-permission;mengelola data referensi permission;ref-permission;delete:any
-delete-any-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;delete:any
-delete-any-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;delete:any
-delete-any-referensi-materi;mengelola data referensi materi;ref-materi;delete:any
-delete-any-referensi-kelas;mengelola data referensi kelas;ref-kelas;delete:any
-delete-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;delete:any
-delete-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;delete:any
-delete-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;delete:any
-delete-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;delete:any
-delete-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;delete:any
-delete-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;delete:any
-delete-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;delete:any
-delete-any-referensi-negara;mengelola data referensi negara;ref-negara;delete:any
-delete-any-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;delete:any
-delete-any-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;delete:any
-delete-any-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;delete:any
-delete-any-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;delete:any
-delete-any-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;delete:any
-delete-any-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;delete:any
-delete-own-referensi;mengelola data referensi;referensi;delete:own
-delete-own-referensi-pengguna;mengelola data pengguna;ref-pengguna;delete:own
-delete-own-referensi-role;mengelola data referensi role;ref-role;delete:own
-delete-own-referensi-permission;mengelola data referensi permission;ref-permission;delete:own
-delete-own-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;delete:own
-delete-own-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;delete:own
-delete-own-referensi-materi;mengelola data referensi materi;ref-materi;delete:own
-delete-own-referensi-kelas;mengelola data referensi kelas;ref-kelas;delete:own
-delete-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;delete:own
-delete-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;delete:own
-delete-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;delete:own
-delete-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;delete:own
-delete-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;delete:own
-delete-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;delete:own
-delete-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;delete:own
-delete-own-referensi-negara;mengelola data referensi negara;ref-negara;delete:own
-delete-own-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;delete:own
-delete-own-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;delete:own
-delete-own-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;delete:own
-delete-own-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;delete:own
-delete-own-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;delete:own
-delete-own-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;delete:own
-read-any-dashbboard;mengakses dashboard;dasboard;read:any
-read-own-dashbboard;mengakses dashboard;dasboard;read:own
-read-any-workbench;mengakses workbench;workbench;read:any
-read-own-workbench;mengakses workbench;workbench;read:own
-read-any-pending;mengakses pending page;pending;read:any
-read-own-pending;mengakses pending page;pending;read:own
-update-any-dokumen-akhir;memperbarui dokumen akhir;dokumen-akhir;update:any
-update-own-dokumen-akhir;memperbarui dokumen akhir;dokumen-akhir;update:own
-update-any-verfikasi-dokumen-akhir;memperbarui dokumen akhir;verfikasi-dokumen-akhir;update:any
-update-own-verfikasi-dokumen-akhir;memperbarui dokumen akhir;verfikasi-dokumen-akhir;update:own
-read-any-pagu;mengakses data pagu;ref-pagu;read:any
-read-own-pagu;mengakses data pagu;ref-pagu;read:own
-create-any-pagu;menambahkan data pagu;ref-pagu;create:any
-create-own-pagu;menambahkan data pagu;ref-pagu;create:own
-update-any-pagu;memperbarui data pagu;ref-pagu;update:any
-update-own-pagu;memperbarui data pagu;ref-pagu;update:own
-delete-any-pagu;menghapus data pagu;ref-pagu;delete:any
-delete-own-pagu;menghapus data pagu;ref-pagu;delete:own
-read-any-sp2d;mengakses data sp2d;ref-sp2d;read:any
-read-own-sp2d;mengakses data sp2d;ref-sp2d;read:own
-create-any-sp2d;menambahkan data sp2d;ref-sp2d;create:any
-create-own-sp2d;menambahkan data sp2d;ref-sp2d;create:own
-update-any-sp2d;memperbarui data sp2d;ref-sp2d;update:any
-update-own-sp2d;memperbarui data sp2d;ref-sp2d;update:own
-delete-any-sp2d;menghapus data sp2d;ref-sp2d;delete:any
-delete-own-sp2d;menghapus data sp2d;ref-sp2d;delete:own
+id;name;description;resource;action
+cm4jxm1e60000cmxxvfh9bcx7;create-any-referensi;mengelola data referensi;referensi;create:any
+cm4jxm1eg0001cmxxzhti61dj;create-any-referensi-pengguna;mengelola data pengguna;ref-pengguna;create:any
+cm4jxm1ei0002cmxx3nles1vn;create-any-referensi-role;mengelola data referensi role;ref-role;create:any
+cm4jxm1ek0003cmxxp0ksvqzz;create-any-referensi-permission;mengelola data referensi permission;ref-permission;create:any
+cm4jxm1el0004cmxxj5c0uvja;create-any-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;create:any
+cm4jxm1en0005cmxxikz0hzcg;create-any-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;create:any
+cm4jxm1eo0006cmxxye497rtj;create-any-referensi-materi;mengelola data referensi materi;ref-materi;create:any
+cm4jxm1er0007cmxx8r7nsdj2;create-any-referensi-kelas;mengelola data referensi kelas;ref-kelas;create:any
+cm4jxm1es0008cmxxkdx8plrv;create-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;create:any
+cm4jxm1eu0009cmxx46lvpou5;create-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;create:any
+cm4jxm1ev000acmxxj60dnrud;create-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;create:any
+cm4jxm1ex000bcmxx6snixuq5;create-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;create:any
+cm4jxm1ey000ccmxx67n40bv2;create-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;create:any
+cm4jxm1f0000dcmxxy7rqjqwq;create-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;create:any
+cm4jxm1f1000ecmxx3ripu70g;create-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;create:any
+cm4jxm1f3000fcmxx7ctuxcdx;create-any-referensi-negara;mengelola data referensi negara;ref-negara;create:any
+cm4jxm1f4000gcmxxbmof30ih;create-any-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;create:any
+cm4jxm1f5000hcmxx2zjfz2or;create-any-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;create:any
+cm4jxm1f7000icmxxxnb64bl2;create-any-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;create:any
+cm4jxm1fp000jcmxxv6hh6f0j;create-any-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;create:any
+cm4jxm1fu000kcmxx9gc3a2iq;create-any-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;create:any
+cm4jxm1fz000lcmxxfnhjx840;create-any-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;create:any
+cm4jxm1g1000mcmxx601uz6ey;create-own-referensi;mengelola data referensi;referensi;create:own
+cm4jxm1g2000ncmxxs3utsj7l;create-own-referensi-pengguna;mengelola data pengguna;ref-pengguna;create:own
+cm4jxm1g3000ocmxxo4cbrhfa;create-own-referensi-role;mengelola data referensi role;ref-role;create:own
+cm4jxm1g4000pcmxxc1yfd7fm;create-own-referensi-permission;mengelola data referensi permission;ref-permission;create:own
+cm4jxm1g6000qcmxxumnwcjg5;create-own-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;create:own
+cm4jxm1g7000rcmxxufcprc1r;create-own-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;create:own
+cm4jxm1g8000scmxxv0wrxp5a;create-own-referensi-materi;mengelola data referensi materi;ref-materi;create:own
+cm4jxm1g9000tcmxxyrfado9t;create-own-referensi-kelas;mengelola data referensi kelas;ref-kelas;create:own
+cm4jxm1ga000ucmxx1qg7pvu8;create-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;create:own
+cm4jxm1gb000vcmxxpcylleji;create-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;create:own
+cm4jxm1gc000wcmxxapmxdpi7;create-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;create:own
+cm4jxm1gd000xcmxxyfnfc4kq;create-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;create:own
+cm4jxm1ge000ycmxxxgzbqhwn;create-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;create:own
+cm4jxm1gf000zcmxxbwgz8aqs;create-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;create:own
+cm4jxm1gg0010cmxxtx4ylvnf;create-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;create:own
+cm4jxm1gi0011cmxxwa5w2ydu;create-own-referensi-negara;mengelola data referensi negara;ref-negara;create:own
+cm4jxm1h90012cmxxv0223vzj;create-own-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;create:own
+cm4jxm1ha0013cmxxowe9234z;create-own-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;create:own
+cm4jxm1hb0014cmxxyo2m07ha;create-own-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;create:own
+cm4jxm1hc0015cmxxphcfga98;create-own-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;create:own
+cm4jxm1hd0016cmxxrfwi5as8;create-own-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;create:own
+cm4jxm1he0017cmxxmevcb5wi;create-own-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;create:own
+cm4jxm1hf0018cmxxa5u2yefe;update-any-referensi;mengelola data referensi;referensi;update:any
+cm4jxm1hh0019cmxxzwkr42v9;update-any-referensi-pengguna;mengelola data pengguna;ref-pengguna;update:any
+cm4jxm1hi001acmxx2mfvdo7s;update-any-referensi-role;mengelola data referensi role;ref-role;update:any
+cm4jxm1hj001bcmxxbsvpsbrt;update-any-referensi-permission;mengelola data referensi permission;ref-permission;update:any
+cm4jxm1hk001ccmxxr8hea5xy;update-any-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;update:any
+cm4jxm1hl001dcmxxcgnumcs9;update-any-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;update:any
+cm4jxm1hn001ecmxxxsaopsu1;update-any-referensi-materi;mengelola data referensi materi;ref-materi;update:any
+cm4jxm1ho001fcmxxhjafnis3;update-any-referensi-kelas;mengelola data referensi kelas;ref-kelas;update:any
+cm4jxm1hq001gcmxxckc8zdbz;update-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;update:any
+cm4jxm1hr001hcmxxnx1j9krf;update-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;update:any
+cm4jxm1hs001icmxxqs6p5iqi;update-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;update:any
+cm4jxm1ht001jcmxxbo4bbrgt;update-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;update:any
+cm4jxm1hv001kcmxxet6a7ehj;update-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;update:any
+cm4jxm1hw001lcmxx93tfjsq6;update-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;update:any
+cm4jxm1hx001mcmxxj7wdz7pt;update-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;update:any
+cm4jxm1hy001ncmxxc8g6punq;update-any-referensi-negara;mengelola data referensi negara;ref-negara;update:any
+cm4jxm1hz001ocmxxemse22xm;update-any-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;update:any
+cm4jxm1i0001pcmxxj118e2y4;update-any-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;update:any
+cm4jxm1i2001qcmxxuy2bpvxe;update-any-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;update:any
+cm4jxm1i3001rcmxxw18ub0hu;update-any-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;update:any
+cm4jxm1i4001scmxxa320ra5g;update-any-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;update:any
+cm4jxm1i5001tcmxxjqdbhila;update-any-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;update:any
+cm4jxm1i6001ucmxx48lkxahm;update-own-referensi;mengelola data referensi;referensi;update:own
+cm4jxm1i7001vcmxx66qdaq7k;update-own-referensi-pengguna;mengelola data pengguna;ref-pengguna;update:own
+cm4jxm1i8001wcmxxuhygb08o;update-own-referensi-role;mengelola data referensi role;ref-role;update:own
+cm4jxm1i9001xcmxxyhrc457n;update-own-referensi-permission;mengelola data referensi permission;ref-permission;update:own
+cm4jxm1ia001ycmxx6njm83eg;update-own-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;update:own
+cm4jxm1ic001zcmxxqek0fw5k;update-own-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;update:own
+cm4jxm1id0020cmxxqcydg1z6;update-own-referensi-materi;mengelola data referensi materi;ref-materi;update:own
+cm4jxm1ie0021cmxxuwx13naz;update-own-referensi-kelas;mengelola data referensi kelas;ref-kelas;update:own
+cm4jxm1ig0022cmxxsgf1enp3;update-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;update:own
+cm4jxm1ih0023cmxxmbe0647k;update-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;update:own
+cm4jxm1ii0024cmxx5fu6hyu6;update-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;update:own
+cm4jxm1ik0025cmxxn32z15mi;update-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;update:own
+cm4jxm1il0026cmxx2brg7pgt;update-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;update:own
+cm4jxm1im0027cmxxqq08ak5x;update-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;update:own
+cm4jxm1io0028cmxxhmlsyu52;update-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;update:own
+cm4jxm1ip0029cmxxxblnnfyt;update-own-referensi-negara;mengelola data referensi negara;ref-negara;update:own
+cm4jxm1iq002acmxxf5robtfa;update-own-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;update:own
+cm4jxm1ir002bcmxx858z19gj;update-own-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;update:own
+cm4jxm1is002ccmxxoz5hp8an;update-own-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;update:own
+cm4jxm1it002dcmxxzyrenj4j;update-own-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;update:own
+cm4jxm1iu002ecmxxxdywlhws;update-own-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;update:own
+cm4jxm1iv002fcmxxf3t4fvxc;update-own-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;update:own
+cm4jxm1ix002gcmxxkf8161ki;read-any-referensi;mengelola data referensi;referensi;read:any
+cm4jxm1iz002hcmxxx26529bs;read-any-referensi-pengguna;mengelola data pengguna;ref-pengguna;read:any
+cm4jxm1j1002icmxxbam5g7wy;read-any-referensi-role;mengelola data referensi role;ref-role;read:any
+cm4jxm1j2002jcmxxf7okdy0t;read-any-referensi-permission;mengelola data referensi permission;ref-permission;read:any
+cm4jxm1jb002kcmxx6oo6mc37;read-any-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;read:any
+cm4jxm1jc002lcmxxnzge7t62;read-any-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;read:any
+cm4jxm1jd002mcmxxjubli5qi;read-any-referensi-materi;mengelola data referensi materi;ref-materi;read:any
+cm4jxm1jf002ncmxx94y7skos;read-any-referensi-kelas;mengelola data referensi kelas;ref-kelas;read:any
+cm4jxm1jh002ocmxxc2iyoolb;read-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;read:any
+cm4jxm1ji002pcmxxonxkm5ax;read-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;read:any
+cm4jxm1jk002qcmxxokefgn9c;read-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;read:any
+cm4jxm1jl002rcmxx6fb68t5o;read-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;
+cm4jxm1jn002scmxx9g7dwhvh;read-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;read:any
+cm4jxm1jo002tcmxxtxdqf5tm;read-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;read:any
+cm4jxm1jp002ucmxxi7pd7l4j;read-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;read:any
+cm4jxm1jr002vcmxxmj4ffgip;read-any-referensi-negara;mengelola data referensi negara;ref-negara;read:any
+cm4jxm1js002wcmxxhq4zy6k1;read-any-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;read:any
+cm4jxm1jt002xcmxx65bhjqsd;read-any-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;read:any
+cm4jxm1ju002ycmxxdr0rnsuy;read-any-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;read:any
+cm4jxm1jv002zcmxxc0b5ntpb;read-any-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;read:any
+cm4jxm1jw0030cmxx3ytbxsyl;read-any-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;read:any
+cm4jxm1jx0031cmxxe0n8t3yh;read-any-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;read:any
+cm4jxm1jz0032cmxx4o0e98mz;read-own-referensi;mengelola data referensi;referensi;read:own
+cm4jxm1k10033cmxxomx63ukp;read-own-referensi-pengguna;mengelola data pengguna;ref-pengguna;read:own
+cm4jxm1k20034cmxxycb1off4;read-own-referensi-role;mengelola data referensi role;ref-role;read:own
+cm4jxm1k30035cmxxh7m1rvky;read-own-referensi-permission;mengelola data referensi permission;ref-permission;read:own
+cm4jxm1k40036cmxxwvivsop4;read-own-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;read:own
+cm4jxm1k50037cmxxo6tc4djl;read-own-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;read:own
+cm4jxm1k60038cmxxblzzqwjf;read-own-referensi-materi;mengelola data referensi materi;ref-materi;read:own
+cm4jxm1k70039cmxx7vkriog4;read-own-referensi-kelas;mengelola data referensi kelas;ref-kelas;read:own
+cm4jxm1k8003acmxxqpn9kh4g;read-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;read:own
+cm4jxm1k9003bcmxxtgolojyt;read-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;read:own
+cm4jxm1kb003ccmxxlffqy24r;read-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;read:own
+cm4jxm1kc003dcmxxjs8dj8fd;read-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;
+cm4jxm1kd003ecmxxuwv6p19f;read-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;read:own
+cm4jxm1ke003fcmxx4hmkzj76;read-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;read:own
+cm4jxm1kf003gcmxxdy8nze8v;read-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;read:own
+cm4jxm1kg003hcmxx7i7zis9n;read-own-referensi-negara;mengelola data referensi negara;ref-negara;read:own
+cm4jxm1kh003icmxxsrqokve6;read-own-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;read:own
+cm4jxm1ki003jcmxxvrf1hf1c;read-own-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;read:own
+cm4jxm1kj003kcmxxb6a883dj;read-own-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;read:own
+cm4jxm1kk003lcmxxwpwe5p7l;read-own-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;read:own
+cm4jxm1kl003mcmxxjtnd5601;read-own-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;read:own
+cm4jxm1kn003ncmxx9p9i3aza;read-own-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;read:own
+cm4jxm1ko003ocmxxynzdvoia;delete-any-referensi;mengelola data referensi;referensi;delete:any
+cm4jxm1kp003pcmxx3kc97kda;delete-any-referensi-pengguna;mengelola data pengguna;ref-pengguna;delete:any
+cm4jxm1kq003qcmxxe7ow1fcp;delete-any-referensi-role;mengelola data referensi role;ref-role;delete:any
+cm4jxm1kr003rcmxxw58rbwsh;delete-any-referensi-permission;mengelola data referensi permission;ref-permission;delete:any
+cm4jxm1ks003scmxxb1334jjp;delete-any-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;delete:any
+cm4jxm1kt003tcmxxw9z5asxf;delete-any-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;delete:any
+cm4jxm1ku003ucmxxhf76uuyg;delete-any-referensi-materi;mengelola data referensi materi;ref-materi;delete:any
+cm4jxm1kv003vcmxxfkxzegkp;delete-any-referensi-kelas;mengelola data referensi kelas;ref-kelas;delete:any
+cm4jxm1kw003wcmxxc5zqg4kf;delete-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;delete:any
+cm4jxm1ky003xcmxx2wglga4v;delete-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;delete:any
+cm4jxm1kz003ycmxxs46mvw90;delete-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;delete:any
+cm4jxm1l0003zcmxxz4lt0n2z;delete-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;delete:any
+cm4jxm1l10040cmxxndjepoww;delete-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;delete:any
+cm4jxm1l20041cmxxghg62mci;delete-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;delete:any
+cm4jxm1l40042cmxx3ppq85g0;delete-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;delete:any
+cm4jxm1l50043cmxx5fjysglz;delete-any-referensi-negara;mengelola data referensi negara;ref-negara;delete:any
+cm4jxm1l60044cmxx757i6l1l;delete-any-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;delete:any
+cm4jxm1l70045cmxxks9jdovx;delete-any-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;delete:any
+cm4jxm1l80046cmxx6zcivjw3;delete-any-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;delete:any
+cm4jxm1l90047cmxxgfl3452p;delete-any-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;delete:any
+cm4jxm1la0048cmxxzqrqq1ed;delete-any-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;delete:any
+cm4jxm1lb0049cmxx6qb4p3su;delete-any-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;delete:any
+cm4jxm1lc004acmxx9yrdrt0p;delete-own-referensi;mengelola data referensi;referensi;delete:own
+cm4jxm1ld004bcmxxz1wvfgak;delete-own-referensi-pengguna;mengelola data pengguna;ref-pengguna;delete:own
+cm4jxm1le004ccmxxbiv7kgwc;delete-own-referensi-role;mengelola data referensi role;ref-role;delete:own
+cm4jxm1lf004dcmxxzyyo67rk;delete-own-referensi-permission;mengelola data referensi permission;ref-permission;delete:own
+cm4jxm1lg004ecmxxlln2w343;delete-own-referensi-role-permission;mengelola data referensi role permission;ref-role-permission;delete:own
+cm4jxm1lh004fcmxx6lfx93v1;delete-own-referensi-narasumber;mengelola data referensi narasumber;ref-narasumber;delete:own
+cm4jxm1lj004gcmxxdvuk2s0z;delete-own-referensi-materi;mengelola data referensi materi;ref-materi;delete:own
+cm4jxm1lk004hcmxxgweusz61;delete-own-referensi-kelas;mengelola data referensi kelas;ref-kelas;delete:own
+cm4jxm1ll004icmxxxzu8gsw1;delete-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;delete:own
+cm4jxm1lm004jcmxxwou3izit;delete-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;delete:own
+cm4jxm1lo004kcmxxlqvehhp5;delete-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;delete:own
+cm4jxm1lp004lcmxxiut6m7lo;delete-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;delete:own
+cm4jxm1lq004mcmxxh5ruugk7;delete-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;delete:own
+cm4jxm1lr004ncmxxey0k8geu;delete-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;delete:own
+cm4jxm1ls004ocmxx1b3ob7hd;delete-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;delete:own
+cm4jxm1lt004pcmxx5qjzx7jy;delete-own-referensi-negara;mengelola data referensi negara;ref-negara;delete:own
+cm4jxm1lu004qcmxx8aaakgtd;delete-own-referensi-provinsi;mengelola data referensi provinsi;ref-provinsi;delete:own
+cm4jxm1lw004rcmxxj9j3iu56;delete-own-proses-setup-kegiatan;mengelola proses setup kegiatan;proses-setup-kegiatan;delete:own
+cm4jxm1lx004scmxxxopppwkp;delete-own-proses-pengajuan;mengelola proses pengajuan;proses-pengajuan;delete:own
+cm4jxm1lz004tcmxx57ukuya9;delete-own-proses-verifikasi;mengelola proses verifikasi;proses-verifikasi;delete:own
+cm4jxm1m0004ucmxxw11gr1du;delete-own-proses-daftar-nominatif;mengelola proses daftar nominatif;proses-daftar-nominatif;delete:own
+cm4jxm1m1004vcmxxtpeby414;delete-own-proses-pembayaran;mengelola proses pembayaran;proses-pembayaran;delete:own
+cm4jxm1m2004wcmxx6kfimdiu;read-any-dashbboard;mengakses dashboard;dasboard;read:any
+cm4jxm1m4004xcmxxoo2geaza;read-own-dashbboard;mengakses dashboard;dasboard;read:own
+cm4jxm1m5004ycmxxztre4fek;read-any-workbench;mengakses workbench;workbench;read:any
+cm4jxm1m6004zcmxxuqsfifd5;read-own-workbench;mengakses workbench;workbench;read:own
+cm4jxm1m80050cmxxo6eme9of;read-any-pending;mengakses pending page;pending;read:any
+cm4jxm1ma0051cmxxf6g002fm;read-own-pending;mengakses pending page;pending;read:own
+cm4jxm1mb0052cmxxjd1fe8m1;update-any-dokumen-akhir;memperbarui dokumen akhir;dokumen-akhir;update:any
+cm4jxm1mc0053cmxx2f2l7iw9;update-own-dokumen-akhir;memperbarui dokumen akhir;dokumen-akhir;update:own
+cm4jxm1md0054cmxx6yijugcg;update-any-verfikasi-dokumen-akhir;memperbarui dokumen akhir;verfikasi-dokumen-akhir;update:any
+cm4jxm1mf0055cmxxcfldhqnx;update-own-verfikasi-dokumen-akhir;memperbarui dokumen akhir;verfikasi-dokumen-akhir;update:own
+cm4jxm1mg0056cmxxmnay32b1;read-any-pagu;mengakses data pagu;ref-pagu;read:any
+cm4jxm1mh0057cmxxfkmaf4da;read-own-pagu;mengakses data pagu;ref-pagu;read:own
+cm4jxm1mj0058cmxxmul9bi38;create-any-pagu;menambahkan data pagu;ref-pagu;create:any
+cm4jxm1mk0059cmxxvro84jqu;create-own-pagu;menambahkan data pagu;ref-pagu;create:own
+cm4jxm1ml005acmxxgrpemy1b;update-any-pagu;memperbarui data pagu;ref-pagu;update:any
+cm4jxm1mn005bcmxxy5ahhsw3;update-own-pagu;memperbarui data pagu;ref-pagu;update:own
+cm4jxm1mo005ccmxxpu8nmtwb;delete-any-pagu;menghapus data pagu;ref-pagu;delete:any
+cm4jxm1mp005dcmxx3l2p0y5h;delete-own-pagu;menghapus data pagu;ref-pagu;delete:own
+cm4jxm1mq005ecmxxwb5bckhc;read-any-sp2d;mengakses data sp2d;ref-sp2d;read:any
+cm4jxm1mr005fcmxx9tiyveu2;read-own-sp2d;mengakses data sp2d;ref-sp2d;read:own
+cm4jxm1mt005gcmxxulz4woy2;create-any-sp2d;menambahkan data sp2d;ref-sp2d;create:any
+cm4jxm1mu005hcmxxn23bywjz;create-own-sp2d;menambahkan data sp2d;ref-sp2d;create:own
+cm4jxm1mv005icmxxdg3xjcrr;update-any-sp2d;memperbarui data sp2d;ref-sp2d;update:any
+cm4jxm1mw005jcmxxbgqgugqw;update-own-sp2d;memperbarui data sp2d;ref-sp2d;update:own
+cm4jxm1mx005kcmxxzlw0z968;delete-any-sp2d;menghapus data sp2d;ref-sp2d;delete:any
+cm4jxm1my005lcmxxwwlf5xp7;delete-own-sp2d;menghapus data sp2d;ref-sp2d;delete:own

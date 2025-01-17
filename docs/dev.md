@@ -154,7 +154,13 @@ pnpm prisma migrate dev --create-only --name tambah_kolom_mak_kro --schema=./pri
 
 pnpm prisma migrate dev --create-only --name inputBuktiBayarTanggal --schema=./prisma/db-honorarium/schema.prisma
 
+pnpm prisma migrate dev --create-only --name get_riwayat_pengajuan_payment_status --schema=./prisma/db-honorarium/schema.prisma
+
 pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
+
+-- pnpm prisma migrate resolve --applied "20241216221436_input_bukti_bayar_tanggal" --schema=./prisma/db-honorarium/schema.prisma
+
+-- pnpm prisma migrate resolve --applied "20241216183121_get_riwayat_pengajuan_payment_status" --schema=./prisma/db-honorarium/schema.prisma
 
 pnpm run prisma:generate
 
@@ -176,3 +182,21 @@ The failed migration(s) can be marked as rolled back or applied:
 
 - If you fixed the database manually (hotfix):
   prisma migrate resolve --applied "20241122102707_redis_prep"
+
+<https://echobind.com/post/make-prisma-ignore-a-migration-change>
+
+```sh
+shasum -a 256 prisma/migrations/20220510001642_my_migration/migration.sql
+```
+
+```PS
+Get-FileHash -Algorithm SHA256 .\prisma\db-honorarium\migrations\20241216183121_get_riwayat_pengajuan_payment_status\migration.sql
+```
+
+```sql
+UPDATE "_prisma_migrations"
+SET "checksum" = lower('610F83112DBEFA49A1694A369268A7C1F2B4A1E5EF1B40A8554834BDB7F1D2F6')
+WHERE "migration_name" = '20241216183121_get_riwayat_pengajuan_payment_status'
+
+select * from "_prisma_migrations"
+```

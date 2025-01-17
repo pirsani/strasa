@@ -24,6 +24,7 @@ const generateExcel = (data: RiwayatPengajuanPaymentStatus[]) => {
   // Define the columns for the Excel file
   const columns = [
     "REFERENSI",
+    "NAMA KEGIATAN",
     "STATUS PENGAJUAN",
     "TANGGAL INPUT",
     "TANGGAL VERIFIKASI",
@@ -54,6 +55,7 @@ const generateExcel = (data: RiwayatPengajuanPaymentStatus[]) => {
     // Map each item to a row matching the column order
     return [
       item.id,
+      item.kegiatan_nama,
       item.status_pembayaran,
       item.diajukan_tanggal,
       item.diverifikasi_tanggal,

@@ -4,6 +4,7 @@ import { dbHonorarium } from "@/lib/db-honorarium";
 export interface RiwayatPengajuanPaymentStatus {
   id: string;
   kegiatan_id: string;
+  kegiatan_nama: string;
   mak: string | null;
   kro: string | null;
   uraian: string;
