@@ -1,4 +1,4 @@
-id;name;description;resource;action
+"id";"name";"description";"resource";"action"
 cm4jxm1e60000cmxxvfh9bcx7;create-any-referensi;mengelola data referensi;referensi;create:any
 cm4jxm1eg0001cmxxzhti61dj;create-any-referensi-pengguna;mengelola data pengguna;ref-pengguna;create:any
 cm4jxm1ei0002cmxx3nles1vn;create-any-referensi-role;mengelola data referensi role;ref-role;create:any
@@ -10,7 +10,7 @@ cm4jxm1er0007cmxx8r7nsdj2;create-any-referensi-kelas;mengelola data referensi ke
 cm4jxm1es0008cmxxkdx8plrv;create-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;create:any
 cm4jxm1eu0009cmxx46lvpou5;create-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;create:any
 cm4jxm1ev000acmxxj60dnrud;create-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;create:any
-cm4jxm1ex000bcmxx6snixuq5;create-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;create:any
+cm4jxm1ex000bcmxx6snixuq5;create-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;create:any
 cm4jxm1ey000ccmxx67n40bv2;create-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;create:any
 cm4jxm1f0000dcmxxy7rqjqwq;create-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;create:any
 cm4jxm1f1000ecmxx3ripu70g;create-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;create:any
@@ -32,7 +32,7 @@ cm4jxm1g9000tcmxxyrfado9t;create-own-referensi-kelas;mengelola data referensi ke
 cm4jxm1ga000ucmxx1qg7pvu8;create-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;create:own
 cm4jxm1gb000vcmxxpcylleji;create-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;create:own
 cm4jxm1gc000wcmxxapmxdpi7;create-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;create:own
-cm4jxm1gd000xcmxxyfnfc4kq;create-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;create:own
+cm4jxm1gd000xcmxxyfnfc4kq;create-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;create:own
 cm4jxm1ge000ycmxxxgzbqhwn;create-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;create:own
 cm4jxm1gf000zcmxxbwgz8aqs;create-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;create:own
 cm4jxm1gg0010cmxxtx4ylvnf;create-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;create:own
@@ -54,7 +54,7 @@ cm4jxm1ho001fcmxxhjafnis3;update-any-referensi-kelas;mengelola data referensi ke
 cm4jxm1hq001gcmxxckc8zdbz;update-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;update:any
 cm4jxm1hr001hcmxxnx1j9krf;update-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;update:any
 cm4jxm1hs001icmxxqs6p5iqi;update-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;update:any
-cm4jxm1ht001jcmxxbo4bbrgt;update-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;update:any
+cm4jxm1ht001jcmxxbo4bbrgt;update-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;update:any
 cm4jxm1hv001kcmxxet6a7ehj;update-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;update:any
 cm4jxm1hw001lcmxx93tfjsq6;update-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;update:any
 cm4jxm1hx001mcmxxj7wdz7pt;update-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;update:any
@@ -76,7 +76,7 @@ cm4jxm1ie0021cmxxuwx13naz;update-own-referensi-kelas;mengelola data referensi ke
 cm4jxm1ig0022cmxxsgf1enp3;update-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;update:own
 cm4jxm1ih0023cmxxmbe0647k;update-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;update:own
 cm4jxm1ii0024cmxx5fu6hyu6;update-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;update:own
-cm4jxm1ik0025cmxxn32z15mi;update-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;update:own
+cm4jxm1ik0025cmxxn32z15mi;update-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;update:own
 cm4jxm1il0026cmxx2brg7pgt;update-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;update:own
 cm4jxm1im0027cmxxqq08ak5x;update-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;update:own
 cm4jxm1io0028cmxxhmlsyu52;update-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;update:own
@@ -98,7 +98,7 @@ cm4jxm1jf002ncmxx94y7skos;read-any-referensi-kelas;mengelola data referensi kela
 cm4jxm1jh002ocmxxc2iyoolb;read-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;read:any
 cm4jxm1ji002pcmxxonxkm5ax;read-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;read:any
 cm4jxm1jk002qcmxxokefgn9c;read-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;read:any
-cm4jxm1jl002rcmxx6fb68t5o;read-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;
+cm4jxm1jl002rcmxx6fb68t5o;read-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;read:any
 cm4jxm1jn002scmxx9g7dwhvh;read-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;read:any
 cm4jxm1jo002tcmxxtxdqf5tm;read-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;read:any
 cm4jxm1jp002ucmxxi7pd7l4j;read-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;read:any
@@ -120,7 +120,7 @@ cm4jxm1k70039cmxx7vkriog4;read-own-referensi-kelas;mengelola data referensi kela
 cm4jxm1k8003acmxxqpn9kh4g;read-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;read:own
 cm4jxm1k9003bcmxxtgolojyt;read-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;read:own
 cm4jxm1kb003ccmxxlffqy24r;read-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;read:own
-cm4jxm1kc003dcmxxjs8dj8fd;read-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;
+cm4jxm1kc003dcmxxjs8dj8fd;read-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;read:own
 cm4jxm1kd003ecmxxuwv6p19f;read-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;read:own
 cm4jxm1ke003fcmxx4hmkzj76;read-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;read:own
 cm4jxm1kf003gcmxxdy8nze8v;read-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;read:own
@@ -142,7 +142,7 @@ cm4jxm1kv003vcmxxfkxzegkp;delete-any-referensi-kelas;mengelola data referensi ke
 cm4jxm1kw003wcmxxc5zqg4kf;delete-any-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;delete:any
 cm4jxm1ky003xcmxx2wglga4v;delete-any-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;delete:any
 cm4jxm1kz003ycmxxs46mvw90;delete-any-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;delete:any
-cm4jxm1l0003zcmxxz4lt0n2z;delete-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;delete:any
+cm4jxm1l0003zcmxxz4lt0n2z;delete-any-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;delete:any
 cm4jxm1l10040cmxxndjepoww;delete-any-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;delete:any
 cm4jxm1l20041cmxxghg62mci;delete-any-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;delete:any
 cm4jxm1l40042cmxx3ppq85g0;delete-any-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;delete:any
@@ -164,7 +164,7 @@ cm4jxm1lk004hcmxxgweusz61;delete-own-referensi-kelas;mengelola data referensi ke
 cm4jxm1ll004icmxxxzu8gsw1;delete-own-referensi-sbm-honorarium;mengelola data referensi sbm honorarium;ref-sbm-honorarium;delete:own
 cm4jxm1lm004jcmxxwou3izit;delete-own-referensi-sbm-uh-dalam-negeri;mengelola data referensi sbm uh dalam negeri;ref-sbm-uh-dalam-negeri;delete:own
 cm4jxm1lo004kcmxxlqvehhp5;delete-own-referensi-sbm-uh-luar-negeri;mengelola data referensi sbm uh luar negeri;ref-sbm-uh-luar-negeri;delete:own
-cm4jxm1lp004lcmxxiut6m7lo;delete-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;asi;delete:own
+cm4jxm1lp004lcmxxiut6m7lo;delete-own-referensi-sbm-uh-uang-representasi;mengelola data referensi sbm uh uang representasi;ref-sbm-uh-uang-representasi;delete:own
 cm4jxm1lq004mcmxxh5ruugk7;delete-own-referensi-pengelola-keuangan;mengelola data referensi pengelola keuangan;ref-pengelola-keuangan;delete:own
 cm4jxm1lr004ncmxxey0k8geu;delete-own-referensi-satker-anggaran;mengelola data referensi satker anggaran;ref-satker-anggaran;delete:own
 cm4jxm1ls004ocmxx1b3ob7hd;delete-own-referensi-unit-kerja;mengelola data referensi unit kerja;ref-unit-kerja;delete:own

@@ -5,7 +5,8 @@ import csv from "csv-parser";
 import fs from "fs";
 import path from "path";
 
-interface permission {
+interface Permission {
+  id: string;
   name: string;
   description: string;
   action: string;
@@ -14,7 +15,7 @@ interface permission {
 
 const seedPermission = async (): Promise<void> => {
   console.log("Seeding Permission data");
-  const results: permission[] = [];
+  const results: Permission[] = [];
   const csvPath = "docs/data-referensi/permission.csv";
   const permissionDataPath = path.resolve(process.cwd(), csvPath);
   return new Promise((resolve, reject) => {
@@ -27,6 +28,7 @@ const seedPermission = async (): Promise<void> => {
             //console.log(row);
             await dbHonorarium.permission.create({
               data: {
+                id: row.id,
                 name: row.name,
                 description: row.description,
                 action: row.action,
@@ -37,6 +39,80 @@ const seedPermission = async (): Promise<void> => {
             });
           }
           console.log("Data Permission seeded successfully");
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .on("error", (error) => reject(error));
+  });
+};
+
+interface Role {
+  id: string;
+  name: string;
+  description: string;
+}
+
+const seedRole = async (): Promise<void> => {
+  console.log("Seeding Role data");
+  const results: Role[] = [];
+  const csvPath = "docs/data-referensi/role.csv";
+  const permissionDataPath = path.resolve(process.cwd(), csvPath);
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(permissionDataPath)
+      .pipe(csv({ separator: ";" }))
+      .on("data", (data) => results.push(data))
+      .on("end", async () => {
+        try {
+          for (const row of results) {
+            //console.log(row);
+            await dbHonorarium.role.create({
+              data: {
+                id: row.id,
+                name: row.name,
+                description: row.description,
+                createdBy: "init",
+                createdAt: new Date(),
+              },
+            });
+          }
+          console.log("Data Role seeded successfully");
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .on("error", (error) => reject(error));
+  });
+};
+
+interface RolePermission {
+  roleId: string;
+  permissionId: string;
+}
+
+const seedRolePermission = async (): Promise<void> => {
+  console.log("Seeding RolePermission data");
+  const results: RolePermission[] = [];
+  const csvPath = "docs/data-referensi/role_permission.csv";
+  const permissionDataPath = path.resolve(process.cwd(), csvPath);
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(permissionDataPath)
+      .pipe(csv({ separator: ";" }))
+      .on("data", (data) => results.push(data))
+      .on("end", async () => {
+        try {
+          for (const row of results) {
+            //console.log(row);
+            await dbHonorarium.rolePermission.create({
+              data: {
+                roleId: row.roleId,
+                permissionId: row.permissionId,
+              },
+            });
+          }
+          console.log("Data RolePermission seeded successfully");
           resolve();
         } catch (error) {
           reject(error);
@@ -309,6 +385,8 @@ const deleteExisting = async (): Promise<void> => {
 async function main() {
   await deleteExisting();
   await seedPermission();
+  await seedRole();
+  await seedRolePermission();
   const initialUnitKerja = await seedUnitKerja();
   await seedNegara();
   await seedProvinsi();
@@ -530,35 +608,40 @@ async function main() {
   // );
 
   // Truncate the table
-  const role = await dbHonorarium.role.createMany({
-    data: [
-      {
-        id: "superadmin",
-        name: "Superadmin",
-        createdBy: "init",
-      },
-      {
-        name: "Admin",
-        createdBy: "init",
-      },
-      {
-        name: "Bendahara",
-        createdBy: "init",
-      },
-      {
-        name: "Operator Keuangan",
-        createdBy: "init",
-      },
-      {
-        name: "Uploader",
-        createdBy: "init",
-      },
-      {
-        name: "Viewer",
-        createdBy: "init",
-      },
-    ],
-  });
+  // const role = await dbHonorarium.role.createMany({
+  //   data: [
+  //     {
+  //       id: "superadmin",
+  //       name: "Superadmin",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       id: "cm4jxm2p3006lcmxxx9kvejm8",
+  //       name: "Admin",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       id: "cm4jxm2p3006mcmxxecdfxxnw",
+  //       name: "Bendahara",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       id: "cm4jxm2p3006ncmxxut1q2v7k",
+  //       name: "Operator Keuangan",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       id: "cm4jxm2p3006ocmxxguy9sz14",
+  //       name: "Uploader",
+  //       createdBy: "init",
+  //     },
+  //     {
+  //       id: "cm4jxm2p3006pcmxxhiridxpo",
+  //       name: "Viewer",
+  //       createdBy: "init",
+  //     },
+  //   ],
+  // });
 
   // karena default page setelah login adalah dashboard maka harus dipastikan punya permission ke dashboard
   const initialPermission = await dbHonorarium.permission.findMany({
@@ -575,16 +658,16 @@ async function main() {
   }); // get all permissions with action create:any
 
   // iterate over the initial permissions and assign them to the superadmin role
-  const promises = initialPermission.map((permission) => {
-    return dbHonorarium.rolePermission.create({
-      data: {
-        roleId: "superadmin",
-        permissionId: permission.id,
-      },
-    });
-  });
+  // const promises = initialPermission.map((permission) => {
+  //   return dbHonorarium.rolePermission.create({
+  //     data: {
+  //       roleId: "superadmin",
+  //       permissionId: permission.id,
+  //     },
+  //   });
+  // });
 
-  await Promise.all(promises);
+  // await Promise.all(promises);
 
   const password = await bcrypt.hash(
     process.env.INIT_ADMIN_PASSWORD || "123456",

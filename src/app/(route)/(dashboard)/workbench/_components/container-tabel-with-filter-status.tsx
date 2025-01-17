@@ -13,17 +13,17 @@ import TabelKegiatan from "./tabel-kegiatan";
 interface ContainerTabelWithFilterStatusProps {
   kegiatan: KegiatanIncludeSatker[];
   status: StatusCount[] | null;
+  timestamp?: number;
 }
 const ContainerTabelWithFilterStatus = ({
   kegiatan: initialKegiatan,
   status,
+  timestamp = new Date().getTime(),
 }: ContainerTabelWithFilterStatusProps) => {
   const [data, setData] = useState(initialKegiatan);
   const [filterStatus, setFilterStatus] = useState<STATUS_PENGAJUAN | null>(
     null
   );
-
-  const timestamp = new Date().getTime();
 
   const handleOnStatusChange = async (status: STATUS_PENGAJUAN | null) => {
     setFilterStatus(status);

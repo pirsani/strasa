@@ -53,6 +53,8 @@ const WorkbenchPage = async () => {
     params.unitKerjaId
   );
 
+  const timestamp = new Date().getTime();
+
   return (
     <div className="p-4 pb-24 h-auto min-h-full flex flex-col bg-gray-200/90">
       <h1 className="mb-2">Workbench </h1>
@@ -60,6 +62,7 @@ const WorkbenchPage = async () => {
         <ContainerTabelWithFilterStatus
           status={countStatus || []}
           kegiatan={kegiatan}
+          timestamp={timestamp}
         />
       </div>
     </div>
