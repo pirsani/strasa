@@ -351,13 +351,13 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                       linkto = `/pengajuan/honorarium/${detail.id}`;
                       break;
                     case "UH_LUAR_NEGERI":
-                      linkto = `/pengajuan/uh-luar-negeri/${detail.id}`;
+                      linkto = `#`;
                       break;
                     case "UH_DALAM_NEGERI":
-                      linkto = `/pengajuan/uh-dalam-negeri/${detail.id}`;
+                      linkto = `#`;
                       break;
                     default:
-                      linkto = `/pengajuan/${detail.id}`;
+                      linkto = `/pengajuan/honorarium/${detail.id}`;
                   }
 
                   return (

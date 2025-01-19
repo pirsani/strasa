@@ -2,6 +2,10 @@ import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import { NextResponse } from "next/server";
 import { downloadDokumenAkhir } from "./dokumen-akhir";
 import { downloadDokumenBuktiPembayaran } from "./dokumen-bukti-pembayaran";
+import {
+  downloadDokumenDaftarHadir,
+  downloadDokumenUndanganNarasumber,
+} from "./dokumen-jadwal";
 import downloadDokumenKegiatan from "./dokumen-kegiatan";
 import downloadDokumenNarasumber, {
   downloadDokumenBuktiPembayaranNarasumber,
@@ -73,8 +77,14 @@ export async function GET(
         return downloadDokumenAkhir(req, slug);
       case "excel-pembayaran":
         return downloadExcelPembayaran(req, slug, dataPengguna);
+      case "dokumen-undangan-narasumber":
+        return downloadDokumenUndanganNarasumber(req, slug);
+      case "dokumen-daftar-hadir":
+        return downloadDokumenDaftarHadir(req, slug);
       default:
-        return new NextResponse(`Download ${slug.join("/")}`);
+        return new NextResponse(`Invalid Download Request ${slug.join("/")}`, {
+          status: 404,
+        });
     }
   } catch (error) {
     console.error(error);

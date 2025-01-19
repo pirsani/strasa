@@ -12,7 +12,7 @@ interface InputFileImmediateUploadProps {
   name: string;
   cuid?: string;
   folder?: string;
-  onFileChange?: (file: File | null) => void;
+  onFileChange?: (file: File | null, cuid?: string) => void;
   className?: string;
   allowedTypes?: string[];
   placeholder?: string;
@@ -39,7 +39,7 @@ export const InputFileImmediateUpload = ({
 
   const clearFile = () => {
     setSelectedFile(null);
-    onFileChange && onFileChange(null); // Notify parent component
+    onFileChange && onFileChange(null, cuid); // Notify parent component
     setPercentCompleted(0);
     if (inputRef.current) {
       inputRef.current.value = ""; // Clear the file input

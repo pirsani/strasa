@@ -11,7 +11,10 @@ import Select, {
 
 interface SelectNarasumberProps {
   inputId: string;
-  onChange: (values: string[] | string | null) => void;
+  onChange: (
+    values: string[] | string | null,
+    labels?: string[] | string | null
+  ) => void;
   values: string[] | string | null;
   isMulti: boolean;
   tabIndex?: number;
@@ -22,7 +25,7 @@ interface Option {
   label: string;
 }
 
-const SelectNarasumber = ({
+export const SelectNarasumber = ({
   inputId,
   onChange,
   values,
@@ -62,7 +65,11 @@ const SelectNarasumber = ({
       ? (option as MultiValue<Option>).map((opt) => opt.value)
       : (option as SingleValue<Option>)?.value || null;
 
-    onChange(newValue); // Pass the updated values to the parent component
+    const newLabel = isMulti
+      ? (option as MultiValue<Option>).map((opt) => opt.label)
+      : (option as SingleValue<Option>)?.label || null;
+
+    onChange(newValue, newLabel); // Pass the updated values to the parent component
 
     // Reset input value on select for single select mode
     // if (!isMulti) {

@@ -36,6 +36,9 @@ export const getKegiatan = async ({
 }: ParamsGetKegiatan = {}): Promise<KegiatanIncludeSatker[]> => {
   const tahunAnggaran = await getTahunAnggranPilihan();
 
+  // console.log("[getKegiatan] satkerId", satkerId);
+  // console.log("[getKegiatan] unitKerjaId", unitKerjaId);
+
   const dataKegiatan = await dbHonorarium.kegiatan.findMany({
     where: {
       tanggalMulai: {

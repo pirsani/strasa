@@ -32,7 +32,7 @@ const jadwalWithoutFileSchema = z.object({
 const jadwalFileSchema = z.object({
   dokumenDaftarHadir: fileSchema({
     required: true,
-    message: "Dokumen Daftar harus diupload",
+    message: "Dokumen Daftar Hadir harus diupload",
   }),
   dokumenUndanganNarasumber: fileSchema({
     required: true,

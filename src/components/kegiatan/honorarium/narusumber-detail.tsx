@@ -28,7 +28,7 @@ interface NarasumberDetailProps {
   narasumber: Narasumber;
   jadwalNarasumber: JadwalNarasumber;
   optionsSbmHonorarium?: OptionSbm[];
-  proses?: ALUR_PROSES;
+  proses?: ALUR_PROSES | null;
   statusPengajuanHonorarium?: STATUS_PENGAJUAN | null;
 }
 
@@ -154,15 +154,6 @@ const NarasumberDetail = ({
 
   // jumlah JP dan jenis honorarium hanya bisa dilakukan jika isOnPengajuan isOnVerifikasi bernilai true
 
-  // const isOnPengajuan =
-  //   proses === "PENGAJUAN" &&
-  //   (!statusPengajuanHonorarium || statusPengajuanHonorarium === "Revise");
-
-  // const isOnVerifikasi =
-  //   proses === "VERIFIKASI" &&
-  //   statusPengajuanHonorarium &&
-  //   (statusPengajuanHonorarium === "Submitted" ||
-  //     statusPengajuanHonorarium === "Revised");
   const [isAllowEditJp, setIsAllowEditJp] = useState(false);
   useEffect(() => {
     const isOnPengajuan =

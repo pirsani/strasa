@@ -90,7 +90,7 @@ export const mapStatusLangkahToDesc = (status: STATUS_PENGAJUAN | null) => {
     case "END":
       return "Proses selesai";
     default:
-      return "Belum diproses";
+      return "Belum diajukan";
   }
 };
 
@@ -117,6 +117,6 @@ export const mapStatusLangkahToColor = (status: STATUS_PENGAJUAN | null) => {
     case "END":
       return "bg-blue-700 text-white";
     default:
-      return "text-white bg-gray-800";
+      return "text-red-500 bg-transparent";
   }
 };

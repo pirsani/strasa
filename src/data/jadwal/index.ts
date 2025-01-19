@@ -226,6 +226,7 @@ export const getJadwalById = async (
       id: jadwalId,
     },
     include: {
+      kegiatan: true,
       kelas: true,
       materi: true,
       riwayatPengajuan: {

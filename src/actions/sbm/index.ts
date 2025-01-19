@@ -10,6 +10,13 @@ export interface OptionSbm {
   satuan?: string;
 }
 
+export interface PlainObjectOptionSbm {
+  value: string;
+  label: string;
+  besaran?: number;
+  satuan?: string;
+}
+
 export const getNegara = async (negara?: string) => {
   const dataNegara = await dbHonorarium.negara.findMany({});
   return dataNegara;

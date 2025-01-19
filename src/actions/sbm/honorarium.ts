@@ -133,14 +133,3 @@ export const deleteDataSbmHonorarium = async (
     };
   }
 };
-
-export const getOptionsSbmHonorarium = async () => {
-  const dataSbmHonorarium = await dbHonorarium.sbmHonorarium.findMany({});
-  // map dataSbmHonorarium to options
-  const optionsSbmHonorarium = dataSbmHonorarium.map((sbmHonorarium) => ({
-    value: sbmHonorarium.id,
-    label: sbmHonorarium.jenis + "-" + sbmHonorarium.uraian,
-  }));
-
-  return optionsSbmHonorarium;
-};

@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteJadwalKelasNarasumber } from "@/actions/honorarium/narasumber/narasumber";
+import { deleteJadwalKelasNarasumber } from "@/actions/honorarium/narasumber/jadwal-kelas-narasumber";
 import updateStatusPengajuanPembayaran from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
 import { getOptionsSbmHonorarium, OptionSbm } from "@/actions/sbm";
 import ConfirmDialog from "@/components/confirm-dialog";
@@ -262,6 +262,10 @@ const DaftarJadwal = ({
                 <div className="px-4 py-2 w-full border-t border-gray-300">
                   Catatan: {jadwal.riwayatPengajuan?.catatanRevisi || "-"}
                 </div>
+                <div className="px-4 py-2 w-full border-t border-gray-300 flex justify-between">
+                  <span className="text-gray-500">Status</span>
+                  <StatusBadge status={status} />
+                </div>
                 {proses == "PENGAJUAN" && (
                   <FormProsesPengajuan
                     jadwalId={jadwal.id}
@@ -336,12 +340,6 @@ const FormProsesPengajuan = ({
 
   return (
     <>
-      <div className="px-4 py-2 w-full border-t border-gray-300">
-        <div className="flex flex-row justify-between">
-          <div className="text-gray-500">Status</div>
-          <StatusBadge status={status} />
-        </div>
-      </div>
       {isShowButton && (
         <div className="flex flex-col px-4 py-2 w-full border-t border-gray-300 gap-2">
           <div className="flex flex-row justify-between">
@@ -429,12 +427,6 @@ const FormProsesVerifikasi = ({
 
   return (
     <div className="flex flex-col px-4 py-2 w-full border-t border-gray-300 gap-2">
-      <div className="px-4 py-2 w-full border-t border-gray-300">
-        <div className="flex flex-row justify-between">
-          <div className="text-gray-500">Status</div>
-          <StatusBadge status={status} />
-        </div>
-      </div>
       {isShowButton && (
         <>
           <div>

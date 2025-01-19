@@ -172,7 +172,7 @@ const FormPembayaran = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel htmlFor="buktiPembayaran">
-                  Upload Nota Dinas/Memorandum/SK Tim
+                  Upload Bukti Pembayaran
                   <RequiredLabel />
                 </FormLabel>
                 <FormControl>

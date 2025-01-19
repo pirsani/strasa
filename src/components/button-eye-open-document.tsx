@@ -5,8 +5,9 @@ import { Button } from "./ui/button";
 
 interface ButtonEyeProps {
   url: string | null;
+  className?: string;
 }
-const ButtonEye = ({ url }: ButtonEyeProps) => {
+const ButtonEye = ({ url, className }: ButtonEyeProps) => {
   // Access state and actions from the store
   const isPreviewHidden = useFileStore((state) => state.isPreviewHidden);
   const showPreview = useFileStore((state) => state.showPreview);
@@ -28,7 +29,8 @@ const ButtonEye = ({ url }: ButtonEyeProps) => {
       variant={"outline"}
       className={cn(
         "border-blue-500 h-12 w-12 p-0 hover:bg-blue-300",
-        fileUrl === url && "bg-blue-500 text-white"
+        fileUrl === url && "bg-blue-500 text-white",
+        className && className
       )}
       onClick={setUrl}
     >

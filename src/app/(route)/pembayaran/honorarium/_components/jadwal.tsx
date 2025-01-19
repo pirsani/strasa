@@ -1,5 +1,6 @@
 import { OptionSbm } from "@/actions/sbm";
 import NarasumberListItem from "@/components/kegiatan/honorarium/narasumber-list-item";
+import StatusBadge from "@/components/kegiatan/status-badge";
 import { ObjPlainJadwalKelasNarasumber } from "@/data/jadwal";
 import { formatHariTanggal } from "@/utils/date-format";
 import { ALUR_PROSES, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
@@ -71,6 +72,10 @@ const Jadwal = ({ jadwal, proses }: JadwalProps & { proses: ALUR_PROSES }) => {
       <div className="flex flex-col w-full ">
         <div className="px-4 py-2 w-full border-t border-gray-300">
           Catatan: {jadwal.riwayatPengajuan?.catatanRevisi || "-"}
+        </div>
+        <div className="px-4 py-2 w-full border-t border-gray-300 flex justify-between">
+          <span className="text-gray-500">Status</span>
+          <StatusBadge status={status} />
         </div>
       </div>
       <DlNominatifHonorarium status={status} jadwal={jadwal} />

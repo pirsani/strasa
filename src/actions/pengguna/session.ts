@@ -101,7 +101,7 @@ export const checkSessionPermission = async ({
   }
 
   const roles = pengguna.data.roles;
-  console.log("Roles", roles);
+  // console.log("Roles", roles);
 
   // string to array
   let actionsArray: string[] = [];
@@ -112,10 +112,10 @@ export const checkSessionPermission = async ({
   }
   let hasPermission = false;
   // iterate over actions
-  console.log("[actionsArray]", actionsArray);
+  // console.log("[actionsArray]", actionsArray);
   for (const action of actionsArray) {
     hasPermission = await checkPermission(roles, action, resource);
-    console.log("Has permission", action, resource, hasPermission);
+    // console.log("Has permission", action, resource, hasPermission);
     if (hasPermission) {
       return hasPermission;
     }

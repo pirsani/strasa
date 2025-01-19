@@ -8,7 +8,19 @@ import {
   publicRoutes,
   RouteItem,
 } from "@/route";
+import { Logger } from "tslog";
 import SidebarItems from "./sidebar-items";
+
+const logger = new Logger({
+  // hideLogPositionForProduction: true,
+  prettyLogTemplate:
+    "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}\t{{logLevelName}}\t[{{filePathWithLine}}{{name}}]\t",
+  prettyLogTimeZone: "UTC",
+  prettyErrorStackTemplate:
+    "  • {{fileName}}\t{{method}}\n\t{{filePathWithLine}}",
+  type: "pretty",
+  name: "SidebarContainer",
+});
 
 // TODO
 // Implement route from some settings
@@ -81,7 +93,8 @@ const SidebarContariner = async () => {
     filteredRoutesAlurProses,
     filteredRouteDashboard,
   } = await getRoutesReferensiForRoles();
-  console.log("route referensi", filteredRouteReferensi);
+  // logger.info("route dashboard", filteredRouteDashboard);
+  // console.log("route referensi", filteredRouteReferensi);
   return (
     <div className="h-full bg-gray-100">
       <div className="h-full overflow-y-auto pb-6">

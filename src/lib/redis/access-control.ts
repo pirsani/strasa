@@ -133,7 +133,7 @@ export async function checkPermission(
     throw new Error("AccessControl is not initialized.");
   }
 
-  console.log("AccessControl", ac.getGrants());
+  // console.log("AccessControl", ac.getGrants());
 
   try {
     const permission = ac.permission({
