@@ -37,6 +37,7 @@ export interface ObjRiwayatPengajuanUpdate {
   dokumenBuktiPembayaran?: string;
   dokumentasi?: string | null;
   dokumenLaporanKegiatan?: string | null;
+  dokumenLainnya?: string | null;
 }
 
 export interface ObjCreateRiwayatPengajuan {

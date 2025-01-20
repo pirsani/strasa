@@ -45,6 +45,9 @@ export const downloadDokumenAkhir = async (req: Request, slug: string[]) => {
       case "laporan":
         filePath = riwayatPengajuan.dokumenLaporanKegiatan;
         break;
+      case "lainnya":
+        filePath = riwayatPengajuan.dokumenLainnya;
+        break;
       default:
         return new NextResponse("Invalid request", { status: 400 });
     }

@@ -15,11 +15,13 @@ const PendingPage = async () => {
   const createAny = await checkSessionPermission({
     actions: ["read:any"],
     resource: "pending",
+    redirectOnUnauthorized: false,
   });
 
   const createOwn = await checkSessionPermission({
     actions: ["read:own"],
     resource: "pending",
+    redirectOnUnauthorized: false,
   });
 
   if (!createAny && !createOwn) {

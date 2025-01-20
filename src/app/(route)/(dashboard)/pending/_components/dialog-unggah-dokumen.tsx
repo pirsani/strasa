@@ -83,18 +83,21 @@ const FormUploadDokumen = ({
   onFormSubmitComplete = () => {},
   onCancel = () => {},
 }: FormUploadDokumenProps) => {
-  const cuiddok = createId();
-  const cuidlap = createId();
+  const cuidDokumentasi = createId();
+  const cuidLaporan = createId();
+  const cuidDokumenLainnya = createId();
   const handleSimpan = () => {};
 
   interface dokumens {
     dokumentasi: string | null;
     laporan: string | null;
+    lainnya: string | null;
   }
 
   const [dokumen, setDokumen] = useState<dokumens>({
     dokumentasi: null,
     laporan: null,
+    lainnya: null,
   });
 
   const handleOnUploadComplete = (name: string) => {
@@ -103,8 +106,10 @@ const FormUploadDokumen = ({
     const type = name.split("_")[0];
     if (type === "dokumentasi") {
       setDokumen({ ...dokumen, dokumentasi: cuid });
-    } else {
+    } else if (type === "laporan") {
       setDokumen({ ...dokumen, laporan: cuid });
+    } else if (type === "lainnya") {
+      setDokumen({ ...dokumen, lainnya: cuid });
     }
     console.log(name);
   };
@@ -114,6 +119,7 @@ const FormUploadDokumen = ({
       riwayatPengajuanId,
       dokumentasi: dokumen.dokumentasi,
       laporan: dokumen.laporan,
+      lainnya: dokumen.lainnya,
     };
     const update = await UpdateDokumenAkhirRiwayatPengajuan(data);
     if (update.success) {
@@ -132,9 +138,9 @@ const FormUploadDokumen = ({
           Dokumentasi
         </label>
         <InputFileImmediateUpload
-          name={"dokumentasi_" + cuiddok}
+          name={"dokumentasi_" + cuidDokumentasi}
           folder={riwayatPengajuanId}
-          cuid={cuiddok}
+          cuid={cuidDokumentasi}
           onFileUploadComplete={handleOnUploadComplete}
         />
       </div>
@@ -143,9 +149,20 @@ const FormUploadDokumen = ({
           Laporan Kegiatan
         </label>
         <InputFileImmediateUpload
-          name={"laporan_" + cuidlap}
+          name={"laporan_" + cuidLaporan}
           folder={riwayatPengajuanId}
-          cuid={cuidlap}
+          cuid={cuidLaporan}
+          onFileUploadComplete={handleOnUploadComplete}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <label className="block text-sm font-medium text-gray-700">
+          Laporan Kegiatan
+        </label>
+        <InputFileImmediateUpload
+          name={"lainnya_" + cuidDokumenLainnya}
+          folder={riwayatPengajuanId}
+          cuid={cuidDokumenLainnya}
           onFileUploadComplete={handleOnUploadComplete}
         />
       </div>

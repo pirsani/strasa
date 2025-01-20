@@ -119,6 +119,7 @@ export const TabelRiwayatPengajuan = ({
       cell: (info) => {
         const hasDokumentasi = !!info.row.original.dokumentasi;
         const hasLaporan = !!info.row.original.dokumenLaporanKegiatan;
+        const hasDokumenLainnya = !!info.row.original.dokumenLainnya;
         const readyToUpload = info.row.original.status === "PAID";
         const riwayatPengajuanId = info.row.original.id;
         const readyToVerify = hasDokumentasi && hasLaporan && readyToUpload;
@@ -133,6 +134,11 @@ export const TabelRiwayatPengajuan = ({
             <LinkToDokumenAkhir
               hasDokumenAkhir={hasLaporan ?? false}
               jenisDokumenAkhir="laporan"
+              riwayatPengajuanId={riwayatPengajuanId}
+            />
+            <LinkToDokumenAkhir
+              hasDokumenAkhir={hasDokumenLainnya ?? false}
+              jenisDokumenAkhir="lainnya"
               riwayatPengajuanId={riwayatPengajuanId}
             />
             {readyToUpload && (
@@ -169,6 +175,7 @@ export const TabelRiwayatPengajuan = ({
       cell: (info) => {
         const hasDokumentasi = !!info.row.original.dokumentasi;
         const hasLaporan = !!info.row.original.dokumenLaporanKegiatan;
+        const hasDokumenLainnya = !!info.row.original.dokumenLainnya;
         const readyToUpload = info.row.original.status === "PAID";
         const readyToVerify = hasDokumentasi && hasLaporan && readyToUpload;
         return (
@@ -209,6 +216,7 @@ export const TabelRiwayatPengajuan = ({
     dibayarTanggal?: Date | string | null;
     hasDokumentasi?: boolean;
     hasLaporan?: boolean;
+    hasDokumenLainnya?: boolean;
   }
 
   const handleView = (row: Kegiatan) => {
@@ -311,6 +319,7 @@ export const TabelRiwayatPengajuan = ({
       //update details
       riwayat.dokumentasi = "dokumentasi";
       riwayat.dokumenLaporanKegiatan = "laporan";
+      riwayat.dokumenLainnya = "lainnya";
       // update riwayatPengajuanData
       setRiwayatPengajuanData((prev) => {
         return prev.map((riwayat) => {
@@ -319,6 +328,7 @@ export const TabelRiwayatPengajuan = ({
               ...riwayat,
               dokumentasi: "dokumentasi",
               dokumenLaporanKegiatan: "laporan",
+              dokumenLainnya: "lainnya",
             };
           }
           return riwayat;
@@ -367,6 +377,7 @@ export const TabelRiwayatPengajuan = ({
     switch (jenisDokumenAkhir) {
       case "dokumentasi":
       case "laporan":
+      case "lainnya":
         return (
           <Link
             href={`/download/dokumen-akhir/${jenisDokumenAkhir}/${riwayatPengajuanId}`}
@@ -465,6 +476,7 @@ export const TabelRiwayatPengajuan = ({
         dibayarTanggal: item.dibayarTanggal,
         hasDokumentasi: !!item.dokumentasi,
         hasLaporan: !!item.dokumenLaporanKegiatan,
+        hasDokumenLainnya: !!item.dokumenLainnya,
       };
       rowDetails[item.id] = [rowDetail];
     });

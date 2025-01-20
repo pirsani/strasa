@@ -84,6 +84,7 @@ export const dashboardRoutes: RouteItem[] = [
     icon: "square-activity",
     order: 1,
     displayAsMenu: true,
+    resources: ["workbench"],
   },
   {
     name: "pending",
@@ -92,6 +93,7 @@ export const dashboardRoutes: RouteItem[] = [
     icon: "monitor-pause",
     order: 1,
     displayAsMenu: true,
+    resources: ["pending"],
   },
 ];
 

@@ -22,12 +22,14 @@ const UpdateDokumenAkhirRiwayatPengajuan = async ({
   riwayatPengajuanId,
   dokumentasi,
   laporan,
+  lainnya,
 }: {
   riwayatPengajuanId: string;
   dokumentasi?: string | null;
   laporan?: string | null;
+  lainnya?: string | null;
 }): Promise<ActionResponse<STATUS_PENGAJUAN>> => {
-  console.log(riwayatPengajuanId, dokumentasi, laporan);
+  console.log(riwayatPengajuanId, dokumentasi, laporan, lainnya);
 
   try {
     const pengguna = await getSessionPenggunaForAction();
@@ -65,6 +67,8 @@ const UpdateDokumenAkhirRiwayatPengajuan = async ({
     const tempFileLaporan = laporan + ".pdf";
     const finalNamafileDokumentasi = "dokumentasi_" + dokumentasi + ".pdf";
     const finalNamafileLaporan = "laporan_" + laporan + ".pdf";
+    const tempFileLainnya = lainnya + ".pdf";
+    const finalNamafileLainnya = "lainnya_" + lainnya + ".pdf";
 
     const finalPathDokumentasi = await moveFile({
       finalPath,
@@ -80,10 +84,18 @@ const UpdateDokumenAkhirRiwayatPengajuan = async ({
       tempFile: tempFileLaporan,
     });
 
+    const finalPathLainnya = await moveFile({
+      finalPath,
+      finalNamafile: finalNamafileLainnya,
+      tempPath,
+      tempFile: tempFileLainnya,
+    });
+
     const objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
       status: riwayatPengajuan.status,
       dokumentasi: finalPathDokumentasi,
       dokumenLaporanKegiatan: finalPathLaporan,
+      dokumenLainnya: finalPathLainnya,
     };
 
     const updatedRiwayatPengajuan = await dbHonorarium.riwayatPengajuan.update({

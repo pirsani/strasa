@@ -179,6 +179,7 @@ export const TabelKegiatan = ({
     dibayarTanggal?: Date | string | null;
     hasDokumentasi?: boolean;
     hasLaporan?: boolean;
+    hasDokumenLainnya?: boolean;
   }
 
   const handleView = (row: Kegiatan) => {
@@ -476,6 +477,7 @@ export const TabelKegiatan = ({
         dibayarTanggal: item.dibayarTanggal,
         hasDokumentasi: !!item.dokumentasi,
         hasLaporan: !!item.dokumenLaporanKegiatan,
+        hasDokumenLainnya: !!item.dokumenLainnya,
       };
       // Append to the array for the given kegiatanId
       if (!rowDetails[item.kegiatanId]) {
