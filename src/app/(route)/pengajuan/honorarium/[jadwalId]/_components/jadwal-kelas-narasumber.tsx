@@ -233,15 +233,16 @@ export const JadwalKelasNarasumber = ({
           );
         })}
       </div>
-
-      <div className="flex justify-end w-full border-t border-gray-300">
-        <DialogTambahNarasumberJadwal
-          kegiatanId={jadwal.kegiatanId}
-          jadwalId={jadwal.id}
-          jumlahJamPelajaran={jadwal.jumlahJamPelajaran}
-          optionsSbmHonorarium={optionsSbmHonorarium}
-        />
-      </div>
+      {proses == "PENGAJUAN" && (
+        <div className="flex justify-end w-full border-t border-gray-300">
+          <DialogTambahNarasumberJadwal
+            kegiatanId={jadwal.kegiatanId}
+            jadwalId={jadwal.id}
+            jumlahJamPelajaran={jadwal.jumlahJamPelajaran}
+            optionsSbmHonorarium={optionsSbmHonorarium}
+          />
+        </div>
+      )}
 
       <div className="flex flex-col w-full ">
         <div className="px-4 py-2 w-full border-t border-gray-300">
