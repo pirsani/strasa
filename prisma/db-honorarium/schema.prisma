@@ -535,8 +535,8 @@ model PesertaKegiatan {
   jabatan                         String?
   eselon                          String?
   golonganUhLuarNegeri            String?          @map("golongan_uh_luar_negeri")
-  tanggalBerangkat                DateTime?        @map("tanggal_berangkat")
-  tanggalKembali                  DateTime?        @map("tanggal_kembali")
+  tanggalBerangkat                DateTime?        @map("tanggal_berangkat") @db.Date
+  tanggalKembali                  DateTime?        @map("tanggal_kembali") @db.Date
   email                           String?
   telp                            String?
   rekeningSendiri                 Boolean          @default(true) @map("rekening_sendiri")

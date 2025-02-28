@@ -135,6 +135,8 @@ async function generateDataRampungan(kegiatan: KegiatanIncludeSpd) {
   // });
 
   const rampunganDataArray: RampunganData[] = peserta.map((peserta) => {
+    const tanggalBerangkat = peserta.tanggalBerangkat || kegiatan.tanggalMulai;
+    const tanggalSelesai = peserta.tanggalKembali || kegiatan.tanggalSelesai;
     return {
       namaPeserta: peserta.nama,
 
@@ -142,23 +144,23 @@ async function generateDataRampungan(kegiatan: KegiatanIncludeSpd) {
       nipPpk: ppk.NIP || "-",
 
       dariKedudukan: "Jakarta, DKI Jakarta",
-      dariKedudukanTanggal: format(kegiatan.tanggalMulai, "dd MMMM yyyy"),
+      dariKedudukanTanggal: format(tanggalBerangkat, "dd MMMM yyyy"),
 
       dari1: "Jakarta, DKI Jakarta",
       ke1: tujuan,
-      dari1tanggal: format(kegiatan.tanggalMulai, "dd MMMM yyyy"),
+      dari1tanggal: format(tanggalBerangkat, "dd MMMM yyyy"),
 
       tiba1: tujuan,
-      tiba1tanggal: format(kegiatan.tanggalMulai, "dd MMMM yyyy"),
+      tiba1tanggal: format(tanggalBerangkat, "dd MMMM yyyy"),
 
-      dari2tanggal: format(kegiatan.tanggalSelesai, "dd MMMM yyyy"),
+      dari2tanggal: format(tanggalSelesai, "dd MMMM yyyy"),
       ke2: "Jakarta, DKI Jakarta",
       dari2: tujuan,
       tiba2: "Jakarta, DKI Jakarta",
-      tiba2tanggal: format(kegiatan.tanggalSelesai, "dd MMMM yyyy"),
+      tiba2tanggal: format(tanggalSelesai, "dd MMMM yyyy"),
 
       tibaDiKedudukan: "Jakarta, DKI Jakarta",
-      tibaDiKedudukanTanggal: format(kegiatan.tanggalSelesai, "dd MMMM yyyy"),
+      tibaDiKedudukanTanggal: format(tanggalSelesai, "dd MMMM yyyy"),
     };
   });
 
