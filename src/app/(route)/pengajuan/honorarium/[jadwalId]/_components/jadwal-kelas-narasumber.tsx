@@ -220,6 +220,7 @@ export const JadwalKelasNarasumber = ({
           const jumlahNarsum = jadwal.jadwalNarasumber.length;
           return (
             <NarasumberListItem
+              kegiatanId={jadwal.kegiatanId}
               key={jadwalNarasumber.id}
               optionsSbmHonorarium={optionsSbmHonorarium}
               index={index}

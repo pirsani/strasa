@@ -119,6 +119,7 @@ export const InputFileImmediateUpload = ({
       <div className="flex flex-row gap-1">
         <div className="flex w-full flex-col">
           <Input
+            className="w-full"
             name={`fki-${name}`}
             type="text"
             readOnly

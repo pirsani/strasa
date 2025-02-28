@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import NarasumberDetail from "./narusumber-detail";
 
 interface NarasumberListItemProps {
+  kegiatanId?: string | null;
   jadwalNarasumber: JadwalNarsum;
   optionsSbmHonorarium: OptionSbm[];
   index: number;
@@ -21,6 +22,7 @@ interface NarasumberListItemProps {
   statusPengajuanHonorarium?: STATUS_PENGAJUAN | null;
 }
 export const NarasumberListItem = ({
+  kegiatanId,
   jadwalNarasumber,
   index = 0,
   totalNarsum = 1,
@@ -121,6 +123,7 @@ export const NarasumberListItem = ({
           )}
         >
           <NarasumberDetail
+            kegiatanId={kegiatanId}
             optionsSbmHonorarium={optionsSbmHonorarium}
             narasumber={jadwalNarasumber.narasumber}
             jadwalNarasumber={jadwalNarasumber}

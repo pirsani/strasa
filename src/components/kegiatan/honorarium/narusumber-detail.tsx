@@ -2,8 +2,11 @@
 import { updateJumlahJpJadwalNarasumber } from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
 import { OptionSbm } from "@/actions/sbm";
 import ButtonEye from "@/components/button-eye-open-document";
+import InputFileImmediateUpload from "@/components/form/input-file-immediate-upload";
 import { Button } from "@/components/ui/button";
+import useFileStore from "@/hooks/use-file-store";
 import { getBesaranPajakHonorarium } from "@/lib/pajak";
+import { cn } from "@/lib/utils";
 import formatCurrency from "@/utils/format-currency";
 import { randomStrimg } from "@/utils/random-string";
 import { createId } from "@paralleldrive/cuid2";
@@ -25,6 +28,7 @@ interface PerkiraanPembayaran {
 }
 
 interface NarasumberDetailProps {
+  kegiatanId?: string | null;
   narasumber: Narasumber;
   jadwalNarasumber: JadwalNarasumber;
   optionsSbmHonorarium?: OptionSbm[];
@@ -33,6 +37,7 @@ interface NarasumberDetailProps {
 }
 
 const NarasumberDetail = ({
+  kegiatanId,
   narasumber,
   jadwalNarasumber,
   optionsSbmHonorarium = [],
@@ -155,10 +160,14 @@ const NarasumberDetail = ({
   // jumlah JP dan jenis honorarium hanya bisa dilakukan jika isOnPengajuan isOnVerifikasi bernilai true
 
   const [isAllowEditJp, setIsAllowEditJp] = useState(false);
+  const [isUploadLkAllowed, setIsUploadLkAllowed] = useState(false);
+  const [showInputUploadLk, setShowInputUploadLk] = useState(false);
   useEffect(() => {
     const isOnPengajuan =
       proses === "PENGAJUAN" &&
       (!statusPengajuanHonorarium || statusPengajuanHonorarium === "REVISE");
+
+    setIsUploadLkAllowed(isOnPengajuan);
 
     const isOnVerifikasi =
       proses === "VERIFIKASI" &&
@@ -174,6 +183,27 @@ const NarasumberDetail = ({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proses, statusPengajuanHonorarium]);
+
+  const { setFileUrl } = useFileStore();
+  const handleFileUploadDokumenKonfirmasiCompleted = (
+    name: string,
+    file?: File | null
+  ) => {
+    if (!file) return;
+
+    console.log("File uploaded", cuid);
+    // get url from uploaded file
+    const url = URL.createObjectURL(file);
+    setFileUrl(url);
+  };
+
+  const handleOnFileChange = (file: File | null, cuid?: string) => {
+    if (!file) {
+      console.log(`File ${cuid} is removed`);
+      // Remove file from list of dokumenKonfirmasiNarasumber
+      setFileUrl(null);
+    }
+  };
 
   const genId = randomStrimg(5);
   const cuid = createId();
@@ -191,8 +221,37 @@ const NarasumberDetail = ({
       <RowNarasumber text="Bank" value={narasumber.bank} />
       <RowNarasumber text="Nama Rekening" value={narasumber.namaRekening} />
       <RowNarasumber text="Nomor Rekening" value={narasumber.nomorRekening} />
-      <RowNarasumberWithInput text="Lembar konfirmasi">
-        <LembarKonfirmasi jadwalNarasumber={jadwalNarasumber} cuid={cuid} />
+      <RowNarasumberWithInput text="Lembar konfirmasi" className="">
+        {isUploadLkAllowed && (
+          <>
+            {showInputUploadLk && (
+              <InputFileImmediateUpload
+                className=""
+                cuid={cuid}
+                folder={kegiatanId + "/" + jadwalNarasumber.jadwalId}
+                name={"narsumLabel"}
+                onFileUploadComplete={
+                  handleFileUploadDokumenKonfirmasiCompleted
+                }
+                //onFileChange={handleOnFileChange}
+              />
+            )}
+            <Button
+              variant={"outline"}
+              onClick={() => setShowInputUploadLk(!showInputUploadLk)}
+            >
+              {showInputUploadLk ? "Batal" : "Ganti"}
+            </Button>
+            {showInputUploadLk && (
+              <Button onClick={() => setShowInputUploadLk(false)}>
+                Simpan
+              </Button>
+            )}
+          </>
+        )}
+        {!showInputUploadLk && (
+          <LembarKonfirmasi jadwalNarasumber={jadwalNarasumber} cuid={cuid} />
+        )}
       </RowNarasumberWithInput>
       <RowNarasumberWithInput text="Jenis Honorarium">
         <SelectSbmHonorarium
@@ -263,7 +322,7 @@ const LembarKonfirmasi = ({
 
   if (lk && lk !== "")
     return (
-      <div className="flex flex-row w-full justify-end">
+      <div className="flex flex-row justify-end">
         <ButtonEye
           url={`/download/konfirmasi-kesediaan-mengajar/${narasumberId}/${id}`}
         />
@@ -296,9 +355,14 @@ const RowNarasumberWithInput = ({
   className?: string;
 }) => {
   return (
-    <div className="flex flex-row w-full border border-blue-200 h-12 bg-blue-100 justify-center items-center pl-2">
+    <div
+      className={cn(
+        "flex flex-row w-full border border-blue-200 h-12 bg-blue-100 justify-center items-center pl-2",
+        className
+      )}
+    >
       <div className="w-1/3">{text}</div>
-      <div className="w-2/3 flex">{children}</div>
+      <div className="w-2/3 flex items-center gap-1">{children}</div>
     </div>
   );
 };
