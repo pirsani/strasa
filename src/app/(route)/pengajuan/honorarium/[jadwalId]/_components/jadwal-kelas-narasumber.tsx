@@ -54,7 +54,7 @@ export const JadwalKelasNarasumber = ({
   const handleDeleteJadwal = async (jadwal: ObjPlainJadwalKelasNarasumber) => {
     setOriginalJadwal(jadwal);
     setConfirmDialogDeleteJadwalMessage(
-      `Hapus jadwal tanggal ${jadwal?.tanggal}${jadwal?.kelas.nama} ${jadwal?.materi.nama}  ?`
+      `Hapus data jadwal tanggal ${jadwal?.tanggal}${jadwal?.kelas.nama} ${jadwal?.materi.nama}  ?`
     );
     // hanya memunculkan dialog konfirmasi, delete dilakukan setelah confirm delete
     setIsConfirmDialogDeleteJadwalOpen(true);

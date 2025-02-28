@@ -35,6 +35,8 @@ const FormGenerateRampungan = ({
     defaultValues: {
       ppkId: kegiatan?.ppkId || "",
       kegiatanId: kegiatan?.id || "",
+      akun: "",
+      keterangan: "",
     },
   });
 
