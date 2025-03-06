@@ -37,6 +37,7 @@ interface RowDetail {
   diverifikasiTanggal?: Date | string | null;
   disetujuiTanggal?: Date | string | null;
   dibayarTanggal?: Date | string | null;
+  catatanRevisi?: string | null;
 }
 
 interface TabelKegiatanProps {
@@ -227,6 +228,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         diverifikasiTanggal: riwayatRampungan.diverifikasiTanggal,
         disetujuiTanggal: riwayatRampungan.disetujuiTanggal,
         dibayarTanggal: riwayatRampungan.dibayarTanggal,
+        catatanRevisi: riwayatRampungan.catatanRevisi,
       };
       newDetails.push(newRiwayatRampungan);
     }
@@ -250,6 +252,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         diverifikasiTanggal: riwayatPengajuanUhLuarNegeri.diverifikasiTanggal,
         disetujuiTanggal: riwayatPengajuanUhLuarNegeri.disetujuiTanggal,
         dibayarTanggal: riwayatPengajuanUhLuarNegeri.dibayarTanggal,
+        catatanRevisi: riwayatPengajuanUhLuarNegeri.catatanRevisi,
       };
       newDetails.push(newRiwayatPengajuanUhLuarNegeri);
     }
@@ -273,6 +276,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         diverifikasiTanggal: riwayatPengajuanUhDalamNegeri.diverifikasiTanggal,
         disetujuiTanggal: riwayatPengajuanUhDalamNegeri.disetujuiTanggal,
         dibayarTanggal: riwayatPengajuanUhDalamNegeri.dibayarTanggal,
+        catatanRevisi: riwayatPengajuanUhDalamNegeri.catatanRevisi,
       };
       newDetails.push(newRiwayatPengajuanUhDalamNegeri);
     }
@@ -297,6 +301,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
         diverifikasiTanggal: jadwal.riwayatPengajuan?.diajukanTanggal,
         disetujuiTanggal: jadwal.riwayatPengajuan?.disetujuiTanggal,
         dibayarTanggal: jadwal.riwayatPengajuan?.dibayarTanggal,
+        catatanRevisi: jadwal.riwayatPengajuan?.catatanRevisi,
       };
     });
 
@@ -331,10 +336,10 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
               <thead>
                 <tr className="bg-gray-400 text-white h-12">
                   <th className="border px-1">Keterangan/Kelas</th>
-                  <th className="border px-1">Tanggal Kegiatan</th>
                   <th className="border px-1">Tanggal Pengajuan</th>
                   <th className="border px-1">Jenis Pengajuan</th>
                   <th className="border px-1">Status Pengajuan</th>
+                  <th className="border px-1">Keterangan Revisi</th>
                   <th className="border px-1">Dokumen</th>
                   <th className="border px-1">Operator</th>
                 </tr>
@@ -370,9 +375,9 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                           {detail.nama}
                         </Link>
                       </td>
-                      <td className="border px-2">
+                      {/* <td className="border px-2">
                         {formatTanggal(detail.tanggalKegiatan, "dd-M-yyyy")}
-                      </td>
+                      </td> */}
                       <td className="border px-2">
                         {formatTanggal(detail.diajukanTanggal, "dd-M-yyyy")}
                       </td>
@@ -380,6 +385,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
                       <td className="border px-2">
                         {<StatusPengajuan status={detail.statusPengajuan} />}
                       </td>
+                      <td className="border px-2">{detail.catatanRevisi}</td>
                       <td className="border px-2">
                         {
                           <DokumenPengajuan
