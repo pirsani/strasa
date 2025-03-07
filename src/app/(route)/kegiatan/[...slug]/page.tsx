@@ -2,6 +2,7 @@ import { getSessionPenggunaForAction } from "@/actions/pengguna/session";
 import PreviewKegiatan from "@/components/kegiatan";
 import { getKegiatanWithAllDetailById } from "@/data/kegiatan";
 import KegiatanDetailContainer from "./_components/kegiatan-detail-container";
+import RiwayatPengajuan from "./_components/riwayat-pengajuan";
 const Kegiatan = async ({
   params,
 }: {
@@ -42,11 +43,24 @@ const Kegiatan = async ({
 
   return (
     <div className="p-4 pb-24 h-auto min-h-full flex flex-col bg-gray-300 gap-2">
-      <h1 className="mb-2 bg-gray-500 text-gray-50 p-2 ">
-        Kegiatan : <span>{kegiatan?.nama}</span>
-      </h1>
-      <div className="relative flex flex-col w-full lg:w-1/2 gap-6 pb-20 bg-gray-100 rounded-lg py-4 lg:px-4 p-2">
-        <PreviewKegiatan kegiatan={kegiatan} isAllowEdit={isAllowEdit} />
+      <div className="relative flex flex-col md:flex-row w-full  gap-2">
+        <div className="flex flex-col w-full md:w-1/2 bg-gray-100">
+          <h1 className="bg-gray-500 text-gray-50 p-2 rounded-t-sm">
+            Kegiatan
+          </h1>
+          <div className="flex-grow p-2">
+            <PreviewKegiatan kegiatan={kegiatan} isAllowEdit={isAllowEdit} />
+          </div>
+        </div>
+
+        <div className="flex flex-col w-full md:w-1/2 bg-gray-100">
+          <h1 className="bg-gray-500 text-gray-50 p-2 rounded-t-sm">
+            Riwayat Pengajuan
+          </h1>
+          <div className="flex-grow p-2">
+            <RiwayatPengajuan kegiatanId={kegiatan?.id || null} />
+          </div>
+        </div>
       </div>
       <KegiatanDetailContainer kegiatan={kegiatan} />
     </div>

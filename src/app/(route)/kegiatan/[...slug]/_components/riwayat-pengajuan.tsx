@@ -7,7 +7,7 @@ interface RiwayatPengajuanProps {
 }
 const RiwayatPengajuan = ({ kegiatanId }: RiwayatPengajuanProps) => {
   return (
-    <div className="bg-white p-2">
+    <div className="bg-white">
       <TabelRiwayatPengajuanDetail kegiatanId={kegiatanId || null} />
     </div>
   );

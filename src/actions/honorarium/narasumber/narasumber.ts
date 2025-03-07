@@ -123,12 +123,16 @@ interface ResultSaveFileToFinalFolder {
 }
 const saveFileKonfirmasiNarasumber = async (
   kegiatanId: string,
-  data: NarasumberJadwal,
+  data: Partial<NarasumberJadwal>,
   tahunKegiatan: number
 ): Promise<ResultSaveFileToFinalFolder | null> => {
   let result: ResultSaveFileToFinalFolder = {
     dokumenKonfirmasiNarasumber: [],
   };
+
+  if (!data.dokumenKonfirmasiNarasumber || !data.jadwalId) {
+    return result;
+  }
 
   if (data.dokumenKonfirmasiNarasumber.length === 0) {
     return result;
@@ -144,6 +148,10 @@ const saveFileKonfirmasiNarasumber = async (
     });
 
     if (uploadedFiles.length !== data.dokumenKonfirmasiNarasumber.length) {
+      console.log(
+        "data.dokumenKonfirmasiNarasumber",
+        data.dokumenKonfirmasiNarasumber
+      );
       throw new Error("Uploaded file not found");
     }
 
@@ -221,6 +229,81 @@ export const deleteNarasumberJadwal = async (
     return {
       success: false,
       error: "Error deleting data",
+      message: (error as Error).message,
+    };
+  }
+};
+
+export const updateNarasumberLk = async (
+  cuid: string,
+  narasumberJadwal: Partial<NarasumberJadwal>
+): Promise<ActionResponse<boolean>> => {
+  // const narasumberJadwal: Partial<NarasumberJadwal> = {
+  //   jadwalId: data.jadwalId,
+  //   dokumenKonfirmasiNarasumber: [cuid],
+  // };
+
+  narasumberJadwal.dokumenKonfirmasiNarasumber = [cuid];
+
+  if (
+    !narasumberJadwal.jadwalId ||
+    !narasumberJadwal.dokumenKonfirmasiNarasumber?.length
+  ) {
+    return {
+      success: false,
+      error: "E-SNJ-JADWAL-03",
+      message: "Data not found",
+    };
+  }
+
+  const jadwal = await getJadwalById(narasumberJadwal.jadwalId);
+
+  if (!jadwal || !jadwal.kegiatan) {
+    return {
+      success: false,
+      error: "E-SNJ-JADWAL-04",
+      message: "Jadwal not found",
+    };
+  }
+
+  const tahunKegiatan = jadwal?.kegiatan?.tanggalMulai.getFullYear();
+
+  const moveFileResult = await saveFileKonfirmasiNarasumber(
+    jadwal.kegiatan.id,
+    narasumberJadwal,
+    tahunKegiatan
+  );
+
+  if (!moveFileResult || !moveFileResult.dokumenKonfirmasiNarasumber.length) {
+    return {
+      success: false,
+      error: "E-SNJ-JADWAL-05",
+      message: "Error saving file",
+    };
+  }
+
+  const dokumenKonfirmasiKesediaanMengajar =
+    moveFileResult.dokumenKonfirmasiNarasumber[0];
+
+  try {
+    const updated = await dbHonorarium.jadwalNarasumber.update({
+      where: {
+        id: narasumberJadwal.id,
+      },
+      data: {
+        dokumenKonfirmasiKesediaanMengajar,
+      },
+    });
+
+    return {
+      success: true,
+      data: true,
+    };
+  } catch (error) {
+    logger.error("[NARASUMBER JADWAL] Error updating data", error);
+    return {
+      success: false,
+      error: "Error updating data",
       message: (error as Error).message,
     };
   }

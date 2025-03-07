@@ -1,4 +1,5 @@
 "use client";
+import { updateNarasumberLk } from "@/actions/honorarium/narasumber/narasumber";
 import { updateJumlahJpJadwalNarasumber } from "@/actions/honorarium/narasumber/proses-pengajuan-pembayaran";
 import { OptionSbm } from "@/actions/sbm";
 import ButtonEye from "@/components/button-eye-open-document";
@@ -185,11 +186,18 @@ const NarasumberDetail = ({
   }, [proses, statusPengajuanHonorarium]);
 
   const { setFileUrl } = useFileStore();
+
+  const genId = randomStrimg(5);
+  const cuid = createId() + ".pdf";
+
+  const [cuidUpload, setCuidUpload] = useState<string | null>(null);
   const handleFileUploadDokumenKonfirmasiCompleted = (
     name: string,
     file?: File | null
   ) => {
     if (!file) return;
+
+    setCuidUpload(cuid);
 
     console.log("File uploaded", cuid);
     // get url from uploaded file
@@ -205,8 +213,22 @@ const NarasumberDetail = ({
     }
   };
 
-  const genId = randomStrimg(5);
-  const cuid = createId();
+  const handleSimpanPerubahanLk = async () => {
+    if (!cuidUpload) {
+      toast.error("File konfirmasi kesediaan mengajar belum diupload");
+      return;
+    }
+    const simpan = await updateNarasumberLk(cuidUpload, {
+      id: jadwalNarasumber.id,
+      jadwalId: jadwalNarasumber.jadwalId,
+    });
+
+    if (simpan.success) {
+      toast.success("Lembar konfirmasi berhasil disimpan");
+      setShowInputUploadLk(false);
+    }
+  };
+
   return (
     <div id={`CKHND-Narasumber-${genId}`}>
       <RowNarasumber text="Nama" value={narasumber.nama} />
@@ -243,9 +265,7 @@ const NarasumberDetail = ({
               {showInputUploadLk ? "Batal" : "Ganti"}
             </Button>
             {showInputUploadLk && (
-              <Button onClick={() => setShowInputUploadLk(false)}>
-                Simpan
-              </Button>
+              <Button onClick={handleSimpanPerubahanLk}>Simpan</Button>
             )}
           </>
         )}

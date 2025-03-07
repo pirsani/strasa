@@ -244,6 +244,7 @@ const DaftarJadwal = ({
                   const jumlahNarsum = jadwal.jadwalNarasumber.length;
                   return (
                     <NarasumberListItem
+                      kegiatanId={kegiatanId}
                       key={jadwalNarasumber.id}
                       optionsSbmHonorarium={optionsSbmHonorarium}
                       index={index}

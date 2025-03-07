@@ -5,6 +5,7 @@ import { getRiwayatPengajuanByKegiatanIdAndJenisPengajuanIn } from "@/data/kegia
 import { formatTanggal } from "@/utils/date-format";
 import { JENIS_PENGAJUAN, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import StatusBadge from "../status-badge";
 
@@ -20,6 +21,7 @@ interface RowDetail {
   diverifikasiTanggal?: Date | string | null;
   disetujuiTanggal?: Date | string | null;
   dibayarTanggal?: Date | string | null;
+  catatanRevisi?: string | null;
 }
 
 interface TabelRiwayatPengajuanDetailProps {
@@ -55,16 +57,25 @@ const TabelRiwayatPengajuanDetail = ({
       header: "Keterangan/Kelas",
       footer: "Keterangan/Kelas",
       meta: { className: "w-[150px]" },
-    },
-    {
-      accessorKey: "tanggalKegiatan",
-      header: "Tanggal Kegiatan",
-      footer: "Tanggal Kegiatan",
-      meta: { className: "w-[100px]" },
       cell: (info) => {
-        return formatTanggal(info.getValue() as Date, "dd-M-yyyy");
+        return (
+          <LinkToDetail
+            id={info.row.original.id}
+            label={info.getValue() as string}
+            jenisPengajuan={info.row.original.jenisPengajuan}
+          />
+        );
       },
     },
+    // {
+    //   accessorKey: "tanggalKegiatan",
+    //   header: "Tanggal Kegiatan",
+    //   footer: "Tanggal Kegiatan",
+    //   meta: { className: "w-[100px]" },
+    //   cell: (info) => {
+    //     return formatTanggal(info.getValue() as Date, "dd-M-yyyy");
+    //   },
+    // },
     {
       accessorKey: "diajukanTanggal",
       header: "Tanggal Pengajuan",
@@ -95,6 +106,12 @@ const TabelRiwayatPengajuanDetail = ({
         const status = info.getValue() as STATUS_PENGAJUAN;
         return <StatusBadge status={status} />;
       },
+    },
+    {
+      accessorKey: "catatanRevisi",
+      header: "Catatan Revisi",
+      footer: "Catatan Revisi",
+      meta: { className: "w-[100px]" },
     },
   ];
 
@@ -154,6 +171,7 @@ const fetchDataRiwayatPengajuan = async (
           diverifikasiTanggal: riwayat.diverifikasiTanggal,
           disetujuiTanggal: riwayat.disetujuiTanggal,
           dibayarTanggal: riwayat.dibayarTanggal,
+          catatanRevisi: riwayat.catatanRevisi,
         });
       });
     }
@@ -175,6 +193,7 @@ const fetchDataRiwayatPengajuan = async (
         diverifikasiTanggal: jadwal.riwayatPengajuan?.diajukanTanggal,
         disetujuiTanggal: jadwal.riwayatPengajuan?.disetujuiTanggal,
         dibayarTanggal: jadwal.riwayatPengajuan?.dibayarTanggal,
+        catatanRevisi: jadwal.riwayatPengajuan?.catatanRevisi,
       };
     });
     newDetails.push(...newDetailsJadwal);
@@ -183,6 +202,43 @@ const fetchDataRiwayatPengajuan = async (
   }
 
   return newDetails;
+};
+
+const LinkToDetail = ({
+  id,
+  label,
+  jenisPengajuan,
+}: {
+  id: string;
+  label: string;
+  jenisPengajuan?: JENIS_PENGAJUAN | null;
+}) => {
+  let linkto = `/kegiatan/${id}`;
+
+  switch (jenisPengajuan) {
+    case "GENERATE_RAMPUNGAN":
+      linkto = `/pengajuan/rampungan/${id}`;
+      break;
+    case "HONORARIUM":
+      linkto = `/pengajuan/honorarium/${id}`;
+      break;
+    case "UH_LUAR_NEGERI":
+      linkto = `/pengajuan/uh-luar-negeri/${id}`;
+      break;
+    case "UH_DALAM_NEGERI":
+      linkto = `/pengajuan/uh-dalam-negeri/${id}`;
+      break;
+    case "UH":
+      linkto = `/pengajuan/uh/${id}`;
+    default:
+      break;
+  }
+
+  return (
+    <Link href={linkto} passHref className="text-blue-500 hover:underline">
+      {label}
+    </Link>
+  );
 };
 
 export default TabelRiwayatPengajuanDetail;
