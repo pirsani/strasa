@@ -80,7 +80,7 @@ jobs:
           git pull origin main
           source ~/.bashrc
           source ~/.profile
-          export PATH="${{ secrets.PNPM_PATH }}:${{ secrets.PM2_PATH }}:$PATH" # Use secrets for pnpm and pm2 paths
+          export PATH="$HOME/.local/bin:$HOME/.nvm/versions/node/${{ secrets.NODE_VERSION }}/bin:$PATH" # Use secrets for pnpm path"
           pm2 stop d01 || true
           pnpm install
           pm2 restart d01 || pm2 start pnpm --name d01 -- start -p 3030
