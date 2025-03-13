@@ -214,3 +214,93 @@ export const getSessionPermissionsForRole =
 
     return permissionsForRoles;
   };
+
+export interface ProsesPermissions {
+  createOwnProsesSetupKegiatan: boolean;
+  createAnyProsesSetupKegiatan: boolean;
+  createOwnProsesPengajuan: boolean;
+  createAnyProsesPengajuan: boolean;
+  createOwnProsesVerifikasi: boolean;
+  createAnyProsesVerifikasi: boolean;
+  createOwnProsesDaftarNominatif: boolean;
+  createAnyProsesDaftarNominatif: boolean;
+  createOwnProsesPembayaran: boolean;
+  createAnyProsesPembayaran: boolean;
+}
+
+export const getProsesPermissions = async (): Promise<ProsesPermissions> => {
+  const createOwnProsesSetupKegiatan = await checkSessionPermission({
+    actions: ["create:own"],
+    resource: "proses-setup-kegiatan",
+    redirectOnUnauthorized: false,
+  });
+
+  const createAnyProsesSetupKegiatan = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "proses-setup-kegiatan",
+    redirectOnUnauthorized: false,
+  });
+
+  const createOwnProsesPengajuan = await checkSessionPermission({
+    actions: ["create:own"],
+    resource: "proses-pengajuan",
+    redirectOnUnauthorized: false,
+  });
+
+  const createAnyProsesPengajuan = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "proses-pengajuan",
+    redirectOnUnauthorized: false,
+  });
+
+  const createOwnProsesVerifikasi = await checkSessionPermission({
+    actions: ["create:own"],
+    resource: "proses-verifikasi",
+    redirectOnUnauthorized: false,
+  });
+
+  const createAnyProsesVerifikasi = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "proses-verifikasi",
+    redirectOnUnauthorized: false,
+  });
+
+  const createOwnProsesDaftarNominatif = await checkSessionPermission({
+    actions: ["create:own"],
+    resource: "proses-daftar-nominatif",
+    redirectOnUnauthorized: false,
+  });
+
+  const createAnyProsesDaftarNominatif = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "proses-daftar-nominatif",
+    redirectOnUnauthorized: false,
+  });
+
+  const createOwnProsesPembayaran = await checkSessionPermission({
+    actions: ["create:own"],
+    resource: "proses-pembayaran",
+    redirectOnUnauthorized: false,
+  });
+
+  const createAnyProsesPembayaran = await checkSessionPermission({
+    actions: ["create:any"],
+    resource: "proses-pembayaran",
+    redirectOnUnauthorized: false,
+  });
+
+  const permissions = {
+    createOwnProsesSetupKegiatan: createOwnProsesSetupKegiatan,
+    createAnyProsesSetupKegiatan: createAnyProsesSetupKegiatan,
+    createOwnProsesPengajuan: createOwnProsesPengajuan,
+    createAnyProsesPengajuan: createAnyProsesPengajuan,
+    createOwnProsesVerifikasi: createOwnProsesVerifikasi,
+    createAnyProsesVerifikasi: createAnyProsesVerifikasi,
+    createOwnProsesDaftarNominatif: createOwnProsesDaftarNominatif,
+    createAnyProsesDaftarNominatif: createAnyProsesDaftarNominatif,
+    createOwnProsesPembayaran: createOwnProsesPembayaran,
+    createAnyProsesPembayaran: createAnyProsesPembayaran,
+  };
+
+  return permissions;
+};

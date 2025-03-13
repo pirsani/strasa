@@ -21,7 +21,7 @@ const VerifikasiDataDukungUangHarianDalamNegeri = ({
   );
 
   return (
-    <div className="">
+    <div className="w-full">
       <h1 className="font-semibold text-lg py-2 p-2 border-b border-gray-300">
         Data Dukung Pengajuan Uang Harian Dalam Negeri
       </h1>

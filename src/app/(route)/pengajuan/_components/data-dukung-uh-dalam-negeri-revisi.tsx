@@ -47,7 +47,10 @@ const DataDukungUangHarianDalamNegeriRevisi = ({
   };
 
   return (
-    <div id="VDDKUHDN-7189" className="mt-6 border border-blue-500 rounded-lg">
+    <div
+      id="VDDKUHDN-7189"
+      className="w-full mt-6 border border-blue-500 rounded-lg"
+    >
       <h1 className="font-semibold text-lg py-2 p-2 border-b border-gray-300">
         Data Dukung Pengajuan Uang Harian Luar Negeri
       </h1>

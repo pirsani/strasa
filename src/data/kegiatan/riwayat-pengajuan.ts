@@ -2,13 +2,17 @@
 import { PenggunaInfo } from "@/data/pengguna";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import {
+  DokumenKegiatan,
+  Itinerary,
   Jadwal,
   JENIS_PENGAJUAN,
   Kegiatan,
   Kelas,
   Materi,
   Organisasi,
+  Provinsi,
   RiwayatPengajuan,
+  Spd,
   STATUS_PENGAJUAN,
 } from "@prisma-honorarium/client";
 
@@ -50,6 +54,10 @@ export interface ObjCreateRiwayatPengajuan {
 export interface KegiatanIncludeSatker extends Kegiatan {
   satker: Organisasi;
   unitKerja: Organisasi;
+  itinerary?: Itinerary[] | null;
+  provinsi?: Provinsi | null;
+  dokumenKegiatan?: DokumenKegiatan[] | null;
+  spd?: Spd | null;
 }
 
 export interface JadwalIncludeKelasMateri extends Jadwal {

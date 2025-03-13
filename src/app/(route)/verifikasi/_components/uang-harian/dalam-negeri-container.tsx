@@ -1,3 +1,4 @@
+"use client";
 import { KegiatanWithDetail } from "@/actions/kegiatan";
 import getPesertaKegiatanDalamNegeri, {
   PesertaKegiatanDalamNegeri,
@@ -88,7 +89,7 @@ const UangHarianDalamNegeriContainer = ({
   };
 
   return (
-    <div>
+    <div className="w-full">
       <VerifikasiDataDukungUangHarianDalamNegeri
         dokumenKegiatan={kegiatan?.dokumenKegiatan}
       />
