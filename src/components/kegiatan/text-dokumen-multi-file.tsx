@@ -16,7 +16,7 @@ const TextDokumenMultiFile = ({
   const toggleListOpen = () => setListOpened(!listOpened);
   return (
     <div className="flex flex-col">
-      <span className="text-gray-700">{label}</span>
+      <span className="font-semibold text-sm">{label}</span>
       <div className="flex flex-row">
         <span className=" bg-gray-100 border border-gray-300 rounded p-2 w-full">
           {dokumen.length} file

@@ -59,7 +59,7 @@ const DataDukungUangHarianLuarNegeriRevisi = ({
   };
 
   return (
-    <div className="" id="VDDKUHLN-8789">
+    <div className="w-full border border-blue-500" id="VDDKUHLN-8789">
       <h1 className="font-semibold text-lg py-2 p-2 border-b border-gray-300">
         Data Dukung Pengajuan Uang Harian Luar Negeri
       </h1>

@@ -1,5 +1,5 @@
 "use client";
-import TextDokumenWithPreviewButton from "@/components/kegiatan/text-dokumen-with-preview-change-button";
+import TextDokumenWithPreviewButton from "@/components/kegiatan/text-dokumen-with-preview-button";
 import { DokumenKegiatan } from "@prisma-honorarium/client";
 interface DataDukungUangHarianLuarNegeriViewProps {
   dokumenKegiatan?: DokumenKegiatan[] | null;
@@ -33,7 +33,7 @@ const DataDukungUangHarianLuarNegeriView = ({
   );
 
   return (
-    <div className="" id="VDDKUHLN-8789">
+    <div className="w-full" id="VDDKUHLN-8789">
       <h1 className="font-semibold text-lg py-2 p-2 border-b border-gray-300">
         Data Dukung Pengajuan Uang Harian Luar Negeri
       </h1>

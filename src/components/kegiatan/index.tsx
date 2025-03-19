@@ -64,21 +64,24 @@ const PreviewKegiatan = ({
       {!kegiatan && <>Loading detail kegiatan...</>}
       {kegiatan && (
         <div className="flex flex-col w-full gap-2">
+          <h1 className="font-semibold text-lg py-2 border-b border-gray-300">
+            Detail Kegiatan
+          </h1>
           <div className="flex flex-col">
-            <label className="text-gray-700">Nama Kegiatan</label>
+            <span className="font-semibold text-sm">Nama Kegiatan</span>
             <span className=" bg-gray-100 border border-gray-300 rounded px-2 py-1 w-full">
               {kegiatan.nama}
             </span>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 w-full  ">
             <div className="flex flex-col w-full sm:w-1/3">
-              <label className="text-gray-700">Tanggal Mulai</label>
+              <span className="font-semibold text-sm">Tanggal Mulai</span>
               <span className=" bg-gray-100 border border-gray-300 rounded px-2 py-1 w-full">
                 {format(new Date(kegiatan.tanggalMulai), "yyyy-MM-dd")}
               </span>
             </div>
             <div className="flex flex-col w-full sm:w-1/3 ">
-              <label className="text-gray-700">Tanggal Selesai</label>
+              <span className="font-semibold text-sm">Tanggal Selesai</span>
               <span className=" bg-gray-100 border border-gray-300 rounded px-2 py-1  w-full">
                 {format(new Date(kegiatan.tanggalSelesai), "yyyy-MM-dd")}
               </span>
@@ -101,7 +104,7 @@ const PreviewKegiatan = ({
           />
 
           <div className="flex flex-col">
-            <span className="text-gray-700">Lokasi</span>
+            <span className="font-semibold text-sm">Lokasi</span>
             <span className=" bg-gray-100 border border-gray-300 rounded px-2 py-1 w-full">
               {kegiatan.lokasi}
             </span>
@@ -109,7 +112,7 @@ const PreviewKegiatan = ({
 
           {kegiatan.lokasi == LOKASI.LUAR_KOTA && (
             <div className="flex flex-col">
-              <span className="text-gray-700">Lokasi</span>
+              <span className="font-semibold text-sm">Lokasi</span>
               <span className=" bg-gray-100 border border-gray-300 rounded px-2 py-1 w-full">
                 {kegiatan.lokasi}
               </span>
@@ -195,7 +198,7 @@ interface RowTextProps {
 }
 const RowText = ({ label, value }: RowTextProps) => (
   <div className="flex flex-col">
-    <span className="text-gray-700">{label}</span>
+    <span className="font-semibold text-sm">{label}</span>
     <span className=" bg-gray-100 border border-gray-300 rounded px-2 py-1 w-full">
       {value}
     </span>
