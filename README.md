@@ -13,13 +13,13 @@ HONORARIUM
 clone project
 
 ```sh
-git clone git@git.kemlu.go.id:bangtik/aplikasi-keuangan-pusdiklat.git
+git clone git@git.kemlu.go.id:bangtik/aplikasi-keuangan-pusdiklat.git strasa
 ```
 
 or
 
 ```
-git clone http://git.kemlu.go.id/bangtik/aplikasi-keuangan-pusdiklat.git
+git clone http://git.kemlu.go.id/bangtik/aplikasi-keuangan-pusdiklat.git strasa
 ```
 
 install
@@ -42,6 +42,10 @@ First, run the development server:
 ```bash
 pnpm run dev
 ```
+
+## Perubahan
+
+-[dokumentasi perubahan/perbaikan](docs/change.md)
 
 ## Technical Reference
 
