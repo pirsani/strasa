@@ -18,14 +18,14 @@ git clone git@git.kemlu.go.id:bangtik/aplikasi-keuangan-pusdiklat.git strasa
 
 or
 
-```
+```sh
 git clone http://git.kemlu.go.id/bangtik/aplikasi-keuangan-pusdiklat.git strasa
 ```
 
 install
 
 ```sh
-cd panda
+cd strasa
 pnpm install
 ```
 

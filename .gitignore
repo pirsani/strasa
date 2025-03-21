@@ -41,3 +41,6 @@ next-env.d.ts
 /BASE_PATH_UPLOAD
 
 /tmp
+
+# redis cache
+dump.rdb
