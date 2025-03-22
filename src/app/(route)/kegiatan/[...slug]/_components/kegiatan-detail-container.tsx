@@ -5,7 +5,6 @@ import { KegiatanIncludeAllDetail } from "@/data/kegiatan";
 import useFileStore from "@/hooks/use-file-store";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { useEffect } from "react";
-import RiwayatPengajuan from "./riwayat-pengajuan";
 import TabelPesertaKegiatan from "./tabel-peserta";
 import TabelPesertaKegiatanDalamNegeri from "./tabel-peserta-uh-dalam-negeri";
 import TabelPesertaKegiatanLuarNegeri from "./tabel-peserta-uh-luar-negeri";
@@ -75,13 +74,6 @@ const KegiatanDetailContainer = ({
           />
         </div>
       )}
-
-      <div className="flex flex-col w-full">
-        <h1 className="bg-gray-500 text-gray-50 p-2 rounded-t-sm">
-          Riwayat Pengajuan
-        </h1>
-        <RiwayatPengajuan kegiatanId={kegiatan?.id || null} />
-      </div>
       <FloatingComponent hide={isPreviewHidden} onHide={handleOnHide}>
         <PdfPreviewContainer className="border-2 h-full border-gray-500" />
       </FloatingComponent>
