@@ -61,7 +61,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.451.0",
     "nanoid": "^5.0.9",
-    "next": "^15.1.2",
+    "next": "^15.3.0",
     "next-auth": "5.0.0-beta.25",
     "next-themes": "^0.4.3",
     "papaparse": "^5.4.1",
@@ -69,10 +69,10 @@
     "pdfkit": "^0.15.2",
     "pdfkit-table": "^0.1.99",
     "pizzip": "^3.1.7",
-    "react": "^19.0.0",
+    "react": "^19.1.0",
     "react-chartjs-2": "^5.3.0",
     "react-day-picker": "8.10.1",
-    "react-dom": "^19.0.0",
+    "react-dom": "^19.1.0",
     "react-dropzone": "^14.3.5",
     "react-focus-lock": "^2.13.5",
     "react-hook-form": "^7.54.2",
@@ -113,6 +113,6 @@
     "typescript": "^5.7.2"
   },
   "overrides": {
-    "react-is": "^19.0.0"
+    "react-is": "^19.1.0"
   }
 }
