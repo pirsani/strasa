@@ -159,6 +159,8 @@ pnpm prisma migrate dev --create-only --name get_riwayat_pengajuan_payment_statu
 
 pnpm prisma migrate dev --create-only --name tambah_kolom_dokumen_lainnya --schema=./prisma/db-honorarium/schema.prisma
 
+pnpm prisma migrate dev --create-only --name tambah_model_peserta_kro --schema=./prisma/db-honorarium/schema.prisma
+
 pnpm prisma migrate deploy --schema=./prisma/db-honorarium/schema.prisma
 
 -- pnpm prisma migrate resolve --applied "20241216221436_input_bukti_bayar_tanggal" --schema=./prisma/db-honorarium/schema.prisma
