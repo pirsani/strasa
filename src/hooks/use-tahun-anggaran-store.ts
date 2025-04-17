@@ -2,44 +2,38 @@ import setTahunAnggaran, {
   getTahunAnggaranPilihan,
 } from "@/actions/pengguna/preference";
 import { create, StateCreator } from "zustand";
-import { persist } from "zustand/middleware";
-import { createStore } from "zustand/vanilla";
+import { persist, PersistOptions } from "zustand/middleware";
 
 // Define the state interface
-type TahunAnggaranState = {
+interface TahunAnggaranState {
   tahunAnggaran: number | null;
   initialized: boolean;
-};
-
-type TahunAnggaranStoreActions = {
   setTahunAnggaranYear: (year: number) => Promise<void>;
-  initializeTahunAnggaran: () => Promise<number>;
-};
-
-type TahunAnggaranStore = TahunAnggaranState & TahunAnggaranStoreActions;
+  initializeTahunAnggaran: () => void;
+}
 
 // Define the Zustand state creator function
-const createState: StateCreator<TahunAnggaranStore> = () => ({
+const createState: StateCreator<TahunAnggaranState> = (set) => ({
   tahunAnggaran: null,
   initialized: false,
   setTahunAnggaranYear: async (year) => {
+    set({ tahunAnggaran: year });
     await setTahunAnggaran(year);
   },
   initializeTahunAnggaran: async () => {
     const tahunAnggaran = await getTahunAnggaranPilihan();
-    useTahunAnggaranStore.setState({
-      tahunAnggaran,
-      initialized: true,
-    });
-    console.log("Tahun anggaran initialized:", "tahunAnggaran", tahunAnggaran);
-    return tahunAnggaran;
+    set({ tahunAnggaran, initialized: true });
   },
 });
 
-const tahunAnggaranStore = createStore<TahunAnggaranStore>()(
-  persist(createState, { name: "tahun-anggaran-storage" })
-);
+// Configure persistence options
+const persistOptions: PersistOptions<TahunAnggaranState> = {
+  name: "tahun-anggaran-storage", // Name for the local storage key
+};
 
-const useTahunAnggaranStore = create(createState);
+// Create the Zustand store with persistence
+export const useTahunAnggaranStore = create(
+  persist(createState, persistOptions)
+);
 
 export default useTahunAnggaranStore;

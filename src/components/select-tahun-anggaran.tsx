@@ -1,5 +1,4 @@
 "use client";
-import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import {
   Select,
   SelectContent,
@@ -9,24 +8,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useTahunAnggaranStore from "@/hooks/use-tahun-anggaran-store";
 import { useEffect, useState } from "react";
 
 const SelectTahunAnggaran = () => {
+  const {
+    tahunAnggaran,
+    setTahunAnggaranYear,
+    initializeTahunAnggaran,
+    initialized,
+  } = useTahunAnggaranStore();
+
   const [ta, setTa] = useState<number | null>(null);
 
   useEffect(() => {
-    console.log("Initializing tahunAnggaran...");
-    const tainit = async () => {
-      const taq = await getTahunAnggaranPilihan();
-      console.log("Tahun anggaran initialized:", "tahunAnggaran", taq);
-      setTa(taq);
-    };
-    tainit();
+    if (!initialized) {
+      initializeTahunAnggaran();
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Check if tahunAnggaran is defined
-  if (ta === null) {
+  if (!initialized || tahunAnggaran === null) {
     //signOut();
     return (
       <div className="bg-primary py-2 px-3 rounded-md text-white">tahun...</div>
@@ -35,10 +39,10 @@ const SelectTahunAnggaran = () => {
 
   return (
     <Select
-      value={`${ta}`}
+      value={`${tahunAnggaran}`}
       onValueChange={(val) => {
         const newTa = parseInt(val, 10); // Convert the value to a number
-        setTa(newTa); // Update the state
+        setTahunAnggaranYear(newTa);
         console.log("Tahun anggaran updated:", newTa);
       }}
     >
