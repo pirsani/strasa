@@ -14,7 +14,7 @@ import {
   Spd,
 } from "@prisma-honorarium/client";
 import { Logger } from "tslog";
-import { getTahunAnggranPilihan } from "../pengguna/preference";
+import { getTahunAnggaranPilihan } from "../pengguna/preference";
 
 const logger = new Logger({
   hideLogPositionForProduction: true,
@@ -34,7 +34,7 @@ export const getKegiatan = async ({
   satkerId,
   unitKerjaId,
 }: ParamsGetKegiatan = {}): Promise<KegiatanIncludeSatker[]> => {
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
 
   // console.log("[getKegiatan] satkerId", satkerId);
   // console.log("[getKegiatan] unitKerjaId", unitKerjaId);
@@ -109,7 +109,7 @@ export const getOptionsKegiatan = async () => {
   // hanya dapat memilih yang ada di satker dan unit kerja yang dipilih
   // jika admin dapat memilih pada satkernya jika tidak makan hanya dapat memilih pada unitKerjaId dan satkerId sesuai pengguna
 
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
   const dataKegiatan = await dbHonorarium.kegiatan.findMany({
     where: {
       tanggalMulai: {

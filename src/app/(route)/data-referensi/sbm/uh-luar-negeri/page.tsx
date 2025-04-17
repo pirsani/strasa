@@ -1,4 +1,4 @@
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import { checkSessionPermission } from "@/actions/pengguna/session";
 import { getOptionsNegara } from "@/actions/sbm";
 import getReferensiSbmUhLuarNegeri, {
@@ -13,7 +13,7 @@ const ReferensiSbmUhLuarNegeriPage = async () => {
     actions: ["create:any"],
     resource: "referensi",
   });
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
   const data = await getReferensiSbmUhLuarNegeri(tahunAnggaran);
   const convertedData = data.map((item) => ({
     ...convertSpecialTypesToPlain<SbmUhLuarNegeriPlainObject>(item),

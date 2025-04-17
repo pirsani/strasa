@@ -1,4 +1,4 @@
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import {
   checkSessionPermission,
   getLoggedInPengguna,
@@ -34,7 +34,7 @@ const PendingPage = async () => {
     redirect("/");
   }
 
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
 
   // TODO memastikan bahwa pengguna yang mengajukan adalah satker pengguna yang terkait dengan kegiatan
   const satkerId = pengguna.satkerId!;

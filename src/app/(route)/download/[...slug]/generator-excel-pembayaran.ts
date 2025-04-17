@@ -1,4 +1,4 @@
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import { SimplifiedSessionPengguna } from "@/actions/pengguna/session";
 import {
   getRiwayatPengajuanPaymentStatus,
@@ -114,7 +114,7 @@ export async function downloadExcelPembayaran(
     }
 
     const { satkerId, unitKerjaId, penggunaId, penggunaName } = dataPengguna;
-    const year = await getTahunAnggranPilihan();
+    const year = await getTahunAnggaranPilihan();
 
     const data = await getRiwayatPengajuanPaymentStatus(year, satkerId);
 

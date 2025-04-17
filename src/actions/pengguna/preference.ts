@@ -39,25 +39,38 @@ export const setTahunAnggaran = async (tahunAnggaran: number) => {
   }
 };
 
-export const getTahunAnggranPilihan = async () => {
-  const session = await auth();
-  if (!session || !session.user || !session.user.id) {
-    throw new Error("Unauthorized");
-  }
+export const getTahunAnggaranPilihan = async () => {
+  console.log("getTahunAnggaranPilihan called");
+  const tahunAnggaran = 2025; // Hardcoded value for testing
+  console.log("Returning tahunAnggaran:", tahunAnggaran);
+  return tahunAnggaran;
+  // try {
+  //   let tahunAnggaran = new Date().getFullYear();
+  //   const session = await auth();
+  //   if (!session || !session.user || !session.user.id) {
+  //     throw new Error("Unauthorized");
+  //   }
 
-  const userId = session.user.id;
+  //   const userId = session.user.id;
 
-  const data = await dbHonorarium.userPreference.findUnique({
-    where: {
-      id: userId || "falback-id",
-    },
-  });
+  //   const data = await dbHonorarium.userPreference.findUnique({
+  //     where: {
+  //       id: userId || "falback-id",
+  //     },
+  //   });
 
-  // if not found, set the default year
-  if (!data) {
-    return await setTahunAnggaran(new Date().getFullYear());
-  }
-  return data.tahunAnggaran;
+  //   // if not found, set the default year
+  //   if (!data) {
+  //     tahunAnggaran = await setTahunAnggaran(tahunAnggaran);
+  //   } else {
+  //     tahunAnggaran = data.tahunAnggaran;
+  //   }
+  //   console.log("getTahunAnggaranPilihan", "tahunAnggaran", tahunAnggaran);
+  //   return tahunAnggaran;
+  // } catch (error) {
+  //   console.error("error getTahunAnggaranPilihan", "tahunAnggaran", error);
+  //   throw new Error("Failed to get tahun anggaran");
+  // }
 };
 
 export default setTahunAnggaran;

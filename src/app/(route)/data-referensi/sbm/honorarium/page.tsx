@@ -1,4 +1,4 @@
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import { checkSessionPermission } from "@/actions/pengguna/session";
 import getReferensiSbmHonorarium from "@/data/sbm-honorarium";
 import { convertSpecialTypesToPlain } from "@/utils/convert-obj-to-plain";
@@ -11,7 +11,7 @@ const ReferensiSbmHonorariumPage = async () => {
     resource: "referensi",
   });
 
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
   const data = await getReferensiSbmHonorarium(tahunAnggaran);
   const convertedData = data.map((item) => ({
     ...convertSpecialTypesToPlain(item),

@@ -1,4 +1,4 @@
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import {
   checkSessionPermission,
   getLoggedInPengguna,
@@ -29,7 +29,7 @@ const ReferensiPaguPage = async () => {
   const satkerId = pengguna.satkerId ?? pengguna.unitKerjaId!; // fallback to unit kerja id, jika sampe sini pasti punya unit kerja id
   const unitKerjaId = pengguna.unitKerjaId;
   const penggunaId = pengguna.id;
-  const tahun = await getTahunAnggranPilihan();
+  const tahun = await getTahunAnggaranPilihan();
 
   const optionsUnitKerja = await getOptionsUnitKerja(satkerId);
   const pagu = await getPaguUnitKerjaBySatker(satkerId, tahun);

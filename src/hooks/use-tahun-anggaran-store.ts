@@ -1,39 +1,45 @@
 import setTahunAnggaran, {
-  getTahunAnggranPilihan,
+  getTahunAnggaranPilihan,
 } from "@/actions/pengguna/preference";
 import { create, StateCreator } from "zustand";
-import { persist, PersistOptions } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import { createStore } from "zustand/vanilla";
 
 // Define the state interface
-interface TahunAnggaranState {
+type TahunAnggaranState = {
   tahunAnggaran: number | null;
   initialized: boolean;
+};
+
+type TahunAnggaranStoreActions = {
   setTahunAnggaranYear: (year: number) => Promise<void>;
-  initializeTahunAnggaran: () => void;
-}
+  initializeTahunAnggaran: () => Promise<number>;
+};
+
+type TahunAnggaranStore = TahunAnggaranState & TahunAnggaranStoreActions;
 
 // Define the Zustand state creator function
-const createState: StateCreator<TahunAnggaranState> = (set) => ({
+const createState: StateCreator<TahunAnggaranStore> = () => ({
   tahunAnggaran: null,
   initialized: false,
   setTahunAnggaranYear: async (year) => {
-    set({ tahunAnggaran: year });
     await setTahunAnggaran(year);
   },
   initializeTahunAnggaran: async () => {
-    const tahunAnggaran = await getTahunAnggranPilihan();
-    set({ tahunAnggaran, initialized: true });
+    const tahunAnggaran = await getTahunAnggaranPilihan();
+    useTahunAnggaranStore.setState({
+      tahunAnggaran,
+      initialized: true,
+    });
+    console.log("Tahun anggaran initialized:", "tahunAnggaran", tahunAnggaran);
+    return tahunAnggaran;
   },
 });
 
-// Configure persistence options
-const persistOptions: PersistOptions<TahunAnggaranState> = {
-  name: "tahun-anggaran-storage", // Name for the local storage key
-};
-
-// Create the Zustand store with persistence
-export const useTahunAnggaranStore = create(
-  persist(createState, persistOptions)
+const tahunAnggaranStore = createStore<TahunAnggaranStore>()(
+  persist(createState, { name: "tahun-anggaran-storage" })
 );
+
+const useTahunAnggaranStore = create(createState);
 
 export default useTahunAnggaranStore;

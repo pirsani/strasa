@@ -1,5 +1,5 @@
 import { getOptionsKota, getOptionsKotaSekitarJakarta } from "@/actions/kota";
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import { checkSessionPermission } from "@/actions/pengguna/session";
 import {
   getSbmTransporDalamKotaPulangPergi,
@@ -18,7 +18,7 @@ const TransporPage = async () => {
     actions: ["create:any"],
     resource: "referensi",
   });
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
   const dataSbmDalamKota = await getSbmTransporDalamKotaPulangPergi(
     tahunAnggaran
   );

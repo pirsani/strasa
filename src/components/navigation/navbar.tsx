@@ -5,17 +5,17 @@ import Search from "./search";
 
 const Navbar = () => {
   return (
-    <nav className="p-2 flex items-center gap-4">
+    <nav className="p-2 flex gap-4 w-full flex-auto bg-gray-100">
       <div className="w-full">
         <Search />
       </div>
-      <div>
+      <div className="mx-auto">
         <NamaSatker />
       </div>
       <div className="mx-2">
         <SelectTahunAnggaran />
       </div>
-      <div className="mx-2">
+      <div className="mx-auto right-0">
         <UserButton />
       </div>
     </nav>

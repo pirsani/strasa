@@ -3,7 +3,7 @@ import {
   getPaguRealisasi,
   getRealisasi,
 } from "@/actions/dashboard";
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import { getLoggedInPengguna } from "@/actions/pengguna/session";
 import CardsContainer from "./_components/cards-container";
 import ChartContainer from "./_components/chart-container";
@@ -14,7 +14,7 @@ const DashboardPage = async () => {
     return <div>Anda tidak memiliki akses ke halaman ini</div>;
   }
 
-  const year = await getTahunAnggranPilihan();
+  const year = await getTahunAnggaranPilihan();
   const dataRealisasi = await getRealisasi(year);
   const dataPaguRealisasi = await getPaguRealisasi(year);
   console.log("[dashboard] dataRealisasi", dataPaguRealisasi);

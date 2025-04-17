@@ -7,20 +7,20 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Tooltip, TooltipContent, TooltipProvider } from "../ui/tooltip";
 
-interface SidebarItemProps {
+interface LinkItemProps {
   icon: LucideIcon;
   title: string;
   href: string;
   collapsed: boolean;
   counter?: number;
 }
-const SidebarItem = ({
+const LinkItem = ({
   icon: Icon,
   title,
   href,
   collapsed,
   counter,
-}: SidebarItemProps) => {
+}: LinkItemProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const { setIsLoading } = useIsLoading();
@@ -41,7 +41,7 @@ const SidebarItem = ({
       type="button"
       className={cn(
         "relative",
-        "flex items-center gap-x-2 text-slate-500 text-sm font-[500] pl-6 transition-all hover:text-slate-600 hover:bg-slate-300/20 w-full",
+        "flex items-center gap-x-2 text-slate-500 text-sm font-[500] transition-all hover:text-slate-600 hover:bg-slate-300/20 w-full",
         isActive &&
           "text-slate-700 bg-sky-200/20 hover:bg-sky-200/20 hover:text-sky-700"
       )}
@@ -81,4 +81,4 @@ const SidebarItem = ({
   );
 };
 
-export default SidebarItem;
+export default LinkItem;

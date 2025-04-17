@@ -10,7 +10,7 @@ import formatCurrency from "@/utils/format-currency";
 import { Pagu as ZPagu } from "@/zod/schemas/pagu";
 import { createId } from "@paralleldrive/cuid2";
 import { Logger } from "tslog";
-import { getTahunAnggranPilihan } from "../pengguna/preference";
+import { getTahunAnggaranPilihan } from "../pengguna/preference";
 import { getPrismaErrorResponse } from "../prisma-error-response";
 import { ActionResponse } from "../response";
 export type { PaguUnitKerja };
@@ -54,7 +54,7 @@ export const simpanDataPagu = async (
       };
     }
 
-    const tahun = await getTahunAnggranPilihan();
+    const tahun = await getTahunAnggaranPilihan();
     const satkerId = pengguna.data.satkerId; // TODO : ignore satker if superadmin
 
     const paguSatker = await dbHonorarium.pagu.findFirst({
@@ -174,7 +174,7 @@ export const hapusDataPagu = async (
   const satkerId = pengguna.data.satkerId;
   //const unitKerjaId = pengguna.data.unitKerjaId;
   const penggunaId = pengguna.data.penggunaId;
-  const tahun = await getTahunAnggranPilihan();
+  const tahun = await getTahunAnggaranPilihan();
   const tobeDeleted = await getPagu(id);
 
   const deleted = await dbHonorarium.pagu.delete({

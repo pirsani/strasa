@@ -1,6 +1,6 @@
 "use server";
 
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import { STATUS_PENGAJUAN } from "@/lib/constants";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { KegiatanIncludeSatker } from "./index";
@@ -8,7 +8,7 @@ import { KegiatanIncludeSatker } from "./index";
 export const getKegiatanHasStatusPengajuan = async (
   status: STATUS_PENGAJUAN | null
 ): Promise<KegiatanIncludeSatker[]> => {
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
   const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findMany({
     where: {
       kegiatan: {

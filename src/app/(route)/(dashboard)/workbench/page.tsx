@@ -1,5 +1,5 @@
 import { getKegiatan, ParamsGetKegiatan } from "@/actions/kegiatan";
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import {
   checkSessionPermission,
   getLoggedInPengguna,
@@ -46,7 +46,7 @@ const WorkbenchPage = async () => {
   }
 
   const kegiatan = await getKegiatan(params);
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
   const distinctStatus = await getDistinctStatusPengajuan(tahunAnggaran);
   const countStatus = await getCountStatusPengajuan(
     tahunAnggaran,

@@ -1,4 +1,4 @@
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import { checkSessionPermission } from "@/actions/pengguna/session";
 import { getOptionsPejabatEselon2keAtas } from "@/actions/sbm";
 import { getSbmUangRepresentasi } from "@/data/sbm-uang-representasi";
@@ -10,7 +10,7 @@ const SbmUangRepresentasiPage = async () => {
     actions: ["create:any"],
     resource: "referensi",
   });
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
   const data = await getSbmUangRepresentasi(tahunAnggaran);
   const optionsPejabat = await getOptionsPejabatEselon2keAtas();
   return (

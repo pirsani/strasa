@@ -1,4 +1,4 @@
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import { getSessionPengguna } from "@/actions/pengguna/session";
 import { getObjPlainPengajuanPembayaran } from "@/data/pembayaran";
 import TabelPengajuanPembayaran from "./_components/tabel-pengajuan-pembayaran";
@@ -9,7 +9,7 @@ const PembayaranPage = async () => {
     return null;
   }
 
-  const tahun = await getTahunAnggranPilihan();
+  const tahun = await getTahunAnggaranPilihan();
   const satkerId = pengguna.data?.satkerId ?? "";
 
   const dataPengajuanPembayaran = await getObjPlainPengajuanPembayaran(

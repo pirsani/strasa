@@ -1,5 +1,5 @@
 "use server";
-import { getTahunAnggranPilihan } from "@/actions/pengguna/preference";
+import { getTahunAnggaranPilihan } from "@/actions/pengguna/preference";
 import { ActionResponse } from "@/actions/response";
 import { SbmHonorariumPlainObject } from "@/data/sbm-honorarium";
 import { dbHonorarium } from "@/lib/db-honorarium";
@@ -17,7 +17,7 @@ const logger = new Logger({
 });
 
 export const getSbmHonorarium = async (sbmHonorarium?: string) => {
-  const tahunAnggaran = await getTahunAnggranPilihan();
+  const tahunAnggaran = await getTahunAnggaranPilihan();
   const dataSbmHonorarium = await dbHonorarium.sbmHonorarium.findMany({
     where: {
       tahun: tahunAnggaran,

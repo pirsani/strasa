@@ -15,7 +15,7 @@ import {
   RiwayatPengajuan,
 } from "@prisma-honorarium/client";
 import { revalidatePath } from "next/cache";
-import { getTahunAnggranPilihan } from "../pengguna/preference";
+import { getTahunAnggaranPilihan } from "../pengguna/preference";
 import { ActionResponse } from "../response";
 // ini akan merge dari data kegiatan dan data pengajuan pembayaran
 export type { ObjPlainPembayaranIncludeKegiatan } from "@/data/pembayaran";
@@ -34,7 +34,7 @@ export const getPengajuanPembayaran = async (): Promise<
     return pengguna;
   }
 
-  const tahun = await getTahunAnggranPilihan();
+  const tahun = await getTahunAnggaranPilihan();
   const penggunaId = pengguna.data.penggunaId;
   const satkerId = pengguna.data.satkerId;
   const status = "RequestToPay";
@@ -57,7 +57,7 @@ export const pengajuanPembayaran = async (
   const penggunaId = pengguna.data.penggunaId;
   const satkerId = pengguna.data.satkerId;
   const status = "RequestToPay";
-  const tahun = await getTahunAnggranPilihan();
+  const tahun = await getTahunAnggaranPilihan();
 
   // check if the data is for jadwal or kegiatan
   const kegiatan = await dbHonorarium.kegiatan.findFirst({
