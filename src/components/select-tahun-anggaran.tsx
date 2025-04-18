@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import useTahunAnggaranStore from "@/hooks/use-tahun-anggaran-store";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const SelectTahunAnggaran = () => {
@@ -18,12 +19,16 @@ const SelectTahunAnggaran = () => {
     initializeTahunAnggaran,
     initialized,
   } = useTahunAnggaranStore();
+  const router = useRouter();
 
   const [ta, setTa] = useState<number | null>(null);
 
   useEffect(() => {
     if (!initialized) {
-      initializeTahunAnggaran();
+      const initTa = async () => {
+        initializeTahunAnggaran();
+      };
+      initTa();
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -40,10 +45,10 @@ const SelectTahunAnggaran = () => {
   return (
     <Select
       value={`${tahunAnggaran}`}
-      onValueChange={(val) => {
+      onValueChange={async (val) => {
         const newTa = parseInt(val, 10); // Convert the value to a number
-        setTahunAnggaranYear(newTa);
-        console.log("Tahun anggaran updated:", newTa);
+        await setTahunAnggaranYear(newTa);
+        router.refresh();
       }}
     >
       <SelectTrigger className="bg-primary text-white font-semibold gap-1">

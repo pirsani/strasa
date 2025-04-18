@@ -11,7 +11,6 @@ import { getRoutesReferensiForRoles } from "@/lib/route";
 import { cn } from "@/lib/utils";
 import { dashboardRoutes, RouteItem } from "@/route-with-sub";
 import { ChevronRight } from "lucide-react";
-import { headers } from "next/headers";
 import {
   Collapsible,
   CollapsibleContent,
@@ -39,8 +38,6 @@ const {
 } = await getRoutesReferensiForRoles();
 
 export async function AppSidebar({ className }: AppSidebarProps) {
-  const headerList = await headers();
-  const pathname = headerList.get("x-current-path");
   return (
     <Sidebar className={cn("gap-0", className)} collapsible="icon">
       <SidebarContent className="gap-0 pb-[200px] pt-4">

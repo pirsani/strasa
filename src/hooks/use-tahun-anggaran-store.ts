@@ -9,7 +9,7 @@ interface TahunAnggaranState {
   tahunAnggaran: number | null;
   initialized: boolean;
   setTahunAnggaranYear: (year: number) => Promise<void>;
-  initializeTahunAnggaran: () => void;
+  initializeTahunAnggaran: () => Promise<void>;
 }
 
 // Define the Zustand state creator function
@@ -18,7 +18,8 @@ const createState: StateCreator<TahunAnggaranState> = (set) => ({
   initialized: false,
   setTahunAnggaranYear: async (year) => {
     set({ tahunAnggaran: year });
-    await setTahunAnggaran(year);
+    const tahunAnggaran = await setTahunAnggaran(year);
+    console.log("setTahunAnggaranYear", "tahunAnggaran", tahunAnggaran);
   },
   initializeTahunAnggaran: async () => {
     const tahunAnggaran = await getTahunAnggaranPilihan();

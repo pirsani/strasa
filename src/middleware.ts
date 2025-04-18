@@ -23,13 +23,14 @@ export const middleware = auth(async (req) => {
 
     if (isLoggedIn && !isLoginRoute(nextUrl.pathname)) {
       console.log("[MIDDLEWARE] logged in");
-      const headers = new Headers(req.headers);
-      headers.set("x-current-path", nextUrl.pathname);
-      return NextResponse.next({
-        request: {
-          headers: headers,
-        },
-      });
+      return;
+      // const headers = new Headers(req.headers);
+      // headers.set("x-current-path", nextUrl.pathname);
+      // return NextResponse.next({
+      //   request: {
+      //     headers: headers,
+      //   },
+      // });
     }
 
     console.log("[MIDDLEWARE] session", session);
