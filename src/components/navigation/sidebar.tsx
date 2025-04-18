@@ -21,9 +21,11 @@ import {
   Grid,
   Home,
   Hourglass,
+  Info,
   Key,
   List,
   ListChecks,
+  ListTree,
   LucideIcon,
   MapPinned,
   Milestone,
@@ -73,6 +75,8 @@ const iconMap: { [key: string]: LucideIcon } = {
   "monitor-play": MonitorPlay,
   "square-activity": SquareActivity,
   wallet: Wallet,
+  info: Info,
+  "list-tree": ListTree,
 };
 
 interface SideBarMenuButtonCustomProps {

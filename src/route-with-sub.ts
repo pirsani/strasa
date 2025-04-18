@@ -273,6 +273,15 @@ export const dataReferensiRoutesWithSub: RouteItem[] = [
     displayAsMenu: true,
     subs: [
       {
+        name: "referensi-kro",
+        title: "KRO",
+        href: "/data-referensi/kro",
+        iconName: "list-tree",
+        // icon: Wallet,
+        order: 110,
+        resources: ["ref-kro", "referensi"],
+      },
+      {
         name: "referensi-pagu",
         title: "Pagu",
         href: "/data-referensi/pagu",

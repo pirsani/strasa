@@ -468,10 +468,13 @@ model Kro {
   nama      String
   deskripsi String?
   tahun     Int
+  satkerId  String    @map("satker_id")
   createdBy String    @map("created_by")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedBy String?   @map("updated_by")
   updatedAt DateTime? @updatedAt @map("updated_at")
+
+  satker Organisasi @relation(fields: [satkerId], references: [id])
 
   @@unique([kode, tahun])
   @@map("kro")
@@ -1093,6 +1096,7 @@ model Organisasi {
   satkerPembayaran       Pembayaran[]            @relation("satker_pembayaran")
   pagu                   Pagu[]                  @relation("pagu_unit_kerja")
   sp2d                   Sp2d[]                  @relation("sp2d_unit_kerja")
+  Kro                    Kro[]
 
   @@map("organisasi")
 }
