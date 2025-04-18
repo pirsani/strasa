@@ -81,7 +81,7 @@ const PesertaContainer = ({
   // ];
 
   return (
-    <div className="mt-4">
+    <div className="mt-4 max-w-full overflow-auto">
       <h1 className="text-lg font-semibold mb-2">Peserta</h1>
       <div className="flex flex-row items-center gap-2 mb-2">
         <Button variant="outline">
@@ -105,7 +105,7 @@ const PesertaContainer = ({
           missingColumns={missingColumns}
         />
       )}
-      {data.length > 0 && <TabelPeserta data={data} />}
+      <TabelPeserta data={data} />
     </div>
   );
 };

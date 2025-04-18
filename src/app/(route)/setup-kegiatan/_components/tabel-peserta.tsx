@@ -1,6 +1,10 @@
 const TabelPeserta = ({ data }: { data: Record<string, any>[] }) => {
+  if (!data || data.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="mt-6 overflow-x-auto">
+    <div className="mt-6 overflow-x-auto w-full max-w-full">
       <table className="min-w-full bg-white border">
         <thead>
           <tr>
