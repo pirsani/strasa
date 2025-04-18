@@ -153,6 +153,7 @@ model PangkatGolongan {
   updatedBy             String?                 @map("updated_by")
   updatedAt             DateTime?               @updatedAt @map("updated_at")
   PejabatPerbendaharaan PejabatPerbendaharaan[]
+  Peserta               Peserta[]
 
   @@unique([golongan, ruang])
   @@map("pangkat_golongan")
@@ -461,6 +462,21 @@ enum LOKASI {
   LUAR_NEGERI
 }
 
+model Kro {
+  id        String    @id @default(cuid())
+  kode      String
+  nama      String
+  deskripsi String?
+  tahun     Int
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@unique([kode, tahun])
+  @@map("kro")
+}
+
 model Kegiatan {
   id                 String                 @id @default(cuid())
   nama               String
@@ -522,6 +538,34 @@ model DokumenSuratTugas {
   updatedAt  DateTime? @updatedAt @map("updated_at")
 
   @@map("dokumen_surat_tugas")
+}
+
+model Peserta {
+  id                              String           @id @default(cuid())
+  nama                            String
+  NIP                             String?          @map("nip")
+  NIK                             String           @map("nik")
+  NPWP                            String?          @map("npwp")
+  pangkatGolonganId               String?          @map("pangkat_golongan_id")
+  pangkatGolongan                 PangkatGolongan? @relation(fields: [pangkatGolonganId], references: [id])
+  jabatan                         String?
+  eselon                          String?
+  golonganUhLuarNegeri            String?          @map("golongan_uh_luar_negeri")
+  email                           String?
+  telp                            String?
+  rekeningSendiri                 Boolean          @default(true) @map("rekening_sendiri")
+  dokumenPeryataanRekeningBerbeda String?          @map("dokumen_peryataan_rekening_berbeda")
+  bank                            String
+  namaRekening                    String           @map("nama_rekening")
+  nomorRekening                   String           @map("nomor_rekening")
+
+  createdBy String    @map("created_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedBy String?   @map("updated_by")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@unique([NIK])
+  @@map("peserta")
 }
 
 model PesertaKegiatan {
