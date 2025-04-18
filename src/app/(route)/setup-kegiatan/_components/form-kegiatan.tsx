@@ -342,7 +342,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
             control={form.control}
             name="dokumenSuratTugas"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel htmlFor={field.name}>
                   Surat Tugas (multiple files)
                   <RequiredLabel />
@@ -359,7 +359,7 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
                     folder={folderCuid}
                     text="Pilih dokumen Surat Tugas"
                     onFileChange={handleMultiFileChange}
-                    className="bg-white w-full"
+                    className="bg-white"
                     classNameEyeButton=""
                   />
                 </FormControl>

@@ -192,7 +192,7 @@ export const FormMultiFileUpload = ({
   }, [files]);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       <input
         id={name}
         type="file"
@@ -210,7 +210,7 @@ export const FormMultiFileUpload = ({
         <Button
           type="button"
           variant={"outline"}
-          className={cn("shadow-lg border-2 border-gray-300", className)}
+          className={cn("shadow-lg border-2 border-gray-300 w-5/6", className)}
           onClick={() => inputRef.current?.click()}
         >
           {text}
@@ -225,7 +225,7 @@ export const FormMultiFileUpload = ({
           }
           onClick={() => setShowFiles(!showFiles)}
           className={cn(
-            "shadow-lg border-2 border-gray-300",
+            "shadow-lg border-2 border-gray-300 w-1/6",
             classNameEyeButton
           )}
         >
