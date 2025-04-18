@@ -1,12 +1,12 @@
 import Link from "next/link";
+import { SidebarTrigger } from "../ui/sidebar";
 import Navbar from "./navbar";
-import TopBarCollapseButton from "./topbar-collapse-button";
 
 const TopBar = () => {
   return (
-    <div className="bg-gray-100 w-full h-[76px] flex flex-row fixed inset-y-0">
+    <div className="bg-gray-100 w-full h-[76px] flex flex-row fixed inset-y-0 z-50 border-0 border-b border-gray-200 shadow-sm">
       <div className="flex flex-row h-full gap-2 w-16 md:w-64 items-center ">
-        <TopBarCollapseButton />
+        <SidebarTrigger className="pl-4" />
         <div className="h-full w-full hidden md:block">
           <Link
             href={"/"}

@@ -1,18 +1,14 @@
-import SidebarContariner from "@/components/navigation/sidebar-container";
+import { AppSidebar } from "@/components/navigation/app-sidebar";
 import TopBar from "@/components/navigation/top-bar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const RouteLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="h-full overflow-hidden">
+    <SidebarProvider defaultOpen={true}>
       <TopBar />
-      <div
-        id="page-container"
-        className="flex flex-row pt-[76px] h-[calc(100vh)]"
-      >
-        <SidebarContariner />
-        <main className="w-full overflow-auto h-full">{children}</main>
-      </div>
-    </div>
+      <AppSidebar className="pt-[76px]" />
+      <main className="w-full h-full pt-[76px]">{children}</main>
+    </SidebarProvider>
   );
 };
 
