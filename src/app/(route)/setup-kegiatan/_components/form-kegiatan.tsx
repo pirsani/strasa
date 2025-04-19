@@ -41,6 +41,11 @@ import ItineraryContainer from "./itinerary-container";
 //import Select, { SingleValue } from "react-select";
 // fix Warning: Extra attributes from the server: aria-activedescendant
 // Dynamically import Select to avoid SSR
+
+const SelectKro = dynamic(() => import("@/components/form/select-kro"), {
+  ssr: false,
+  loading: () => <p>Loading KRO...</p>,
+});
 const SelectProvinsi = dynamic(() => import("./select-provinsi"), {
   ssr: false,
   loading: () => <p>Loading provinsi...</p>,
@@ -231,11 +236,10 @@ export const FormKegiatan = ({ editId }: FormKegiatanProps) => {
               <FormItem>
                 <FormLabel>KRO</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="kro"
-                    {...field}
-                    value={field.value ?? ""} // Ensure value is not null
-                    tabIndex={0}
+                  <SelectKro
+                    value={field.value || null}
+                    fieldName={field.name}
+                    onChange={field.onChange}
                   />
                 </FormControl>
                 <FormMessage />

@@ -44,6 +44,11 @@ import ItineraryContainer from "./itinerary-container";
 //import Select, { SingleValue } from "react-select";
 // fix Warning: Extra attributes from the server: aria-activedescendant
 // Dynamically import Select to avoid SSR
+
+const SelectKro = dynamic(() => import("@/components/form/select-kro"), {
+  ssr: false,
+  loading: () => <p>Loading KRO...</p>,
+});
 const SelectProvinsi = dynamic(() => import("./select-provinsi"), {
   ssr: false,
   loading: () => <p>Loading provinsi...</p>,
@@ -68,6 +73,7 @@ export const FormKegiatanEdit = ({
   editId,
   kegiatan,
 }: FormKegiatanEditProps) => {
+  console.log("FormKegiatanEdit", editId, kegiatan);
   const isEditMode = editId != null;
   type FormMode = typeof isEditMode;
   const form = useForm<FormValues<FormMode>>({
@@ -240,6 +246,23 @@ export const FormKegiatanEdit = ({
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="kro"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>KRO</FormLabel>
+                <FormControl>
+                  <SelectKro
+                    value={field.value || null}
+                    fieldName={field.name}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="flex flex-row w-full gap-2">
             <FormField
               control={form.control}
@@ -340,7 +363,7 @@ export const FormKegiatanEdit = ({
             control={form.control}
             name="dokumenSuratTugas"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormLabel htmlFor={field.name}>
                   Surat Tugas (multiple files)
                   <RequiredLabel />
@@ -357,7 +380,7 @@ export const FormKegiatanEdit = ({
                     folder={folderCuid}
                     text="Pilih dokumen Surat Tugas"
                     onFileChange={handleMultiFileChange}
-                    className="bg-white w-full"
+                    className="bg-white"
                     classNameEyeButton=""
                   />
                 </FormControl>

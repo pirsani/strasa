@@ -45,6 +45,7 @@ const SetupKegiatanPage = async ({
     cuid: kegiatan.id,
     dokumenJadwalCuid: kegiatan.dokumenJadwal,
     dokumenNodinMemoSkCuid: kegiatan.dokumenNodinMemoSk,
+    kro: kegiatan.kro,
     //dokumenSuratTugasCuid: [],
     nama: kegiatan.nama,
     tanggalMulai: kegiatan.tanggalMulai,
