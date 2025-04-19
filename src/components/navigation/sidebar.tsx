@@ -39,6 +39,7 @@ import {
   User,
   UserCog,
   Users,
+  UsersRound,
   Wallet,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -77,6 +78,7 @@ const iconMap: { [key: string]: LucideIcon } = {
   wallet: Wallet,
   info: Info,
   "list-tree": ListTree,
+  "users-round": UsersRound,
 };
 
 interface SideBarMenuButtonCustomProps {

@@ -11,6 +11,7 @@ import downloadDokumenNarasumber, {
   downloadDokumenBuktiPembayaranNarasumber,
   downloadDokumenKonfirmasiKesediaanMengajar,
 } from "./dokumen-narasumber";
+import downloadDokumenPeserta from "./dokumen-peserta";
 import { downloadDokumenPengadaan } from "./generator-dokumen-pengadaan";
 import { downloadExcelPembayaran } from "./generator-excel-pembayaran";
 import { downloadDokumenRampungan } from "./generator-rampungan";
@@ -57,6 +58,8 @@ export async function GET(
         return downloadDokumenKegiatan(req, slug);
       case "narasumber":
         return downloadDokumenNarasumber(req, slug);
+      case "peserta":
+        return downloadDokumenPeserta(req, slug);
       case "test":
         return downloadTest(req, slug);
       case "nominatif-honorarium":

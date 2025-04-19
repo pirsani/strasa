@@ -171,6 +171,15 @@ export const dataReferensiRoutesWithSub: RouteItem[] = [
     displayAsMenu: true,
     subs: [
       {
+        name: "referensi-peserta",
+        title: "Peserta",
+        href: "/data-referensi/peserta",
+        iconName: "users-round",
+        order: 0,
+        displayAsMenu: true,
+        resources: ["ref-peserta", "referensi"],
+      },
+      {
         name: "referensi-narasumber",
         title: "Narasumber",
         href: "/data-referensi/narasumber",
