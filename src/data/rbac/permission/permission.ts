@@ -13,7 +13,20 @@ export const getPermissionsOfRole = async (role: string) => {
     action: permission.permission.action,
     resource: permission.permission.resource,
   }));
+  // concat action and resource by "::"
   return permissions.map(
-    (permission) => `${permission.action}:${permission.resource}`
+    (permission) => `${permission.action}::${permission.resource}`
+  );
+};
+
+export const getAllPermissions = async () => {
+  const permissions = await dbHonorarium.permission.findMany();
+  const permissionsArr = permissions.map((permission) => ({
+    action: permission.action,
+    resource: permission.resource,
+  }));
+  // concat action and resource by "::"
+  return permissionsArr.map(
+    (permission) => `${permission.action}::${permission.resource}`
   );
 };

@@ -1,4 +1,9 @@
 "use server";
+import {
+  checkSessionPermission,
+  getLoggedInPengguna,
+} from "@/actions/pengguna/session";
+import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { ActionResponse } from "@/actions/response";
 import { dbHonorarium } from "@/lib/db-honorarium";
 import { initializeAccessControl } from "@/lib/redis/access-control";
@@ -7,7 +12,6 @@ import { createId } from "@paralleldrive/cuid2";
 import { Role } from "@prisma-honorarium/client";
 import { revalidatePath } from "next/cache";
 import { Logger } from "tslog";
-import { getPrismaErrorResponse } from "../prisma-error-response";
 // Create a Logger instance with custom settings
 const logger = new Logger({
   hideLogPositionForProduction: true,
@@ -59,6 +63,149 @@ export const getOptionsRole = async () => {
   });
 
   return optionsRole;
+};
+
+export const simpanRole = async (
+  data: ZRole
+): Promise<ActionResponse<Role>> => {
+  // check permission
+  try {
+    const hasPermission = await checkSessionPermission({
+      actions: "create:any",
+      resource: "ref-role",
+    });
+
+    const user = await getLoggedInPengguna();
+
+    if (!hasPermission || !user) {
+      return {
+        success: false,
+        error: "Unauthorized",
+        message: "Unauthorized",
+      };
+    }
+
+    const { permissionsToRemove, permissionsToAdd } = await diffPermissions(
+      data.id || createId(),
+      data.permissions || []
+    );
+
+    // check if role already exists
+    const existingrole = await dbHonorarium.role.findUnique({
+      where: {
+        id: data.id || createId(),
+      },
+    });
+
+    // update role with transaction
+    const trans = await dbHonorarium.$transaction(async (prisma) => {
+      let role: Role | null = existingrole;
+      if (role === null) {
+        role = await prisma.role.create({
+          data: {
+            name: data.name,
+            createdBy: user.id!, // user.id is not null
+          },
+        });
+      } else {
+        // delete permissions
+        console.log(
+          "delete permissions",
+          permissionsToRemove.map((p) => p)
+        );
+        const deleted = await prisma.rolePermission.deleteMany({
+          where: {
+            roleId: role.id,
+            permissionId: {
+              in: permissionsToRemove.map((p) => p),
+            },
+          },
+        });
+        console.log("deleted", deleted);
+
+        // add permissions
+        const added = await prisma.rolePermission.createMany({
+          data: permissionsToAdd.map((p) => ({
+            roleId: role?.id!, // role?.id is not null
+            permissionId: p,
+          })),
+        });
+        console.log("added", added);
+      }
+      return role;
+    });
+
+    // apply roles to redis access control and reinitialize
+    await initializeAccessControl();
+
+    revalidatePath("/data-referensi/role");
+    revalidatePath("/data-referensi/role/" + data.id);
+
+    return {
+      success: true,
+      message: "Role saved successfully",
+      data: trans,
+    };
+
+    // update permissions
+  } catch (error) {
+    console.error("Error checking permission:", error);
+    return {
+      success: false,
+      error: "Error ESR-001",
+      message: "Please try again or contact support",
+    };
+  }
+};
+
+const diffPermissions = async (roleId: string, newPermissions: string[]) => {
+  // console.log("diffPermissions", roleId, newPermissions);
+  // newPermissions is an array of strings representing action e.g. ["create:any", "read:own"] and resource e.g. "ref-role"
+  // become "create:any:ref-role", "read:own:ref-role"
+  const rolePermissions = await dbHonorarium.rolePermission.findMany({
+    where: {
+      roleId: roleId,
+    },
+    include: {
+      permission: true,
+    },
+  });
+
+  // map newPermissions to permissionsId
+
+  const permissions = await dbHonorarium.permission.findMany();
+
+  // map newPermissions to permissionsId
+  const newPermissionIds = newPermissions
+    .map((permission) => {
+      const [action, resource] = permission.split("::");
+      const permissionId = permissions.find(
+        (p) => p.action === action && p.resource === resource
+      )?.id;
+      return permissionId;
+    })
+    .filter((permissionId) => permissionId !== undefined);
+
+  const existingPermissionsId = rolePermissions.map((permission) => {
+    return permission.permissionId;
+  });
+  // find permissions that are in newPermissions but not in existingPermissions
+  const permissionsToAdd = newPermissionIds.filter(
+    (permissionId) => !existingPermissionsId.includes(permissionId)
+  );
+  // find permissions that are in existingPermissions but not in newPermissions
+  const permissionsToRemove = existingPermissionsId.filter(
+    (permissionId) => !newPermissionIds.includes(permissionId)
+  );
+
+  // console.log("newPermissionIds", newPermissionIds);
+  // console.log("permissionsToAdd", permissionsToAdd);
+  // console.log("permissionsToRemove", permissionsToRemove);
+  return {
+    newPermissionIds,
+    permissionsToAdd,
+    permissionsToRemove,
+  };
 };
 
 interface RolePermission {

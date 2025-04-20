@@ -1,11 +1,13 @@
 import { Input } from "@/components/ui/input";
 
 interface CheckboxPermissionProps {
+  disabled?: boolean;
   permission: string;
   checked: boolean;
   onChange: () => void;
 }
 export const CheckboxPermission = ({
+  disabled,
   permission,
   checked,
   onChange, // Add the onChange handler
@@ -15,6 +17,7 @@ export const CheckboxPermission = ({
       {/* <Tooltip>
         <TooltipTrigger> */}
       <Input
+        disabled={disabled}
         data-slot="input"
         type="checkbox"
         id={permission}

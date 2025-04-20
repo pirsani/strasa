@@ -8,7 +8,7 @@ declare module "@tanstack/react-table" {
     getIsSomeTrue?: (columnId: string) => boolean;
   }
   // <// <https://github.com/TanStack/table/discussions/5051>
-  // @ts-expect-error
+  // @ts-expect-error: ColumnMeta is extended to include custom properties for table functionality
   interface ColumnMeta<TData extends RowData, TValue> {
     rowSpan?: number;
     isKolomAksi?: boolean;

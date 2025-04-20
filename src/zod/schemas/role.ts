@@ -7,7 +7,7 @@ export const roleIdSchema = z.union([
 
 export const roleSchema = z.object({
   id: roleIdSchema.optional(),
-  permissions: z.array(z.string().cuid()).optional().nullable(),
+  permissions: z.array(z.string()).optional().nullable(),
   name: z
     .string()
     .min(5, {

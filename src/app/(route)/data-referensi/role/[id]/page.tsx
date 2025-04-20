@@ -1,6 +1,11 @@
 import { checkSessionPermission } from "@/actions/pengguna/session";
-import { getPermissionsOfRole } from "@/data/rbac/permission/permission";
+import {
+  getAllPermissions,
+  getPermissionsOfRole,
+} from "@/data/rbac/permission/permission";
 import { getListOfResource, getRole } from "@/data/rbac/role/role";
+import { Role as ZRole } from "@/zod/schemas/role";
+import Link from "next/link";
 import FormPermissions from "./form-permission";
 
 const RoleDetailPage = async ({
@@ -10,7 +15,7 @@ const RoleDetailPage = async ({
 }) => {
   const { id } = await params;
   const listOfResource = await getListOfResource();
-  console.log("listOfResource", listOfResource);
+  // console.log("listOfResource", listOfResource);
 
   const hasPermission = await checkSessionPermission({
     actions: "create:any",
@@ -21,24 +26,41 @@ const RoleDetailPage = async ({
   }
   const role = await getRole(id);
 
+  let zrole: ZRole = {
+    name: "",
+    permissions: [],
+  };
+
   if (!role && id !== "new") {
     return <div>Role not found</div>;
+  } else if (role) {
+    const permissions = await getPermissionsOfRole(id);
+    zrole = {
+      id: role.id,
+      name: role.name,
+      permissions: permissions,
+    };
   }
 
-  const permissions = await getPermissionsOfRole(id);
-  console.log("list of permissions", permissions);
+  const availablePermissions = await getAllPermissions();
+  // console.log("availablePermissions", availablePermissions);
 
   return (
     <div className="h-full flex flex-col gap-2 p-4 rounded-md">
       <h1 className="font-semibold">
-        Role Detail - {role?.name || "New Role"}{" "}
+        <Link
+          href="/data-referensi/role"
+          className="hover:underline text-blue-500"
+        >
+          Role
+        </Link>{" "}
+        - {role?.name || "New Role"}{" "}
       </h1>
-      <div className="">
-        <FormPermissions
-          resources={listOfResource.map((resource) => resource.resource)}
-          permissions={permissions}
-        />
-      </div>
+      <FormPermissions
+        resources={listOfResource.map((resource) => resource.resource)}
+        availablePermissions={availablePermissions}
+        role={zrole}
+      />
     </div>
   );
 };

@@ -13,7 +13,7 @@ const ReferensiUnitKerjaPage = async () => {
   console.log("Has permission?", hasPermission);
   return (
     <div className="p-4 pb-24 h-auto min-h-full flex flex-col gap-2">
-      <h1 className="m-2">Tabel Referensi &gt; Unit Kerja </h1>
+      <h1 className="m-2">Tabel Referensi &gt; Role </h1>
       <RoleContainer data={data} />
     </div>
   );

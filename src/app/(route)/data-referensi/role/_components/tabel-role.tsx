@@ -9,6 +9,7 @@ import { useSearchTerm } from "@/hooks/use-search-term";
 import { Organisasi as Role } from "@prisma-honorarium/client";
 
 import { ColumnDef, Row } from "@tanstack/react-table";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -52,7 +53,12 @@ export const TabelRole = ({
     {
       accessorKey: "name",
       header: "Nama",
-      cell: (info) => info.getValue(),
+      //cell: (info) => info.getValue(),
+      cell: (info) => {
+        const id = info.row.original.id;
+        const name = info.row.original.name;
+        return <Link href={`/data-referensi/role/${id}`}>{name}</Link>;
+      },
       footer: "Nama",
     },
     {
