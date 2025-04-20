@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 
 import CummulativeErrors from "@/components/form/cummulative-error";
-import SelectPermissions from "@/components/form/select-permissions";
 import {
   Form,
   FormControl,
@@ -31,6 +30,9 @@ interface FormRoleProps {
   handleFormSubmitComplete?: (isSuccess: Boolean) => void;
   className?: string;
   role?: Partial<Role> | null;
+  resources?: string[];
+  actions?: string[];
+  permissions?: string[];
 }
 const FormRole = ({
   onCancel,
@@ -68,7 +70,7 @@ const FormRole = ({
     console.log(data);
   };
   return (
-    <div>
+    <div className="w-full">
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
@@ -80,24 +82,6 @@ const FormRole = ({
                   <FormLabel>Nama Role</FormLabel>
                   <FormControl>
                     <Input placeholder="pelaksana" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="permissions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="narasumberIds">Permission</FormLabel>
-                  <FormControl>
-                    <SelectPermissions
-                      isMulti
-                      inputId={field.name}
-                      onChange={field.onChange}
-                      values={field.value ?? []} // Ensure value is passed correctly
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

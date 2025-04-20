@@ -7,7 +7,7 @@ const RouteLayout = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider defaultOpen={true}>
       <TopBar />
       <AppSidebar className="pt-[76px]" />
-      <main className="w-full h-full pt-[76px] overflow-auto">{children}</main>
+      <main className="w-full h-max pt-[76px] overflow-auto">{children}</main>
     </SidebarProvider>
   );
 };
