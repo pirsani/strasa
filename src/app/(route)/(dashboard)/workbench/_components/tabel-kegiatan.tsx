@@ -207,7 +207,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       return;
     }
 
-    let newDetails: RowDetail[] = [];
+    const newDetails: RowDetail[] = [];
 
     const riwayatRampungan =
       await getRiwayatPengajuanByKegiatanIdAndJenisPengajuan(

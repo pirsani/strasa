@@ -106,7 +106,7 @@ const setujuiPengajuanUhLuarNegeri = async (
       };
     }
 
-    let x = 0;
+    const x = 0;
     const transactionUpdate = await dbHonorarium.$transaction(
       async (prisma) => {
         // iterate detailUhLuarNegeriPeserta

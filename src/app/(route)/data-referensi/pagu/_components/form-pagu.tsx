@@ -22,7 +22,7 @@ import { toast } from "sonner";
 
 interface FormPaguProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   pagu?: Partial<ZPagu> | null;
   satkerId?: string;

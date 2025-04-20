@@ -126,7 +126,7 @@ const saveFileKonfirmasiNarasumber = async (
   data: Partial<NarasumberJadwal>,
   tahunKegiatan: number
 ): Promise<ResultSaveFileToFinalFolder | null> => {
-  let result: ResultSaveFileToFinalFolder = {
+  const result: ResultSaveFileToFinalFolder = {
     dokumenKonfirmasiNarasumber: [],
   };
 

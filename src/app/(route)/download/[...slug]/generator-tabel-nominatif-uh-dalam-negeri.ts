@@ -253,7 +253,7 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     let jenis = "";
     let besaran = "";
     let jumlah = "";
-    let persentase = "100%";
+    const persentase = "100%";
     let total = 0;
     let hr = "";
     if (peserta.uhDalamNegeri) {
@@ -447,7 +447,7 @@ const getDokumenNominatif = async (
     STATUS_PENGAJUAN.END,
   ];
 
-  let dokumenNominatif: DokumenNominatif = {
+  const dokumenNominatif: DokumenNominatif = {
     isFinal: false,
     filePath: null,
     isFileExist: false,

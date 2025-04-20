@@ -36,7 +36,7 @@ const WorkbenchPage = async () => {
   const satkerId = pengguna.satkerId;
   const unitKerjaId = pengguna.unitKerjaId;
 
-  let params: ParamsGetKegiatan = {};
+  const params: ParamsGetKegiatan = {};
   if (readAny) {
     console.log("[workbench read:any]", pengguna);
     params.satkerId = satkerId!;

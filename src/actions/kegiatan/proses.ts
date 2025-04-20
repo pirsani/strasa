@@ -158,7 +158,7 @@ export const generateSpd = async (spd: ZSpd): Promise<ActionResponse<Spd>> => {
     },
   });
 
-  let upsertedSpd: Spd | null = null;
+  const upsertedSpd: Spd | null = null;
   if (kegiatan) {
     // find the latest spd
     const tahunKegiatan = kegiatan.tanggalMulai.getFullYear();
@@ -377,7 +377,7 @@ const createObjUpdateRiwayatPengajuan = (
   penggunaId: string,
   catatanRevisi?: string | null
 ) => {
-  let objRiwayatPengajuanUpdate: ObjUpdateRiwayatPengajuan = {
+  const objRiwayatPengajuanUpdate: ObjUpdateRiwayatPengajuan = {
     status: status,
   };
   switch (status) {

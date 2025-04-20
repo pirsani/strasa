@@ -26,7 +26,7 @@ const SelectKegiatan = dynamic(
 
 interface FormKroProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   kro?: Partial<Kro>;
   kegiatanId?: string;

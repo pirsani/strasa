@@ -20,7 +20,7 @@ import { toast } from "sonner";
 
 interface FormNegaraProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   negara?: Partial<Negara>;
 }

@@ -29,7 +29,7 @@ const SelectKegiatan = dynamic(
 
 interface FormSatkerAnggaranProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   satkerAnggaran?: Partial<SatkerAnggaran>;
 }

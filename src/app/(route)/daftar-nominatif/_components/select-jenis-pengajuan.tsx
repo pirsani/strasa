@@ -96,7 +96,7 @@ const createOptionsBaseOnKegiatan = (
     (pengajuan) => pengajuan.jenis === "UH_DALAM_NEGERI"
   );
 
-  let options: Option[] = [
+  const options: Option[] = [
     {
       value: "HONORARIUM",
       label: "Honorarium",

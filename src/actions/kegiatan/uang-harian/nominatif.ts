@@ -36,7 +36,7 @@ interface ObjRiwayatPengajuanUpdate {
 export const pengajuanPembayaranUangHarian = async (
   data: NominatifPembayaranWithoutFile
 ): Promise<ActionResponse<NominatifPembayaranWithoutFile>> => {
-  let objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
+  const objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
     status: "REQUEST_TO_PAY",
   };
 

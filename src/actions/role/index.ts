@@ -107,7 +107,9 @@ export const simpanRole = async (
             createdBy: user.id!, // user.id is not null
           },
         });
-      } else {
+      }
+
+      if (role !== null) {
         // delete permissions
         console.log(
           "delete permissions",
@@ -126,7 +128,7 @@ export const simpanRole = async (
         // add permissions
         const added = await prisma.rolePermission.createMany({
           data: permissionsToAdd.map((p) => ({
-            roleId: role?.id!, // role?.id is not null
+            roleId: role.id, // role?.id is not null
             permissionId: p,
           })),
         });

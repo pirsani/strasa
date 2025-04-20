@@ -429,7 +429,7 @@ const getDokumenNominatif = async (
     STATUS_PENGAJUAN.END,
   ];
 
-  let dokumenNominatif: DokumenNominatif = {
+  const dokumenNominatif: DokumenNominatif = {
     isFinal: false,
     filePath: null,
     isFileExist: false,

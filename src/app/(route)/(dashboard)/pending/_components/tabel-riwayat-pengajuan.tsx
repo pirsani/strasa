@@ -458,7 +458,7 @@ export const TabelRiwayatPengajuan = ({
   };
 
   const mapsDataToRowDetails = (data: RiwayatPengajuanIncludePengguna[]) => {
-    let rowDetails: RowDetails<RowDetail> = {};
+    const rowDetails: RowDetails<RowDetail> = {};
     data.forEach((item) => {
       const rowDetail: RowDetail = {
         id: item.id,

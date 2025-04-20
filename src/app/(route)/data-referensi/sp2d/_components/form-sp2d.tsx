@@ -26,7 +26,7 @@ import { toast } from "sonner";
 
 interface FormSp2dProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   sp2d?: Partial<ZSp2d> | null;
   satkerId?: string;

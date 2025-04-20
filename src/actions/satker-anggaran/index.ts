@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 
 // pada prinsipnya, Satker anggaran adalah unit kerja dalam organisasi yang memiliki anggaran
 
+// eslint-disable-next-line  @typescript-eslint/no-empty-object-type
 export interface satkerAnggaranWithPejabatPengelolaKeuangan
   extends SatkerAnggaran {}
 export const getSatkerAnggaran = async (satkerAnggaran?: string) => {

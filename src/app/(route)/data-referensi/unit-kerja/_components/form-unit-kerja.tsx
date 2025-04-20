@@ -28,7 +28,7 @@ const SelectKegiatan = dynamic(
 
 interface FormUnitKerjaProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   unitKerja?: Partial<UnitKerja> | null;
 }

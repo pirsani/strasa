@@ -26,7 +26,7 @@ const SelectKegiatan = dynamic(
 
 interface FormKelasProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   kelas?: Partial<Kelas>;
   kegiatanId?: string;

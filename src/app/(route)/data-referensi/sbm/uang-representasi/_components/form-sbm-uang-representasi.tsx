@@ -29,7 +29,7 @@ const SelectPejabatEselon2keAtas = dynamic(
 
 interface FormSbmUangRepresentasiProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   sbmUangRepresentasi?: Partial<SbmUangRepresentasi>;
 }

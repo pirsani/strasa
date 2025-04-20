@@ -29,7 +29,7 @@ import { toast } from "sonner";
 
 interface FormPejabatPerbendaharaanProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   pejabat?: Partial<PejabatPerbendaharaan> | null;
 }

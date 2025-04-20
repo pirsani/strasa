@@ -277,7 +277,7 @@ function getGolonganUhLuarNegeriFromGolonganRuang(
     return "D";
   }
 
-  let gl = golonganRuang.trim();
+  const gl = golonganRuang.trim();
   let golongaUhLuarNegeri: "A" | "B" | "C" | "D" | null = null;
   switch (gl.toUpperCase()) {
     case "IV/C":

@@ -27,7 +27,7 @@ const SelectKegiatan = dynamic(
 
 interface FormRoleProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   role?: Partial<Role> | null;
   resources?: string[];

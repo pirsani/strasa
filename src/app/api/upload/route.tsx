@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const folderIdentifier = data.get("folder") as string; // folder identifier is kegiatanId
     // check if file have extension
 
-    let hasFileExtension = getFileExtension(filename);
+    const hasFileExtension = getFileExtension(filename);
     let uniqueFilename;
     if (hasFileExtension) {
       console.log("hasFileExtension", hasFileExtension);

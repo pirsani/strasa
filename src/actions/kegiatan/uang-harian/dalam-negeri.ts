@@ -74,7 +74,7 @@ export const ajukanUhDalamNegeri = async (
 async function saveFileToFinalFolder(
   dokumenUhDalamNegeriWithoutFile: DokumenUhDalamNegeriWithoutFile
 ) {
-  let logUploadedFile: LogUploadedFile[] = [];
+  const logUploadedFile: LogUploadedFile[] = [];
   try {
     const dokumenUhDalamNegeri = dokumenUhDalamNegeriWithoutFileSchema.parse(
       dokumenUhDalamNegeriWithoutFile

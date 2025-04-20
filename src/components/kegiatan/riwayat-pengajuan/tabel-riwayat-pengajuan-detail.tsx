@@ -148,7 +148,7 @@ const fetchDataRiwayatPengajuan = async (
   kegiatanId: string
 ): Promise<RowDetail[]> => {
   // Fetch data here
-  let newDetails: RowDetail[] = [];
+  const newDetails: RowDetail[] = [];
 
   try {
     const riwayatRampungan =

@@ -29,7 +29,7 @@ const SelectKegiatan = dynamic(
 
 interface FormPenggunaProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   pengguna?: Partial<Pengguna> | null;
 }

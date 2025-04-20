@@ -39,7 +39,7 @@ export interface JadwalNarsum extends JadwalNarasumber {
   narasumber: Narasumber;
   jenisHonorarium?: SbmHonorarium | null;
 }
-
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface Narsum extends Narasumber {}
 
 export interface ObjPlainJadwalKelasNarasumber extends JadwalPlainObject {

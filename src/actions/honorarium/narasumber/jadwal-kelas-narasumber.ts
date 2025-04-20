@@ -193,7 +193,7 @@ const saveFileToFinalFolder = async (
   data: Jadwal,
   tahunKegiatan: number
 ): Promise<ResultSaveFileToFinalFolder | null> => {
-  let result: ResultSaveFileToFinalFolder = {
+  const result: ResultSaveFileToFinalFolder = {
     dokumenDaftarHadirPath: null,
     dokumenUndanganNarasumberPath: null,
     dokumenKonfirmasiNarasumber: [],

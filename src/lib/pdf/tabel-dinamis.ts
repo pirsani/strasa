@@ -105,7 +105,7 @@ const justifyBetween = (
     const totalSpaces = Math.floor(availableWidth / spaceWidth);
 
     // Build the final spread value by inserting the spaces between the currency symbol and the value
-    let spreadValue = `${currencySymbol}${" ".repeat(totalSpaces)}${value}`;
+    const spreadValue = `${currencySymbol}${" ".repeat(totalSpaces)}${value}`;
 
     return spreadValue;
   } catch (error) {
@@ -151,7 +151,7 @@ const findMaxLevel = (tableColumnHeaders: TableColumnHeader[]): number => {
 const getDeepestColumns = (
   tableColumnHeaders: TableColumnHeader[]
 ): TableColumnHeader[] => {
-  let deepestColumns: TableColumnHeader[] = [];
+  const deepestColumns: TableColumnHeader[] = [];
 
   const traverse = (column: TableColumnHeader) => {
     if (!column.subHeader || column.subHeader.length === 0) {
@@ -365,10 +365,10 @@ const generateTable = (
   const heightDivider = 15;
   // generate table row
   // untuk halaman 2 dan selanjutnya
-  let controlBaseStartYOnFirstPage =
+  const controlBaseStartYOnFirstPage =
     startYonFirstPage + headerRowHeight + totalHeightHeader;
-  let controlBaseStartY = startY + headerRowHeight + totalHeightHeader;
-  let controlStartYRowgroupMembers = controlBaseStartY;
+  const controlBaseStartY = startY + headerRowHeight + totalHeightHeader;
+  const controlStartYRowgroupMembers = controlBaseStartY;
   let dataGroupIterator = 0;
   let rowIterator = 0;
   let page = 1;
@@ -695,8 +695,8 @@ export async function generateTabelDinamis(options: TableDinamisOptions) {
     // how to detect last start y
 
     // Detect current x and y coordinates
-    let currentX = doc.x;
-    let currentY = doc.y;
+    const currentX = doc.x;
+    const currentY = doc.y;
     console.log(`Current X: ${currentX}, Current Y: ${currentY}`);
 
     // Generate a line for debugging purposes

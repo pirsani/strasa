@@ -25,7 +25,7 @@ import { toast } from "sonner";
 
 interface FormSbmTransporJakartaKeKotaKabSekitarProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   sbmTransporJakartaKeKotaKabSekitar?: Partial<SbmTransporJakartaKeKotaKabSekitar>;
 }

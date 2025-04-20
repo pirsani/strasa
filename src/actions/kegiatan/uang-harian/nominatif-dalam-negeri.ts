@@ -6,7 +6,7 @@ export const updateBendaharaPpkNominatifUhDalamNegeri = async (
   kegiatanId: string,
   bendaharaId: string,
   ppkId: string
-): Promise<ActionResponse<Boolean>> => {
+): Promise<ActionResponse<boolean>> => {
   try {
     const riwayatPengajuan = await dbHonorarium.riwayatPengajuan.findFirst({
       where: {

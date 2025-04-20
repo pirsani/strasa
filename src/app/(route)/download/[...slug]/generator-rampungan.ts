@@ -439,7 +439,7 @@ interface RampunganDokumen {
 }
 const getDokumenRampungan = async (kegiatan: KegiatanIncludeSpd) => {
   const tahunKegiatan = kegiatan.tanggalMulai.getFullYear().toString();
-  let dokumenRampungan: RampunganDokumen = {
+  const dokumenRampungan: RampunganDokumen = {
     isFinal: false,
     filePath: null,
     isFileExist: false,

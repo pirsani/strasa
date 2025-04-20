@@ -38,6 +38,7 @@ export const TableCellInput = <T,>({
       typeof table.options.meta.updateData === "function"
     ) {
       console.log("row.index", row);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       (table.options.meta.updateData as Function)(row.index, column.id, value);
       handleOnBlur(value);
       console.log("column.id", column.id);

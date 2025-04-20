@@ -19,7 +19,7 @@ import { toast } from "sonner";
 
 interface FormMateriProps {
   onCancel?: () => void;
-  handleFormSubmitComplete?: (isSuccess: Boolean) => void;
+  handleFormSubmitComplete?: (isSuccess: boolean) => void;
   className?: string;
   materi?: Partial<Materi>;
 }

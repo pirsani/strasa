@@ -83,7 +83,7 @@ export async function saveDokumenKegiatanToFinalFolder(
   kegiatanId: string,
   subFolder?: string
 ) {
-  let logUploadedFile: LogUploadedFile[] = [];
+  const logUploadedFile: LogUploadedFile[] = [];
   try {
     const kegiatan = await dbHonorarium.kegiatan.findUnique({
       where: { id: kegiatanId },

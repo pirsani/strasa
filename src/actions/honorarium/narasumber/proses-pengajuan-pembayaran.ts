@@ -82,11 +82,11 @@ const updateStatusPengajuanPembayaran = async (
   const penggunaId = pengguna.data.penggunaId;
   const penggunaName = pengguna.data.penggunaName;
 
-  let objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
+  const objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
     status: status,
   };
 
-  let objCreateRiwayatPengajuan: ObjCreateRiwayatPengajuan = {
+  const objCreateRiwayatPengajuan: ObjCreateRiwayatPengajuan = {
     status: "SUBMITTED",
     jenis: "HONORARIUM",
     diajukanOlehId: penggunaId,
@@ -179,7 +179,7 @@ export const updateJumlahJpJadwalNarasumber = async (
   jadwalNarasumberId: string,
   jumlahJp: number,
   jenisHonorariumId: string | null
-): Promise<ActionResponse<Boolean>> => {
+): Promise<ActionResponse<boolean>> => {
   console.log(jadwalNarasumberId, jumlahJp, jenisHonorariumId);
 
   if (!jenisHonorariumId) {
@@ -279,7 +279,7 @@ export const updateBendaharaPpkNominatifHonorarium = async (
   jadwalId: string,
   bendaharaId: string,
   ppkId: string
-): Promise<ActionResponse<Boolean>> => {
+): Promise<ActionResponse<boolean>> => {
   const jadwal = await dbHonorarium.jadwal.findFirst({
     where: {
       id: jadwalId,
@@ -296,7 +296,7 @@ export const updateBendaharaPpkNominatifHonorarium = async (
 
   const riwayatPengajuanId = jadwal.riwayatPengajuanId;
 
-  let objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
+  const objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
     status: "APPROVED",
     bendaharaId: bendaharaId,
     ppkId: ppkId,
@@ -326,7 +326,7 @@ export const updateBendaharaPpkNominatifHonorarium = async (
 export const pengajuanPembayaranHonorarium = async (
   data: NominatifPembayaranWithoutFile
 ): Promise<ActionResponse<NominatifPembayaranWithoutFile>> => {
-  let objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
+  const objRiwayatPengajuanUpdate: ObjRiwayatPengajuanUpdate = {
     status: "REQUEST_TO_PAY",
   };
 

@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from "@prisma-honorarium/client";
 
 declare global {
+  // eslint-disable-next-line no-var, vars-on-top
   var prismaDbHonorarium: PrismaClient | undefined;
 }
 

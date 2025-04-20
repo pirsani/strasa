@@ -28,6 +28,7 @@ export const TableCell = ({
       table.options.meta &&
       typeof table.options.meta.updateData === "function"
     ) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       (table.options.meta.updateData as Function)(row.index, column.id, value);
     } else {
       console.log("updateData method is not available");

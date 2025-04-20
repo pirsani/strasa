@@ -51,7 +51,7 @@ export const getRoutesReferensiForRoles = async (): Promise<{
   //   return true; // Include routes without resources by default
   // });
 
-  let filteredRouteReferensi: RouteItem[] = [];
+  const filteredRouteReferensi: RouteItem[] = [];
 
   dataReferensiRoutesWithSub.forEach((route) => {
     if (route.subs) {

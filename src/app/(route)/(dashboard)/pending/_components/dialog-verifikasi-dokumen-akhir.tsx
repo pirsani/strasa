@@ -34,7 +34,7 @@ export const DialogVerifikasiDokumenAkhir = ({
   };
 
   // Closes the dialog if the form submission is successful
-  const hanldeFormSubmitComplete = (isSuccess: Boolean) => {
+  const hanldeFormSubmitComplete = (isSuccess: boolean) => {
     if (isSuccess) {
       setOpen(false);
       onSubmitted(kegiatanId, riwayatPengajuanId);
@@ -74,7 +74,7 @@ export const DialogVerifikasiDokumenAkhir = ({
 
 interface FormVerfikasiDokumenAkhirProps {
   riwayatPengajuanId: string;
-  onFormSubmitComplete?: (isSuccess: Boolean) => void;
+  onFormSubmitComplete?: (isSuccess: boolean) => void;
   onCancel?: () => void;
 }
 const FormVerfikasiDokumenAkhir = ({

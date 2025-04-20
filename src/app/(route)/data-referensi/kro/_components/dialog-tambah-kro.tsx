@@ -26,7 +26,7 @@ export const DialogTambahKro = ({
   };
 
   // Closes the dialog if the form submission is successful
-  const handleFormSubmitComplete = (isSuccess: Boolean) => {
+  const handleFormSubmitComplete = (isSuccess: boolean) => {
     if (isSuccess) {
       setOpen(false);
     }
