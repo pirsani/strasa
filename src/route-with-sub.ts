@@ -16,6 +16,18 @@ export interface RouteItem {
 
 export const DEFAULT_ROUTE_AFTER_LOGIN = "/dashboard";
 
+export const profileRoutes: RouteItem[] = [
+  {
+    name: "profile",
+    title: "Profile",
+    href: "/profile",
+    iconName: "user",
+    // icon: User,
+    order: 1,
+    displayAsMenu: false,
+  },
+];
+
 export const loginRoutes: RouteItem[] = [
   {
     name: "login",

@@ -83,4 +83,25 @@ export const penggunaSchema = z
     }
   });
 
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(3, { message: "Masukkan password saat ini" })
+      .max(255),
+    newPassword: passwordSchema,
+    rePassword: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.newPassword && data.newPassword !== data.rePassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Password and rePassword must match",
+        path: ["rePassword"],
+      });
+    }
+  });
+
+export type ChangePassword = z.infer<typeof changePasswordSchema>;
+
 export type Pengguna = z.infer<typeof penggunaSchema>;
