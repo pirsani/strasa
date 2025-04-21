@@ -157,7 +157,9 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
     {
       accessorKey: "status",
       header: "Status",
-      cell: (info) => info.getValue(),
+      cell: (info) => {
+        return <StatusPengajuan status={info.getValue() as STATUS_PENGAJUAN} />;
+      },
       footer: "Status",
     },
 
