@@ -9,14 +9,13 @@ import {
 } from "@/components/ui/sidebar";
 import { getRoutesReferensiForRoles } from "@/data/route/route";
 import { cn } from "@/lib/utils";
-import { dashboardRoutes } from "@/route-with-sub";
 import { ChevronRight } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
-import SideBarMenuButtonCustom from "./sidebar";
+import { SideBarMenuButtonCustom, SideBarMenuButtonWithBadge } from "./sidebar";
 
 // Menu items.
 
@@ -37,9 +36,9 @@ export async function AppSidebar({ className }: AppSidebarProps) {
         <SidebarGroup className="py-0">
           <SidebarGroupContent>
             <SidebarMenu>
-              {dashboardRoutes.map((item) => (
+              {filteredRouteDashboard.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SideBarMenuButtonCustom item={item} />
+                  <SideBarMenuButtonWithBadge item={item} />
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

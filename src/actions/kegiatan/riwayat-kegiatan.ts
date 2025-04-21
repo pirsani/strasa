@@ -37,3 +37,16 @@ export const getKegiatanHasStatusPengajuan = async (
 
   //return riwayatPengajuan.map((item) => item.kegiatan);
 };
+
+export const getCountStatusPengajuan = async (
+  name: string
+): Promise<number> => {
+  // random number for testing
+  const names = ["workbench", "pending"];
+  if (!names.includes(name)) {
+    return 0;
+  }
+  // TODO get count dari database
+  const randomNumber = Math.floor(Math.random() * 100);
+  return randomNumber;
+};

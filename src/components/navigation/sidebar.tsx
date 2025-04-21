@@ -1,10 +1,12 @@
 "use client";
+import { SidebarMenuBadge, SidebarMenuButton } from "@/components/ui/sidebar";
 import { RouteItem } from "@/route-with-sub";
 import Link from "next/link";
-import { createElement } from "react";
-import { SidebarMenuButton } from "../ui/sidebar";
+import { createElement, useEffect, useState } from "react";
 
+import { getCountStatusPengajuan } from "@/actions/kegiatan/riwayat-kegiatan";
 import { useIsLoading } from "@/hooks/use-loading";
+import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
   Banknote,
@@ -84,7 +86,9 @@ const iconMap: { [key: string]: LucideIcon } = {
 interface SideBarMenuButtonCustomProps {
   item: RouteItem;
 }
-const SideBarMenuButtonCustom = ({ item }: SideBarMenuButtonCustomProps) => {
+export const SideBarMenuButtonCustom = ({
+  item,
+}: SideBarMenuButtonCustomProps) => {
   const pathname = usePathname();
   const { setIsLoading } = useIsLoading();
   const isActive =
@@ -102,4 +106,54 @@ const SideBarMenuButtonCustom = ({ item }: SideBarMenuButtonCustomProps) => {
   );
 };
 
-export default SideBarMenuButtonCustom;
+interface SideBarMenuButtonWithBadgeProps {
+  item: RouteItem;
+}
+export const SideBarMenuButtonWithBadge = ({
+  item,
+  ...props
+}: SideBarMenuButtonWithBadgeProps) => {
+  const pathname = usePathname();
+  const isActive =
+    (pathname === "/" && item.href === "/") || pathname === item.href;
+  const Icon = iconMap[item.iconName] || AlertTriangle; // Map the icon string to the actual icon component
+  return (
+    <>
+      <SidebarMenuButton asChild isActive={isActive}>
+        <Link href={item.href}>
+          {createElement(Icon, {
+            className: "h-4 w-4",
+          })}
+          <span>{item.title}</span>
+        </Link>
+      </SidebarMenuButton>
+      <SidebarMenuBadgeCounter item={item} />
+    </>
+  );
+};
+
+interface SidebarMenuBadgeCounterProps {
+  item: RouteItem;
+}
+
+const SidebarMenuBadgeCounter = ({ item }: SidebarMenuBadgeCounterProps) => {
+  const [itemCount, setItemCount] = useState<number>(0);
+  useEffect(() => {
+    // Simulate an API call to fetch the count
+    const fetchCount = async () => {
+      const count = await getCountStatusPengajuan(item.name);
+      setItemCount(count);
+    };
+    fetchCount();
+  }, [item]);
+  return (
+    <SidebarMenuBadge
+      className={cn(
+        "rounded-full",
+        itemCount > 0 ? "bg-red-500 text-white" : "hidden"
+      )}
+    >
+      {itemCount}
+    </SidebarMenuBadge>
+  );
+};
