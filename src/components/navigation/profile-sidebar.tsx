@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { profileRoutes } from "@/route-with-sub";
-import SideBarMenuButtonCustom from "./sidebar";
+import { SideBarMenuButtonCustom } from "./sidebar";
 
 // Menu items.
 

@@ -35,6 +35,12 @@ export const getKegiatan = async ({
   unitKerjaId,
 }: ParamsGetKegiatan = {}): Promise<KegiatanIncludeSatker[]> => {
   const tahunAnggaran = await getTahunAnggranPilihan();
+  console.log(
+    "[getKegiatan] tahunAnggaran",
+    tahunAnggaran,
+    satkerId,
+    unitKerjaId
+  );
 
   // console.log("[getKegiatan] satkerId", satkerId);
   // console.log("[getKegiatan] unitKerjaId", unitKerjaId);

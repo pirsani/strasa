@@ -42,8 +42,12 @@ interface RowDetail {
 
 interface TabelKegiatanProps {
   data: KegiatanIncludeSatker[];
+  filterStatus?: STATUS_PENGAJUAN | null;
 }
-export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
+export const TabelKegiatan = ({
+  data: initialData,
+  filterStatus,
+}: TabelKegiatanProps) => {
   const [data, setData] = useState<KegiatanIncludeSatker[]>(initialData);
   const [isEditing, setIsEditing] = useState(false);
   const [editableRowId, setEditableRowIndex] = useState<string | null>(null);
@@ -92,7 +96,7 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
             variant={"ghost"}
             onClick={() => {
               //console.log("info", info);
-              handleExpand(info.row.original.id, info.row.index);
+              handleExpand(info.row.original.id, info.row.index, filterStatus);
             }}
           >
             <ChevronRight
@@ -197,7 +201,11 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       console.log("View detail:", detail);
       // diganti dengan link to dokumen
     };
-  const handleExpand = async (rowId: string, index: number) => {
+  const handleExpand = async (
+    rowId: string,
+    index: number,
+    filterStatus?: STATUS_PENGAJUAN | null
+  ) => {
     // console.log("Expand row:", rowId);
     // check if already fetched or Check if the row is already expanded just close it
     if (rowDetails[rowId] || expanded[index]) {
@@ -313,6 +321,14 @@ export const TabelKegiatan = ({ data: initialData }: TabelKegiatanProps) => {
       ...rowDetails,
       [rowId]: newDetails,
     };
+
+    // filter newRowDetails by filterStatus
+    if (filterStatus) {
+      const filteredDetails = newDetails.filter(
+        (detail) => detail.statusPengajuan === filterStatus
+      );
+      newRowDetails[rowId] = filteredDetails;
+    }
 
     setRowDetails(newRowDetails);
 

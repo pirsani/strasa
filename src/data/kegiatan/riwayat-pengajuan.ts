@@ -185,6 +185,10 @@ export const getRiwayatPengajuanByKegiatanIdAndJenisPengajuan = async (
   kegiatanId: string,
   jenis: JENIS_PENGAJUAN
 ): Promise<RiwayatPengajuanIncludePengguna | null> => {
+  console.log("getRiwayatPengajuanByKegiatanIdAndJenisPengajuan", {
+    kegiatanId,
+    jenis,
+  });
   const riwayat = await dbHonorarium.riwayatPengajuan.findFirst({
     where: {
       kegiatanId,
@@ -271,6 +275,11 @@ export const getCountStatusPengajuan = async (
   satkerId?: string,
   unitKerjaId?: string
 ): Promise<StatusCount[] | null> => {
+  console.log("getCountStatusPengajuan", {
+    tahunAnggaran,
+    satkerId,
+    unitKerjaId,
+  });
   const result = await dbHonorarium.riwayatPengajuan.groupBy({
     by: ["status"],
     where: {
@@ -287,6 +296,8 @@ export const getCountStatusPengajuan = async (
       status: true,
     },
   });
+
+  console.log("getCountStatusPengajuan result", result);
 
   const formattedResult = result.map((item) => ({
     status: item.status,

@@ -59,7 +59,7 @@ const ContainerTabelWithFilterStatus = ({
         </Button>
       </div>
 
-      <TabelKegiatan data={data} />
+      <TabelKegiatan data={data} filterStatus={filterStatus} />
     </div>
   );
 };
