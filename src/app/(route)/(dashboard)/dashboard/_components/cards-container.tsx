@@ -28,17 +28,29 @@ const CardsContainer = ({ data }: CardsContainerProps) => {
 
   return (
     <div className="flex flex-col sm:flex-row gap-2">
-      <Card title="Pengajuan" jumlah={pengajuanCount} bgColor="bg-blue-500" />
-      <Card title="Revisi" jumlah={revisiCount} bgColor="bg-red-400" />
+      <Card
+        title="Pengajuan"
+        jumlah={pengajuanCount}
+        bgColor="bg-blue-500"
+        moreInfo={"/pengajuan/filter-by/status/SUBMITTED"}
+      />
+      <Card
+        title="Revisi"
+        jumlah={revisiCount}
+        bgColor="bg-red-400"
+        moreInfo={"/pengajuan/filter-by/status/REVISE"}
+      />
       <Card
         title="Tahap Pembayaran"
         jumlah={tahapPembayaranCount}
         bgColor="bg-green-500"
+        moreInfo={"/pengajuan/filter-by/status/REQUEST_TO_PAY"}
       />
       <Card
         title="Butuh Finishing Dokumen"
         jumlah={finishingDokumenCount}
         bgColor="bg-gray-400"
+        moreInfo={"/pengajuan/filter-by/status/PAID"}
       />
     </div>
   );

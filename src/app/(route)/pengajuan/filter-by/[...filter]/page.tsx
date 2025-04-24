@@ -14,7 +14,29 @@ const PengajuanPageFilteredBy = async ({
 }) => {
   const { filter } = await params;
   const filterBy = filter[0];
-  const filterByStatus = filter[1];
+  const filterValue = filter[1];
+
+  // check if filterBy is valid
+  const validFilterBy = ["status", "satkerId", "unitKerjaId"];
+  if (!validFilterBy.includes(filterBy)) {
+    return <div>Filter tidak valid</div>;
+  }
+  // check if filterValue is valid
+  switch (filterBy) {
+    case "status":
+      const validFilterValue = [
+        "SUBMITTED",
+        "REVISE",
+        "REQUEST_TO_PAY",
+        "PAID",
+      ];
+      if (filterBy === "status" && !validFilterValue.includes(filterValue)) {
+        return <div>Filter value tidak valid</div>;
+      }
+      break;
+    default:
+      return <div>INVALID FILTER</div>;
+  }
 
   const pengguna = await getLoggedInPengguna();
 
@@ -46,13 +68,15 @@ const PengajuanPageFilteredBy = async ({
     paramsKegiatan.unitKerjaId = unitKerjaId!;
   }
 
-  const statusPengajuan: STATUS_PENGAJUAN[] = ["SUBMITTED"];
+  const statusPengajuan: STATUS_PENGAJUAN[] = [filterValue as STATUS_PENGAJUAN];
 
   const data = await getRiwayatPengajuanInStatus(satkerId!, statusPengajuan);
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Pengajuan</h1>
-      <TabelRiwayatPengajuan data={data} />
+    <div className="p-4 pb-24 h-auto min-h-full flex flex-col bg-gray-200/90">
+      <h1 className="mb-2">Detil Dashboard Riwayat Pengajuan</h1>
+      <div className="flex-grow w-full border p-2 bg-gray-100 rounded-lg pb-24">
+        <TabelRiwayatPengajuan data={data} />
+      </div>
     </div>
   );
 };

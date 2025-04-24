@@ -1,7 +1,10 @@
 import { getSessionPengguna } from "@/actions/pengguna/session";
 import { getOptionsSbmHonorarium } from "@/actions/sbm";
 import FloatingPdfPreviewContainer from "@/components/floating-pdf-preview-container";
-import { getObjPlainJadwalById } from "@/data/jadwal";
+import {
+  getObjPlainJadwalById,
+  getObjPlainJadwalByRiwayatPengajuanId,
+} from "@/data/jadwal";
 import { checkPermissionAlurProses } from "@/lib/check-permission-alur-proses";
 import { JadwalKelasNarasumber } from "./_components/jadwal-kelas-narasumber";
 
@@ -11,7 +14,13 @@ export default async function HonorariumDetilPage({
   params: Promise<{ jadwalId: string }>;
 }) {
   const jadwalId = (await params).jadwalId;
-  const jadwal = await getObjPlainJadwalById(jadwalId);
+  let jadwal = await getObjPlainJadwalById(jadwalId);
+
+  // if !jadwal try to get jadwal by riwayatPengajuanId
+  if (!jadwal) {
+    jadwal = await getObjPlainJadwalByRiwayatPengajuanId(jadwalId);
+  }
+
   const optionsSbmHonorarium = await getOptionsSbmHonorarium();
 
   const statusPengajuan = jadwal?.riwayatPengajuan?.status;

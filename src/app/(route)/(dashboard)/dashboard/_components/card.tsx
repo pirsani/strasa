@@ -1,13 +1,21 @@
 import { cn } from "@/lib/utils";
 import { getDarkerTailwindColor } from "@/utils/tailwind-colors-utils";
+import Link from "next/link";
 
 interface CardProps {
   title: string;
   jumlah: number;
   className?: string;
   bgColor?: string;
+  moreInfo?: string;
 }
-const Card = ({ title, jumlah, className, bgColor }: CardProps) => {
+const Card = ({
+  title,
+  jumlah,
+  className,
+  bgColor,
+  moreInfo = "#",
+}: CardProps) => {
   const darkerBgColor = bgColor ? getDarkerTailwindColor(bgColor) : undefined;
 
   return (
@@ -23,7 +31,7 @@ const Card = ({ title, jumlah, className, bgColor }: CardProps) => {
         <h3>{title}</h3>
       </div>
       <div className={cn("mt-auto rounded-sm text-center", darkerBgColor)}>
-        More info
+        <Link href={moreInfo}>More info</Link>
       </div>
     </div>
   );

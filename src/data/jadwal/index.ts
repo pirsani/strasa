@@ -218,6 +218,15 @@ export const getObjPlainJadwalById = async (
   return plainObject;
 };
 
+export const getObjPlainJadwalByRiwayatPengajuanId = async (
+  riwayatPengajuanId: string
+): Promise<ObjPlainJadwalKelasNarasumber> => {
+  const jadwal = await getJadwalByRiwayatPengajuanId(riwayatPengajuanId);
+  const plainObject =
+    convertSpecialTypesToPlain<ObjPlainJadwalKelasNarasumber>(jadwal);
+  return plainObject;
+};
+
 export const getJadwalById = async (
   jadwalId: string
 ): Promise<JadwalKelasNarasumber | null> => {
