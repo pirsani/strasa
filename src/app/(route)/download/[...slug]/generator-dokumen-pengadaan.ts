@@ -58,8 +58,13 @@ export function updateWordTemplate(data: WordTemplateData) {
 
 export async function downloadDokumenPengadaan(req: Request, slug: string[]) {
   const buf = generatorDokumenPengadaan({ nomorSpk: "12345" });
+  if (!buf) {
+    return new Response("Error generating document", { status: 500 });
+  }
 
-  return new Response(buf, {
+  // Convert Buffer to Uint8Array
+  const uint8Array = new Uint8Array(buf);
+  return new Response(uint8Array, {
     status: 200,
     headers: {
       "Content-Type":

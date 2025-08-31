@@ -39,6 +39,8 @@ const UhDalamNegeriContainer = ({
     setPesertaUpdated(data);
   };
 
+  console.log("[prosesPermissions]", prosesPermissions);
+
   useEffect(() => {
     if (riwayatPengajuan) {
       setStatusPengajuan(riwayatPengajuan.status);
@@ -52,6 +54,9 @@ const UhDalamNegeriContainer = ({
       prosesPermissions?.createOwnProsesPengajuan
     ) {
       return <DataDukungUangHarianDalamNegeri kegiatanId={kegiatanId} />;
+    } else {
+      console.log("denied");
+      return <p>Anda tidak memiliki akses untuk mengajukan UH Dalam Negeri.</p>;
     }
   } else {
     switch (statusPengajuan) {

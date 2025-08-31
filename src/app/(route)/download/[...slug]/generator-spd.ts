@@ -110,7 +110,10 @@ export async function downloadDokumenSpd(req: Request, slug: string[]) {
   };
   console.log(dataSpd);
   const pdfBytes = await fillFormSpd(dataSpd);
-  return new NextResponse(pdfBytes, {
+
+  // Convert Buffer to Uint8Array
+  const uint8Array = new Uint8Array(pdfBytes);
+  return new NextResponse(uint8Array, {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",

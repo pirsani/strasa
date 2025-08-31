@@ -47,8 +47,8 @@ export const downloadTemplateExcel = async (req: Request, slug: string[]) => {
     await fs.access(templatePath, fs.constants.R_OK);
 
     const template = await fs.readFile(templatePath);
-
-    return new NextResponse(template, {
+    const uint8Array = new Uint8Array(template);
+    return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         "Content-Type":

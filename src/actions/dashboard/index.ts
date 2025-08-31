@@ -5,9 +5,10 @@ import { getDistinctInStatusPengajuan } from "@/data/kegiatan/riwayat-pengajuan"
 import {
   getPaguRealisasiUnitKerjaBySatker,
   getPaguUnitKerja,
-  ResultPaguRealisasi,
+  type ResultPaguRealisasi,
 } from "@/data/pagu";
 import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
+
 export type { ResultPaguRealisasi };
 
 export const getPaguRealisasi = async (

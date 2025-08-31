@@ -1,6 +1,7 @@
 "use client";
 import { getKegiatanById, KegiatanWithDetail } from "@/actions/kegiatan";
 import { getLogProses } from "@/actions/kegiatan/proses";
+import { ProsesPermissions } from "@/actions/pengguna/session";
 import FloatingComponent from "@/components/floating-component";
 import PreviewKegiatan from "@/components/kegiatan";
 import PdfPreviewContainer from "@/components/pdf-preview-container";
@@ -21,7 +22,11 @@ const SelectKegiatan = dynamic(
   { ssr: false, loading: () => <p>Loading daftar kegiatan...</p> }
 );
 
-const PengajuanContainer = () => {
+interface PengajuanContainerProps {
+  prosesPermissions?: ProsesPermissions;
+}
+
+const PengajuanContainer = ({ prosesPermissions }: PengajuanContainerProps) => {
   const [kegiatanId, setKegiatanId] = useState<string | null>(null);
   const [kegiatan, setKegiatan] = useState<KegiatanWithDetail | null>(null);
   const [logProses, setLogProses] = useState<LogProses[]>([]);
@@ -126,6 +131,7 @@ const PengajuanContainer = () => {
               kegiatanId={kegiatan.id}
               riwayatPengajuan={pengajuanUhDalamNegeri}
               dokumenKegiatan={kegiatan.dokumenKegiatan}
+              prosesPermissions={prosesPermissions}
             />
           )}
 
@@ -137,6 +143,7 @@ const PengajuanContainer = () => {
               kegiatanId={kegiatan.id}
               riwayatPengajuan={pengajuanUhLuarNegeri}
               dokumenKegiatan={kegiatan.dokumenKegiatan}
+              prosesPermissions={prosesPermissions}
             />
           )}
 

@@ -67,8 +67,9 @@ export const downloadDokumenBuktiPembayaran = async (
     const contentDisposition = `${inlineOrAttachment}; filename=${filename}`;
 
     //console.log("contentDisposition", contentDisposition);
+    const uint8Array = new Uint8Array(file); // Convert Buffer to Uint8Array
 
-    return new NextResponse(file, {
+    return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         "Content-Type": contentType,

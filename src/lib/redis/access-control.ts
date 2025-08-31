@@ -115,6 +115,7 @@ export async function loadAccessControl(): Promise<AccessControl | null> {
   }
 
   console.log("AccessControl rules loaded from Redis");
+  console.log("Grants:", ac.getGrants());
   return ac;
 }
 

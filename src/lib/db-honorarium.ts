@@ -5,9 +5,12 @@ declare global {
   var prismaDbHonorarium: PrismaClient | undefined;
 }
 
-export const dbHonorarium = global.prismaDbHonorarium || new PrismaClient();
+// Use 'globalThis' instead of 'global'
+export const dbHonorarium = globalThis.prismaDbHonorarium || new PrismaClient();
 
-if (process.env.NODE_ENV !== "production")
-  global.prismaDbHonorarium = dbHonorarium;
+if (process.env.NODE_ENV !== "production") {
+  // Use 'globalThis' instead of 'global'
+  globalThis.prismaDbHonorarium = dbHonorarium;
+}
 
 export { Prisma };

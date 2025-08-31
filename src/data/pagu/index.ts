@@ -13,6 +13,16 @@ export interface PaguUnitKerja extends Pagu {
   unitKerja: UnitKerjaIncludeIndukOrganisasi;
 }
 
+export interface ResultPaguRealisasi {
+  year: number;
+  unit_kerja_id: string;
+  nama: string;
+  singkatan: string;
+  realisasi: bigint;
+  pagu: bigint;
+  sisa: bigint;
+}
+
 export const getPaguUnitKerjaBySatker = async (
   satkerId: string,
   tahun: number
@@ -71,15 +81,6 @@ export const getPaguUnitKerja = async (
   return pagu;
 };
 
-export interface ResultPaguRealisasi {
-  year: number;
-  unit_kerja_id: string;
-  nama: string;
-  singkatan: string;
-  realisasi: bigint;
-  pagu: bigint;
-  sisa: bigint;
-}
 export const getPaguRealisasiUnitKerjaBySatker = async (
   tahun: number,
   satkerId: string

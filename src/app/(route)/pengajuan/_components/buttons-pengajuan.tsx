@@ -56,6 +56,7 @@ const ButtonsPengajuan = ({
   const handleOnClick = (jenis: JENIS_PENGAJUAN) => {
     setJenisPengajuan(jenis);
     handleSelection(jenis);
+    console.log("[jenis]", jenis);
     console.log("[logProses]", logProses);
   };
 
@@ -214,6 +215,7 @@ const ButtonAjukanUhDalamNegeri = ({
   statusUhDalamNegeri,
 }: ButtonAjukanUhDalamNegeriProps) => {
   // jika belum ada generate rampungan, tidak bisa ajukan UH dalam negeri
+  console.log("[statusRampungan]", statusRampungan);
   if (
     !statusRampungan ||
     (statusRampungan !== "VERIFIED" && statusRampungan !== "END")

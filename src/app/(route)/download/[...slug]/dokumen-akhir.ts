@@ -61,7 +61,8 @@ export const downloadDokumenAkhir = async (req: Request, slug: string[]) => {
     // resolve the path to avoid path traversal attack
     const fullPathResolvedPath = path.resolve(fullPath);
     const file = await fs.readFile(fullPathResolvedPath);
-    return new NextResponse(file, {
+    const uint8Array = new Uint8Array(file); // Convert Buffer to Uint8Array
+    return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",

@@ -388,7 +388,8 @@ export async function downloadDokumenRampungan(req: Request, slug: string[]) {
       dokumenRampungan.file &&
       dokumenRampungan.isFinal
     ) {
-      return new NextResponse(dokumenRampungan.file, {
+      const uint8Array = new Uint8Array(dokumenRampungan.file);
+      return new NextResponse(uint8Array, {
         status: 200,
         headers: {
           "Content-Type": "application/pdf",
@@ -415,7 +416,8 @@ export async function downloadDokumenRampungan(req: Request, slug: string[]) {
     console.log("[write file]", dokumenRampungan.filePath);
     await fs.writeFile(dokumenRampungan.filePath, completePdfBytes);
 
-    return new NextResponse(completePdfBytes, {
+    const uint8Array = new Uint8Array(completePdfBytes);
+    return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",

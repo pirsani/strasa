@@ -264,7 +264,8 @@ export async function generateDaftarNominatif(req: Request, slug: string[]) {
     dokumenNominatif.isFinal
   ) {
     console.log("[file exist]", dokumenNominatif.filePath);
-    return new NextResponse(dokumenNominatif.file, {
+    const uint8Array = new Uint8Array(dokumenNominatif.file);
+    return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
