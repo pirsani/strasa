@@ -23,7 +23,7 @@ const DataDukungUangHarianDalamNegeriView = ({
   return (
     <div id="VDDKUHDN-8189" className="w-full mt-6 rounded-lg">
       <h1 className="font-semibold text-lg py-2 p-2 border-b border-gray-300">
-        Data Dukung Pengajuan Uang Harian Luar Negeri
+        Data Dukung Pengajuan Uang Harian Dalam Negeri
       </h1>
       <div className="flex flex-col gap-8 p-2 pb-8">
         <div className="w-full flex flex-col gap-2">

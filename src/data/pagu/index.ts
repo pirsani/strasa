@@ -1,4 +1,5 @@
 import { dbHonorarium } from "@/lib/db-honorarium";
+import { ResultPaguRealisasi } from "@/types";
 import { Organisasi, Pagu } from "@prisma-honorarium/client";
 
 const getPaguSatker = () => {
@@ -13,15 +14,15 @@ export interface PaguUnitKerja extends Pagu {
   unitKerja: UnitKerjaIncludeIndukOrganisasi;
 }
 
-export interface ResultPaguRealisasi {
-  year: number;
-  unit_kerja_id: string;
-  nama: string;
-  singkatan: string;
-  realisasi: bigint;
-  pagu: bigint;
-  sisa: bigint;
-}
+// export interface ResultPaguRealisasi {
+//   year: number;
+//   unit_kerja_id: string;
+//   nama: string;
+//   singkatan: string;
+//   realisasi: bigint;
+//   pagu: bigint;
+//   sisa: bigint;
+// }
 
 export const getPaguUnitKerjaBySatker = async (
   satkerId: string,

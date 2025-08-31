@@ -41,7 +41,7 @@ const FormVerifikasiUhDalamNegeri = ({
           onChange={(e) => setCatatanRevisi(e.target.value)}
         ></textarea>
       </div>
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-row gap-2 justify-end">
         <Button
           type="button"
           className="w-1/3"
@@ -50,7 +50,12 @@ const FormVerifikasiUhDalamNegeri = ({
         >
           Revisi
         </Button>
-        <Button type="button" className="w-full" onClick={handleSetuju}>
+        <Button
+          type="button"
+          className="w-1/3"
+          onClick={handleSetuju}
+          id="btn-setuju-cfv"
+        >
           Setuju
         </Button>
       </div>

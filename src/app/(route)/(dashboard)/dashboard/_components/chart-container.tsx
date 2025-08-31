@@ -1,5 +1,5 @@
 "use client";
-import { type ResultPaguRealisasi } from "@/actions/dashboard";
+import { ResultPaguRealisasi } from "@/types";
 import { BarChartRealisasi } from "./bar-chart";
 import BarChartPaguRealisasi, {
   PaguRealisasiSisa,

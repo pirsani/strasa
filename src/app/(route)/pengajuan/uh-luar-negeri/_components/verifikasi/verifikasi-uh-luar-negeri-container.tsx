@@ -5,10 +5,9 @@ import setujuiPengajuanUhLuarNegeri, {
 } from "@/actions/kegiatan/uang-harian/verifikasi-luar-negeri";
 import { TabelHariPesertaKegiatan } from "@/app/(route)/verifikasi/_components/uang-harian/tabel-peserta-kegiatan-luar-negeri";
 import FloatingComponent from "@/components/floating-component";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { DokumenKegiatan, STATUS_PENGAJUAN } from "@prisma-honorarium/client";
 import { Dispatch, SetStateAction, useState } from "react";
+import { toast } from "sonner";
 import DataDukungUangHarianLuarNegeriView from "../../../_components/data-dukung-uh-luar-negeri-view";
 import FormVerifikasiUhLuarNegeri from "./form-verifikasi";
 
@@ -31,7 +30,6 @@ const VerifikasiUhLuarNegeriContainer = ({
   const [detailUhLuarNegeriPeserta, setDetailUhLuarNegeriPeserta] = useState<
     DetailUhLuarNegeriPeserta[] | null
   >(null);
-  const { toast } = useToast();
 
   const handleDataChange = (data: PesertaKegiatanLuarNegeri[]) => {
     setPesertaUpdated(data);
@@ -54,18 +52,10 @@ const VerifikasiUhLuarNegeriContainer = ({
       detailUhLuarNegeriPeserta
     );
     if (updated.success) {
-      toast({
-        title: "Verifikasi berhasil",
-        description: "Pengajuan uang harian telah diverifikasi dan disetujui",
-        action: <Button>OK</Button>,
-      });
+      toast.success("Pengajuan disetujui");
       updateStatus && updateStatus("APPROVED");
     } else {
-      toast({
-        title: "Terjadi kesalahan",
-        description: `${updated.error} ${updated.message}`,
-        duration: 9000,
-      });
+      toast.error(`Terjadi kesalahan: ${updated.error} ${updated.message}`);
     }
   };
 
@@ -75,17 +65,9 @@ const VerifikasiUhLuarNegeriContainer = ({
       catatanRevisi
     );
     if (updated.success) {
-      toast({
-        title: "Pengajuan dikembalikan",
-        description: "Pengajuan uang harian telah dikembalikan ke revisi",
-        duration: 9000,
-      });
+      toast.success("Pengajuan dikembalikan ke revisi");
     } else {
-      toast({
-        title: "Terjadi kesalahan",
-        description: `${updated.error} ${updated.message}`,
-        duration: 9000,
-      });
+      toast.error(`Terjadi kesalahan: ${updated.error} ${updated.message}`);
     }
     updateStatus && updateStatus("REVISE");
   };

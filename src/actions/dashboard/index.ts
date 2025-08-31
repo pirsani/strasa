@@ -5,11 +5,9 @@ import { getDistinctInStatusPengajuan } from "@/data/kegiatan/riwayat-pengajuan"
 import {
   getPaguRealisasiUnitKerjaBySatker,
   getPaguUnitKerja,
-  type ResultPaguRealisasi,
 } from "@/data/pagu";
+import { ResultPaguRealisasi } from "@/types";
 import { STATUS_PENGAJUAN } from "@prisma-honorarium/client";
-
-export type { ResultPaguRealisasi };
 
 export const getPaguRealisasi = async (
   year: number
